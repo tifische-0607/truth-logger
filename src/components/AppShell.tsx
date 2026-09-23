@@ -2,6 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type ReactNode } from "react";
 import {
+  CloudDownload,
   FolderClosed,
   Gauge,
   Loader2,
@@ -15,11 +16,13 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { timeAgo } from "@/lib/format";
+import { OfflineBanner } from "@/components/OfflineBanner";
 
 const nav = [
   { to: "/dashboard", label: "Dashboard", icon: Gauge },
   { to: "/cases", label: "Cases", icon: FolderClosed },
   { to: "/verify", label: "Verify", icon: ShieldCheck },
+  { to: "/offline", label: "Offline", icon: CloudDownload },
   { to: "/export", label: "Export", icon: PackageCheck },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
@@ -237,6 +240,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Link>
           <WorkerPill compact />
         </header>
+
+        <OfflineBanner />
 
         <main className="min-w-0 flex-1 px-4 pt-6 pb-28 md:px-8 md:pt-8 md:pb-12">{children}</main>
 

@@ -163,6 +163,13 @@ function ItemPage() {
         }
       />
 
+      {!online ? (
+        <div className="bg-warn/20 text-warn-foreground mb-5 rounded-xl border p-4 text-sm">
+          Offline copy held on this device. Files shown are the downloaded copies, verified against
+          their SHA-256 when they were synced. The evidence of record stays in the secure store.
+        </div>
+      ) : null}
+
       <div className="grid gap-5 xl:grid-cols-3">
         <section className="panel xl:col-span-2">
           <h2 className="px-5 pt-5 pb-3 font-semibold">Screenshots & renders</h2>
