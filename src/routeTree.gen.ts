@@ -21,6 +21,7 @@ import { Route as AuthenticatedJobsJobIdRouteImport } from './routes/_authentica
 import { Route as ApiPublicWorkerClaimRouteImport } from './routes/api/public/worker-claim'
 import { Route as ApiPublicWorkerCompleteRouteImport } from './routes/api/public/worker-complete'
 import { Route as ApiPublicWorkerHeartbeatRouteImport } from './routes/api/public/worker-heartbeat'
+import { Route as ApiPublicWorkerIngestRouteImport } from './routes/api/public/worker-ingest'
 import { Route as ApiPublicWorkerLogRouteImport } from './routes/api/public/worker-log'
 import { Route as ApiPublicWorkerUploadUrlRouteImport } from './routes/api/public/worker-upload-url'
 
@@ -86,6 +87,11 @@ const ApiPublicWorkerHeartbeatRoute =
     path: '/api/public/worker-heartbeat',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicWorkerIngestRoute = ApiPublicWorkerIngestRouteImport.update({
+  id: '/api/public/worker-ingest',
+  path: '/api/public/worker-ingest',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicWorkerLogRoute = ApiPublicWorkerLogRouteImport.update({
   id: '/api/public/worker-log',
   path: '/api/public/worker-log',
@@ -109,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/api/public/worker-claim': typeof ApiPublicWorkerClaimRoute
   '/api/public/worker-complete': typeof ApiPublicWorkerCompleteRoute
   '/api/public/worker-heartbeat': typeof ApiPublicWorkerHeartbeatRoute
+  '/api/public/worker-ingest': typeof ApiPublicWorkerIngestRoute
   '/api/public/worker-log': typeof ApiPublicWorkerLogRoute
   '/api/public/worker-upload-url': typeof ApiPublicWorkerUploadUrlRoute
   '/cases/': typeof AuthenticatedCasesIndexRoute
@@ -124,6 +131,7 @@ export interface FileRoutesByTo {
   '/api/public/worker-claim': typeof ApiPublicWorkerClaimRoute
   '/api/public/worker-complete': typeof ApiPublicWorkerCompleteRoute
   '/api/public/worker-heartbeat': typeof ApiPublicWorkerHeartbeatRoute
+  '/api/public/worker-ingest': typeof ApiPublicWorkerIngestRoute
   '/api/public/worker-log': typeof ApiPublicWorkerLogRoute
   '/api/public/worker-upload-url': typeof ApiPublicWorkerUploadUrlRoute
   '/cases': typeof AuthenticatedCasesIndexRoute
@@ -141,6 +149,7 @@ export interface FileRoutesById {
   '/api/public/worker-claim': typeof ApiPublicWorkerClaimRoute
   '/api/public/worker-complete': typeof ApiPublicWorkerCompleteRoute
   '/api/public/worker-heartbeat': typeof ApiPublicWorkerHeartbeatRoute
+  '/api/public/worker-ingest': typeof ApiPublicWorkerIngestRoute
   '/api/public/worker-log': typeof ApiPublicWorkerLogRoute
   '/api/public/worker-upload-url': typeof ApiPublicWorkerUploadUrlRoute
   '/_authenticated/cases/': typeof AuthenticatedCasesIndexRoute
@@ -158,6 +167,7 @@ export interface FileRouteTypes {
     | '/api/public/worker-claim'
     | '/api/public/worker-complete'
     | '/api/public/worker-heartbeat'
+    | '/api/public/worker-ingest'
     | '/api/public/worker-log'
     | '/api/public/worker-upload-url'
     | '/cases/'
@@ -173,6 +183,7 @@ export interface FileRouteTypes {
     | '/api/public/worker-claim'
     | '/api/public/worker-complete'
     | '/api/public/worker-heartbeat'
+    | '/api/public/worker-ingest'
     | '/api/public/worker-log'
     | '/api/public/worker-upload-url'
     | '/cases'
@@ -189,6 +200,7 @@ export interface FileRouteTypes {
     | '/api/public/worker-claim'
     | '/api/public/worker-complete'
     | '/api/public/worker-heartbeat'
+    | '/api/public/worker-ingest'
     | '/api/public/worker-log'
     | '/api/public/worker-upload-url'
     | '/_authenticated/cases/'
@@ -201,6 +213,7 @@ export interface RootRouteChildren {
   ApiPublicWorkerClaimRoute: typeof ApiPublicWorkerClaimRoute
   ApiPublicWorkerCompleteRoute: typeof ApiPublicWorkerCompleteRoute
   ApiPublicWorkerHeartbeatRoute: typeof ApiPublicWorkerHeartbeatRoute
+  ApiPublicWorkerIngestRoute: typeof ApiPublicWorkerIngestRoute
   ApiPublicWorkerLogRoute: typeof ApiPublicWorkerLogRoute
   ApiPublicWorkerUploadUrlRoute: typeof ApiPublicWorkerUploadUrlRoute
 }
@@ -291,6 +304,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWorkerHeartbeatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/worker-ingest': {
+      id: '/api/public/worker-ingest'
+      path: '/api/public/worker-ingest'
+      fullPath: '/api/public/worker-ingest'
+      preLoaderRoute: typeof ApiPublicWorkerIngestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/worker-log': {
       id: '/api/public/worker-log'
       path: '/api/public/worker-log'
@@ -336,6 +356,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicWorkerClaimRoute: ApiPublicWorkerClaimRoute,
   ApiPublicWorkerCompleteRoute: ApiPublicWorkerCompleteRoute,
   ApiPublicWorkerHeartbeatRoute: ApiPublicWorkerHeartbeatRoute,
+  ApiPublicWorkerIngestRoute: ApiPublicWorkerIngestRoute,
   ApiPublicWorkerLogRoute: ApiPublicWorkerLogRoute,
   ApiPublicWorkerUploadUrlRoute: ApiPublicWorkerUploadUrlRoute,
 }
