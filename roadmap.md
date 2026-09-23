@@ -18,6 +18,8 @@
 - [x] Export screen: verify-then-ZIP bundle (6-level layout, manifest.txt, verification report, custody-log.md, `exported` events)
 
 ## Next
+- [ ] Offline mode: on-device case cache, sync button, offline banner (in progress)
+- [ ] iPad-only case viewer: swipeable artefacts + zoomed screenshot viewer
 - [ ] Accounts and items browsing screens beyond the case page
 - [ ] Analyst assessment entry UI
 
