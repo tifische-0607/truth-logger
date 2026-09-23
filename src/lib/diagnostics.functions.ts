@@ -83,14 +83,37 @@ async function probe(baseUrl: string, name: string): Promise<EndpointProbe> {
   }
 }
 
+/** Only this app's own hosts may be probed — no arbitrary outbound requests. */
+function isAllowedHost(hostname: string): boolean {
+  return (
+    hostname === "localhost" ||
+    hostname === "127.0.0.1" ||
+    hostname.endsWith(".lovable.app") ||
+    hostname.endsWith(".lovableproject.com")
+  );
+}
+
 export const getWorkerDiagnostics = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { baseUrl: string }) => {
-    if (!data || typeof data.baseUrl !== "string" || !/^https?:\/\//.test(data.baseUrl)) {
+    if (!data || typeof data.baseUrl !== "string") {
       throw new Error("baseUrl must be an absolute http(s) URL");
     }
-    return { baseUrl: data.baseUrl.replace(/\/$/, "") };
+    let url: URL;
+    try {
+      url = new URL(data.baseUrl);
+    } catch {
+      throw new Error("baseUrl must be an absolute http(s) URL");
+    }
+    if (url.protocol !== "http:" && url.protocol !== "https:") {
+      throw new Error("baseUrl must be an absolute http(s) URL");
+    }
+    if (!isAllowedHost(url.hostname)) {
+      throw new Error("Diagnostics can only probe this app's own address.");
+    }
+    return { baseUrl: `${url.protocol}//${url.host}` };
   })
+
   .handler(async ({ data, context }): Promise<WorkerDiagnostics> => {
     const { baseUrl } = data;
 
