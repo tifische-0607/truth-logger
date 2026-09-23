@@ -6,6 +6,7 @@ import { PageHeader, useWorkerStatus } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { WorkerDiagnosticsPanel } from "@/components/WorkerDiagnostics";
 import { formatDateTime, timeAgo } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/settings")({
@@ -71,6 +72,8 @@ function SettingsPage() {
             </Button>
           </div>
         </section>
+
+        <WorkerDiagnosticsPanel />
       </div>
     </>
   );
