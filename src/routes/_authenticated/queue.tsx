@@ -42,6 +42,7 @@ function QueuePage() {
   const [busy, setBusy] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetUrl, setSheetUrl] = useState("");
+  const [mineOnly, setMineOnly] = useState(true);
 
   useEffect(() => {
     const channel = supabase
@@ -179,6 +180,23 @@ function QueuePage() {
           <Sliders className="size-4" /> Add with case, incident and options
         </Button>
       </section>
+
+      <div className="flex gap-2">
+        <Button
+          variant={mineOnly ? "default" : "outline"}
+          className="h-11"
+          onClick={() => setMineOnly(true)}
+        >
+          My captures
+        </Button>
+        <Button
+          variant={mineOnly ? "outline" : "default"}
+          className="h-11"
+          onClick={() => setMineOnly(false)}
+        >
+          Everyone's
+        </Button>
+      </div>
 
       <section className="panel">
         <div className="flex items-center justify-between px-5 pt-5 pb-3">
