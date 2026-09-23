@@ -6,8 +6,10 @@ import {
   Gauge,
   Loader2,
   LogOut,
+  PackageCheck,
   Radio,
   Settings,
+  ShieldCheck,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -17,6 +19,8 @@ import { timeAgo } from "@/lib/format";
 const nav = [
   { to: "/dashboard", label: "Dashboard", icon: Gauge },
   { to: "/cases", label: "Cases", icon: FolderClosed },
+  { to: "/verify", label: "Verify", icon: ShieldCheck },
+  { to: "/export", label: "Export", icon: PackageCheck },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
 
