@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { formatDateTime } from "@/lib/format";
+import { getCachedCase, offlineFirst } from "@/lib/offline";
 
 export const Route = createFileRoute("/_authenticated/cases/$caseId")({
   component: CasePage,
@@ -24,30 +25,44 @@ function CasePage() {
 
   const caseQuery = useQuery({
     queryKey: ["case", caseId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("cases")
-        .select("*")
-        .eq("id", caseId)
-        .maybeSingle();
-      if (error) throw error;
-      return data;
-    },
+    queryFn: async () =>
+      offlineFirst(
+        async () => {
+          const { data, error } = await supabase
+            .from("cases")
+            .select("*")
+            .eq("id", caseId)
+            .maybeSingle();
+          if (error) throw error;
+          return data;
+        },
+        async () => {
+          const cached = await getCachedCase(caseId);
+          return (cached?.case ?? null) as typeof caseQueryPlaceholder;
+        },
+      ),
   });
 
   const incidents = useQuery({
     queryKey: ["case-incidents", caseId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("incidents")
-        .select(
-          "*, accounts(id, handle, display_name, platform, profile_url, account_snapshots(id, captured_at, followers, following, verified, display_name, bio_verbatim), items(id, item_code, item_type, author_name, captured_at, parent_item_id))",
-        )
-        .eq("case_id", caseId)
-        .order("incident_id");
-      if (error) throw error;
-      return data;
-    },
+    queryFn: async () =>
+      offlineFirst(
+        async () => {
+          const { data, error } = await supabase
+            .from("incidents")
+            .select(
+              "*, accounts(id, handle, display_name, platform, profile_url, account_snapshots(id, captured_at, followers, following, verified, display_name, bio_verbatim), items(id, item_code, item_type, author_name, captured_at, parent_item_id))",
+            )
+            .eq("case_id", caseId)
+            .order("incident_id");
+          if (error) throw error;
+          return data;
+        },
+        async () => {
+          const cached = await getCachedCase(caseId);
+          return (cached?.incidents ?? null) as typeof incidentsPlaceholder;
+        },
+      ),
   });
 
   const [form, setForm] = useState({
