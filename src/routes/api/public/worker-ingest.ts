@@ -60,6 +60,53 @@ type Body = {
   };
 };
 
+/** Copy only the fields the worker is allowed to set; unknown keys are dropped. */
+function pick<T extends Record<string, unknown>>(source: unknown, keys: readonly string[]): T {
+  const out: Record<string, unknown> = {};
+  if (source && typeof source === "object") {
+    for (const key of keys) {
+      const value = (source as Record<string, unknown>)[key];
+      if (value !== undefined) out[key] = value;
+    }
+  }
+  return out as T;
+}
+
+const CASE_FIELDS = [
+  "id",
+  "opened_on",
+  "target_of_complaint",
+  "offence_alleged",
+  "jurisdiction_agency",
+  "lead_handler",
+  "status",
+  "related_cases",
+  "notes",
+] as const;
+const INCIDENT_FIELDS = [
+  "incident_id",
+  "start_date",
+  "end_date",
+  "narrative_themes",
+  "escalation_stage",
+  "summary",
+] as const;
+const ACCOUNT_FIELDS = ["platform", "handle", "display_name", "profile_url", "platform_id"] as const;
+const SNAPSHOT_FIELDS = [
+  "display_name",
+  "followers",
+  "following",
+  "verified",
+  "bio_verbatim",
+  "created",
+  "captured_at",
+] as const;
+
+function fail(stage: string, detail: unknown) {
+  console.error(`worker-ingest ${stage} failed:`, detail);
+  return jsonResponse({ error: `Could not save ${stage}. Check the worker log.` }, 500);
+}
+
 export const Route = createFileRoute("/api/public/worker-ingest")({
   server: {
     handlers: {
@@ -87,36 +134,36 @@ export const Route = createFileRoute("/api/public/worker-ingest")({
         // 1. case
         const { error: caseErr } = await sb
           .from("cases")
-          .upsert({ ...records.case }, { onConflict: "id" });
-        if (caseErr) return jsonResponse({ error: `case: ${caseErr.message}` }, 500);
+          .upsert(pick(records.case, CASE_FIELDS), { onConflict: "id" });
+        if (caseErr) return fail("the case", caseErr);
 
         // 2. incident
         const { data: incident, error: incErr } = await sb
           .from("incidents")
           .upsert(
-            { ...records.incident, case_id: records.case.id },
+            { ...pick(records.incident, INCIDENT_FIELDS), case_id: records.case.id },
             { onConflict: "case_id,incident_id" },
           )
           .select("id")
           .single();
-        if (incErr) return jsonResponse({ error: `incident: ${incErr.message}` }, 500);
+        if (incErr) return fail("the incident", incErr);
 
         // 3. account + snapshot (snapshots are append-only by convention)
         const { data: account, error: acctErr } = await sb
           .from("accounts")
           .upsert(
-            { platform: "FB", ...records.account, incident_uuid: incident.id },
+            { platform: "FB", ...pick(records.account, ACCOUNT_FIELDS), incident_uuid: incident.id },
             { onConflict: "incident_uuid,platform,handle" },
           )
           .select("id")
           .single();
-        if (acctErr) return jsonResponse({ error: `account: ${acctErr.message}` }, 500);
+        if (acctErr) return fail("the account", acctErr);
 
         if (records.account_snapshot) {
           const { error } = await sb
             .from("account_snapshots")
-            .insert({ ...records.account_snapshot, account_id: account.id });
-          if (error) return jsonResponse({ error: `account_snapshot: ${error.message}` }, 500);
+            .insert({ ...pick(records.account_snapshot, SNAPSHOT_FIELDS), account_id: account.id });
+          if (error) return fail("the account snapshot", error);
         }
 
         // 4. items — parents before children
@@ -161,7 +208,7 @@ export const Route = createFileRoute("/api/public/worker-ingest")({
             .upsert(row, { onConflict: "account_id,item_code" })
             .select("id")
             .single();
-          if (error) return jsonResponse({ error: `item ${item.item_code}: ${error.message}` }, 500);
+          if (error) return fail(`item ${item.item_code}`, error);
           codeToId.set(item.item_code, saved.id);
 
           if (item.subject_profile) {
@@ -173,7 +220,7 @@ export const Route = createFileRoute("/api/public/worker-ingest")({
               observed: item.subject_profile.observed ?? {},
               insufficient_data: item.subject_profile.insufficient_data ?? false,
             });
-            if (spErr) return jsonResponse({ error: `subject_profile: ${spErr.message}` }, 500);
+            if (spErr) return fail("the subject profile", spErr);
           }
 
           for (const artefact of item.artefacts ?? []) {
@@ -191,7 +238,7 @@ export const Route = createFileRoute("/api/public/worker-ingest")({
               })
               .select("id")
               .single();
-            if (aErr) return jsonResponse({ error: `artefact ${artefact.filename}: ${aErr.message}` }, 500);
+            if (aErr) return fail(`artefact ${artefact.filename}`, aErr);
             insertedArtefacts.push({
               id: savedArtefact.id,
               path: artefact.storage_path,
@@ -211,7 +258,7 @@ export const Route = createFileRoute("/api/public/worker-ingest")({
               tool_version: event.tool_version ?? null,
               notes: event.notes ?? null,
             });
-            if (cErr) return jsonResponse({ error: `custody_event: ${cErr.message}` }, 500);
+            if (cErr) return fail("the custody event", cErr);
           }
         }
 

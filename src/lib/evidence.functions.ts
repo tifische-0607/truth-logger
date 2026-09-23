@@ -30,6 +30,21 @@ function summarise(results: VerifyResult[]) {
   return counts;
 }
 
+/** Only the owner or an investigator assigned to the case may verify or export it. */
+async function assertCaseAccess(
+  supabase: { rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown }> },
+  userId: string,
+  caseId: string,
+) {
+  const { data } = await supabase.rpc("can_access_case", {
+    _user_id: userId,
+    _case_id: caseId,
+  });
+  if (data !== true) {
+    throw new Error("You are not assigned to this case. Ask the workspace owner for access.");
+  }
+}
+
 export const verifyEvidence = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { scope: "case" | "item"; id: string; handler?: string }) => {
@@ -40,11 +55,12 @@ export const verifyEvidence = createServerFn({ method: "POST" })
       handler: String(data.handler ?? "unknown").slice(0, 120),
     };
   })
-  .handler(async ({ data }): Promise<VerifyReport> => {
+  .handler(async ({ data, context }): Promise<VerifyReport> => {
     const { loadScope, rehashArtefacts } = await import("@/lib/evidence.server");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const scopeData = await loadScope(supabaseAdmin, data.scope, data.id);
+    await assertCaseAccess(context.supabase as never, context.userId, scopeData.caseId);
     const { results } = await rehashArtefacts(scopeData, data.handler, {
       note: "manual verification",
     });
@@ -75,12 +91,13 @@ export const exportBundle = createServerFn({ method: "POST" })
       };
     },
   )
-  .handler(async ({ data }): Promise<ExportReport> => {
+  .handler(async ({ data, context }): Promise<ExportReport> => {
     const { loadScope, rehashArtefacts, buildBundle, uploadBundle } = await import(
       "@/lib/evidence.server"
     );
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
+    await assertCaseAccess(context.supabase as never, context.userId, data.caseId);
     const scopeData = await loadScope(supabaseAdmin, "case", data.caseId);
     const generatedAt = new Date().toISOString();
     const { results, bytes } = await rehashArtefacts(scopeData, data.handler, {

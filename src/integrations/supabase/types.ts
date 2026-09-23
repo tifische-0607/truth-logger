@@ -260,6 +260,38 @@ export type Database = {
         }
         Relationships: []
       }
+      case_assignments: {
+        Row: {
+          assigned_by: string | null
+          case_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          assigned_by?: string | null
+          case_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          assigned_by?: string | null
+          case_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_assignments_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cases: {
         Row: {
           created_at: string
@@ -609,6 +641,10 @@ export type Database = {
       append_job_log: {
         Args: { p_job_id: string; p_lines: string[]; p_warnings: string[] }
         Returns: undefined
+      }
+      can_access_case: {
+        Args: { _case_id: string; _user_id: string }
+        Returns: boolean
       }
       claim_next_job: {
         Args: never
