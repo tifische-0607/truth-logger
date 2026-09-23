@@ -42,12 +42,32 @@ function duration(from: string | null, to: string | null) {
   return s < 60 ? `${s}s` : `${Math.floor(s / 60)}m ${s % 60}s`;
 }
 
+function formatUptime(bootIso: string, nowMs: number) {
+  const s = Math.max(0, Math.floor((nowMs - new Date(bootIso).getTime()) / 1000));
+  const days = Math.floor(s / 86400);
+  const hours = Math.floor((s % 86400) / 3600);
+  const mins = Math.floor((s % 3600) / 60);
+  const secs = s % 60;
+  if (days > 0) return `${days}d ${hours}h ${mins}m`;
+  if (hours > 0) return `${hours}h ${mins}m ${secs}s`;
+  return `${mins}m ${secs}s`;
+}
+
 function WorkerDashboard() {
   const qc = useQueryClient();
   const worker = useWorkerStatus();
   const online = useOnline();
   const [pending, setPending] = useState(0);
   const [sending, setSending] = useState(false);
+  const [nowMs, setNowMs] = useState(() => Date.now());
+
+  useEffect(() => {
+    const t = setInterval(() => setNowMs(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  const info = (worker.data?.info ?? {}) as Record<string, unknown>;
+  const bootTime = typeof info["boot_time"] === "string" ? info["boot_time"] : null;
 
   useEffect(() => {
     void pendingOutboxCount().then(setPending);
@@ -134,6 +154,15 @@ function WorkerDashboard() {
             <div>Last check-in: {worker.lastSeen ? timeAgo(worker.lastSeen) : "never"}</div>
             <div>Machine: {worker.data?.hostname ?? "—"}</div>
             <div>Version: {worker.data?.version ?? "—"}</div>
+            <div>
+              Running for:{" "}
+              {bootTime && worker.online ? (
+                <span className="font-mono">{formatUptime(bootTime, nowMs)}</span>
+              ) : (
+                "—"
+              )}
+            </div>
+            <div>Last reboot: {bootTime ? formatDateTime(bootTime) : "—"}</div>
           </dl>
         </section>
 

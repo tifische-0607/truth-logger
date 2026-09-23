@@ -7,9 +7,12 @@ post with a logged-in Chromium, uploads every artefact to the evidence bucket,
 ingests the whole record tree and marks the job done or failed.
 """
 
+import re
+import subprocess
 import threading
 import time
 import traceback
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -17,10 +20,29 @@ from . import api, config
 from .capture import capture_post, handle_from_url, post_id_from_url, utcnow
 
 
+def _boot_info() -> dict[str, Any]:
+    """Machine boot time and uptime on macOS (kern.boottime)."""
+    try:
+        out = subprocess.check_output(["sysctl", "-n", "kern.boottime"], text=True)
+        m = re.search(r"sec = (\d+)", out)
+        if not m:
+            return {}
+        boot = int(m.group(1))
+        boot_dt = datetime.fromtimestamp(boot, tz=timezone.utc)
+        return {
+            "boot_time": boot_dt.isoformat().replace("+00:00", "Z"),
+            "uptime_seconds": int(time.time()) - boot,
+        }
+    except Exception:
+        return {}
+
+
 def _heartbeat_forever() -> None:
     while True:
         try:
-            api.heartbeat({"os": "macOS", "work_dir": str(config.WORK_DIR)})
+            api.heartbeat(
+                {"os": "macOS", "work_dir": str(config.WORK_DIR), **_boot_info()}
+            )
         except Exception as exc:
             print(f"[heartbeat] {exc}")
         time.sleep(config.HEARTBEAT_SECONDS)
