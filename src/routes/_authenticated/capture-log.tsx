@@ -91,13 +91,21 @@ function CaptureLogPage() {
         title="Capture log"
         subtitle="Every capture run, how long it took and where the evidence landed."
         actions={
-          <Button
-            variant="outline"
-            className="h-12"
-            onClick={() => void qc.invalidateQueries({ queryKey: ["capture-log"] })}
-          >
-            <RefreshCw className="size-4" /> Refresh
-          </Button>
+          <div className="flex items-center gap-3">
+            <span className="text-muted-foreground flex items-center gap-2 text-xs">
+              <span
+                className={`size-2.5 rounded-full ${live ? "bg-done-foreground animate-pulse" : "bg-muted-foreground/50"}`}
+              />
+              {live ? "Live" : "Connecting…"}
+            </span>
+            <Button
+              variant="outline"
+              className="h-12"
+              onClick={() => void qc.invalidateQueries({ queryKey: ["capture-log"] })}
+            >
+              <RefreshCw className="size-4" /> Refresh
+            </Button>
+          </div>
         }
       />
 
