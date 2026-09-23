@@ -31,7 +31,7 @@ function Dashboard() {
 
   useEffect(() => {
     const channel = supabase
-      .channel("jobs-feed")
+      .channel(`jobs-feed-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "capture_jobs" }, () => {
         void queryClient.invalidateQueries({ queryKey: ["jobs"] });
       })
