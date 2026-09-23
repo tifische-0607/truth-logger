@@ -12,9 +12,10 @@ import { formatDateTime, timeAgo } from "@/lib/format";
 import { EvidenceThumb } from "@/components/EvidenceThumb";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    url: typeof search["url"] === "string" ? search["url"] : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): { url?: string } =>
+    typeof search["url"] === "string" && search["url"].length > 0
+      ? { url: search["url"] }
+      : {},
   component: Dashboard,
 });
 
@@ -193,7 +194,7 @@ function Dashboard() {
                     params={{ itemId: item.id }}
                     className="group block"
                   >
-                    <EvidenceThumb path={shot?.storage_path} />
+                    <EvidenceThumb path={shot?.storage_path ?? null} />
                     <div className="mt-2 font-mono text-xs font-semibold">{item.item_code}</div>
                     <div className="text-muted-foreground line-clamp-2 text-xs">
                       {item.author_name ?? "Unknown"} · {item.text_original ?? ""}
