@@ -329,9 +329,18 @@ function ZoomViewer({ artefact, onClose }: { artefact: ArtefactRow; onClose: () 
   const [scale, setScale] = useState(1);
 
   return (
-    <div className="bg-background/98 fixed inset-0 z-50 flex flex-col">
+    <div className="bg-background fixed inset-0 z-50 flex flex-col">
       <div className="flex items-center gap-3 border-b px-4 py-3">
         <span className="hash truncate text-sm">{artefact["filename"] as string}</span>
+        <span
+          className={`shrink-0 rounded px-2 py-0.5 text-[10px] font-bold tracking-wide uppercase ${
+            LIVE_KINDS.has(artefact["kind"] as string)
+              ? "bg-done text-done-foreground"
+              : "bg-warn text-warn-foreground"
+          }`}
+        >
+          {kindLabel(artefact["kind"] as string)}
+        </span>
         <div className="ml-auto flex items-center gap-2">
           <button
             type="button"
