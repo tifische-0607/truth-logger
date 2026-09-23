@@ -32,7 +32,7 @@ function JobDetail() {
 
   useEffect(() => {
     const channel = supabase
-      .channel(`job-${jobId}`)
+      .channel(`job-${jobId}-${Math.random().toString(36).slice(2)}`)
       .on(
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "capture_jobs", filter: `id=eq.${jobId}` },
