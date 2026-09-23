@@ -86,7 +86,7 @@ export function CaseTimeline({ caseId }: { caseId: string }) {
             kind: "custody",
             title: `${ev.action} · ${ev.filename ?? "artefact"}`,
             detail: [ev.handler, ev.notes].filter(Boolean).join(" · ") || "Custody event",
-            itemId: ev.item_id ?? undefined,
+            ...(ev.item_id ? { itemId: ev.item_id } : {}),
           });
         }
       }
