@@ -20,6 +20,7 @@ import { Route as AuthenticatedOfflineRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedQueueRouteImport } from './routes/_authenticated/queue'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
+import { Route as AuthenticatedTemplatesRouteImport } from './routes/_authenticated/templates'
 import { Route as AuthenticatedVerifyRouteImport } from './routes/_authenticated/verify'
 import { Route as AuthenticatedWorkerRouteImport } from './routes/_authenticated/worker'
 import { Route as AuthenticatedCasesIndexRouteImport } from './routes/_authenticated/cases.index'
@@ -88,6 +89,11 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
 const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
   id: '/team',
   path: '/team',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedTemplatesRoute = AuthenticatedTemplatesRouteImport.update({
+  id: '/templates',
+  path: '/templates',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedVerifyRoute = AuthenticatedVerifyRouteImport.update({
@@ -178,6 +184,7 @@ export interface FileRoutesByFullPath {
   '/queue': typeof AuthenticatedQueueRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/team': typeof AuthenticatedTeamRoute
+  '/templates': typeof AuthenticatedTemplatesRoute
   '/verify': typeof AuthenticatedVerifyRoute
   '/worker': typeof AuthenticatedWorkerRoute
   '/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
@@ -204,6 +211,7 @@ export interface FileRoutesByTo {
   '/queue': typeof AuthenticatedQueueRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/team': typeof AuthenticatedTeamRoute
+  '/templates': typeof AuthenticatedTemplatesRoute
   '/verify': typeof AuthenticatedVerifyRoute
   '/worker': typeof AuthenticatedWorkerRoute
   '/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
@@ -232,6 +240,7 @@ export interface FileRoutesById {
   '/_authenticated/queue': typeof AuthenticatedQueueRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/team': typeof AuthenticatedTeamRoute
+  '/_authenticated/templates': typeof AuthenticatedTemplatesRoute
   '/_authenticated/verify': typeof AuthenticatedVerifyRoute
   '/_authenticated/worker': typeof AuthenticatedWorkerRoute
   '/_authenticated/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
@@ -260,6 +269,7 @@ export interface FileRouteTypes {
     | '/queue'
     | '/settings'
     | '/team'
+    | '/templates'
     | '/verify'
     | '/worker'
     | '/cases/$caseId'
@@ -286,6 +296,7 @@ export interface FileRouteTypes {
     | '/queue'
     | '/settings'
     | '/team'
+    | '/templates'
     | '/verify'
     | '/worker'
     | '/cases/$caseId'
@@ -313,6 +324,7 @@ export interface FileRouteTypes {
     | '/_authenticated/queue'
     | '/_authenticated/settings'
     | '/_authenticated/team'
+    | '/_authenticated/templates'
     | '/_authenticated/verify'
     | '/_authenticated/worker'
     | '/_authenticated/cases/$caseId'
@@ -418,6 +430,13 @@ declare module '@tanstack/react-router' {
       path: '/team'
       fullPath: '/team'
       preLoaderRoute: typeof AuthenticatedTeamRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/templates': {
+      id: '/_authenticated/templates'
+      path: '/templates'
+      fullPath: '/templates'
+      preLoaderRoute: typeof AuthenticatedTemplatesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/verify': {
@@ -530,6 +549,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedQueueRoute: typeof AuthenticatedQueueRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRoute
+  AuthenticatedTemplatesRoute: typeof AuthenticatedTemplatesRoute
   AuthenticatedVerifyRoute: typeof AuthenticatedVerifyRoute
   AuthenticatedWorkerRoute: typeof AuthenticatedWorkerRoute
   AuthenticatedCasesCaseIdRoute: typeof AuthenticatedCasesCaseIdRoute
@@ -549,6 +569,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedQueueRoute: AuthenticatedQueueRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedTeamRoute: AuthenticatedTeamRoute,
+  AuthenticatedTemplatesRoute: AuthenticatedTemplatesRoute,
   AuthenticatedVerifyRoute: AuthenticatedVerifyRoute,
   AuthenticatedWorkerRoute: AuthenticatedWorkerRoute,
   AuthenticatedCasesCaseIdRoute: AuthenticatedCasesCaseIdRoute,
