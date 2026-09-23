@@ -11,6 +11,7 @@ import {
   Radio,
   Settings,
   ShieldCheck,
+  Users,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -24,6 +25,7 @@ const nav = [
   { to: "/verify", label: "Verify", icon: ShieldCheck },
   { to: "/offline", label: "Offline", icon: CloudDownload },
   { to: "/export", label: "Export", icon: PackageCheck },
+  { to: "/team", label: "Team", icon: Users },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
 
