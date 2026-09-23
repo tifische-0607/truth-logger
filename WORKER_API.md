@@ -111,8 +111,26 @@ concurrent callers never get the same job.
     "result": null,
     "created_at": "2026-09-23T06:10:55.002Z",
     "updated_at": "2026-09-23T06:13:02.441Z"
+  },
+  "settings": {
+    "fb_account_label": "investigations@fridayanalytics.org",
+    "proxy_url": null,
+    "timeout_seconds": 180,
+    "expand_comments": true,
+    "save_pdf": true,
+    "notes": null
   }
 }
+```
+
+`settings` is the workspace-wide capture setup (`public.capture_settings`, row `default`),
+returned on every claim — including when `job` is `null`. It never contains credentials;
+the Facebook session stays on the Mac mini. Apply `proxy_url` to the browser launch,
+`timeout_seconds` as the per-capture deadline, and `expand_comments` / `save_pdf` as
+capture toggles. Per-job `options` override these when both are present.
+
+```json
+{ "job": null, "settings": { "timeout_seconds": 180 } }
 ```
 
 **Response `200` (queue empty)**
