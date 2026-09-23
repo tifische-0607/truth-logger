@@ -60,6 +60,53 @@ type Body = {
   };
 };
 
+/** Copy only the fields the worker is allowed to set; unknown keys are dropped. */
+function pick<T extends Record<string, unknown>>(source: unknown, keys: readonly string[]): T {
+  const out: Record<string, unknown> = {};
+  if (source && typeof source === "object") {
+    for (const key of keys) {
+      const value = (source as Record<string, unknown>)[key];
+      if (value !== undefined) out[key] = value;
+    }
+  }
+  return out as T;
+}
+
+const CASE_FIELDS = [
+  "id",
+  "opened_on",
+  "target_of_complaint",
+  "offence_alleged",
+  "jurisdiction_agency",
+  "lead_handler",
+  "status",
+  "related_cases",
+  "notes",
+] as const;
+const INCIDENT_FIELDS = [
+  "incident_id",
+  "start_date",
+  "end_date",
+  "narrative_themes",
+  "escalation_stage",
+  "summary",
+] as const;
+const ACCOUNT_FIELDS = ["platform", "handle", "display_name", "profile_url", "platform_id"] as const;
+const SNAPSHOT_FIELDS = [
+  "display_name",
+  "followers",
+  "following",
+  "verified",
+  "bio_verbatim",
+  "created",
+  "captured_at",
+] as const;
+
+function fail(stage: string, detail: unknown) {
+  console.error(`worker-ingest ${stage} failed:`, detail);
+  return jsonResponse({ error: `Could not save ${stage}. Check the worker log.` }, 500);
+}
+
 export const Route = createFileRoute("/api/public/worker-ingest")({
   server: {
     handlers: {
