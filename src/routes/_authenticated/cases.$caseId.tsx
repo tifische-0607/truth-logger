@@ -110,7 +110,18 @@ function CasePage() {
       <PageHeader
         title={`CASE-${caseId}`}
         subtitle={`Opened ${formatDateTime(caseQuery.data.opened_on)}`}
-        actions={<StatusBadge status={caseQuery.data.status} className="text-sm" />}
+        actions={
+          <div className="flex items-center gap-3">
+            <Link
+              to="/review/$caseId"
+              params={{ caseId }}
+              className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
+            >
+              <Tablet className="size-4" /> Review mode
+            </Link>
+            <StatusBadge status={caseQuery.data.status} className="text-sm" />
+          </div>
+        }
       />
 
       <div className="grid gap-5 lg:grid-cols-3">
