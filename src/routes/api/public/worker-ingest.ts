@@ -208,7 +208,7 @@ export const Route = createFileRoute("/api/public/worker-ingest")({
             .upsert(row, { onConflict: "account_id,item_code" })
             .select("id")
             .single();
-          if (error) return jsonResponse({ error: `item ${item.item_code}: ${error.message}` }, 500);
+          if (error) return fail(`item ${item.item_code}`, error);
           codeToId.set(item.item_code, saved.id);
 
           if (item.subject_profile) {
@@ -220,7 +220,7 @@ export const Route = createFileRoute("/api/public/worker-ingest")({
               observed: item.subject_profile.observed ?? {},
               insufficient_data: item.subject_profile.insufficient_data ?? false,
             });
-            if (spErr) return jsonResponse({ error: `subject_profile: ${spErr.message}` }, 500);
+            if (spErr) return fail("the subject profile", spErr);
           }
 
           for (const artefact of item.artefacts ?? []) {
@@ -238,7 +238,7 @@ export const Route = createFileRoute("/api/public/worker-ingest")({
               })
               .select("id")
               .single();
-            if (aErr) return jsonResponse({ error: `artefact ${artefact.filename}: ${aErr.message}` }, 500);
+            if (aErr) return fail(`artefact ${artefact.filename}`, aErr);
             insertedArtefacts.push({
               id: savedArtefact.id,
               path: artefact.storage_path,
@@ -258,7 +258,7 @@ export const Route = createFileRoute("/api/public/worker-ingest")({
               tool_version: event.tool_version ?? null,
               notes: event.notes ?? null,
             });
-            if (cErr) return jsonResponse({ error: `custody_event: ${cErr.message}` }, 500);
+            if (cErr) return fail("the custody event", cErr);
           }
         }
 
