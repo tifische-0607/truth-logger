@@ -260,6 +260,42 @@ export type Database = {
         }
         Relationships: []
       }
+      capture_settings: {
+        Row: {
+          expand_comments: boolean
+          fb_account_label: string | null
+          id: string
+          notes: string | null
+          proxy_url: string | null
+          save_pdf: boolean
+          timeout_seconds: number
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          expand_comments?: boolean
+          fb_account_label?: string | null
+          id?: string
+          notes?: string | null
+          proxy_url?: string | null
+          save_pdf?: boolean
+          timeout_seconds?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          expand_comments?: boolean
+          fb_account_label?: string | null
+          id?: string
+          notes?: string | null
+          proxy_url?: string | null
+          save_pdf?: boolean
+          timeout_seconds?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       case_assignments: {
         Row: {
           assigned_by: string | null
@@ -291,6 +327,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      case_templates: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          fields: Json
+          id: string
+          is_default: boolean
+          jurisdiction_agency: string | null
+          name: string
+          offence_alleged: string | null
+          required_artefacts: string[]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          fields?: Json
+          id?: string
+          is_default?: boolean
+          jurisdiction_agency?: string | null
+          name: string
+          offence_alleged?: string | null
+          required_artefacts?: string[]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          fields?: Json
+          id?: string
+          is_default?: boolean
+          jurisdiction_agency?: string | null
+          name?: string
+          offence_alleged?: string | null
+          required_artefacts?: string[]
+          updated_at?: string
+        }
+        Relationships: []
       }
       cases: {
         Row: {
