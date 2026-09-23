@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/AppShell";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatDateTime } from "@/lib/format";
+import { listCachedCases, offlineFirst } from "@/lib/offline";
 
 export const Route = createFileRoute("/_authenticated/cases/")({
   component: CasesList,
@@ -13,14 +14,27 @@ export const Route = createFileRoute("/_authenticated/cases/")({
 function CasesList() {
   const cases = useQuery({
     queryKey: ["cases", "all"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("cases")
-        .select("*, incidents(id)")
-        .order("opened_on", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
+    queryFn: async () =>
+      offlineFirst(
+        async () => {
+          const { data, error } = await supabase
+            .from("cases")
+            .select("*, incidents(id)")
+            .order("opened_on", { ascending: false });
+          if (error) throw error;
+          return data;
+        },
+        async () => {
+          const cached = await listCachedCases();
+          if (!cached.length) return null;
+          return cached.map((c) => ({
+            ...(c.case as Record<string, unknown>),
+            incidents: c.incidents.map(() => ({ id: "" })),
+          })) as unknown as Awaited<ReturnType<typeof listCachedCases>> extends never
+            ? never
+            : never[];
+        },
+      ),
   });
 
   return (
