@@ -4,6 +4,7 @@ import { Camera, FileText, FolderOpen, ShieldCheck, User } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { formatDateTime } from "@/lib/format";
+import { getCachedCase, offlineFirst } from "@/lib/offline";
 
 type Entry = {
   key: string;
@@ -21,10 +22,62 @@ const KIND_META: Record<Entry["kind"], { label: string; icon: typeof Camera; cla
   custody: { label: "Custody", icon: ShieldCheck, className: "bg-muted text-muted-foreground" },
 };
 
+async function cachedTimeline(caseId: string): Promise<Entry[] | null> {
+  const record = await getCachedCase(caseId);
+  if (!record) return null;
+  type Loose = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+  const entries: Entry[] = [];
+  for (const inc of record.incidents as Loose[]) {
+    entries.push({
+      key: `inc-${inc["id"]}`,
+      at: inc["start_date"] ? `${inc["start_date"]}T00:00:00Z` : inc["created_at"],
+      kind: "incident",
+      title: `INC-${inc["incident_id"]} opened`,
+      detail: inc["summary"] ?? "Incident wave recorded",
+    });
+    for (const acct of (inc["accounts"] ?? []) as Loose[]) {
+      const handle = `${acct["platform"]}_@${acct["handle"]}`;
+      for (const snap of (acct["account_snapshots"] ?? []) as Loose[]) {
+        entries.push({
+          key: `snap-${snap["id"]}`,
+          at: snap["captured_at"],
+          kind: "snapshot",
+          title: `Snapshot of ${handle}`,
+          detail: `${snap["followers"] ?? "—"} followers`,
+        });
+      }
+      for (const item of (acct["items"] ?? []) as Loose[]) {
+        entries.push({
+          key: `item-${item["id"]}`,
+          at: item["captured_at"],
+          kind: "item",
+          title: `${item["item_code"]} captured`,
+          detail: `${item["item_type"]} by ${item["author_name"] ?? "unknown"}`,
+          itemId: item["id"],
+        });
+      }
+    }
+  }
+  for (const events of Object.values(record.custody)) {
+    for (const ev of events as Loose[]) {
+      entries.push({
+        key: `cust-${ev["id"]}`,
+        at: ev["created_at"],
+        kind: "custody",
+        title: `${ev["action"]} · ${ev["filename"] ?? "artefact"}`,
+        detail: [ev["handler"], ev["notes"]].filter(Boolean).join(" · ") || "Custody event",
+        ...(ev["item_id"] ? { itemId: ev["item_id"] as string } : {}),
+      });
+    }
+  }
+  return entries.sort((a, b) => b.at.localeCompare(a.at));
+}
+
 export function CaseTimeline({ caseId }: { caseId: string }) {
   const timeline = useQuery({
     queryKey: ["case-timeline", caseId],
-    queryFn: async (): Promise<Entry[]> => {
+    queryFn: async (): Promise<Entry[]> =>
+      offlineFirst<Entry[]>(async () => {
       const { data: incidents, error } = await supabase
         .from("incidents")
         .select(
@@ -92,7 +145,7 @@ export function CaseTimeline({ caseId }: { caseId: string }) {
       }
 
       return entries.sort((a, b) => b.at.localeCompare(a.at));
-    },
+      }, () => cachedTimeline(caseId)),
   });
 
   return (

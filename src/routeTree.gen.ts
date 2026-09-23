@@ -14,12 +14,14 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedExportRouteImport } from './routes/_authenticated/export'
+import { Route as AuthenticatedOfflineRouteImport } from './routes/_authenticated/offline'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedVerifyRouteImport } from './routes/_authenticated/verify'
 import { Route as AuthenticatedCasesIndexRouteImport } from './routes/_authenticated/cases.index'
 import { Route as AuthenticatedCasesCaseIdRouteImport } from './routes/_authenticated/cases.$caseId'
 import { Route as AuthenticatedItemsItemIdRouteImport } from './routes/_authenticated/items.$itemId'
 import { Route as AuthenticatedJobsJobIdRouteImport } from './routes/_authenticated/jobs.$jobId'
+import { Route as AuthenticatedReviewCaseIdRouteImport } from './routes/_authenticated/review.$caseId'
 import { Route as ApiPublicWorkerClaimRouteImport } from './routes/api/public/worker-claim'
 import { Route as ApiPublicWorkerCompleteRouteImport } from './routes/api/public/worker-complete'
 import { Route as ApiPublicWorkerHeartbeatRouteImport } from './routes/api/public/worker-heartbeat'
@@ -49,6 +51,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 const AuthenticatedExportRoute = AuthenticatedExportRouteImport.update({
   id: '/export',
   path: '/export',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedOfflineRoute = AuthenticatedOfflineRouteImport.update({
+  id: '/offline',
+  path: '/offline',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
@@ -83,6 +90,12 @@ const AuthenticatedJobsJobIdRoute = AuthenticatedJobsJobIdRouteImport.update({
   path: '/jobs/$jobId',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedReviewCaseIdRoute =
+  AuthenticatedReviewCaseIdRouteImport.update({
+    id: '/review/$caseId',
+    path: '/review/$caseId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ApiPublicWorkerClaimRoute = ApiPublicWorkerClaimRouteImport.update({
   id: '/api/public/worker-claim',
   path: '/api/public/worker-claim',
@@ -121,11 +134,13 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/export': typeof AuthenticatedExportRoute
+  '/offline': typeof AuthenticatedOfflineRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/verify': typeof AuthenticatedVerifyRoute
   '/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
   '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
+  '/review/$caseId': typeof AuthenticatedReviewCaseIdRoute
   '/api/public/worker-claim': typeof ApiPublicWorkerClaimRoute
   '/api/public/worker-complete': typeof ApiPublicWorkerCompleteRoute
   '/api/public/worker-heartbeat': typeof ApiPublicWorkerHeartbeatRoute
@@ -139,11 +154,13 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/export': typeof AuthenticatedExportRoute
+  '/offline': typeof AuthenticatedOfflineRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/verify': typeof AuthenticatedVerifyRoute
   '/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
   '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
+  '/review/$caseId': typeof AuthenticatedReviewCaseIdRoute
   '/api/public/worker-claim': typeof ApiPublicWorkerClaimRoute
   '/api/public/worker-complete': typeof ApiPublicWorkerCompleteRoute
   '/api/public/worker-heartbeat': typeof ApiPublicWorkerHeartbeatRoute
@@ -159,11 +176,13 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/export': typeof AuthenticatedExportRoute
+  '/_authenticated/offline': typeof AuthenticatedOfflineRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/verify': typeof AuthenticatedVerifyRoute
   '/_authenticated/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
   '/_authenticated/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/_authenticated/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
+  '/_authenticated/review/$caseId': typeof AuthenticatedReviewCaseIdRoute
   '/api/public/worker-claim': typeof ApiPublicWorkerClaimRoute
   '/api/public/worker-complete': typeof ApiPublicWorkerCompleteRoute
   '/api/public/worker-heartbeat': typeof ApiPublicWorkerHeartbeatRoute
@@ -179,11 +198,13 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/export'
+    | '/offline'
     | '/settings'
     | '/verify'
     | '/cases/$caseId'
     | '/items/$itemId'
     | '/jobs/$jobId'
+    | '/review/$caseId'
     | '/api/public/worker-claim'
     | '/api/public/worker-complete'
     | '/api/public/worker-heartbeat'
@@ -197,11 +218,13 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/export'
+    | '/offline'
     | '/settings'
     | '/verify'
     | '/cases/$caseId'
     | '/items/$itemId'
     | '/jobs/$jobId'
+    | '/review/$caseId'
     | '/api/public/worker-claim'
     | '/api/public/worker-complete'
     | '/api/public/worker-heartbeat'
@@ -216,11 +239,13 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/dashboard'
     | '/_authenticated/export'
+    | '/_authenticated/offline'
     | '/_authenticated/settings'
     | '/_authenticated/verify'
     | '/_authenticated/cases/$caseId'
     | '/_authenticated/items/$itemId'
     | '/_authenticated/jobs/$jobId'
+    | '/_authenticated/review/$caseId'
     | '/api/public/worker-claim'
     | '/api/public/worker-complete'
     | '/api/public/worker-heartbeat'
@@ -279,6 +304,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedExportRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/offline': {
+      id: '/_authenticated/offline'
+      path: '/offline'
+      fullPath: '/offline'
+      preLoaderRoute: typeof AuthenticatedOfflineRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/settings': {
       id: '/_authenticated/settings'
       path: '/settings'
@@ -319,6 +351,13 @@ declare module '@tanstack/react-router' {
       path: '/jobs/$jobId'
       fullPath: '/jobs/$jobId'
       preLoaderRoute: typeof AuthenticatedJobsJobIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/review/$caseId': {
+      id: '/_authenticated/review/$caseId'
+      path: '/review/$caseId'
+      fullPath: '/review/$caseId'
+      preLoaderRoute: typeof AuthenticatedReviewCaseIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/api/public/worker-claim': {
@@ -369,22 +408,26 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedExportRoute: typeof AuthenticatedExportRoute
+  AuthenticatedOfflineRoute: typeof AuthenticatedOfflineRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedVerifyRoute: typeof AuthenticatedVerifyRoute
   AuthenticatedCasesCaseIdRoute: typeof AuthenticatedCasesCaseIdRoute
   AuthenticatedItemsItemIdRoute: typeof AuthenticatedItemsItemIdRoute
   AuthenticatedJobsJobIdRoute: typeof AuthenticatedJobsJobIdRoute
+  AuthenticatedReviewCaseIdRoute: typeof AuthenticatedReviewCaseIdRoute
   AuthenticatedCasesIndexRoute: typeof AuthenticatedCasesIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedExportRoute: AuthenticatedExportRoute,
+  AuthenticatedOfflineRoute: AuthenticatedOfflineRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedVerifyRoute: AuthenticatedVerifyRoute,
   AuthenticatedCasesCaseIdRoute: AuthenticatedCasesCaseIdRoute,
   AuthenticatedItemsItemIdRoute: AuthenticatedItemsItemIdRoute,
   AuthenticatedJobsJobIdRoute: AuthenticatedJobsJobIdRoute,
+  AuthenticatedReviewCaseIdRoute: AuthenticatedReviewCaseIdRoute,
   AuthenticatedCasesIndexRoute: AuthenticatedCasesIndexRoute,
 }
 

@@ -5,23 +5,46 @@ import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/AppShell";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatDateTime } from "@/lib/format";
+import { listCachedCases, offlineFirst } from "@/lib/offline";
 
 export const Route = createFileRoute("/_authenticated/cases/")({
   component: CasesList,
 });
 
+type CaseRow = {
+  id: string;
+  status: string;
+  opened_on: string;
+  target_of_complaint: string | null;
+  offence_alleged: string | null;
+  jurisdiction_agency: string | null;
+  incidents?: { id: string }[] | null;
+};
+
 function CasesList() {
   const cases = useQuery({
     queryKey: ["cases", "all"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("cases")
-        .select("*, incidents(id)")
-        .order("opened_on", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
+    queryFn: async (): Promise<CaseRow[]> =>
+      offlineFirst<CaseRow[]>(
+        async () => {
+          const { data, error } = await supabase
+            .from("cases")
+            .select("*, incidents(id)")
+            .order("opened_on", { ascending: false });
+          if (error) throw error;
+          return (data ?? []) as unknown as CaseRow[];
+        },
+        async () => {
+          const cached = await listCachedCases();
+          if (!cached.length) return null;
+          return cached.map((c) => ({
+            ...(c.case as unknown as CaseRow),
+            incidents: c.incidents.map((i) => ({ id: String(i["id"] ?? "") })),
+          }));
+        },
+      ),
   });
+
 
   return (
     <>

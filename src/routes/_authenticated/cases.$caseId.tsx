@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Tablet } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -13,10 +13,32 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { formatDateTime } from "@/lib/format";
+import { getCachedCase, offlineFirst } from "@/lib/offline";
 
 export const Route = createFileRoute("/_authenticated/cases/$caseId")({
   component: CasePage,
 });
+
+async function fetchCase(caseId: string) {
+  const { data, error } = await supabase.from("cases").select("*").eq("id", caseId).maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+async function fetchIncidents(caseId: string) {
+  const { data, error } = await supabase
+    .from("incidents")
+    .select(
+      "*, accounts(id, handle, display_name, platform, profile_url, account_snapshots(id, captured_at, followers, following, verified, display_name, bio_verbatim), items(id, item_code, item_type, author_name, captured_at, parent_item_id))",
+    )
+    .eq("case_id", caseId)
+    .order("incident_id");
+  if (error) throw error;
+  return data;
+}
+
+type CaseData = Awaited<ReturnType<typeof fetchCase>>;
+type IncidentData = Awaited<ReturnType<typeof fetchIncidents>>;
 
 function CasePage() {
   const { caseId } = Route.useParams();
@@ -24,31 +46,28 @@ function CasePage() {
 
   const caseQuery = useQuery({
     queryKey: ["case", caseId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("cases")
-        .select("*")
-        .eq("id", caseId)
-        .maybeSingle();
-      if (error) throw error;
-      return data;
-    },
+    queryFn: async () =>
+      offlineFirst<CaseData>(
+        () => fetchCase(caseId),
+        async () => {
+          const cached = await getCachedCase(caseId);
+          return (cached?.case ?? null) as CaseData;
+        },
+      ),
   });
 
   const incidents = useQuery({
     queryKey: ["case-incidents", caseId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("incidents")
-        .select(
-          "*, accounts(id, handle, display_name, platform, profile_url, account_snapshots(id, captured_at, followers, following, verified, display_name, bio_verbatim), items(id, item_code, item_type, author_name, captured_at, parent_item_id))",
-        )
-        .eq("case_id", caseId)
-        .order("incident_id");
-      if (error) throw error;
-      return data;
-    },
+    queryFn: async () =>
+      offlineFirst<IncidentData>(
+        () => fetchIncidents(caseId),
+        async () => {
+          const cached = await getCachedCase(caseId);
+          return (cached?.incidents ?? null) as unknown as IncidentData;
+        },
+      ),
   });
+
 
   const [form, setForm] = useState({
     target_of_complaint: "",
@@ -91,7 +110,18 @@ function CasePage() {
       <PageHeader
         title={`CASE-${caseId}`}
         subtitle={`Opened ${formatDateTime(caseQuery.data.opened_on)}`}
-        actions={<StatusBadge status={caseQuery.data.status} className="text-sm" />}
+        actions={
+          <div className="flex items-center gap-3">
+            <Link
+              to="/review/$caseId"
+              params={{ caseId }}
+              className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
+            >
+              <Tablet className="size-4" /> Review mode
+            </Link>
+            <StatusBadge status={caseQuery.data.status} className="text-sm" />
+          </div>
+        }
       />
 
       <div className="grid gap-5 lg:grid-cols-3">
