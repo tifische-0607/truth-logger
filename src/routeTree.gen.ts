@@ -12,12 +12,15 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedCaptureLogRouteImport } from './routes/_authenticated/capture-log'
+import { Route as AuthenticatedCaptureSettingsRouteImport } from './routes/_authenticated/capture-settings'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedExportRouteImport } from './routes/_authenticated/export'
 import { Route as AuthenticatedOfflineRouteImport } from './routes/_authenticated/offline'
 import { Route as AuthenticatedQueueRouteImport } from './routes/_authenticated/queue'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
+import { Route as AuthenticatedTemplatesRouteImport } from './routes/_authenticated/templates'
 import { Route as AuthenticatedVerifyRouteImport } from './routes/_authenticated/verify'
 import { Route as AuthenticatedWorkerRouteImport } from './routes/_authenticated/worker'
 import { Route as AuthenticatedCasesIndexRouteImport } from './routes/_authenticated/cases.index'
@@ -47,6 +50,17 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedCaptureLogRoute = AuthenticatedCaptureLogRouteImport.update({
+  id: '/capture-log',
+  path: '/capture-log',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCaptureSettingsRoute =
+  AuthenticatedCaptureSettingsRouteImport.update({
+    id: '/capture-settings',
+    path: '/capture-settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -75,6 +89,11 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
 const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
   id: '/team',
   path: '/team',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedTemplatesRoute = AuthenticatedTemplatesRouteImport.update({
+  id: '/templates',
+  path: '/templates',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedVerifyRoute = AuthenticatedVerifyRouteImport.update({
@@ -157,12 +176,15 @@ const ApiPublicWorkerUploadUrlRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/capture-log': typeof AuthenticatedCaptureLogRoute
+  '/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/export': typeof AuthenticatedExportRoute
   '/offline': typeof AuthenticatedOfflineRoute
   '/queue': typeof AuthenticatedQueueRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/team': typeof AuthenticatedTeamRoute
+  '/templates': typeof AuthenticatedTemplatesRoute
   '/verify': typeof AuthenticatedVerifyRoute
   '/worker': typeof AuthenticatedWorkerRoute
   '/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
@@ -181,12 +203,15 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/capture-log': typeof AuthenticatedCaptureLogRoute
+  '/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/export': typeof AuthenticatedExportRoute
   '/offline': typeof AuthenticatedOfflineRoute
   '/queue': typeof AuthenticatedQueueRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/team': typeof AuthenticatedTeamRoute
+  '/templates': typeof AuthenticatedTemplatesRoute
   '/verify': typeof AuthenticatedVerifyRoute
   '/worker': typeof AuthenticatedWorkerRoute
   '/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
@@ -207,12 +232,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/capture-log': typeof AuthenticatedCaptureLogRoute
+  '/_authenticated/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/export': typeof AuthenticatedExportRoute
   '/_authenticated/offline': typeof AuthenticatedOfflineRoute
   '/_authenticated/queue': typeof AuthenticatedQueueRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/team': typeof AuthenticatedTeamRoute
+  '/_authenticated/templates': typeof AuthenticatedTemplatesRoute
   '/_authenticated/verify': typeof AuthenticatedVerifyRoute
   '/_authenticated/worker': typeof AuthenticatedWorkerRoute
   '/_authenticated/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
@@ -233,12 +261,15 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/capture-log'
+    | '/capture-settings'
     | '/dashboard'
     | '/export'
     | '/offline'
     | '/queue'
     | '/settings'
     | '/team'
+    | '/templates'
     | '/verify'
     | '/worker'
     | '/cases/$caseId'
@@ -257,12 +288,15 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/capture-log'
+    | '/capture-settings'
     | '/dashboard'
     | '/export'
     | '/offline'
     | '/queue'
     | '/settings'
     | '/team'
+    | '/templates'
     | '/verify'
     | '/worker'
     | '/cases/$caseId'
@@ -282,12 +316,15 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/capture-log'
+    | '/_authenticated/capture-settings'
     | '/_authenticated/dashboard'
     | '/_authenticated/export'
     | '/_authenticated/offline'
     | '/_authenticated/queue'
     | '/_authenticated/settings'
     | '/_authenticated/team'
+    | '/_authenticated/templates'
     | '/_authenticated/verify'
     | '/_authenticated/worker'
     | '/_authenticated/cases/$caseId'
@@ -339,6 +376,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/capture-log': {
+      id: '/_authenticated/capture-log'
+      path: '/capture-log'
+      fullPath: '/capture-log'
+      preLoaderRoute: typeof AuthenticatedCaptureLogRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/capture-settings': {
+      id: '/_authenticated/capture-settings'
+      path: '/capture-settings'
+      fullPath: '/capture-settings'
+      preLoaderRoute: typeof AuthenticatedCaptureSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -379,6 +430,13 @@ declare module '@tanstack/react-router' {
       path: '/team'
       fullPath: '/team'
       preLoaderRoute: typeof AuthenticatedTeamRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/templates': {
+      id: '/_authenticated/templates'
+      path: '/templates'
+      fullPath: '/templates'
+      preLoaderRoute: typeof AuthenticatedTemplatesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/verify': {
@@ -483,12 +541,15 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCaptureLogRoute: typeof AuthenticatedCaptureLogRoute
+  AuthenticatedCaptureSettingsRoute: typeof AuthenticatedCaptureSettingsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedExportRoute: typeof AuthenticatedExportRoute
   AuthenticatedOfflineRoute: typeof AuthenticatedOfflineRoute
   AuthenticatedQueueRoute: typeof AuthenticatedQueueRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRoute
+  AuthenticatedTemplatesRoute: typeof AuthenticatedTemplatesRoute
   AuthenticatedVerifyRoute: typeof AuthenticatedVerifyRoute
   AuthenticatedWorkerRoute: typeof AuthenticatedWorkerRoute
   AuthenticatedCasesCaseIdRoute: typeof AuthenticatedCasesCaseIdRoute
@@ -500,12 +561,15 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCaptureLogRoute: AuthenticatedCaptureLogRoute,
+  AuthenticatedCaptureSettingsRoute: AuthenticatedCaptureSettingsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedExportRoute: AuthenticatedExportRoute,
   AuthenticatedOfflineRoute: AuthenticatedOfflineRoute,
   AuthenticatedQueueRoute: AuthenticatedQueueRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedTeamRoute: AuthenticatedTeamRoute,
+  AuthenticatedTemplatesRoute: AuthenticatedTemplatesRoute,
   AuthenticatedVerifyRoute: AuthenticatedVerifyRoute,
   AuthenticatedWorkerRoute: AuthenticatedWorkerRoute,
   AuthenticatedCasesCaseIdRoute: AuthenticatedCasesCaseIdRoute,

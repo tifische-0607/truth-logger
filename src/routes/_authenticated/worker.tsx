@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, useWorkerStatus } from "@/components/AppShell";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { formatDateTime, timeAgo } from "@/lib/format";
 import { flushOutbox, pendingOutboxCount, useOnline } from "@/lib/offline";
 
@@ -60,6 +61,10 @@ function WorkerDashboard() {
   const [pending, setPending] = useState(0);
   const [sending, setSending] = useState(false);
   const [nowMs, setNowMs] = useState(() => Date.now());
+  const [feed, setFeed] = useState<{ at: string; text: string }[]>([]);
+  const [live, setLive] = useState(false);
+  const [newUrl, setNewUrl] = useState("");
+  const [queueing, setQueueing] = useState(false);
 
   useEffect(() => {
     const t = setInterval(() => setNowMs(Date.now()), 1000);
@@ -74,16 +79,77 @@ function WorkerDashboard() {
   }, []);
 
   useEffect(() => {
+    const push = (text: string) =>
+      setFeed((f) => [{ at: new Date().toISOString(), text }, ...f].slice(0, 40));
+
     const channel = supabase
       .channel(`worker-dash-${Math.random().toString(36).slice(2)}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "capture_jobs" }, () => {
-        void qc.invalidateQueries({ queryKey: ["worker-jobs"] });
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "capture_jobs" },
+        (payload) => {
+          void qc.invalidateQueries({ queryKey: ["worker-jobs"] });
+          const row = (payload.new ?? {}) as Record<string, unknown>;
+          const url = typeof row["url"] === "string" ? row["url"] : "";
+          const status = typeof row["status"] === "string" ? row["status"] : "";
+          if (payload.eventType === "INSERT") push(`Capture requested · ${url}`);
+          else if (status === "running") push(`Mac mini started · ${url}`);
+          else if (status === "done") push(`Capture finished · ${url}`);
+          else if (status === "failed") push(`Capture failed · ${url}`);
+        },
+      )
+      .on("postgres_changes", { event: "*", schema: "public", table: "worker_status" }, () => {
+        void qc.invalidateQueries({ queryKey: ["worker-status"] });
+        push("Mac mini checked in");
       })
-      .subscribe();
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "artefacts" }, (p) => {
+        const row = (p.new ?? {}) as Record<string, unknown>;
+        push(`File received · ${String(row["filename"] ?? "artefact")}`);
+      })
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "custody_events" },
+        (p) => {
+          const row = (p.new ?? {}) as Record<string, unknown>;
+          push(`Custody record · ${String(row["action"] ?? "")} ${String(row["filename"] ?? "")}`);
+        },
+      )
+      .subscribe((status) => setLive(status === "SUBSCRIBED"));
     return () => {
       void supabase.removeChannel(channel);
     };
   }, [qc]);
+
+  const queueCapture = async () => {
+    const value = newUrl.trim();
+    if (!value) {
+      toast.error("Paste a Facebook link first.");
+      return;
+    }
+    setQueueing(true);
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      const handler =
+        typeof window !== "undefined" ? localStorage.getItem("fbem.handler") : null;
+      const { error } = await supabase.from("capture_jobs").insert({
+        url: value,
+        handler: handler || null,
+        created_by: userData.user?.id ?? null,
+      });
+      if (error) throw error;
+      setNewUrl("");
+      await qc.invalidateQueries({ queryKey: ["worker-jobs"] });
+      toast.success(
+        worker.online
+          ? "Sent — the Mac mini will start it within a minute."
+          : "Saved — it will run as soon as the Mac mini is online.",
+      );
+    } catch {
+      toast.error("Could not send this capture. Try again.");
+    } finally {
+      setQueueing(false);
+    }
+  };
 
   const jobs = useQuery({
     queryKey: ["worker-jobs"],
@@ -196,6 +262,52 @@ function WorkerDashboard() {
           </Button>
         </section>
       </div>
+
+      <section className="panel p-5">
+        <h2 className="font-semibold">Send a capture to the Mac mini</h2>
+        <p className="text-muted-foreground mt-1 text-xs">
+          Paste a Facebook link — the Mac mini picks it up on its own, no need to start it there.
+        </p>
+        <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+          <Input
+            value={newUrl}
+            onChange={(e) => setNewUrl(e.target.value)}
+            placeholder="https://www.facebook.com/..."
+            inputMode="url"
+            className="h-12"
+          />
+          <Button className="h-12 sm:w-48" disabled={queueing} onClick={() => void queueCapture()}>
+            {queueing ? <Loader2 className="size-4 animate-spin" /> : null} Send to Mac mini
+          </Button>
+        </div>
+      </section>
+
+      <section className="panel">
+        <div className="flex items-center justify-between px-5 pt-5 pb-3">
+          <h2 className="font-semibold">Live activity</h2>
+          <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
+            <span
+              className={`size-2 rounded-full ${live ? "bg-done-foreground animate-pulse" : "bg-muted-foreground"}`}
+            />
+            {live ? "connected" : "connecting…"}
+          </span>
+        </div>
+        <div className="divide-border max-h-72 divide-y overflow-y-auto">
+          {feed.length === 0 && (
+            <p className="text-muted-foreground px-5 py-6 text-sm">
+              Waiting for the Mac mini — each check-in, run and file appears here as it happens.
+            </p>
+          )}
+          {feed.map((e, i) => (
+            <div key={`${e.at}-${i}`} className="flex gap-3 px-5 py-2 text-sm">
+              <span className="text-muted-foreground shrink-0 font-mono text-xs">
+                {new Date(e.at).toLocaleTimeString()}
+              </span>
+              <span className="truncate">{e.text}</span>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <section className="panel">
         <div className="flex items-center justify-between px-5 pt-5 pb-3">

@@ -42,6 +42,7 @@ function QueuePage() {
   const [busy, setBusy] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetUrl, setSheetUrl] = useState("");
+  const [mineOnly, setMineOnly] = useState(true);
 
   useEffect(() => {
     const channel = supabase
@@ -61,7 +62,7 @@ function QueuePage() {
       const { data, error } = await supabase
         .from("capture_jobs")
         .select(
-          "id, url, status, case_id, incident_id, handler, created_at, claimed_at, finished_at",
+          "id, url, status, case_id, incident_id, handler, created_at, claimed_at, finished_at, created_by",
         )
         .order("created_at", { ascending: false })
         .limit(60);
@@ -71,7 +72,14 @@ function QueuePage() {
     refetchInterval: 15_000,
   });
 
-  const rows = jobs.data ?? [];
+  const me = useQuery({
+    queryKey: ["me-id"],
+    queryFn: async () => (await supabase.auth.getUser()).data.user?.id ?? null,
+  });
+
+  const rows = (jobs.data ?? []).filter((j) =>
+    mineOnly && me.data ? j.created_by === me.data : true,
+  );
   const waiting = rows.filter((j) => j.status === "queued" || j.status === "running");
   const history = rows.filter((j) => j.status === "done" || j.status === "failed");
 
@@ -172,6 +180,23 @@ function QueuePage() {
           <Sliders className="size-4" /> Add with case, incident and options
         </Button>
       </section>
+
+      <div className="flex gap-2">
+        <Button
+          variant={mineOnly ? "default" : "outline"}
+          className="h-11"
+          onClick={() => setMineOnly(true)}
+        >
+          My captures
+        </Button>
+        <Button
+          variant={mineOnly ? "outline" : "default"}
+          className="h-11"
+          onClick={() => setMineOnly(false)}
+        >
+          Everyone's
+        </Button>
+      </div>
 
       <section className="panel">
         <div className="flex items-center justify-between px-5 pt-5 pb-3">
