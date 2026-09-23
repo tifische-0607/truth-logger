@@ -227,6 +227,7 @@ function ItemPage() {
         </section>
 
         <CaseSummaryPanel
+          key={itemId}
           initialText={data.text_en ?? data.text_original ?? ""}
           context={`Facebook ${data.item_type} ${data.item_code} by ${data.author_name ?? data.author_handle ?? "unknown author"}`}
         />
