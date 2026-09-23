@@ -197,7 +197,15 @@ def run_job(job: dict[str, Any]) -> None:
             print(f"[log failed] {exc}")
 
     log(f"Claimed job for {job['url']}")
-    data = capture_post(job["url"], job.get("options") or {}, log)
+    settings = job.get("settings") or {}
+    merged_options: dict[str, Any] = {
+        "proxy_url": settings.get("proxy_url"),
+        "timeout_seconds": settings.get("timeout_seconds") or 180,
+        "expand_comments": settings.get("expand_comments", True),
+        "save_pdf": settings.get("save_pdf", True),
+    }
+    merged_options.update(job.get("options") or {})  # per-job options win
+    data = capture_post(job["url"], merged_options, log)
     log(f"Saved {len(data['artefacts'])} artefacts to {data['out_dir']}")
 
     records = _build_records(job, data, handler)
