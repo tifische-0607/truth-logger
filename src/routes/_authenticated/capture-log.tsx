@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader2, RefreshCw } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -42,6 +42,30 @@ const FILTERS = ["all", "done", "failed"] as const;
 function CaptureLogPage() {
   const qc = useQueryClient();
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("all");
+  const [live, setLive] = useState(false);
+  const [, tick] = useState(0);
+
+  // Live updates: every change to a capture run refreshes this table immediately.
+  useEffect(() => {
+    const channel = supabase
+      .channel(`capture-log-${Math.random().toString(36).slice(2)}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "capture_jobs" },
+        () => void qc.invalidateQueries({ queryKey: ["capture-log"] }),
+      )
+      .subscribe((status) => setLive(status === "SUBSCRIBED"));
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [qc]);
+
+  // Keep the elapsed time of in-flight runs ticking.
+  useEffect(() => {
+    const t = setInterval(() => tick((n) => n + 1), 1000);
+    return () => clearInterval(t);
+  }, []);
+
 
   const runs = useQuery({
     queryKey: ["capture-log"],
@@ -67,13 +91,21 @@ function CaptureLogPage() {
         title="Capture log"
         subtitle="Every capture run, how long it took and where the evidence landed."
         actions={
-          <Button
-            variant="outline"
-            className="h-12"
-            onClick={() => void qc.invalidateQueries({ queryKey: ["capture-log"] })}
-          >
-            <RefreshCw className="size-4" /> Refresh
-          </Button>
+          <div className="flex items-center gap-3">
+            <span className="text-muted-foreground flex items-center gap-2 text-xs">
+              <span
+                className={`size-2.5 rounded-full ${live ? "bg-done-foreground animate-pulse" : "bg-muted-foreground/50"}`}
+              />
+              {live ? "Live" : "Connecting…"}
+            </span>
+            <Button
+              variant="outline"
+              className="h-12"
+              onClick={() => void qc.invalidateQueries({ queryKey: ["capture-log"] })}
+            >
+              <RefreshCw className="size-4" /> Refresh
+            </Button>
+          </div>
         }
       />
 
@@ -125,7 +157,11 @@ function CaptureLogPage() {
                   )}
                 </td>
                 <td className="px-5 py-3">{r.handler ?? "—"}</td>
-                <td className="px-5 py-3">{duration(r.claimed_at, r.finished_at)}</td>
+                <td className="px-5 py-3">
+                  {r.status === "running" && r.claimed_at
+                    ? `${duration(r.claimed_at, new Date().toISOString())}…`
+                    : duration(r.claimed_at, r.finished_at)}
+                </td>
                 <td className="px-5 py-3">{r.warnings?.length ?? 0}</td>
                 <td className="px-5 py-3">
                   <StatusBadge status={r.status} />
