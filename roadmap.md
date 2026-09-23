@@ -18,8 +18,8 @@
 - [x] Export screen: verify-then-ZIP bundle (6-level layout, manifest.txt, verification report, custody-log.md, `exported` events)
 
 ## Next
-- [ ] Offline mode: on-device case cache, sync button, offline banner (in progress)
-- [ ] iPad-only case viewer: swipeable artefacts + zoomed screenshot viewer
+- [x] Offline mode: on-device case cache, sync button, offline banner, queued custody events
+- [x] iPad review mode: swipeable artefact deck + pinch/zoom viewer (`/review/$caseId`)
 - [ ] Accounts and items browsing screens beyond the case page
 - [ ] Analyst assessment entry UI
 
