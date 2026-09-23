@@ -30,6 +30,21 @@ function summarise(results: VerifyResult[]) {
   return counts;
 }
 
+/** Only the owner or an investigator assigned to the case may verify or export it. */
+async function assertCaseAccess(
+  supabase: { rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown }> },
+  userId: string,
+  caseId: string,
+) {
+  const { data } = await supabase.rpc("can_access_case", {
+    _user_id: userId,
+    _case_id: caseId,
+  });
+  if (data !== true) {
+    throw new Error("You are not assigned to this case. Ask the workspace owner for access.");
+  }
+}
+
 export const verifyEvidence = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { scope: "case" | "item"; id: string; handler?: string }) => {
