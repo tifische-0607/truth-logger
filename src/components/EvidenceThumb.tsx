@@ -1,14 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { ImageOff } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
+import { blobStore } from "@/lib/offline-db";
 
+/** Signed URL when online; the on-device copy when the network is unavailable. */
 export function useSignedUrl(path?: string | null, expiresIn = 300) {
-  return useQuery({
+  const [objectUrl, setObjectUrl] = useState<string | null>(null);
+
+  const query = useQuery({
     queryKey: ["signed-url", path],
     enabled: Boolean(path),
     staleTime: (expiresIn - 30) * 1000,
+    retry: false,
     queryFn: async () => {
+      if (typeof navigator !== "undefined" && !navigator.onLine) throw new Error("offline");
       const { data, error } = await supabase.storage
         .from("evidence")
         .createSignedUrl(path as string, expiresIn);
@@ -16,6 +23,33 @@ export function useSignedUrl(path?: string | null, expiresIn = 300) {
       return data.signedUrl;
     },
   });
+
+  const needsFallback = Boolean(path) && query.isError;
+
+  useEffect(() => {
+    let url: string | null = null;
+    let cancelled = false;
+    if (needsFallback && path) {
+      void blobStore.get(path).then((blob) => {
+        if (!blob || cancelled) return;
+        url = URL.createObjectURL(blob);
+        setObjectUrl(url);
+      });
+    } else {
+      setObjectUrl(null);
+    }
+    return () => {
+      cancelled = true;
+      if (url) URL.revokeObjectURL(url);
+    };
+  }, [needsFallback, path]);
+
+  return {
+    ...query,
+    data: query.data ?? objectUrl ?? undefined,
+    isError: query.isError && !objectUrl,
+    fromCache: Boolean(!query.data && objectUrl),
+  };
 }
 
 export function EvidenceThumb({ path }: { path?: string | null }) {
