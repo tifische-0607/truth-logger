@@ -81,7 +81,7 @@ export async function syncCase(caseId: string, onProgress?: (p: SyncProgress) =>
   }
 
   const artefactRows = itemRows.flatMap(
-    (i) => ((i["artefacts"] ?? []) as Record<string, unknown>[]) ?? [],
+    (i) => (i["artefacts"] ?? []) as Record<string, unknown>[],
   );
   const toDownload = artefactRows.filter((a) => cacheable(a["kind"] as string));
 
