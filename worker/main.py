@@ -7,6 +7,7 @@ post with a logged-in Chromium, uploads every artefact to the evidence bucket,
 ingests the whole record tree and marks the job done or failed.
 """
 
+import os
 import re
 import subprocess
 import threading
@@ -256,10 +257,16 @@ def main() -> None:
     threading.Thread(target=_heartbeat_forever, daemon=True).start()
     print(f"Worker {config.VERSION} on {config.HOSTNAME} -> {config.BASE_URL}")
     while True:
+        if NET_FAILURES["count"] >= NET_FAILURE_LIMIT:
+            # Lost contact with the app for a sustained stretch. Exit non-zero so
+            # launchd (or the shell wrapper) restarts us with a clean state.
+            print(f"[net] {NET_FAILURE_LIMIT} consecutive failures — exiting for restart")
+            raise SystemExit(1)
         try:
             job = api.claim()
+            _net_ok()
         except Exception as exc:
-            print(f"[claim] {exc}")
+            _net_failed("claim", exc)
             time.sleep(config.POLL_SECONDS * 2)
             continue
         if not job:
