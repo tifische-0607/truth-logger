@@ -67,7 +67,7 @@ function WorkerDashboard() {
   }, []);
 
   const info = (worker.data?.info ?? {}) as Record<string, unknown>;
-  const bootTime = typeof info.boot_time === "string" ? info.boot_time : null;
+  const bootTime = typeof info["boot_time"] === "string" ? info["boot_time"] : null;
 
   useEffect(() => {
     void pendingOutboxCount().then(setPending);
