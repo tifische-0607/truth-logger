@@ -23,6 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { timeAgo } from "@/lib/format";
 import { OfflineBanner } from "@/components/OfflineBanner";
+import { NewCaptureSheet } from "@/components/NewCaptureSheet";
 
 const nav = [
   { to: "/dashboard", label: "Dashboard", icon: Gauge },
