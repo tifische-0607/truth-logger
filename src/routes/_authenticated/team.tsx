@@ -149,7 +149,7 @@ function TeamPage() {
     <div className="space-y-6">
       <PageHeader
         title="Team & case assignment"
-        description="Only the owner and investigators assigned to a case can open, verify or export it."
+        subtitle="Only the owner and investigators assigned to a case can open, verify or export it."
       />
 
       {!isOwner && (
