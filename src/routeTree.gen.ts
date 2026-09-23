@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedCaptureLogRouteImport } from './routes/_authenticated/capture-log'
+import { Route as AuthenticatedCaptureSettingsRouteImport } from './routes/_authenticated/capture-settings'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedExportRouteImport } from './routes/_authenticated/export'
 import { Route as AuthenticatedOfflineRouteImport } from './routes/_authenticated/offline'
@@ -47,6 +49,17 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedCaptureLogRoute = AuthenticatedCaptureLogRouteImport.update({
+  id: '/capture-log',
+  path: '/capture-log',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCaptureSettingsRoute =
+  AuthenticatedCaptureSettingsRouteImport.update({
+    id: '/capture-settings',
+    path: '/capture-settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -157,6 +170,8 @@ const ApiPublicWorkerUploadUrlRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/capture-log': typeof AuthenticatedCaptureLogRoute
+  '/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/export': typeof AuthenticatedExportRoute
   '/offline': typeof AuthenticatedOfflineRoute
@@ -181,6 +196,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/capture-log': typeof AuthenticatedCaptureLogRoute
+  '/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/export': typeof AuthenticatedExportRoute
   '/offline': typeof AuthenticatedOfflineRoute
@@ -207,6 +224,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/capture-log': typeof AuthenticatedCaptureLogRoute
+  '/_authenticated/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/export': typeof AuthenticatedExportRoute
   '/_authenticated/offline': typeof AuthenticatedOfflineRoute
@@ -233,6 +252,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/capture-log'
+    | '/capture-settings'
     | '/dashboard'
     | '/export'
     | '/offline'
@@ -257,6 +278,8 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/capture-log'
+    | '/capture-settings'
     | '/dashboard'
     | '/export'
     | '/offline'
@@ -282,6 +305,8 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/capture-log'
+    | '/_authenticated/capture-settings'
     | '/_authenticated/dashboard'
     | '/_authenticated/export'
     | '/_authenticated/offline'
@@ -338,6 +363,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/capture-log': {
+      id: '/_authenticated/capture-log'
+      path: '/capture-log'
+      fullPath: '/capture-log'
+      preLoaderRoute: typeof AuthenticatedCaptureLogRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/capture-settings': {
+      id: '/_authenticated/capture-settings'
+      path: '/capture-settings'
+      fullPath: '/capture-settings'
+      preLoaderRoute: typeof AuthenticatedCaptureSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
@@ -483,6 +522,8 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCaptureLogRoute: typeof AuthenticatedCaptureLogRoute
+  AuthenticatedCaptureSettingsRoute: typeof AuthenticatedCaptureSettingsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedExportRoute: typeof AuthenticatedExportRoute
   AuthenticatedOfflineRoute: typeof AuthenticatedOfflineRoute
@@ -500,6 +541,8 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCaptureLogRoute: AuthenticatedCaptureLogRoute,
+  AuthenticatedCaptureSettingsRoute: AuthenticatedCaptureSettingsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedExportRoute: AuthenticatedExportRoute,
   AuthenticatedOfflineRoute: AuthenticatedOfflineRoute,
