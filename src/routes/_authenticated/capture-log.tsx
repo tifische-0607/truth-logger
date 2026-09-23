@@ -42,6 +42,30 @@ const FILTERS = ["all", "done", "failed"] as const;
 function CaptureLogPage() {
   const qc = useQueryClient();
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("all");
+  const [live, setLive] = useState(false);
+  const [, tick] = useState(0);
+
+  // Live updates: every change to a capture run refreshes this table immediately.
+  useEffect(() => {
+    const channel = supabase
+      .channel(`capture-log-${Math.random().toString(36).slice(2)}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "capture_jobs" },
+        () => void qc.invalidateQueries({ queryKey: ["capture-log"] }),
+      )
+      .subscribe((status) => setLive(status === "SUBSCRIBED"));
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [qc]);
+
+  // Keep the elapsed time of in-flight runs ticking.
+  useEffect(() => {
+    const t = setInterval(() => tick((n) => n + 1), 1000);
+    return () => clearInterval(t);
+  }, []);
+
 
   const runs = useQuery({
     queryKey: ["capture-log"],
