@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { ChevronRight, Tablet } from "lucide-react";
+import { ChevronRight, Printer, Tablet } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -112,6 +112,13 @@ function CasePage() {
         subtitle={`Opened ${formatDateTime(caseQuery.data.opened_on)}`}
         actions={
           <div className="flex items-center gap-3">
+            <Link
+              to="/report/$caseId"
+              params={{ caseId }}
+              className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
+            >
+              <Printer className="size-4" /> Case report
+            </Link>
             <Link
               to="/review/$caseId"
               params={{ caseId }}
