@@ -157,7 +157,11 @@ function CaptureLogPage() {
                   )}
                 </td>
                 <td className="px-5 py-3">{r.handler ?? "—"}</td>
-                <td className="px-5 py-3">{duration(r.claimed_at, r.finished_at)}</td>
+                <td className="px-5 py-3">
+                  {r.status === "running" && r.claimed_at
+                    ? `${duration(r.claimed_at, new Date().toISOString())}…`
+                    : duration(r.claimed_at, r.finished_at)}
+                </td>
                 <td className="px-5 py-3">{r.warnings?.length ?? 0}</td>
                 <td className="px-5 py-3">
                   <StatusBadge status={r.status} />
