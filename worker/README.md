@@ -34,30 +34,22 @@ python -m worker.main
 You should see the worker card in the app's sidebar turn green within a minute.
 Queue a capture from the app ("New capture"), and the job log fills in live.
 
-## Keep it running (launchd)
-
-`~/Library/LaunchAgents/com.fbem.worker.plist`:
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<plist version="1.0"><dict>
-  <key>Label</key><string>com.fbem.worker</string>
-  <key>ProgramArguments</key>
-  <array>
-    <string>/Users/YOU/fbem/app/worker/.venv/bin/python</string>
-    <string>-m</string><string>worker.main</string>
-  </array>
-  <key>WorkingDirectory</key><string>/Users/YOU/fbem/app</string>
-  <key>RunAtLoad</key><true/>
-  <key>KeepAlive</key><true/>
-  <key>StandardOutPath</key><string>/Users/YOU/fbem/worker.log</string>
-  <key>StandardErrorPath</key><string>/Users/YOU/fbem/worker.err.log</string>
-</dict></plist>
-```
+## Keep it running (auto-restart)
 
 ```bash
-launchctl load ~/Library/LaunchAgents/com.fbem.worker.plist
+bash worker/install.sh
 ```
+
+This registers the worker with launchd so it:
+
+- starts automatically at login,
+- restarts automatically after any crash, and
+- restarts automatically when the worker loses contact with the app — the
+  worker exits on purpose after 20 consecutive failed heartbeats/claims
+  (`NET_FAILURE_LIMIT`, override in `.env`) and launchd brings it back.
+
+Logs: `~/fbem/worker.log` and `~/fbem/worker.err.log`.
+To stop it: `launchctl unload ~/Library/LaunchAgents/com.fbem.worker.plist`.
 
 Chromium runs with a visible window (Facebook blocks headless far more often), so
 keep the Mac mini logged in to its macOS user account.
