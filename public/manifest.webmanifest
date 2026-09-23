@@ -8,6 +8,15 @@
   "orientation": "any",
   "background_color": "#1b2233",
   "theme_color": "#1b2233",
+  "shortcuts": [
+    {
+      "name": "New capture",
+      "short_name": "Capture",
+      "description": "Send a Facebook link to the capture queue",
+      "url": "/dashboard?capture=1",
+      "icons": [{ "src": "/app-icon.png", "sizes": "512x512", "type": "image/png" }]
+    }
+  ],
   "icons": [
     { "src": "/app-icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
     { "src": "/app-icon.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
