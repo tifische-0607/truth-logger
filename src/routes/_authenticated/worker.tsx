@@ -60,6 +60,10 @@ function WorkerDashboard() {
   const [pending, setPending] = useState(0);
   const [sending, setSending] = useState(false);
   const [nowMs, setNowMs] = useState(() => Date.now());
+  const [feed, setFeed] = useState<{ at: string; text: string }[]>([]);
+  const [live, setLive] = useState(false);
+  const [newUrl, setNewUrl] = useState("");
+  const [queueing, setQueueing] = useState(false);
 
   useEffect(() => {
     const t = setInterval(() => setNowMs(Date.now()), 1000);
@@ -74,16 +78,77 @@ function WorkerDashboard() {
   }, []);
 
   useEffect(() => {
+    const push = (text: string) =>
+      setFeed((f) => [{ at: new Date().toISOString(), text }, ...f].slice(0, 40));
+
     const channel = supabase
       .channel(`worker-dash-${Math.random().toString(36).slice(2)}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "capture_jobs" }, () => {
-        void qc.invalidateQueries({ queryKey: ["worker-jobs"] });
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "capture_jobs" },
+        (payload) => {
+          void qc.invalidateQueries({ queryKey: ["worker-jobs"] });
+          const row = (payload.new ?? {}) as Record<string, unknown>;
+          const url = typeof row["url"] === "string" ? row["url"] : "";
+          const status = typeof row["status"] === "string" ? row["status"] : "";
+          if (payload.eventType === "INSERT") push(`Capture requested · ${url}`);
+          else if (status === "running") push(`Mac mini started · ${url}`);
+          else if (status === "done") push(`Capture finished · ${url}`);
+          else if (status === "failed") push(`Capture failed · ${url}`);
+        },
+      )
+      .on("postgres_changes", { event: "*", schema: "public", table: "worker_status" }, () => {
+        void qc.invalidateQueries({ queryKey: ["worker-status"] });
+        push("Mac mini checked in");
       })
-      .subscribe();
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "artefacts" }, (p) => {
+        const row = (p.new ?? {}) as Record<string, unknown>;
+        push(`File received · ${String(row["filename"] ?? "artefact")}`);
+      })
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "custody_events" },
+        (p) => {
+          const row = (p.new ?? {}) as Record<string, unknown>;
+          push(`Custody record · ${String(row["action"] ?? "")} ${String(row["filename"] ?? "")}`);
+        },
+      )
+      .subscribe((status) => setLive(status === "SUBSCRIBED"));
     return () => {
       void supabase.removeChannel(channel);
     };
   }, [qc]);
+
+  const queueCapture = async () => {
+    const value = newUrl.trim();
+    if (!value) {
+      toast.error("Paste a Facebook link first.");
+      return;
+    }
+    setQueueing(true);
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      const handler =
+        typeof window !== "undefined" ? localStorage.getItem("fbem.handler") : null;
+      const { error } = await supabase.from("capture_jobs").insert({
+        url: value,
+        handler: handler || null,
+        created_by: userData.user?.id ?? null,
+      });
+      if (error) throw error;
+      setNewUrl("");
+      await qc.invalidateQueries({ queryKey: ["worker-jobs"] });
+      toast.success(
+        worker.online
+          ? "Sent — the Mac mini will start it within a minute."
+          : "Saved — it will run as soon as the Mac mini is online.",
+      );
+    } catch {
+      toast.error("Could not send this capture. Try again.");
+    } finally {
+      setQueueing(false);
+    }
+  };
 
   const jobs = useQuery({
     queryKey: ["worker-jobs"],
