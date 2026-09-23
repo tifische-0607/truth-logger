@@ -1,0 +1,15 @@
+{
+  "name": "FB Evidence Monitor",
+  "short_name": "Evidence",
+  "description": "Collect Facebook posts and comments as legal evidence with a full chain of custody.",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#1b2233",
+  "theme_color": "#1b2233",
+  "icons": [
+    { "src": "/app-icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/app-icon.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
