@@ -134,36 +134,36 @@ export const Route = createFileRoute("/api/public/worker-ingest")({
         // 1. case
         const { error: caseErr } = await sb
           .from("cases")
-          .upsert({ ...records.case }, { onConflict: "id" });
-        if (caseErr) return jsonResponse({ error: `case: ${caseErr.message}` }, 500);
+          .upsert(pick(records.case, CASE_FIELDS), { onConflict: "id" });
+        if (caseErr) return fail("the case", caseErr);
 
         // 2. incident
         const { data: incident, error: incErr } = await sb
           .from("incidents")
           .upsert(
-            { ...records.incident, case_id: records.case.id },
+            { ...pick(records.incident, INCIDENT_FIELDS), case_id: records.case.id },
             { onConflict: "case_id,incident_id" },
           )
           .select("id")
           .single();
-        if (incErr) return jsonResponse({ error: `incident: ${incErr.message}` }, 500);
+        if (incErr) return fail("the incident", incErr);
 
         // 3. account + snapshot (snapshots are append-only by convention)
         const { data: account, error: acctErr } = await sb
           .from("accounts")
           .upsert(
-            { platform: "FB", ...records.account, incident_uuid: incident.id },
+            { platform: "FB", ...pick(records.account, ACCOUNT_FIELDS), incident_uuid: incident.id },
             { onConflict: "incident_uuid,platform,handle" },
           )
           .select("id")
           .single();
-        if (acctErr) return jsonResponse({ error: `account: ${acctErr.message}` }, 500);
+        if (acctErr) return fail("the account", acctErr);
 
         if (records.account_snapshot) {
           const { error } = await sb
             .from("account_snapshots")
-            .insert({ ...records.account_snapshot, account_id: account.id });
-          if (error) return jsonResponse({ error: `account_snapshot: ${error.message}` }, 500);
+            .insert({ ...pick(records.account_snapshot, SNAPSHOT_FIELDS), account_id: account.id });
+          if (error) return fail("the account snapshot", error);
         }
 
         // 4. items — parents before children
