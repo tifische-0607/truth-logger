@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/AppShell";
 import { StatusBadge } from "@/components/StatusBadge";
+import { CaseTimeline } from "@/components/CaseTimeline";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -142,6 +143,7 @@ function CasePage() {
         </section>
 
         <section className="space-y-5 lg:col-span-2">
+          <CaseTimeline caseId={caseId} />
           {incidents.data?.length ? (
             incidents.data.map((inc) => (
               <div key={inc.id} className="panel p-5">
