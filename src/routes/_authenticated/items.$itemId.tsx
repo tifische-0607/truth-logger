@@ -11,6 +11,7 @@ import { CaseSummaryPanel } from "@/components/CaseSummaryPanel";
 import { EvidenceThumb, useSignedUrl } from "@/components/EvidenceThumb";
 import { Button } from "@/components/ui/button";
 import { formatBytes, formatDateTime, LIVE_KINDS, RENDER_KINDS } from "@/lib/format";
+import { findCachedItem, offlineFirst, queueCustodyEvent, useOnline } from "@/lib/offline";
 
 export const Route = createFileRoute("/_authenticated/items/$itemId")({
   component: ItemPage,
@@ -29,7 +30,7 @@ type Artefact = {
 
 async function logAccess(artefact: Artefact, itemId: string, note: string) {
   const handler = localStorage.getItem("fbem.handler") ?? "unknown";
-  const { error } = await supabase.from("custody_events").insert({
+  const payload = {
     artefact_id: artefact.id,
     item_id: itemId,
     filename: artefact.filename,
@@ -37,53 +38,93 @@ async function logAccess(artefact: Artefact, itemId: string, note: string) {
     action: "accessed",
     handler,
     notes: note,
-  });
-  if (error) toast.error("Could not write custody event");
+  };
+  if (typeof navigator !== "undefined" && !navigator.onLine) {
+    await queueCustodyEvent(payload);
+    return;
+  }
+  const { error } = await supabase.from("custody_events").insert(payload);
+  if (error) {
+    await queueCustodyEvent(payload);
+    toast.warning("Custody entry queued — it will be sent when you're back online");
+  }
 }
+
+async function fetchItem(itemId: string) {
+  const { data, error } = await supabase
+    .from("items")
+    .select(
+      "*, artefacts(*), accounts(id, handle, display_name, platform, incident_uuid, incidents(incident_id, case_id))",
+    )
+    .eq("id", itemId)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+async function fetchChildren(itemId: string) {
+  const { data, error } = await supabase
+    .from("items")
+    .select("id, item_code, item_type, author_name, text_original, parent_item_id")
+    .eq("parent_item_id", itemId)
+    .order("item_code");
+  if (error) throw error;
+  return data;
+}
+
+async function fetchCustody(itemId: string) {
+  const { data, error } = await supabase
+    .from("custody_events")
+    .select("*")
+    .eq("item_id", itemId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data;
+}
+
+type ItemData = Awaited<ReturnType<typeof fetchItem>>;
+type ChildData = Awaited<ReturnType<typeof fetchChildren>>;
+type CustodyData = Awaited<ReturnType<typeof fetchCustody>>;
 
 function ItemPage() {
   const { itemId } = Route.useParams();
+  const online = useOnline();
   const [viewer, setViewer] = useState<Artefact | null>(null);
 
   const item = useQuery({
     queryKey: ["item", itemId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("items")
-        .select(
-          "*, artefacts(*), accounts(id, handle, display_name, platform, incident_uuid, incidents(incident_id, case_id))",
-        )
-        .eq("id", itemId)
-        .maybeSingle();
-      if (error) throw error;
-      return data;
-    },
+    queryFn: async () =>
+      offlineFirst<ItemData>(
+        () => fetchItem(itemId),
+        async () => {
+          const cached = await findCachedItem(itemId);
+          return (cached?.item ?? null) as unknown as ItemData;
+        },
+      ),
   });
 
   const children = useQuery({
     queryKey: ["item-children", itemId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("items")
-        .select("id, item_code, item_type, author_name, text_original, parent_item_id")
-        .eq("parent_item_id", itemId)
-        .order("item_code");
-      if (error) throw error;
-      return data;
-    },
+    queryFn: async () =>
+      offlineFirst<ChildData>(
+        () => fetchChildren(itemId),
+        async () => {
+          const cached = await findCachedItem(itemId);
+          return (cached?.children ?? null) as unknown as ChildData;
+        },
+      ),
   });
 
   const custody = useQuery({
     queryKey: ["custody", itemId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("custody_events")
-        .select("*")
-        .eq("item_id", itemId)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
+    queryFn: async () =>
+      offlineFirst<CustodyData>(
+        () => fetchCustody(itemId),
+        async () => {
+          const cached = await findCachedItem(itemId);
+          return (cached?.custody ?? null) as unknown as CustodyData;
+        },
+      ),
   });
 
   const viewerUrl = useSignedUrl(viewer?.storage_path ?? null, 300);
