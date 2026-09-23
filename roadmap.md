@@ -1,9 +1,10 @@
 # Roadmap
 
-- [ ] Live worker link: realtime worker status, runs and sync activity on the Worker dashboard
-- [ ] Send capture requests from the Worker dashboard to the Mac mini so runs start automatically
-- [ ] Publish the app (stable address for iPad review mode / offline cases) + Add to Home Screen walkthrough
-- [ ] Investigator view: each investigator sees only their own queued captures
-- [ ] Capture settings page: Facebook login details, proxy, capture timeout — used by the queue
-- [ ] Capture log: every run with date, duration, success/failure, linked to its case
-- [ ] Case template screen: define fields and artefacts new cases must match
+- [x] Live worker activity feed + send-to-Mac-mini form on the Worker dashboard
+- [x] Investigator's own queued captures view (My captures / Everyone's on Queue)
+- [x] Capture settings page (account label, proxy, timeout, comment expansion, PDF)
+- [x] Capture log (date, duration, success/failure, linked to case)
+- [x] Case template screen (fields + required artefacts)
+- [x] Auto-run queuing (worker claims queued jobs on its own; settings ride along)
+- [ ] Publish and walk through Add to Home Screen on iPad
+- [ ] User runs the real Facebook capture on the Mac mini
