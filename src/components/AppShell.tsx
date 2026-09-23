@@ -215,10 +215,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </nav>
 
         <div className="border-sidebar-border space-y-3 border-t pt-4">
-          <div className="text-sidebar-foreground/80 flex items-center gap-2">
-            <Radio className="size-4 shrink-0" />
-            <WorkerPill />
-          </div>
+          <WorkerStatusCard />
           <button
             onClick={signOut}
             className="text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-sm transition-colors"
