@@ -41,11 +41,18 @@ when the last heartbeat is under 2 minutes old.
 {
   "version": "worker-1.4.2",
   "hostname": "macmini.local",
-  "info": { "queue_depth": 0, "os": "macOS 15.3" }
+  "info": {
+    "queue_depth": 0,
+    "os": "macOS 15.3",
+    "boot_time": "2026-09-20T21:44:03Z",
+    "uptime_seconds": 191661
+  }
 }
 ```
 
-All fields optional; an empty body `{}` is accepted.
+All fields optional; an empty body `{}` is accepted. `info` is free-form and shown
+on the Worker dashboard; the built-in worker reports `boot_time` (ISO 8601 UTC) and
+`uptime_seconds` from macOS `kern.boottime` each heartbeat.
 
 **Response `200`**
 
