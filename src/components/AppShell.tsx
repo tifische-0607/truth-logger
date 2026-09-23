@@ -157,8 +157,8 @@ export function PageHeader({
   actions,
 }: {
   title: string;
-  subtitle?: string;
-  actions?: ReactNode;
+  subtitle?: string | undefined;
+  actions?: ReactNode | undefined;
 }) {
   return (
     <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
