@@ -23,6 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { timeAgo } from "@/lib/format";
 import { OfflineBanner } from "@/components/OfflineBanner";
+import { NewCaptureSheet } from "@/components/NewCaptureSheet";
 
 const nav = [
   { to: "/dashboard", label: "Dashboard", icon: Gauge },
@@ -198,6 +199,21 @@ function shortUrl(url: string) {
 export function AppShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [captureOpen, setCaptureOpen] = useState(false);
+  const [captureUrl, setCaptureUrl] = useState("");
+
+  // Home Screen shortcut / shared link: /dashboard?capture=1&url=…
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("capture") === null) return;
+    setCaptureUrl(params.get("url") ?? "");
+    setCaptureOpen(true);
+    params.delete("capture");
+    params.delete("url");
+    const rest = params.toString();
+    window.history.replaceState({}, "", window.location.pathname + (rest ? `?${rest}` : ""));
+  }, []);
 
   async function signOut() {
     await queryClient.cancelQueries();
@@ -256,6 +272,25 @@ export function AppShell({ children }: { children: ReactNode }) {
         <OfflineBanner />
 
         <main className="min-w-0 flex-1 px-4 pt-6 pb-28 md:px-8 md:pt-8 md:pb-12">{children}</main>
+
+        <button
+          type="button"
+          onClick={() => {
+            setCaptureUrl("");
+            setCaptureOpen(true);
+          }}
+          aria-label="New capture"
+          className="bg-primary text-primary-foreground safe-bottom fixed right-5 bottom-24 z-50 flex min-h-14 items-center gap-2 rounded-full px-5 text-base font-semibold shadow-lg transition-transform active:scale-95 md:bottom-8"
+        >
+          <ListPlus className="size-5" />
+          New capture
+        </button>
+
+        <NewCaptureSheet
+          open={captureOpen}
+          onOpenChange={setCaptureOpen}
+          initialUrl={captureUrl}
+        />
 
         <nav className="bg-sidebar text-sidebar-foreground safe-bottom fixed inset-x-0 bottom-0 z-40 flex justify-around border-t border-white/10 md:hidden">
           {nav.map((entry) => (

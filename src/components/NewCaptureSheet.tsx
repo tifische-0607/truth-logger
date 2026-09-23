@@ -213,14 +213,35 @@ export function NewCaptureSheet({
         <div className="space-y-6 px-5 pb-8">
           <div className="space-y-2">
             <Label htmlFor="url">Facebook URL</Label>
-            <Input
-              id="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://www.facebook.com/…"
-              className="h-12 text-base"
-              inputMode="url"
-            />
+            <div className="flex gap-2">
+              <Input
+                id="url"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="https://www.facebook.com/…"
+                className="h-12 flex-1 text-base"
+                inputMode="url"
+              />
+              <Button
+                type="button"
+                variant="secondary"
+                className="h-12 px-4"
+                onClick={async () => {
+                  try {
+                    const text = await navigator.clipboard.readText();
+                    if (text.trim()) {
+                      setUrl(text.trim());
+                    } else {
+                      toast.error("Clipboard is empty");
+                    }
+                  } catch {
+                    toast.error("Allow clipboard access, or paste into the box");
+                  }
+                }}
+              >
+                Paste
+              </Button>
+            </div>
           </div>
 
           <div className="space-y-2">
