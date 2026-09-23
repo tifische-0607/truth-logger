@@ -20,3 +20,6 @@
 - [ ] Export: verify-then-ZIP bundle in the 6-level folder layout, manifest.txt of hashes, custody logs as markdown, `exported` events with recipient name
 - [ ] Accounts and items browsing screens beyond the case page
 - [ ] Analyst assessment entry UI
+
+## Worker
+- [x] Mac mini capture worker (`worker/`) — heartbeat, claim, Chromium capture, upload, ingest, complete
