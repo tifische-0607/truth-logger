@@ -1,7 +1,14 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type ReactNode } from "react";
-import { FolderClosed, Gauge, LogOut, Radio, Settings } from "lucide-react";
+import {
+  FolderClosed,
+  Gauge,
+  Loader2,
+  LogOut,
+  Radio,
+  Settings,
+} from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
