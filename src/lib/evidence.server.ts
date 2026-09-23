@@ -242,7 +242,7 @@ export async function buildBundle(
   manifest.push(`Purpose: ${meta.purpose || "—"}`);
   manifest.push(`Artefacts: ${scopeData.artefacts.length}`);
   manifest.push("");
-  manifest.push("SHA-256  <two spaces>  path-in-bundle   (verification status)");
+  manifest.push("SHA-256  path-in-bundle  (verification status)");
   manifest.push("".padEnd(78, "-"));
 
   for (const artefact of scopeData.artefacts) {
