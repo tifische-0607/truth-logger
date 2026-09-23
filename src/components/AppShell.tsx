@@ -1,7 +1,14 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type ReactNode } from "react";
-import { FolderClosed, Gauge, LogOut, Radio, Settings } from "lucide-react";
+import {
+  FolderClosed,
+  Gauge,
+  Loader2,
+  LogOut,
+  Radio,
+  Settings,
+} from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -70,6 +77,105 @@ export function WorkerPill({ compact = false }: { compact?: boolean }) {
   );
 }
 
+function useActiveJobs() {
+  const queryClient = useQueryClient();
+  const query = useQuery({
+    queryKey: ["active-jobs"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("capture_jobs")
+        .select("id, status, url, created_at")
+        .in("status", ["queued", "running"])
+        .order("created_at", { ascending: false })
+        .limit(5);
+      if (error) throw error;
+      return data;
+    },
+    refetchInterval: 15_000,
+  });
+
+  useEffect(() => {
+    const channel = supabase
+      .channel(`active-jobs-feed-${Math.random().toString(36).slice(2)}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "capture_jobs" },
+        () => void queryClient.invalidateQueries({ queryKey: ["active-jobs"] }),
+      )
+      .subscribe();
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
+  return query;
+}
+
+export function WorkerStatusCard() {
+  const { lastSeen, online, data } = useWorkerStatus();
+  const jobs = useActiveJobs();
+  const [, force] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => force((n) => n + 1), 20_000);
+    return () => clearInterval(t);
+  }, []);
+
+  const running = (jobs.data ?? []).filter((j) => j.status === "running");
+  const queued = (jobs.data ?? []).filter((j) => j.status === "queued");
+  const hostname = (data as { hostname?: string } | null)?.hostname;
+
+  return (
+    <div className="bg-sidebar-accent/40 border-sidebar-border space-y-2.5 rounded-xl border p-3">
+      <div className="flex items-center gap-2">
+        <span
+          className={cn(
+            "size-2.5 shrink-0 rounded-full",
+            online ? "bg-done-foreground animate-pulse" : "bg-failed-foreground",
+          )}
+        />
+        <span className="text-xs font-semibold">
+          {online ? "Worker online" : "Worker offline"}
+        </span>
+        <Radio className="text-sidebar-foreground/50 ml-auto size-3.5" />
+      </div>
+      <div className="text-sidebar-foreground/60 space-y-0.5 text-[11px] leading-snug">
+        <div>Mac mini · seen {timeAgo(lastSeen)}</div>
+        {hostname ? <div className="truncate">{hostname}</div> : null}
+      </div>
+      <div className="text-sidebar-foreground/70 space-y-1 text-[11px]">
+        {running.map((j) => (
+          <Link
+            key={j.id}
+            to="/jobs/$jobId"
+            params={{ jobId: j.id }}
+            className="hover:bg-sidebar-accent flex items-center gap-1.5 rounded-md px-1.5 py-1"
+          >
+            <Loader2 className="text-running-foreground size-3 animate-spin" />
+            <span className="truncate">Capturing… {shortUrl(j.url)}</span>
+          </Link>
+        ))}
+        {queued.length > 0 ? (
+          <div className="px-1.5 py-0.5">
+            {queued.length} job{queued.length === 1 ? "" : "s"} queued
+          </div>
+        ) : null}
+        {running.length === 0 && queued.length === 0 ? (
+          <div className="text-sidebar-foreground/50 px-1.5 py-0.5">No active captures</div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+function shortUrl(url: string) {
+  try {
+    const u = new URL(url);
+    return u.pathname.replace(/\/$/, "").split("/").pop() || u.hostname;
+  } catch {
+    return url;
+  }
+}
+
 export function AppShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -109,10 +215,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </nav>
 
         <div className="border-sidebar-border space-y-3 border-t pt-4">
-          <div className="text-sidebar-foreground/80 flex items-center gap-2">
-            <Radio className="size-4 shrink-0" />
-            <WorkerPill />
-          </div>
+          <WorkerStatusCard />
           <button
             onClick={signOut}
             className="text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-sm transition-colors"
