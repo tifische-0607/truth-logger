@@ -145,12 +145,12 @@ export function WorkerStatusCard() {
           )}
         />
         <span className="text-xs font-semibold">
-          {online ? "Worker online" : "Worker offline"}
+          {online ? "Friday Analytics online" : "Friday Analytics offline"}
         </span>
         <Radio className="text-sidebar-foreground/50 ml-auto size-3.5" />
       </div>
       <div className="text-sidebar-foreground/60 space-y-0.5 text-[11px] leading-snug">
-        <div>Mac mini · seen {timeAgo(lastSeen)}</div>
+        <div>FridayA · seen {timeAgo(lastSeen)}</div>
         {hostname ? <div className="truncate">{hostname}</div> : null}
       </div>
       <div className="text-sidebar-foreground/70 space-y-1 text-[11px]">
