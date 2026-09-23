@@ -142,6 +142,7 @@ function CasePage() {
         </section>
 
         <section className="space-y-5 lg:col-span-2">
+          <CaseTimeline caseId={caseId} />
           {incidents.data?.length ? (
             incidents.data.map((inc) => (
               <div key={inc.id} className="panel p-5">
