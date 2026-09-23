@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedExportRouteImport } from './routes/_authenticated/export'
 import { Route as AuthenticatedOfflineRouteImport } from './routes/_authenticated/offline'
+import { Route as AuthenticatedQueueRouteImport } from './routes/_authenticated/queue'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as AuthenticatedVerifyRouteImport } from './routes/_authenticated/verify'
@@ -58,6 +59,11 @@ const AuthenticatedExportRoute = AuthenticatedExportRouteImport.update({
 const AuthenticatedOfflineRoute = AuthenticatedOfflineRouteImport.update({
   id: '/offline',
   path: '/offline',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedQueueRoute = AuthenticatedQueueRouteImport.update({
+  id: '/queue',
+  path: '/queue',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
@@ -147,6 +153,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/export': typeof AuthenticatedExportRoute
   '/offline': typeof AuthenticatedOfflineRoute
+  '/queue': typeof AuthenticatedQueueRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/team': typeof AuthenticatedTeamRoute
   '/verify': typeof AuthenticatedVerifyRoute
@@ -169,6 +176,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/export': typeof AuthenticatedExportRoute
   '/offline': typeof AuthenticatedOfflineRoute
+  '/queue': typeof AuthenticatedQueueRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/team': typeof AuthenticatedTeamRoute
   '/verify': typeof AuthenticatedVerifyRoute
@@ -193,6 +201,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/export': typeof AuthenticatedExportRoute
   '/_authenticated/offline': typeof AuthenticatedOfflineRoute
+  '/_authenticated/queue': typeof AuthenticatedQueueRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/team': typeof AuthenticatedTeamRoute
   '/_authenticated/verify': typeof AuthenticatedVerifyRoute
@@ -217,6 +226,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/export'
     | '/offline'
+    | '/queue'
     | '/settings'
     | '/team'
     | '/verify'
@@ -239,6 +249,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/export'
     | '/offline'
+    | '/queue'
     | '/settings'
     | '/team'
     | '/verify'
@@ -262,6 +273,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/export'
     | '/_authenticated/offline'
+    | '/_authenticated/queue'
     | '/_authenticated/settings'
     | '/_authenticated/team'
     | '/_authenticated/verify'
@@ -333,6 +345,13 @@ declare module '@tanstack/react-router' {
       path: '/offline'
       fullPath: '/offline'
       preLoaderRoute: typeof AuthenticatedOfflineRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/queue': {
+      id: '/_authenticated/queue'
+      path: '/queue'
+      fullPath: '/queue'
+      preLoaderRoute: typeof AuthenticatedQueueRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/settings': {
@@ -447,6 +466,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedExportRoute: typeof AuthenticatedExportRoute
   AuthenticatedOfflineRoute: typeof AuthenticatedOfflineRoute
+  AuthenticatedQueueRoute: typeof AuthenticatedQueueRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRoute
   AuthenticatedVerifyRoute: typeof AuthenticatedVerifyRoute
@@ -462,6 +482,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedExportRoute: AuthenticatedExportRoute,
   AuthenticatedOfflineRoute: AuthenticatedOfflineRoute,
+  AuthenticatedQueueRoute: AuthenticatedQueueRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedTeamRoute: AuthenticatedTeamRoute,
   AuthenticatedVerifyRoute: AuthenticatedVerifyRoute,
