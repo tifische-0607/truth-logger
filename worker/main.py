@@ -7,6 +7,7 @@ post with a logged-in Chromium, uploads every artefact to the evidence bucket,
 ingests the whole record tree and marks the job done or failed.
 """
 
+import os
 import re
 import subprocess
 import threading
@@ -37,14 +38,30 @@ def _boot_info() -> dict[str, Any]:
         return {}
 
 
+# Consecutive network failures (heartbeat or claim). If contact with the app is
+# lost for a sustained stretch the process exits non-zero so launchd restarts it.
+NET_FAILURES = {"count": 0}
+NET_FAILURE_LIMIT = int(os.environ.get("NET_FAILURE_LIMIT", "20"))
+
+
+def _net_ok() -> None:
+    NET_FAILURES["count"] = 0
+
+
+def _net_failed(where: str, exc: Exception) -> None:
+    NET_FAILURES["count"] += 1
+    print(f"[{where}] {exc} (failure {NET_FAILURES['count']}/{NET_FAILURE_LIMIT})")
+
+
 def _heartbeat_forever() -> None:
     while True:
         try:
             api.heartbeat(
                 {"os": "macOS", "work_dir": str(config.WORK_DIR), **_boot_info()}
             )
+            _net_ok()
         except Exception as exc:
-            print(f"[heartbeat] {exc}")
+            _net_failed("heartbeat", exc)
         time.sleep(config.HEARTBEAT_SECONDS)
 
 
@@ -240,10 +257,16 @@ def main() -> None:
     threading.Thread(target=_heartbeat_forever, daemon=True).start()
     print(f"Worker {config.VERSION} on {config.HOSTNAME} -> {config.BASE_URL}")
     while True:
+        if NET_FAILURES["count"] >= NET_FAILURE_LIMIT:
+            # Lost contact with the app for a sustained stretch. Exit non-zero so
+            # launchd (or the shell wrapper) restarts us with a clean state.
+            print(f"[net] {NET_FAILURE_LIMIT} consecutive failures — exiting for restart")
+            raise SystemExit(1)
         try:
             job = api.claim()
+            _net_ok()
         except Exception as exc:
-            print(f"[claim] {exc}")
+            _net_failed("claim", exc)
             time.sleep(config.POLL_SECONDS * 2)
             continue
         if not job:
