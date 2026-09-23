@@ -147,15 +147,19 @@ def capture_post(url: str, options: dict[str, Any], log: Logger) -> dict[str, An
             }
         )
 
+    proxy_url = options.get("proxy_url") or None
+    timeout_ms = int(options.get("timeout_seconds") or 180) * 1000
+
     with sync_playwright() as p:
         context = p.chromium.launch_persistent_context(
             user_data_dir=str(config.PROFILE_DIR),
             headless=False,  # Facebook is far friendlier to a real window
             viewport={"width": 1280, "height": 1800},
             locale="en-GB",
+            **({"proxy": {"server": proxy_url}} if proxy_url else {}),
         )
         page = context.pages[0] if context.pages else context.new_page()
-        page.set_default_timeout(30000)
+        page.set_default_timeout(min(timeout_ms, 120000))
         log(f"Opening {url}")
         page.goto(url, wait_until="domcontentloaded")
         page.wait_for_timeout(3000)
