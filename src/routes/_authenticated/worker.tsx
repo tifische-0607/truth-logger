@@ -91,7 +91,7 @@ function WorkerDashboard() {
   const sendQueued = async () => {
     setSending(true);
     try {
-      const sent = await flushOutbox();
+      const { sent } = await flushOutbox();
       setPending(await pendingOutboxCount());
       toast.success(sent ? `${sent} queued record(s) sent.` : "Nothing waiting to send.");
     } catch {
