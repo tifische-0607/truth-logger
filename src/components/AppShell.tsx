@@ -198,6 +198,21 @@ function shortUrl(url: string) {
 export function AppShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [captureOpen, setCaptureOpen] = useState(false);
+  const [captureUrl, setCaptureUrl] = useState("");
+
+  // Home Screen shortcut / shared link: /dashboard?capture=1&url=…
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("capture") === null) return;
+    setCaptureUrl(params.get("url") ?? "");
+    setCaptureOpen(true);
+    params.delete("capture");
+    params.delete("url");
+    const rest = params.toString();
+    window.history.replaceState({}, "", window.location.pathname + (rest ? `?${rest}` : ""));
+  }, []);
 
   async function signOut() {
     await queryClient.cancelQueries();
