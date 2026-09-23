@@ -37,7 +37,12 @@ def heartbeat(info: Optional[dict[str, Any]] = None) -> dict[str, Any]:
 
 
 def claim() -> Optional[dict[str, Any]]:
-    return _post("/api/public/worker-claim", {}, timeout=30).get("job")
+    """Claim the next queued job. Workspace capture settings ride along on the job."""
+    payload = _post("/api/public/worker-claim", {}, timeout=30)
+    job = payload.get("job")
+    if job is not None:
+        job["settings"] = payload.get("settings") or {}
+    return job
 
 
 def log(job_id: str, lines: list[str] | None = None, warnings: list[str] | None = None) -> None:
