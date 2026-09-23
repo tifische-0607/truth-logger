@@ -37,14 +37,30 @@ def _boot_info() -> dict[str, Any]:
         return {}
 
 
+# Consecutive network failures (heartbeat or claim). If contact with the app is
+# lost for a sustained stretch the process exits non-zero so launchd restarts it.
+NET_FAILURES = {"count": 0}
+NET_FAILURE_LIMIT = int(os.environ.get("NET_FAILURE_LIMIT", "20"))
+
+
+def _net_ok() -> None:
+    NET_FAILURES["count"] = 0
+
+
+def _net_failed(where: str, exc: Exception) -> None:
+    NET_FAILURES["count"] += 1
+    print(f"[{where}] {exc} (failure {NET_FAILURES['count']}/{NET_FAILURE_LIMIT})")
+
+
 def _heartbeat_forever() -> None:
     while True:
         try:
             api.heartbeat(
                 {"os": "macOS", "work_dir": str(config.WORK_DIR), **_boot_info()}
             )
+            _net_ok()
         except Exception as exc:
-            print(f"[heartbeat] {exc}")
+            _net_failed("heartbeat", exc)
         time.sleep(config.HEARTBEAT_SECONDS)
 
 
