@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/AppShell";
 import { HashChip } from "@/components/HashChip";
+import { CaseSummaryPanel } from "@/components/CaseSummaryPanel";
 import { EvidenceThumb, useSignedUrl } from "@/components/EvidenceThumb";
 import { Button } from "@/components/ui/button";
 import { formatBytes, formatDateTime, LIVE_KINDS, RENDER_KINDS } from "@/lib/format";
@@ -224,6 +225,12 @@ function ItemPage() {
             </div>
           </div>
         </section>
+
+        <CaseSummaryPanel
+          key={itemId}
+          initialText={data.text_en ?? data.text_original ?? ""}
+          context={`Facebook ${data.item_type} ${data.item_code} by ${data.author_name ?? data.author_handle ?? "unknown author"}`}
+        />
 
         {children.data?.length ? (
           <section className="panel xl:col-span-3">
