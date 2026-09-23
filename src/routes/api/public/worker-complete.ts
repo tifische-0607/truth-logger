@@ -23,7 +23,7 @@ export const Route = createFileRoute("/api/public/worker-complete")({
           .from("capture_jobs")
           .update({
             status,
-            result: body.result ?? {},
+            result: (body.result ?? {}) as never,
             finished_at: new Date().toISOString(),
           })
           .eq("id", body.job_id);

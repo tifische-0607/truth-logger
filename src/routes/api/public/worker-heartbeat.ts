@@ -23,7 +23,7 @@ export const Route = createFileRoute("/api/public/worker-heartbeat")({
           last_seen: now,
           version: body.version ?? null,
           hostname: body.hostname ?? null,
-          info: body.info ?? {},
+          info: (body.info ?? {}) as never,
         });
         if (error) return jsonResponse({ error: error.message }, 500);
         return jsonResponse({ ok: true, last_seen: now });
