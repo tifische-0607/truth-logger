@@ -256,7 +256,7 @@ function WorkerDashboard() {
         }
       />
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <section className="panel p-5">
           <h2 className="flex items-center gap-2 font-semibold">
             <Radio className="size-4" /> Mac mini
