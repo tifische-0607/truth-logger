@@ -215,8 +215,61 @@ function CaseReport() {
         {c.notes ? <p className="mt-3 text-sm whitespace-pre-wrap">{c.notes}</p> : null}
       </section>
 
+      <section className="panel print-break p-6">
+        <h2 className="text-lg font-semibold">1. Poster handles and profiles</h2>
+        <p className="text-muted-foreground text-xs">
+          Authors of captured posts, with the profile details Facebook publicly stated at capture
+          time. No details are inferred; empty fields were not shown on the profile.
+        </p>
+        <div className="mt-4 overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead className="text-muted-foreground uppercase">
+              <tr className="border-b">
+                <th className="py-2 pr-3">Poster</th>
+                <th className="py-2 pr-3">Handle</th>
+                <th className="py-2 pr-3">Profile link</th>
+                <th className="py-2 pr-3">Followers</th>
+                <th className="py-2 pr-3">Following</th>
+                <th className="py-2 pr-3">Likes</th>
+                <th className="py-2">Bio</th>
+              </tr>
+            </thead>
+            <tbody>
+              {posters.map((p) => (
+                <tr key={p.key} className="border-b align-top">
+                  <td className="py-2 pr-3 font-medium">
+                    {p.displayName ?? "Insufficient data"}
+                    {p.verified ? " ✓" : ""}
+                    <div className="text-muted-foreground font-normal">
+                      {p.posts} {p.posts === 1 ? "post" : "posts"} · last captured{" "}
+                      {p.lastCaptured ? formatDateTime(p.lastCaptured) : "—"}
+                    </div>
+                  </td>
+                  <td className="py-2 pr-3 font-mono">
+                    {p.handle ? `@${p.handle}` : "—"}
+                    <div className="text-muted-foreground font-normal">{p.account}</div>
+                  </td>
+                  <td className="py-2 pr-3 break-all">{p.profileUrl ?? "—"}</td>
+                  <td className="py-2 pr-3">{p.followers?.toLocaleString() ?? "—"}</td>
+                  <td className="py-2 pr-3">{p.following?.toLocaleString() ?? "—"}</td>
+                  <td className="py-2 pr-3">{p.likes?.toLocaleString() ?? "—"}</td>
+                  <td className="py-2 max-w-56 break-words">{p.bio ?? "—"}</td>
+                </tr>
+              ))}
+              {posters.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="text-muted-foreground py-3">
+                    No posters captured yet.
+                  </td>
+                </tr>
+              ) : null}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <section className="panel p-6">
-        <h2 className="text-lg font-semibold">1. Timeline of events</h2>
+        <h2 className="text-lg font-semibold">2. Timeline of events</h2>
         <p className="text-muted-foreground text-xs">{timeline.length} events, oldest first</p>
         <ol className="mt-4 space-y-3">
           {timeline.map((e, idx) => (
