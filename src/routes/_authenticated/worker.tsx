@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Activity, Clock3, Loader2, RefreshCw, Radio, Terminal, UploadCloud } from "lucide-react";
 import { toast } from "sonner";
 
@@ -179,6 +179,13 @@ function WorkerDashboard() {
   const currentProgress = current ? getCaptureProgress(current.status, current.log) : null;
   const logJob = current ?? rows.find((j) => (j.log?.length ?? 0) > 0) ?? null;
   const workerLogs = logJob ? visibleWorkerLogs(logJob.log) : [];
+
+  // Keep the live output pinned to the newest line while a capture runs.
+  const logBoxRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const box = logBoxRef.current;
+    if (box) box.scrollTop = box.scrollHeight;
+  }, [workerLogs.length, logJob?.id]);
 
   const sendQueued = async () => {
     setSending(true);
