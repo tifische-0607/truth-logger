@@ -177,7 +177,8 @@ function WorkerDashboard() {
   const active = rows.filter((j) => j.status === "running");
   const current = active[0] ?? null;
   const currentProgress = current ? getCaptureProgress(current.status, current.log) : null;
-  const workerLogs = current ? visibleWorkerLogs(current.log) : [];
+  const logJob = current ?? rows.find((j) => (j.log?.length ?? 0) > 0) ?? null;
+  const workerLogs = logJob ? visibleWorkerLogs(logJob.log) : [];
 
   const sendQueued = async () => {
     setSending(true);
@@ -340,6 +341,14 @@ function WorkerDashboard() {
             </h2>
             <span className="text-muted-foreground text-xs">{workerLogs.length} lines</span>
           </div>
+          {logJob && !current ? (
+            <div className="border-border text-muted-foreground mx-4 mb-2 rounded-lg border px-3 py-1.5 text-xs">
+              Last run's log —{" "}
+              <Link to="/jobs/$jobId" params={{ jobId: logJob.id }} className="underline">
+                open job
+              </Link>
+            </div>
+          ) : null}
           <div className="bg-sidebar text-sidebar-foreground h-64 overflow-y-auto p-4">
             {workerLogs.length ? (
               <pre className="hash whitespace-pre-wrap">
