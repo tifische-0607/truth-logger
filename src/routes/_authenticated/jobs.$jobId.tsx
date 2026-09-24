@@ -9,6 +9,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { formatDateTime } from "@/lib/format";
 import { visibleWorkerLogs } from "@/lib/capture-progress";
 import { CaptureCustodyTrail } from "@/components/CaptureCustodyTrail";
+import { CaptureViewer } from "@/components/CaptureViewer";
 
 export const Route = createFileRoute("/_authenticated/jobs/$jobId")({
   component: JobDetail,
@@ -126,6 +127,8 @@ function JobDetail() {
               <div ref={logEnd} />
             </div>
           </div>
+
+          {resultItemId ? <CaptureViewer itemId={resultItemId} /> : null}
 
           {resultItemId ? <CaptureCustodyTrail itemId={resultItemId} /> : null}
         </section>
