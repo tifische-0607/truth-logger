@@ -127,6 +127,28 @@ function QueuePage() {
     toast.success(message);
   };
 
+  const stopRunning = async (job: { id: string; warnings?: string[] | null }) => {
+    if (!window.confirm("Stop this capture? It will be marked as stopped and the Mac mini will restart to close the stuck browser.")) return;
+    const now = new Date().toISOString();
+    const { error } = await supabase
+      .from("capture_jobs")
+      .update({
+        status: "failed",
+        finished_at: now,
+        warnings: [...(job.warnings ?? []), `Stopped from the app at ${now} (stalled)`],
+      })
+      .eq("id", job.id)
+      .eq("status", "running");
+    if (error) {
+      toast.error("Could not stop this capture.");
+      return;
+    }
+    // Ask the Mac mini to restart so the stuck browser closes (owner only; ignored otherwise).
+    await supabase.from("worker_status").update({ restart_requested_at: now }).eq("id", "worker");
+    await qc.invalidateQueries({ queryKey: ["queue-jobs"] });
+    toast.success("Capture stopped. Resend the link when you're ready.");
+  };
+
   return (
     <div className="space-y-5">
       <PageHeader
@@ -232,7 +254,16 @@ function QueuePage() {
                   >
                     <X className="size-4" /> Cancel
                   </Button>
-                ) : null}
+                ) : (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-11"
+                    onClick={() => void stopRunning(job)}
+                  >
+                    <X className="size-4" /> Stop
+                  </Button>
+                )}
               </div>
             ))
           )}

@@ -9,3 +9,6 @@
 - [ ] Publish and walk through Add to Home Screen on iPad
 - [ ] User runs the real Facebook capture on the Mac mini
 - [x] Public SpyGlass landing page at `/`
+- [x] Diagnose Mac mini offline (13:37 UTC)
+- [x] Why captures/screenshots show blank on Results
+- [x] Stop button for stalled running captures on Queue

@@ -27,6 +27,15 @@ Logger = Callable[[str], None]
 ProgressReporter = Callable[[int, str], None]
 
 
+def _browser_channel() -> dict:
+    """Use installed Google Chrome (plays Facebook video); fall back to bundled Chromium."""
+    import os
+    ch = os.environ.get("BROWSER_CHANNEL", "chrome").strip()
+    if ch and os.path.exists("/Applications/Google Chrome.app"):
+        return {"channel": ch}
+    return {}
+
+
 def utcnow() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
@@ -295,6 +304,7 @@ def capture_post(
 
     with sync_playwright() as p:
         context = p.chromium.launch_persistent_context(
+            **_browser_channel(),
             user_data_dir=str(config.PROFILE_DIR),
             headless=False,  # Facebook is far friendlier to a real window
             viewport={"width": 1280, "height": 1800},
@@ -321,6 +331,12 @@ def capture_post(
                 progress(28, "Expanding comments and replies")
             _expand_comments(page, log)
 
+        body_text = (page.inner_text("body") or "")[:5000]
+        for msg in ("having trouble with playing this video", "isn't available at the moment",
+                    "This content isn't available", "Video unavailable"):
+            if msg.lower() in body_text.lower():
+                log(f"WARNING: Facebook showed an error screen: \"{msg}\" — the screenshot shows this notice, not the post")
+                break
         data = page.evaluate(_EXTRACT_JS)
         log(f"Parsed post and {len(data.get('comments') or [])} comment nodes")
         if progress:

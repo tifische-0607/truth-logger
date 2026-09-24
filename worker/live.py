@@ -32,6 +32,15 @@ from .capture import Logger, ProgressReporter, post_id_from_url, sha256_file, ut
 MAX_MINUTES_CAP = 240
 
 
+def _browser_channel() -> dict:
+    """Use installed Google Chrome (plays Facebook video); fall back to bundled Chromium."""
+    import os
+    ch = os.environ.get("BROWSER_CHANNEL", "chrome").strip()
+    if ch and os.path.exists("/Applications/Google Chrome.app"):
+        return {"channel": ch}
+    return {}
+
+
 def _tool(name: str) -> str:
     path = shutil.which(name) or next(
         (p for p in (f"/opt/homebrew/bin/{name}", f"/usr/local/bin/{name}") if Path(p).exists()), None
@@ -105,6 +114,7 @@ def record_live(
 
     with sync_playwright() as p:
         context = p.chromium.launch_persistent_context(
+            **_browser_channel(),
             user_data_dir=str(config.PROFILE_DIR),
             headless=False,
             viewport={"width": 1280, "height": 1800},

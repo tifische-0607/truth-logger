@@ -26,7 +26,8 @@ export const Route = createFileRoute("/api/public/worker-complete")({
             result: (body.result ?? {}) as never,
             finished_at: new Date().toISOString(),
           })
-          .eq("id", body.job_id);
+          .eq("id", body.job_id)
+          .eq("status", "running"); // a capture stopped from the app stays stopped
         if (error) return jsonResponse({ error: error.message }, 500);
 
         return jsonResponse({ ok: true, job_id: body.job_id, status });
