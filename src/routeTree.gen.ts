@@ -32,6 +32,7 @@ import { Route as AuthenticatedJobsJobIdRouteImport } from './routes/_authentica
 import { Route as AuthenticatedProfilesCaseIdRouteImport } from './routes/_authenticated/profiles.$caseId'
 import { Route as AuthenticatedReportCaseIdRouteImport } from './routes/_authenticated/report.$caseId'
 import { Route as AuthenticatedReviewCaseIdRouteImport } from './routes/_authenticated/review.$caseId'
+import { Route as AuthenticatedSummaryCaseIdRouteImport } from './routes/_authenticated/summary.$caseId'
 import { Route as AuthenticatedTrailCaseIdRouteImport } from './routes/_authenticated/trail.$caseId'
 import { Route as AuthenticatedTranscriptsCaseIdRouteImport } from './routes/_authenticated/transcripts.$caseId'
 import { Route as ApiPublicWorkerClaimRouteImport } from './routes/api/public/worker-claim'
@@ -163,6 +164,12 @@ const AuthenticatedReviewCaseIdRoute =
     path: '/review/$caseId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedSummaryCaseIdRoute =
+  AuthenticatedSummaryCaseIdRouteImport.update({
+    id: '/summary/$caseId',
+    path: '/summary/$caseId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedTrailCaseIdRoute =
   AuthenticatedTrailCaseIdRouteImport.update({
     id: '/trail/$caseId',
@@ -236,6 +243,7 @@ export interface FileRoutesByFullPath {
   '/profiles/$caseId': typeof AuthenticatedProfilesCaseIdRoute
   '/report/$caseId': typeof AuthenticatedReportCaseIdRoute
   '/review/$caseId': typeof AuthenticatedReviewCaseIdRoute
+  '/summary/$caseId': typeof AuthenticatedSummaryCaseIdRoute
   '/trail/$caseId': typeof AuthenticatedTrailCaseIdRoute
   '/transcripts/$caseId': typeof AuthenticatedTranscriptsCaseIdRoute
   '/api/public/worker-claim': typeof ApiPublicWorkerClaimRoute
@@ -269,6 +277,7 @@ export interface FileRoutesByTo {
   '/profiles/$caseId': typeof AuthenticatedProfilesCaseIdRoute
   '/report/$caseId': typeof AuthenticatedReportCaseIdRoute
   '/review/$caseId': typeof AuthenticatedReviewCaseIdRoute
+  '/summary/$caseId': typeof AuthenticatedSummaryCaseIdRoute
   '/trail/$caseId': typeof AuthenticatedTrailCaseIdRoute
   '/transcripts/$caseId': typeof AuthenticatedTranscriptsCaseIdRoute
   '/api/public/worker-claim': typeof ApiPublicWorkerClaimRoute
@@ -304,6 +313,7 @@ export interface FileRoutesById {
   '/_authenticated/profiles/$caseId': typeof AuthenticatedProfilesCaseIdRoute
   '/_authenticated/report/$caseId': typeof AuthenticatedReportCaseIdRoute
   '/_authenticated/review/$caseId': typeof AuthenticatedReviewCaseIdRoute
+  '/_authenticated/summary/$caseId': typeof AuthenticatedSummaryCaseIdRoute
   '/_authenticated/trail/$caseId': typeof AuthenticatedTrailCaseIdRoute
   '/_authenticated/transcripts/$caseId': typeof AuthenticatedTranscriptsCaseIdRoute
   '/api/public/worker-claim': typeof ApiPublicWorkerClaimRoute
@@ -339,6 +349,7 @@ export interface FileRouteTypes {
     | '/profiles/$caseId'
     | '/report/$caseId'
     | '/review/$caseId'
+    | '/summary/$caseId'
     | '/trail/$caseId'
     | '/transcripts/$caseId'
     | '/api/public/worker-claim'
@@ -372,6 +383,7 @@ export interface FileRouteTypes {
     | '/profiles/$caseId'
     | '/report/$caseId'
     | '/review/$caseId'
+    | '/summary/$caseId'
     | '/trail/$caseId'
     | '/transcripts/$caseId'
     | '/api/public/worker-claim'
@@ -406,6 +418,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profiles/$caseId'
     | '/_authenticated/report/$caseId'
     | '/_authenticated/review/$caseId'
+    | '/_authenticated/summary/$caseId'
     | '/_authenticated/trail/$caseId'
     | '/_authenticated/transcripts/$caseId'
     | '/api/public/worker-claim'
@@ -594,6 +607,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReviewCaseIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/summary/$caseId': {
+      id: '/_authenticated/summary/$caseId'
+      path: '/summary/$caseId'
+      fullPath: '/summary/$caseId'
+      preLoaderRoute: typeof AuthenticatedSummaryCaseIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/trail/$caseId': {
       id: '/_authenticated/trail/$caseId'
       path: '/trail/$caseId'
@@ -680,6 +700,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProfilesCaseIdRoute: typeof AuthenticatedProfilesCaseIdRoute
   AuthenticatedReportCaseIdRoute: typeof AuthenticatedReportCaseIdRoute
   AuthenticatedReviewCaseIdRoute: typeof AuthenticatedReviewCaseIdRoute
+  AuthenticatedSummaryCaseIdRoute: typeof AuthenticatedSummaryCaseIdRoute
   AuthenticatedTrailCaseIdRoute: typeof AuthenticatedTrailCaseIdRoute
   AuthenticatedTranscriptsCaseIdRoute: typeof AuthenticatedTranscriptsCaseIdRoute
   AuthenticatedCasesIndexRoute: typeof AuthenticatedCasesIndexRoute
@@ -705,6 +726,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProfilesCaseIdRoute: AuthenticatedProfilesCaseIdRoute,
   AuthenticatedReportCaseIdRoute: AuthenticatedReportCaseIdRoute,
   AuthenticatedReviewCaseIdRoute: AuthenticatedReviewCaseIdRoute,
+  AuthenticatedSummaryCaseIdRoute: AuthenticatedSummaryCaseIdRoute,
   AuthenticatedTrailCaseIdRoute: AuthenticatedTrailCaseIdRoute,
   AuthenticatedTranscriptsCaseIdRoute: AuthenticatedTranscriptsCaseIdRoute,
   AuthenticatedCasesIndexRoute: AuthenticatedCasesIndexRoute,
