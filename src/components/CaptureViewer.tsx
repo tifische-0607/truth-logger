@@ -170,6 +170,80 @@ function NoteCard({ artefact, itemId }: { artefact: Artefact; itemId: string }) 
   );
 }
 
+function useArtefactText(artefact: Artefact | null, itemId: string, note: string) {
+  return useQuery({
+    queryKey: ["artefact-text", artefact?.id],
+    enabled: !!artefact,
+    retry: false,
+    staleTime: Infinity,
+    queryFn: async () => {
+      const a = artefact!;
+      const { data, error } = await supabase.storage
+        .from("evidence")
+        .createSignedUrl(a.storage_path, 300);
+      if (error || !data) throw error ?? new Error("no url");
+      const res = await fetch(data.signedUrl);
+      if (!res.ok) throw new Error("fetch failed");
+      const body = await res.text();
+      await logAccess(a, itemId, note);
+      return body;
+    },
+  });
+}
+
+function TranscriptColumn({
+  title,
+  artefact,
+  itemId,
+}: {
+  title: string;
+  artefact: Artefact | null;
+  itemId: string;
+}) {
+  const text = useArtefactText(artefact, itemId, "Read transcript on the capture page");
+  const lines = (text.data ?? "").split("\n").map((l) => l.trimEnd()).filter(Boolean);
+  return (
+    <div className="min-w-0 rounded-lg border">
+      <div className="border-b px-4 py-2 text-sm font-semibold">{title}</div>
+      <div className="max-h-96 space-y-1 overflow-auto px-4 py-3">
+        {!artefact ? (
+          <p className="text-muted-foreground text-sm">Not captured.</p>
+        ) : text.isLoading ? (
+          <Loader2 className="size-4 animate-spin" />
+        ) : text.isError ? (
+          <p className="text-muted-foreground text-sm">
+            Not available — connect to the internet to read this transcript.
+          </p>
+        ) : (
+          lines.map((l, i) => {
+            const m = l.match(/^\[(\d{1,2}:\d{2}(?::\d{2})?)\]\s*(.*)$/);
+            return (
+              <div key={i} className="flex gap-3 text-sm">
+                {m ? (
+                  <>
+                    <span className="hash text-muted-foreground shrink-0">{m[1]}</span>
+                    <span>{m[2]}</span>
+                  </>
+                ) : (
+                  <span className="text-muted-foreground whitespace-pre-wrap">{l}</span>
+                )}
+              </div>
+            );
+          })
+        )}
+      </div>
+      {artefact ? (
+        <div className="flex items-center justify-between gap-2 border-t px-4 py-2">
+          <HashChip value={artefact.sha256} label="SHA-256" />
+          <Button variant="ghost" size="sm" onClick={() => void download(artefact, itemId)}>
+            <Download className="size-4" />
+          </Button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 /** Photos, videos and notes captured for one evidence item. */
 export function CaptureViewer({ itemId }: { itemId: string }) {
   const [zoomed, setZoomed] = useState<Artefact | null>(null);
@@ -197,9 +271,14 @@ export function CaptureViewer({ itemId }: { itemId: string }) {
   }
 
   const all = artefacts.data ?? [];
+  const TRANSCRIPT_KINDS = new Set(["transcript_original", "transcript_en"]);
+  const tOriginal = [...all].reverse().find((a) => a.kind === "transcript_original") ?? null;
+  const tEnglish = [...all].reverse().find((a) => a.kind === "transcript_en") ?? null;
   const photos = all.filter((a) => isImage(a) && !isVideo(a));
   const videos = all.filter(isVideo);
-  const notes = all.filter((a) => !isImage(a) && !isVideo(a) && isText(a));
+  const notes = all.filter(
+    (a) => !isImage(a) && !isVideo(a) && isText(a) && !TRANSCRIPT_KINDS.has(a.kind),
+  );
   const others = all.filter((a) => !isImage(a) && !isVideo(a) && !isText(a));
 
   return (
@@ -215,6 +294,22 @@ export function CaptureViewer({ itemId }: { itemId: string }) {
         <p className="text-muted-foreground text-sm">
           No files stored for this capture yet — they appear here as the Mac mini uploads them.
         </p>
+      ) : null}
+
+      {tOriginal || tEnglish ? (
+        <div>
+          <h3 className="text-muted-foreground mb-2 text-xs font-semibold tracking-wide uppercase">
+            Reel transcript
+          </h3>
+          <p className="bg-warn text-warn-foreground mb-3 rounded px-3 py-2 text-xs font-semibold">
+            MACHINE TRANSCRIPT – not verified by a human. Check against the original audio before
+            use in any report.
+          </p>
+          <div className="grid gap-4 md:grid-cols-2">
+            <TranscriptColumn title="Original language" artefact={tOriginal} itemId={itemId} />
+            <TranscriptColumn title="English translation" artefact={tEnglish} itemId={itemId} />
+          </div>
+        </div>
       ) : null}
 
       {photos.length ? (
