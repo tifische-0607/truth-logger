@@ -122,7 +122,7 @@ function Dashboard() {
           <div className="divide-border divide-y">
             {jobs.data?.length ? (
               jobs.data.map((job) => {
-                const progress = getJobProgress(job.status, job.log);
+                const progress = getCaptureProgress(job.status, job.log);
                 const showProgress = job.status === "queued" || job.status === "running";
                 return (
                   <Link
