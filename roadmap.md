@@ -8,3 +8,4 @@
 - [x] Auto-run queuing (worker claims queued jobs on its own; settings ride along)
 - [ ] Publish and walk through Add to Home Screen on iPad
 - [ ] User runs the real Facebook capture on the Mac mini
+- [ ] Public SpyGlass landing page at `/`
