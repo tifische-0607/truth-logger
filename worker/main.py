@@ -215,7 +215,11 @@ def run_job(job: dict[str, Any]) -> None:
         except Exception as exc:
             print(f"[log failed] {exc}")
 
+    def progress(percent: int, stage: str) -> None:
+        log(f"PROGRESS:{max(0, min(100, percent))}:{stage}")
+
     log(f"Claimed job for {job['url']}")
+    progress(5, "Preparing capture")
     settings = job.get("settings") or {}
     merged_options: dict[str, Any] = {
         "proxy_url": settings.get("proxy_url"),
@@ -224,17 +228,22 @@ def run_job(job: dict[str, Any]) -> None:
         "save_pdf": settings.get("save_pdf", True),
     }
     merged_options.update(job.get("options") or {})  # per-job options win
-    data = capture_post(job["url"], merged_options, log)
+    progress(10, "Opening Facebook in Chromium")
+    data = capture_post(job["url"], merged_options, log, progress)
     log(f"Saved {len(data['artefacts'])} artefacts to {data['out_dir']}")
 
     records = _build_records(job, data, handler)
     post_folder = records["items"][0]["folder_path"]
-    for artefact in data["artefacts"]:
+    artefacts = data["artefacts"]
+    artefact_count = max(len(artefacts), 1)
+    for index, artefact in enumerate(artefacts):
         storage_path = f"{post_folder}/artefacts/{artefact['filename']}"
         payload = Path(artefact["path"]).read_bytes()
         api.upload(storage_path, payload, artefact["mime_type"])
         log(f"Uploaded {artefact['filename']} ({artefact['size_bytes']} bytes)")
+        progress(65 + round(((index + 1) / artefact_count) * 20), f"Uploaded {index + 1} of {len(artefacts)} artefacts")
 
+    progress(90, "Writing evidence records")
     log("Writing records to the evidence database")
     result = api.ingest(job_id, records)
 
@@ -242,6 +251,7 @@ def run_job(job: dict[str, Any]) -> None:
     if mismatches:
         api.log(job_id, warnings=[f"{v['filename']}: hash {v['result']}" for v in mismatches])
 
+    progress(98, "Final integrity checks complete")
     api.complete(
         job_id,
         "done",
