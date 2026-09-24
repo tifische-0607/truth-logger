@@ -179,7 +179,7 @@ function TranscriptBlock({
 }: {
   title: string;
   art: Art | null;
-  q: { data?: string; isLoading: boolean; error: unknown };
+  q: { data?: string | undefined; isLoading: boolean; error: unknown };
 }) {
   if (!art) return <div className="text-muted-foreground text-sm">{title}: not saved</div>;
   const lines = (q.data ?? "").split("\n");
