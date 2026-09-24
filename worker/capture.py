@@ -22,7 +22,6 @@ from typing import Any, Callable
 from playwright.sync_api import Page, sync_playwright
 
 from . import config
-from .transcript import capture_transcript, is_video_url
 
 Logger = Callable[[str], None]
 ProgressReporter = Callable[[int, str], None]
@@ -382,6 +381,8 @@ def capture_post(
             data["profile"] = _capture_profile(context, data["author_url"], out_dir, log, record,
                                                options.get("profile_fields") or {})
         data["transcript"] = None
+        # Imported here to avoid a circular import (transcript -> live -> capture).
+        from .transcript import capture_transcript, is_video_url
         if options.get("transcript", True) and (is_video_url(url) or is_video_url(final_url)):
             if progress:
                 progress(60, "Downloading audio and transcribing")
