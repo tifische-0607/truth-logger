@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Activity, Clock3, Loader2, RefreshCw, Radio, Terminal, UploadCloud } from "lucide-react";
 import { toast } from "sonner";
 
@@ -180,6 +180,13 @@ function WorkerDashboard() {
   const logJob = current ?? rows.find((j) => (j.log?.length ?? 0) > 0) ?? null;
   const workerLogs = logJob ? visibleWorkerLogs(logJob.log) : [];
 
+  // Keep the live output pinned to the newest line while a capture runs.
+  const logBoxRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const box = logBoxRef.current;
+    if (box) box.scrollTop = box.scrollHeight;
+  }, [workerLogs.length, logJob?.id]);
+
   const sendQueued = async () => {
     setSending(true);
     try {
@@ -326,6 +333,12 @@ function WorkerDashboard() {
                 <Clock3 className="size-3.5" />
                 {current.claimed_at ? `Started ${timeAgo(current.claimed_at)}` : "Starting now"}
               </div>
+              {workerLogs.length > 0 ? (
+                <div className="bg-sidebar text-sidebar-foreground/80 mt-4 flex items-center gap-2 rounded-lg px-3 py-2 font-mono text-xs">
+                  <Terminal className="size-3.5 shrink-0 opacity-60" />
+                  <span className="truncate">{workerLogs[workerLogs.length - 1]}</span>
+                </div>
+              ) : null}
             </div>
           ) : (
             <p className="text-muted-foreground mt-5 text-sm">
@@ -337,9 +350,18 @@ function WorkerDashboard() {
         <section className="panel overflow-hidden">
           <div className="flex items-center justify-between px-5 pt-5 pb-3">
             <h2 className="flex items-center gap-2 font-semibold">
-              <Terminal className="size-4" /> Worker logs
+              <Terminal className="size-4" />
+              {current ? "Live capture output" : "Worker logs"}
             </h2>
-            <span className="text-muted-foreground text-xs">{workerLogs.length} lines</span>
+            <span className="text-muted-foreground flex items-center gap-2 text-xs">
+              {current ? (
+                <span className="text-done-foreground flex items-center gap-1.5">
+                  <span className="bg-done-foreground size-2 animate-pulse rounded-full" />
+                  streaming
+                </span>
+              ) : null}
+              {workerLogs.length} lines
+            </span>
           </div>
           {logJob && !current ? (
             <div className="border-border text-muted-foreground mx-4 mb-2 rounded-lg border px-3 py-1.5 text-xs">
@@ -349,7 +371,7 @@ function WorkerDashboard() {
               </Link>
             </div>
           ) : null}
-          <div className="bg-sidebar text-sidebar-foreground h-64 overflow-y-auto p-4">
+          <div ref={logBoxRef} className="bg-sidebar text-sidebar-foreground h-80 overflow-y-auto p-4">
             {workerLogs.length ? (
               <pre className="hash whitespace-pre-wrap">
                 {workerLogs
@@ -358,7 +380,9 @@ function WorkerDashboard() {
               </pre>
             ) : (
               <p className="text-sidebar-foreground/60 text-sm">
-                {current ? "Waiting for the next worker message…" : "Logs appear when a capture starts."}
+                {current
+                  ? "Waiting for the next worker message…"
+                  : "Logs appear when a capture starts."}
               </p>
             )}
           </div>
