@@ -20,6 +20,11 @@ from pathlib import Path
 from typing import Any
 
 from . import api, config
+
+# The launchd service starts with a bare PATH; yt-dlp needs to find Homebrew's ffmpeg.
+os.environ["PATH"] = ":".join(
+    ["/opt/homebrew/bin", "/usr/local/bin", os.environ.get("PATH", "/usr/bin:/bin")]
+)
 from .capture import capture_post, handle_from_url, post_id_from_url, utcnow
 
 
@@ -219,7 +224,7 @@ def _build_records(job: dict[str, Any], data: dict[str, Any], handler: str) -> d
         if shot:
             shot = {**shot, "filename": (
                 f"CASE-{job.get('case_id') or 'UNFILED'}_INC-{job.get('incident_id') or '00'}"
-                f"_FB_{code}_screenshot.png")}
+                f"_FB_{code}_{shot.get('stamp', 'capture')}_screenshot.png")}
             comment_uploads.append((f"{c_folder}/artefacts/{shot['filename']}", shot))
             c_item["artefacts"] = artefact_rows(c_folder, [shot])
             c_item["custody_events"] = [{
@@ -301,6 +306,14 @@ def run_job(job: dict[str, Any]) -> None:
         data = capture_post(job["url"], {**merged_options, "_job_id": job["id"]}, log, progress)
     log(f"Saved {len(data['artefacts'])} artefacts to {data['out_dir']}")
 
+    # Every capture gets unique filenames so a recapture never collides with
+    # (or overwrites) files from an earlier capture of the same post.
+    stamp = Path(data["out_dir"]).name.split("_")[0]
+    for a in data["artefacts"]:
+        a["filename"] = f"{stamp}_{a['filename']}"
+    for c in data.get("comments") or []:
+        if c.get("screenshot"):
+            c["screenshot"]["stamp"] = stamp
     records = _build_records(job, data, handler)
     post_folder = records["items"][0]["folder_path"]
     artefacts = data["artefacts"]
