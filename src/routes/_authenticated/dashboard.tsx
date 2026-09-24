@@ -120,26 +120,49 @@ function Dashboard() {
           </div>
           <div className="divide-border divide-y">
             {jobs.data?.length ? (
-              jobs.data.map((job) => (
-                <Link
-                  key={job.id}
-                  to="/jobs/$jobId"
-                  params={{ jobId: job.id }}
-                  className="hover:bg-muted flex min-h-16 items-center justify-between gap-4 px-5 py-3 transition-colors"
-                >
-                  <div className="min-w-0">
-                    <div className="truncate text-sm font-medium">{job.url}</div>
-                    <div className="text-muted-foreground mt-0.5 text-xs">
-                      <span className="font-mono">
-                        CASE-{job.case_id} · INC-{job.incident_id}
-                      </span>{" "}
-                      · {timeAgo(job.created_at)}
-                      {job.log?.length ? ` · ${job.log.length} log lines` : ""}
+              jobs.data.map((job) => {
+                const progress = getJobProgress(job.status, job.log);
+                const showProgress = job.status === "queued" || job.status === "running";
+                return (
+                  <Link
+                    key={job.id}
+                    to="/jobs/$jobId"
+                    params={{ jobId: job.id }}
+                    className="hover:bg-muted block min-h-16 px-5 py-3 transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-medium">{job.url}</div>
+                        <div className="text-muted-foreground mt-0.5 text-xs">
+                          <span className="font-mono">
+                            CASE-{job.case_id} · INC-{job.incident_id}
+                          </span>{" "}
+                          · {timeAgo(job.created_at)}
+                          {job.log?.length ? ` · ${job.log.length} log lines` : ""}
+                        </div>
+                      </div>
+                      <StatusBadge status={job.status} />
                     </div>
-                  </div>
-                  <StatusBadge status={job.status} />
-                </Link>
-              ))
+                    {showProgress ? (
+                      <div className="mt-3" aria-label={`Capture progress: ${progress.stage}`}>
+                        <div className="text-muted-foreground mb-1.5 flex justify-between gap-3 text-xs">
+                          <span className="truncate">{progress.stage}</span>
+                          <span className="font-mono tabular-nums">
+                            {progress.percent === null ? "…" : `${progress.percent}%`}
+                          </span>
+                        </div>
+                        <Progress
+                          value={progress.percent ?? 8}
+                          aria-valuetext={
+                            progress.percent === null ? progress.stage : `${progress.percent}% · ${progress.stage}`
+                          }
+                          className={progress.percent === null ? "animate-pulse" : undefined}
+                        />
+                      </div>
+                    ) : null}
+                  </Link>
+                );
+              })
             ) : (
               <p className="text-muted-foreground px-5 py-8 text-sm">
                 No capture jobs yet. Tap “New capture” to queue one.
