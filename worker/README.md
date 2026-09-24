@@ -13,7 +13,7 @@ cd worker
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 playwright install chromium
-cp .env.example .env      # then paste your WORKER_TOKEN and pick the base URL
+cp .env.example .env      # then paste your WORKER_TOKEN
 ```
 
 Log in to Facebook once — the session is kept in the profile folder:
