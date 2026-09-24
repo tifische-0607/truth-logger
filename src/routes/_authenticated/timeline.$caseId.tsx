@@ -93,6 +93,8 @@ const LABEL = { post: "Post", reel: "Reel", comment: "Comment", reply: "Reply" }
 function TimelinePage() {
   const { caseId } = Route.useParams();
   const q = useQuery({ queryKey: ["timeline", caseId], queryFn: () => fetchTimeline(caseId) });
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
 
   if (q.isLoading) return <p className="text-muted-foreground p-6">Loading timeline…</p>;
   if (q.error) return <p className="text-destructive p-6">{(q.error as Error).message}</p>;
@@ -100,7 +102,19 @@ function TimelinePage() {
 
   const count = (k: Entry["kind"]) => all.filter((e) => e.kind === k).length;
   const authors = new Set(all.map((e) => e.handle ?? e.author).filter(Boolean)).size;
-  const approx = dated.filter((e) => e.basis === "approximate").length;
+
+  const filtering = !!from || !!to;
+  // Inclusive range in Kuala Lumpur calendar days: from 00:00 to 23:59:59.999.
+  const fromMs = from ? new Date(`${from}T00:00:00+08:00`).getTime() : null;
+  const toMs = to ? new Date(`${to}T23:59:59.999+08:00`).getTime() : null;
+  const visible = dated.filter((e) => {
+    const t = new Date(e.publishedAt!).getTime();
+    if (fromMs !== null && t < fromMs) return false;
+    if (toMs !== null && t > toMs) return false;
+    return true;
+  });
+
+  const approx = visible.filter((e) => e.basis === "approximate").length;
   const first = dated[0]?.publishedAt;
   const last = dated[dated.length - 1]?.publishedAt;
 
@@ -113,7 +127,7 @@ function TimelinePage() {
     year: "numeric",
   });
   const days = new Map<string, Entry[]>();
-  for (const e of dated) {
+  for (const e of visible) {
     const d = dayFmt.format(new Date(e.publishedAt!));
     days.set(d, [...(days.get(d) ?? []), e]);
   }
