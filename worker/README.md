@@ -36,20 +36,34 @@ Queue a capture from the app ("New capture"), and the job log fills in live.
 
 ## Keep it running (auto-restart)
 
+Two levels, pick one:
+
+**Starts at login** (no password needed):
+
 ```bash
 bash worker/install.sh
 ```
 
-This registers the worker with launchd so it:
+**Starts at boot — recommended** (survives macOS restarts even when nobody
+logs in):
 
-- starts automatically at login,
+```bash
+sudo bash worker/install-system.sh
+```
+
+Both register the worker with launchd so it:
+
 - restarts automatically after any crash, and
 - restarts automatically when the worker loses contact with the app — the
   worker exits on purpose after 20 consecutive failed heartbeats/claims
   (`NET_FAILURE_LIMIT`, override in `.env`) and launchd brings it back.
 
+The system version runs as the user who owns the project folder, so it can
+still read the venv, `worker/.env` and the saved Facebook session. To remove
+it: `sudo bash worker/uninstall-system.sh`.
+
 Logs: `~/fbem/worker.log` and `~/fbem/worker.err.log`.
-To stop it: `launchctl unload ~/Library/LaunchAgents/com.fbem.worker.plist`.
+To stop the login version: `launchctl unload ~/Library/LaunchAgents/com.fbem.worker.plist`.
 
 Chromium runs with a visible window (Facebook blocks headless far more often), so
 keep the Mac mini logged in to its macOS user account.
