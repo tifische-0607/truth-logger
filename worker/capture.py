@@ -183,7 +183,7 @@ _PROFILE_JS = """
   // the number that sits directly before each keyword, not the line's first number.
   const header = all.slice(0, 40).join(' • ');
   const near = (word) => {
-    const m = header.match(new RegExp('([\\d][\\d.,]*\\s*[KkMm]?)\\s+' + word + '\\b', 'i'));
+    const m = header.match(new RegExp('([\\\\d][\\\\d.,]*\\\\s*[KkMm]?)\\\\s+' + word + '\\\\b', 'i'));
     return m ? m[1] + ' ' + word : null;
   };
   let intro = [];
