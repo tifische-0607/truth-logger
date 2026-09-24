@@ -16,6 +16,8 @@ export const Route = createFileRoute("/_authenticated/settings")({
 function SettingsPage() {
   const worker = useWorkerStatus();
   const [handler, setHandler] = useState("");
+  const publicIp =
+    (worker.data as { public_ip?: string | null } | null | undefined)?.public_ip ?? null;
 
   useEffect(() => {
     setHandler(localStorage.getItem("fbem.handler") ?? "");
@@ -41,10 +43,32 @@ function SettingsPage() {
             <div>{formatDateTime(worker.lastSeen)}</div>
             <div>Version: {worker.data?.version ?? "—"}</div>
             <div>Host: {worker.data?.hostname ?? "—"}</div>
+            <div className="flex items-center gap-2">
+              Public IP:{" "}
+              <span className="hash">{publicIp ?? "—"}</span>
+              {publicIp ? (
+                <button
+                  type="button"
+                  className="text-xs font-semibold underline underline-offset-2"
+                  onClick={() => {
+                    void navigator.clipboard.writeText(publicIp);
+                    toast.success("IP copied");
+                  }}
+                >
+                  Copy
+                </button>
+              ) : null}
+            </div>
+            <div>Port: none — worker is outbound-only</div>
           </dl>
           <p className="text-muted-foreground mt-4 text-xs">
             The worker authenticates with the WORKER_TOKEN secret and posts to
             <span className="hash"> /api/public/worker-heartbeat</span> every minute.
+            {publicIp
+              ? ` The last check-in arrived from ${publicIp}, which confirms the Mac mini is reachable and talking to the app.`
+              : " The public IP appears after the worker's first check-in."}{" "}
+            The worker only makes outbound connections (it polls the app for jobs), so it
+            doesn't listen on any port — a green check-in <em>is</em> the reachability test.
           </p>
         </section>
 

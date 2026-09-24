@@ -1,0 +1,1 @@
+alter table public.worker_status add column if not exists public_ip text;
