@@ -196,6 +196,32 @@ function shortUrl(url: string) {
   }
 }
 
+function WorkerOfflineBanner() {
+  const { online, isLoading } = useWorkerStatus();
+  const [dismissed, setDismissed] = useState(false);
+  if (isLoading || online || dismissed) return null;
+
+  return (
+    <div className="bg-failed text-failed-foreground safe-top px-4 py-2.5 text-sm">
+      <div className="mx-auto flex max-w-5xl items-center gap-3">
+        <Server className="size-4 shrink-0" />
+        <p className="min-w-0 flex-1 leading-snug">
+          The Mac mini worker isn't checking in. Captures will wait until it starts — on the Mac
+          mini, run <code className="font-mono text-xs">sudo bash worker/install-system.sh</code>{" "}
+          so it starts at boot, even before login.
+        </p>
+        <button
+          type="button"
+          onClick={() => setDismissed(true)}
+          className="shrink-0 rounded-md px-2 py-1 text-xs font-semibold underline underline-offset-2"
+        >
+          Dismiss
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export function AppShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -270,6 +296,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         </header>
 
         <OfflineBanner />
+        <WorkerOfflineBanner />
+
 
         <main className="min-w-0 flex-1 px-4 pt-6 pb-28 md:px-8 md:pt-8 md:pb-12">{children}</main>
 
