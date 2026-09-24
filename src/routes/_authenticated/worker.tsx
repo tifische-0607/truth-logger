@@ -333,6 +333,12 @@ function WorkerDashboard() {
                 <Clock3 className="size-3.5" />
                 {current.claimed_at ? `Started ${timeAgo(current.claimed_at)}` : "Starting now"}
               </div>
+              {workerLogs.length > 0 ? (
+                <div className="bg-sidebar text-sidebar-foreground/80 mt-4 flex items-center gap-2 rounded-lg px-3 py-2 font-mono text-xs">
+                  <Terminal className="size-3.5 shrink-0 opacity-60" />
+                  <span className="truncate">{workerLogs[workerLogs.length - 1]}</span>
+                </div>
+              ) : null}
             </div>
           ) : (
             <p className="text-muted-foreground mt-5 text-sm">
