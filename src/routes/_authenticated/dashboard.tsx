@@ -11,6 +11,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { Progress } from "@/components/ui/progress";
 import { formatDateTime, timeAgo } from "@/lib/format";
 import { EvidenceThumb } from "@/components/EvidenceThumb";
+import { getCaptureProgress } from "@/lib/capture-progress";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -256,22 +257,3 @@ function Dashboard() {
   );
 }
 
-const PROGRESS_PATTERN = /^PROGRESS:(\d{1,3}):(.*)$/;
-
-function getJobProgress(status: string, log: string[] | null) {
-  if (status === "queued") return { percent: 0, stage: "Waiting for Mac mini" };
-  if (status === "done") return { percent: 100, stage: "Capture complete" };
-  if (status === "failed") return { percent: null, stage: "Capture stopped" };
-
-  for (const line of [...(log ?? [])].reverse()) {
-    const match = line.match(PROGRESS_PATTERN);
-    if (match) {
-      return {
-        percent: Math.max(0, Math.min(100, Number(match[1]))),
-        stage: match[2]?.trim() || "Processing capture",
-      };
-    }
-  }
-
-  return { percent: null, stage: "Processing · awaiting progress update" };
-}
