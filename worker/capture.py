@@ -344,7 +344,7 @@ def capture_post(
     with sync_playwright() as p:
         context = p.chromium.launch_persistent_context(
             **_browser_channel(),
-            user_data_dir=str(config.PROFILE_DIR),
+            user_data_dir=str(config.profile_dir()),
             headless=False,  # Facebook is far friendlier to a real window
             viewport={"width": 1280, "height": 1800},
             locale="en-GB",

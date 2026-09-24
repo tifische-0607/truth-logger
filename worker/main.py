@@ -359,34 +359,49 @@ def run_job(job: dict[str, Any]) -> None:
     log("Job complete")
 
 
+def _run_safely(job: dict[str, Any], slot: int, free: "queue.Queue[int]") -> None:
+    try:
+        config.use_slot(slot)
+        run_job(job)
+    except Exception as exc:
+        traceback.print_exc()
+        try:
+            api.log(job["id"], warnings=[str(exc)[:500]])
+            api.complete(job["id"], "failed", {"error": str(exc)[:500]})
+        except Exception as inner:
+            print(f"[complete failed] {inner}")
+    finally:
+        free.put(slot)
+
+
 def main() -> None:
+    import queue
+
     threading.Thread(target=_heartbeat_forever, daemon=True).start()
-    print(f"Worker {config.VERSION} on {config.HOSTNAME} -> {config.BASE_URL}")
+    print(f"Worker {config.VERSION} on {config.HOSTNAME} -> {config.BASE_URL} "
+          f"({config.MAX_CONCURRENT} concurrent captures)")
+    free: "queue.Queue[int]" = queue.Queue()
+    for n in range(config.MAX_CONCURRENT):
+        free.put(n)
     while True:
         if NET_FAILURES["count"] >= NET_FAILURE_LIMIT:
-            # Lost contact with the app for a sustained stretch. Exit non-zero so
-            # launchd (or the shell wrapper) restarts us with a clean state.
             print(f"[net] {NET_FAILURE_LIMIT} consecutive failures — exiting for restart")
-            raise SystemExit(1)
+            os._exit(1)
+        slot = free.get()  # wait for a free capture slot
         try:
             job = api.claim()
             _net_ok()
         except Exception as exc:
+            free.put(slot)
             _net_failed("claim", exc)
             time.sleep(config.POLL_SECONDS * 2)
             continue
         if not job:
+            free.put(slot)
             time.sleep(config.POLL_SECONDS)
             continue
-        try:
-            run_job(job)
-        except Exception as exc:
-            traceback.print_exc()
-            try:
-                api.log(job["id"], warnings=[str(exc)[:500]])
-                api.complete(job["id"], "failed", {"error": str(exc)[:500]})
-            except Exception as inner:
-                print(f"[complete failed] {inner}")
+        print(f"[slot {slot}] starting job {job.get('id')}")
+        threading.Thread(target=_run_safely, args=(job, slot, free), daemon=True).start()
 
 
 if __name__ == "__main__":
