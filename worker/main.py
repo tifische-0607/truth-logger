@@ -229,7 +229,12 @@ def run_job(job: dict[str, Any]) -> None:
     }
     merged_options.update(job.get("options") or {})  # per-job options win
     progress(10, "Opening Facebook in Chromium")
-    data = capture_post(job["url"], merged_options, log, progress)
+    if merged_options.get("mode") == "live":
+        from .live import record_live
+
+        data = record_live(job["url"], merged_options, log, progress)
+    else:
+        data = capture_post(job["url"], merged_options, log, progress)
     log(f"Saved {len(data['artefacts'])} artefacts to {data['out_dir']}")
 
     records = _build_records(job, data, handler)
