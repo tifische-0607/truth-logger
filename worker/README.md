@@ -115,3 +115,6 @@ is reached. It finishes with an end screenshot, `live_recording_log.txt` (UTC st
 reason, tool versions, segment hashes) and `link.txt`. Progress on the Worker page shows the
 elapsed recording time. The temporary cookie file used to fetch the stream is deleted afterwards
 and never uploaded.
+
+## Concurrent captures
+The worker runs up to `MAX_CONCURRENT` (default 4, max 4) captures at once. Slot 0 uses the main Chrome profile; slots 1-3 use a fresh copy of it per job. Set `MAX_CONCURRENT=1` in `.env` to go back to one at a time.
