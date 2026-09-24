@@ -128,6 +128,8 @@ function JobDetail() {
             </div>
           </div>
 
+          {resultItemId ? <CaptureViewer itemId={resultItemId} /> : null}
+
           {resultItemId ? <CaptureCustodyTrail itemId={resultItemId} /> : null}
         </section>
       </div>
