@@ -12,3 +12,4 @@
 - [x] Diagnose Mac mini offline (13:37 UTC)
 - [x] Why captures/screenshots show blank on Results
 - [x] Stop button for stalled running captures on Queue
+- [ ] Restore Mac mini worker check-ins and process queued reel captures
