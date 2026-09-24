@@ -97,6 +97,16 @@ def _author_handle(author_url: str | None, fallback_url: str) -> str:
     return h if h != "unknown" else handle_from_url(fallback_url)
 
 
+def _time_fields(ts: dict[str, Any] | None) -> dict[str, Any]:
+    """published_at plus how it was obtained (engagement.published_time)."""
+    if not ts:
+        return {}
+    return {
+        "published_at": ts.get("iso"),
+        "engagement": {"published_time": {k: ts.get(k) for k in ("display", "tooltip", "basis", "note")}},
+    }
+
+
 def _build_records(job: dict[str, Any], data: dict[str, Any], handler: str) -> dict[str, Any]:
     options = job.get("options") or {}
     url = data["final_url"]
@@ -156,6 +166,7 @@ def _build_records(job: dict[str, Any], data: dict[str, Any], handler: str) -> d
         "author_handle": handle,
         "author_url": stated.get("profile_url"),
         "text_original": data.get("post_text"),
+        **_time_fields(data.get("post_timestamp")),
         "captured_at": utcnow(),
         "folder_path": post_folder,
         "artefacts": artefact_rows(post_folder, data["artefacts"]),
@@ -211,6 +222,7 @@ def _build_records(job: dict[str, Any], data: dict[str, Any], handler: str) -> d
             "author_handle": c_handle,
             "author_url": comment.get("author_url"),
             "text_original": comment.get("text"),
+            **_time_fields(comment.get("timestamp")),
             "captured_at": utcnow(),
             "folder_path": c_folder,
             "subject_profile": {
