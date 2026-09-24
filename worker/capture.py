@@ -10,6 +10,8 @@ Produces, for one post URL:
 Everything is returned as plain dicts; nothing here talks to the app.
 """
 
+from __future__ import annotations
+
 import hashlib
 import json
 import re

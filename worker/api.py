@@ -1,5 +1,7 @@
 """Thin client for the six worker endpoints documented in WORKER_API.md."""
 
+from __future__ import annotations
+
 from typing import Any, Optional
 
 import requests

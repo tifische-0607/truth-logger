@@ -7,6 +7,8 @@ post with a logged-in Chromium, uploads every artefact to the evidence bucket,
 ingests the whole record tree and marks the job done or failed.
 """
 
+from __future__ import annotations
+
 import os
 import re
 import subprocess
