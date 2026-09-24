@@ -31,6 +31,13 @@ MARK_JS = """
     if (!a) a = links.find((l) => { const t = (l.innerText || l.getAttribute('aria-label') || '').trim(); return t.length < 40 && rel.test(t); });
     return a || null;
   };
+  if (/instagram\.com$/.test(location.hostname)) {
+    // Instagram puts the exact time in <time datetime="..."> (hover text = title).
+    const t = document.querySelector('main time[datetime], article time[datetime], time[datetime]');
+    if (!t) return {};
+    t.setAttribute('data-fbem-time', 'post');
+    return { post: (t.innerText || '').trim(), post_iso: t.getAttribute('datetime'), post_title: t.getAttribute('title') };
+  }
   const arts = Array.from(document.querySelectorAll('div[role="article"]'));
   const root = arts[0] || document.querySelector('div[role="main"]');
   const out = {};
@@ -92,6 +99,16 @@ def read_timestamps(page: Page, log: Callable[[str], None], limit: int = 300) ->
         return {}
     captured = datetime.now(MYT)
     out: dict[str, dict[str, Any]] = {}
+    if labels.get("post_iso"):
+        try:
+            when = datetime.fromisoformat(labels["post_iso"].replace("Z", "+00:00")).astimezone(MYT)
+            out["post"] = {"display": labels.get("post"), "tooltip": labels.get("post_title") or labels["post_iso"],
+                           "iso": when.isoformat(), "basis": "exact", "note": None}
+            log(f"Timestamp: Instagram post published {when.isoformat()} (exact)")
+            return out
+        except ValueError:
+            pass
+    labels = {k: v for k, v in labels.items() if k in ("post",) or k.startswith("c")}
     for key in list(labels)[:limit]:
         label = labels[key]
         tooltip = None
