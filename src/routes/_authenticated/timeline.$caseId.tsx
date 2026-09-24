@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Clapperboard, FileText, MessageSquare, CornerDownRight } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, Clapperboard, FileText, MessageSquare, CornerDownRight, X } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/AppShell";
@@ -92,6 +93,8 @@ const LABEL = { post: "Post", reel: "Reel", comment: "Comment", reply: "Reply" }
 function TimelinePage() {
   const { caseId } = Route.useParams();
   const q = useQuery({ queryKey: ["timeline", caseId], queryFn: () => fetchTimeline(caseId) });
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
 
   if (q.isLoading) return <p className="text-muted-foreground p-6">Loading timeline…</p>;
   if (q.error) return <p className="text-destructive p-6">{(q.error as Error).message}</p>;
@@ -99,7 +102,19 @@ function TimelinePage() {
 
   const count = (k: Entry["kind"]) => all.filter((e) => e.kind === k).length;
   const authors = new Set(all.map((e) => e.handle ?? e.author).filter(Boolean)).size;
-  const approx = dated.filter((e) => e.basis === "approximate").length;
+
+  const filtering = !!from || !!to;
+  // Inclusive range in Kuala Lumpur calendar days: from 00:00 to 23:59:59.999.
+  const fromMs = from ? new Date(`${from}T00:00:00+08:00`).getTime() : null;
+  const toMs = to ? new Date(`${to}T23:59:59.999+08:00`).getTime() : null;
+  const visible = dated.filter((e) => {
+    const t = new Date(e.publishedAt!).getTime();
+    if (fromMs !== null && t < fromMs) return false;
+    if (toMs !== null && t > toMs) return false;
+    return true;
+  });
+
+  const approx = visible.filter((e) => e.basis === "approximate").length;
   const first = dated[0]?.publishedAt;
   const last = dated[dated.length - 1]?.publishedAt;
 
@@ -112,7 +127,7 @@ function TimelinePage() {
     year: "numeric",
   });
   const days = new Map<string, Entry[]>();
-  for (const e of dated) {
+  for (const e of visible) {
     const d = dayFmt.format(new Date(e.publishedAt!));
     days.set(d, [...(days.get(d) ?? []), e]);
   }
@@ -159,10 +174,62 @@ function TimelinePage() {
         ) : null}
       </section>
 
+      <section className="panel mb-6 flex flex-wrap items-end gap-4 p-4">
+        <div>
+          <label htmlFor="tl-from" className="text-muted-foreground mb-1 block text-xs uppercase">
+            Published from
+          </label>
+          <input
+            id="tl-from"
+            type="date"
+            value={from}
+            max={to || undefined}
+            onChange={(e) => setFrom(e.target.value)}
+            className="border-input bg-background min-h-12 rounded-lg border px-3 text-sm"
+          />
+        </div>
+        <div>
+          <label htmlFor="tl-to" className="text-muted-foreground mb-1 block text-xs uppercase">
+            Published until
+          </label>
+          <input
+            id="tl-to"
+            type="date"
+            value={to}
+            min={from || undefined}
+            onChange={(e) => setTo(e.target.value)}
+            className="border-input bg-background min-h-12 rounded-lg border px-3 text-sm"
+          />
+        </div>
+        {filtering ? (
+          <button
+            type="button"
+            onClick={() => {
+              setFrom("");
+              setTo("");
+            }}
+            className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
+          >
+            <X className="size-4" /> Clear dates
+          </button>
+        ) : null}
+        <p className="text-muted-foreground text-sm">
+          {filtering
+            ? `Showing ${visible.length} of ${dated.length} dated items${
+                undated.length ? ` · ${undated.length} without a date are always listed below` : ""
+              }`
+            : "Pick a start or end date to show only that period."}
+        </p>
+      </section>
+
       {dated.length === 0 ? (
         <p className="text-muted-foreground panel p-5 text-sm">
           No items in this case have a published date yet. Dates are saved on captures made after the
           Mac mini update.
+        </p>
+      ) : visible.length === 0 ? (
+        <p className="text-muted-foreground panel p-5 text-sm">
+          Nothing was published in the selected period. Widen the dates or clear them.
         </p>
       ) : (
         [...days.entries()].map(([day, list]) => (
