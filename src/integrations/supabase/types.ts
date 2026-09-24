@@ -266,6 +266,7 @@ export type Database = {
           fb_account_label: string | null
           id: string
           notes: string | null
+          profile_fields: Json
           proxy_url: string | null
           save_pdf: boolean
           timeout_seconds: number
@@ -277,6 +278,7 @@ export type Database = {
           fb_account_label?: string | null
           id?: string
           notes?: string | null
+          profile_fields?: Json
           proxy_url?: string | null
           save_pdf?: boolean
           timeout_seconds?: number
@@ -288,6 +290,7 @@ export type Database = {
           fb_account_label?: string | null
           id?: string
           notes?: string | null
+          profile_fields?: Json
           proxy_url?: string | null
           save_pdf?: boolean
           timeout_seconds?: number

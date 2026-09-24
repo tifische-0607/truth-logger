@@ -459,3 +459,6 @@ Ingest payload shape is unchanged: one `post` item whose `text_original` is
 ## Author profile capture (worker 1.1)
 
 When the post author's link is found, the worker opens that profile (option `capture_profile`, default true) and saves two extra artefacts on the post item: `profile_screenshot` (profile_page.png) and `profile_extract` (profile_stated.json). The profile's publicly stated fields fill `account.display_name/profile_url/platform_id`, `account_snapshot.followers/following/verified/bio_verbatim`, and the poster's `subject_profile.stated` (display_name, handle, profile_url, platform_id, verified, followers, following, likes, bio_verbatim, intro_stated). The handle now comes from the author's profile link, not the post link. Commenters get `author_handle` and stated handle/profile_url from their own links. PDPA: stated intro lines or bios mentioning religion, politics, ethnicity, birth date or age are dropped; nothing is inferred.
+
+### Profile privacy (`settings.profile_fields`)
+`/worker-claim` returns `settings.profile_fields`: `{ "<field>": { "keep": bool, "reason": string } }`. Fields: profile_screenshot, platform_id, verified, followers, following, likes, bio_verbatim, intro_stated. When `keep` is false the worker never stores that field (screenshot not taken) and logs the drop with its reason. display_name and profile_url are always kept.
