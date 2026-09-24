@@ -380,7 +380,7 @@ function ReliabilityBadge({ errors }: { errors: string[] }) {
   const score = Math.max(0, 100 - n * 50);
   const cls =
     n === 0
-      ? "border-success/40 bg-success/15 text-success"
+      ? "border-primary/40 bg-primary/15 text-primary"
       : "border-destructive/40 bg-destructive/15 text-destructive";
   return (
     <span
