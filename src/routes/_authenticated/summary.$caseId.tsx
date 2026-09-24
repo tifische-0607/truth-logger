@@ -23,9 +23,9 @@ type AuthorRow = {
   handle: string;
   name: string | null;
   verified: boolean;
-  followers?: number;
-  following?: number;
-  likes?: number;
+  followers?: number | undefined;
+  following?: number | undefined;
+  likes?: number | undefined;
   posts: number;
   comments: number;
 };
