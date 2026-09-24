@@ -26,6 +26,7 @@ import { Route as AuthenticatedVerifyRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedWorkerRouteImport } from './routes/_authenticated/worker'
 import { Route as AuthenticatedCasesIndexRouteImport } from './routes/_authenticated/cases.index'
 import { Route as AuthenticatedCasesCaseIdRouteImport } from './routes/_authenticated/cases.$caseId'
+import { Route as AuthenticatedCommentsCaseIdRouteImport } from './routes/_authenticated/comments.$caseId'
 import { Route as AuthenticatedItemsItemIdRouteImport } from './routes/_authenticated/items.$itemId'
 import { Route as AuthenticatedJobsJobIdRouteImport } from './routes/_authenticated/jobs.$jobId'
 import { Route as AuthenticatedProfilesCaseIdRouteImport } from './routes/_authenticated/profiles.$caseId'
@@ -127,6 +128,12 @@ const AuthenticatedCasesCaseIdRoute =
     path: '/cases/$caseId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedCommentsCaseIdRoute =
+  AuthenticatedCommentsCaseIdRouteImport.update({
+    id: '/comments/$caseId',
+    path: '/comments/$caseId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedItemsItemIdRoute =
   AuthenticatedItemsItemIdRouteImport.update({
     id: '/items/$itemId',
@@ -223,6 +230,7 @@ export interface FileRoutesByFullPath {
   '/verify': typeof AuthenticatedVerifyRoute
   '/worker': typeof AuthenticatedWorkerRoute
   '/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
+  '/comments/$caseId': typeof AuthenticatedCommentsCaseIdRoute
   '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
   '/profiles/$caseId': typeof AuthenticatedProfilesCaseIdRoute
@@ -255,6 +263,7 @@ export interface FileRoutesByTo {
   '/verify': typeof AuthenticatedVerifyRoute
   '/worker': typeof AuthenticatedWorkerRoute
   '/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
+  '/comments/$caseId': typeof AuthenticatedCommentsCaseIdRoute
   '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
   '/profiles/$caseId': typeof AuthenticatedProfilesCaseIdRoute
@@ -289,6 +298,7 @@ export interface FileRoutesById {
   '/_authenticated/verify': typeof AuthenticatedVerifyRoute
   '/_authenticated/worker': typeof AuthenticatedWorkerRoute
   '/_authenticated/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
+  '/_authenticated/comments/$caseId': typeof AuthenticatedCommentsCaseIdRoute
   '/_authenticated/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/_authenticated/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
   '/_authenticated/profiles/$caseId': typeof AuthenticatedProfilesCaseIdRoute
@@ -323,6 +333,7 @@ export interface FileRouteTypes {
     | '/verify'
     | '/worker'
     | '/cases/$caseId'
+    | '/comments/$caseId'
     | '/items/$itemId'
     | '/jobs/$jobId'
     | '/profiles/$caseId'
@@ -355,6 +366,7 @@ export interface FileRouteTypes {
     | '/verify'
     | '/worker'
     | '/cases/$caseId'
+    | '/comments/$caseId'
     | '/items/$itemId'
     | '/jobs/$jobId'
     | '/profiles/$caseId'
@@ -388,6 +400,7 @@ export interface FileRouteTypes {
     | '/_authenticated/verify'
     | '/_authenticated/worker'
     | '/_authenticated/cases/$caseId'
+    | '/_authenticated/comments/$caseId'
     | '/_authenticated/items/$itemId'
     | '/_authenticated/jobs/$jobId'
     | '/_authenticated/profiles/$caseId'
@@ -539,6 +552,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCasesCaseIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/comments/$caseId': {
+      id: '/_authenticated/comments/$caseId'
+      path: '/comments/$caseId'
+      fullPath: '/comments/$caseId'
+      preLoaderRoute: typeof AuthenticatedCommentsCaseIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/items/$itemId': {
       id: '/_authenticated/items/$itemId'
       path: '/items/$itemId'
@@ -654,6 +674,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedVerifyRoute: typeof AuthenticatedVerifyRoute
   AuthenticatedWorkerRoute: typeof AuthenticatedWorkerRoute
   AuthenticatedCasesCaseIdRoute: typeof AuthenticatedCasesCaseIdRoute
+  AuthenticatedCommentsCaseIdRoute: typeof AuthenticatedCommentsCaseIdRoute
   AuthenticatedItemsItemIdRoute: typeof AuthenticatedItemsItemIdRoute
   AuthenticatedJobsJobIdRoute: typeof AuthenticatedJobsJobIdRoute
   AuthenticatedProfilesCaseIdRoute: typeof AuthenticatedProfilesCaseIdRoute
@@ -678,6 +699,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedVerifyRoute: AuthenticatedVerifyRoute,
   AuthenticatedWorkerRoute: AuthenticatedWorkerRoute,
   AuthenticatedCasesCaseIdRoute: AuthenticatedCasesCaseIdRoute,
+  AuthenticatedCommentsCaseIdRoute: AuthenticatedCommentsCaseIdRoute,
   AuthenticatedItemsItemIdRoute: AuthenticatedItemsItemIdRoute,
   AuthenticatedJobsJobIdRoute: AuthenticatedJobsJobIdRoute,
   AuthenticatedProfilesCaseIdRoute: AuthenticatedProfilesCaseIdRoute,
