@@ -291,7 +291,7 @@ function ItemPage() {
               <div className="text-muted-foreground mb-2 flex items-center gap-2 text-xs font-semibold uppercase">
                 <Languages className="size-3.5" /> English translation
                 {data.translator_statement?.startsWith("MACHINE") ? (
-                  <span className="bg-warning/15 text-warning rounded px-1.5 py-0.5 text-[10px] normal-case">
+                  <span className="border-primary/40 text-primary rounded border px-1.5 py-0.5 text-[10px] normal-case">
                     Machine – not verified
                   </span>
                 ) : null}
