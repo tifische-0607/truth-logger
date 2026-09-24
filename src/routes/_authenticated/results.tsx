@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/AppShell";
 import { EvidenceThumb, useSignedUrl } from "@/components/EvidenceThumb";
+import { CaptureCustodyTrail } from "@/components/CaptureCustodyTrail";
 import { formatBytes, formatDateTime } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/results")({
@@ -229,6 +230,14 @@ function ResultsPage() {
                     </div>
                   </div>
                 </div>
+                <details className="mt-4">
+                  <summary className="text-primary min-h-11 cursor-pointer py-2 text-sm font-medium">
+                    Show custody trail
+                  </summary>
+                  <div className="mt-2">
+                    <CaptureCustodyTrail itemId={row.itemId} />
+                  </div>
+                </details>
               </section>
             );
           })}
