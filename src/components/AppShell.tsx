@@ -29,6 +29,7 @@ import { NewCaptureSheet } from "@/components/NewCaptureSheet";
 const nav = [
   { to: "/dashboard", label: "Dashboard", icon: Gauge },
   { to: "/cases", label: "Cases", icon: FolderClosed },
+  { to: "/case-database", label: "Case database", icon: FolderClosed },
   { to: "/verify", label: "Verify", icon: ShieldCheck },
   { to: "/offline", label: "Offline", icon: CloudDownload },
   { to: "/export", label: "Export", icon: PackageCheck },
