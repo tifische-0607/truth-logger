@@ -176,6 +176,40 @@ function WorkerDashboard() {
   const waiting = rows.filter((j) => j.status === "queued");
   const active = rows.filter((j) => j.status === "running");
   const current = active[0] ?? null;
+
+  const [restarting, setRestarting] = useState(false);
+  const restartWorker = async () => {
+    const msg = current
+      ? "Restart the Mac mini worker? The current capture will be stopped and put back in the queue to run again."
+      : "Restart the Mac mini worker?";
+    if (!window.confirm(msg)) return;
+    setRestarting(true);
+    try {
+      const now = new Date().toISOString();
+      const { error } = await supabase
+        .from("worker_status")
+        .update({ restart_requested_at: now })
+        .eq("id", "worker");
+      if (error) throw error;
+      const running = rows.filter((j) => j.status === "running");
+      for (const j of running) {
+        await supabase
+          .from("capture_jobs")
+          .update({
+            status: "queued",
+            claimed_at: null,
+            warnings: [...(j.warnings ?? []), `Worker restarted from the app at ${now}; re-queued`],
+          })
+          .eq("id", j.id);
+      }
+      await qc.invalidateQueries({ queryKey: ["worker-jobs"] });
+      toast.success("Restart sent. The Mac mini restarts at its next check-in (within about 20 seconds).");
+    } catch {
+      toast.error("Could not send the restart. Only the workspace owner can restart the worker.");
+    } finally {
+      setRestarting(false);
+    }
+  };
   const currentProgress = current ? getCaptureProgress(current.status, current.log) : null;
   const logJob = current ?? rows.find((j) => (j.log?.length ?? 0) > 0) ?? null;
   const workerLogs = logJob ? visibleWorkerLogs(logJob.log) : [];
@@ -301,7 +335,19 @@ function WorkerDashboard() {
             <h2 className="flex items-center gap-2 font-semibold">
               <Activity className="size-4" /> Current capture
             </h2>
-            {current ? <StatusBadge status={current.status} /> : null}
+            <div className="flex items-center gap-2">
+              {current ? <StatusBadge status={current.status} /> : null}
+              <Button
+                variant="outline"
+                className="h-11"
+                disabled={restarting || !worker.online}
+                onClick={() => void restartWorker()}
+                title={worker.online ? "Restart the Mac mini worker" : "Worker is offline — restart it on the Mac mini"}
+              >
+                {restarting ? <Loader2 className="size-4 animate-spin" /> : <RefreshCw className="size-4" />}
+                Restart worker
+              </Button>
+            </div>
           </div>
           {current && currentProgress ? (
             <div className="mt-5">
