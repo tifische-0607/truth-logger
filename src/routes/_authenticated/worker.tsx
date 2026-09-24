@@ -286,6 +286,34 @@ function WorkerDashboard() {
         </section>
 
         <section className="panel p-5">
+          <h2 className="flex items-center gap-2 font-semibold">
+            <Clock3 className="size-4" /> Last run
+          </h2>
+          {lastRun ? (
+            <div className="mt-3 space-y-1.5">
+              <div className="flex items-center gap-2">
+                <StatusBadge status={lastRun.status} />
+                <span className="text-lg font-semibold">
+                  {duration(lastRun.claimed_at, lastRun.finished_at) ?? "—"}
+                </span>
+              </div>
+              <div className="text-muted-foreground text-xs">
+                Finished {timeAgo(lastRun.finished_at!)}
+              </div>
+              <Link
+                to="/jobs/$jobId"
+                params={{ jobId: lastRun.id }}
+                className="text-primary block truncate text-xs underline-offset-4 hover:underline"
+              >
+                {lastRun.url}
+              </Link>
+            </div>
+          ) : (
+            <p className="text-muted-foreground mt-3 text-sm">No captures have finished yet.</p>
+          )}
+        </section>
+
+        <section className="panel p-5">
           <h2 className="font-semibold">Capture requests</h2>
           <div className="mt-3 grid grid-cols-2 gap-3">
             {STATUSES.map((s) => (
