@@ -10,5 +10,5 @@
 - [ ] User runs the real Facebook capture on the Mac mini
 - [x] Public SpyGlass landing page at `/`
 - [ ] Diagnose Mac mini offline (13:37 UTC)
-- [ ] Why captures/screenshots show blank on Results
-- [ ] Stop button for stalled running captures on Queue
+- [x] Why captures/screenshots show blank on Results
+- [x] Stop button for stalled running captures on Queue
