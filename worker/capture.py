@@ -274,6 +274,38 @@ def _capture_profile(context: Any, profile_url: str, out_dir: Path, log: Logger,
     return profile
 
 
+def _screenshot_comments(page: Page, comments: list[dict[str, Any]], out_dir: Path,
+                         log: Logger, limit: int) -> None:
+    """Element screenshot of every comment node; attaches file info to comment['screenshot']."""
+    shots_dir = out_dir / "comments"
+    shots_dir.mkdir(exist_ok=True)
+    nodes = page.locator('div[role="article"]')
+    saved = 0
+    for comment in comments[:limit]:
+        if not (comment.get("text") or comment.get("author_name")):
+            continue
+        idx = int(comment.get("index", 0)) + 1  # node 0 is the post itself
+        path = shots_dir / f"comment_{idx:04d}.png"
+        try:
+            node = nodes.nth(idx)
+            node.scroll_into_view_if_needed(timeout=3000)
+            node.screenshot(path=str(path), timeout=8000)
+        except Exception as exc:
+            log(f"Comment {idx} screenshot skipped: {exc}")
+            continue
+        comment["screenshot"] = {
+            "path": path,
+            "filename": path.name,
+            "kind": "comment_screenshot",
+            "mime_type": "image/png",
+            "sha256": sha256_file(path),
+            "size_bytes": path.stat().st_size,
+            "captured_at": utcnow(),
+        }
+        saved += 1
+    log(f"Saved {saved} comment screenshots")
+
+
 def capture_post(
     url: str,
     options: dict[str, Any],
@@ -341,6 +373,13 @@ def capture_post(
         log(f"Parsed post and {len(data.get('comments') or [])} comment nodes")
         if progress:
             progress(45, "Post and comments processed")
+
+        # One screenshot per comment/reply, kept with that comment's own evidence item.
+        if options.get("comment_screenshots", True) and data.get("comments"):
+            if progress:
+                progress(48, "Screenshotting each comment")
+            _screenshot_comments(page, data["comments"], out_dir, log,
+                                 int(options.get("max_comments") or 500))
 
         if options.get("live_screenshots", True):
             png = out_dir / "live_post.png"
