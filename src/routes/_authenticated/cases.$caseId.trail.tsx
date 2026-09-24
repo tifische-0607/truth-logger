@@ -153,7 +153,7 @@ function CaseTrailPage() {
             <section key={day} className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="bg-primary h-2.5 w-2.5 shrink-0 rounded-full" />
-                <h2 className="text-lg font-semibold">{formatDate(day)}</h2>
+                <h2 className="text-lg font-semibold">{formatDay(day)}</h2>
                 <div className="bg-border h-px flex-1" />
               </div>
               <div className="space-y-5">
