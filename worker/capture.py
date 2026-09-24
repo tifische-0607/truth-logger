@@ -115,20 +115,32 @@ def _expand_comments(page: Page, log: Logger, max_clicks: int = 40) -> None:
 _EXTRACT_JS = """
 () => {
   const text = (el) => (el ? el.innerText.trim() : null);
-  const article = document.querySelector('div[role="article"]');
   const posts = Array.from(document.querySelectorAll('div[role="article"]'));
-  const root = posts[0] || article;
-  const authorLink = root ? root.querySelector('h2 a, h3 a, strong a') : null;
+  const root = posts[0] || document.querySelector('div[role="main"]');
+  const isProfileLink = (a) => {
+    const h = a.getAttribute('href') || '';
+    return h && !/comment_id|\\/photo|\\/videos\\/|\\/posts\\/|\\/reel|\\/share|\\/hashtag|\\/watch|#/.test(h)
+      && (a.innerText || '').trim().length > 1;
+  };
+  const pickAuthor = (node) => {
+    if (!node) return null;
+    for (const sel of ['h2 a', 'h3 a', 'h4 a', 'strong a', 'a[role="link"][tabindex="0"]']) {
+      const a = Array.from(node.querySelectorAll(sel)).find(isProfileLink);
+      if (a) return a;
+    }
+    return null;
+  };
+  const authorLink = pickAuthor(root);
 
   const comments = posts.slice(1).map((node, i) => {
-    const a = node.querySelector('a[href*="/user/"], a[role="link"] span, strong a');
+    const a = pickAuthor(node);
     const body = node.querySelector('div[dir="auto"]');
     const time = node.querySelector('a[href*="comment_id"]');
-    const depth = node.closest('div[role="article"] div[role="article"]') ? 1 : 0;
+    const depth = node.parentElement && node.parentElement.closest('div[role="article"]') ? 1 : 0;
     return {
       index: i,
       author_name: a ? a.innerText.trim() : null,
-      author_url: (node.querySelector('a[role="link"]') || {}).href || null,
+      author_url: a ? a.href : null,
       text: body ? body.innerText.trim() : null,
       url: time ? time.href : null,
       depth,
@@ -144,6 +156,93 @@ _EXTRACT_JS = """
   };
 }
 """
+
+# Only what the profile itself states publicly. No inference of any kind.
+_PROFILE_JS = """
+() => {
+  const main = document.querySelector('div[role="main"]') || document.body;
+  const h1 = main.querySelector('h1');
+  const all = (main.innerText || '').split('\\n').map(s => s.trim()).filter(Boolean);
+  const find = (re) => { const l = all.find(s => re.test(s)); return l || null; };
+  let intro = [];
+  const introIdx = all.findIndex(s => /^Intro$/i.test(s));
+  if (introIdx >= 0) intro = all.slice(introIdx + 1, introIdx + 12);
+  const verified = !!main.querySelector('[aria-label*="Verified" i], svg[title*="Verified" i]');
+  const og = (p) => (document.querySelector(`meta[property="${p}"]`) || {}).content || null;
+  const idMeta = (document.querySelector('meta[property="al:android:url"]') || {}).content || '';
+  const idm = idMeta.match(/(?:profile|page)\\/(\\d+)/);
+  return {
+    display_name: h1 ? h1.innerText.trim() : og('og:title'),
+    followers_text: find(/\\bfollowers?\\b/i),
+    following_text: find(/\\bfollowing\\b/i),
+    likes_text: find(/\\blikes?\\b/i),
+    verified,
+    intro,
+    og_description: og('og:description'),
+    platform_id: idm ? idm[1] : null,
+    page_url: location.href,
+  };
+}
+"""
+
+# Stated profile lines that touch PDPA-sensitive categories are dropped.
+_SENSITIVE = re.compile(
+    r"relig|christian|muslim|islam|hindu|buddh|church|mosque|masjid|temple|politic|party|"
+    r"born on|birthday|\bage\b|years old|ethnic|race|malay|chinese|indian",
+    re.I,
+)
+
+
+def _count(text: str | None) -> int | None:
+    if not text:
+        return None
+    m = re.search(r"([\d.,]+)\s*([KkMm]?)", text)
+    if not m:
+        return None
+    try:
+        n = float(m.group(1).replace(",", ""))
+    except ValueError:
+        return None
+    mult = {"k": 1_000, "m": 1_000_000}.get(m.group(2).lower(), 1)
+    return int(n * mult)
+
+
+def _capture_profile(context: Any, profile_url: str, out_dir: Path, log: Logger,
+                     record: Any) -> dict[str, Any] | None:
+    """Open the author's profile, save a screenshot and the stated public fields."""
+    try:
+        page = context.new_page()
+        page.goto(profile_url, wait_until="domcontentloaded")
+        page.wait_for_timeout(3000)
+        _dismiss_dialogs(page)
+        raw = page.evaluate(_PROFILE_JS)
+        png = out_dir / "profile_page.png"
+        page.screenshot(path=str(png), full_page=False)
+        record(png, "profile_screenshot", "image/png")
+        page.close()
+    except Exception as exc:
+        log(f"Profile capture skipped: {exc}")
+        return None
+    intro = [s for s in (raw.get("intro") or []) if not _SENSITIVE.search(s)]
+    bio = (raw.get("og_description") or "").strip() or None
+    if bio and _SENSITIVE.search(bio):
+        bio = None
+    profile = {
+        "display_name": raw.get("display_name"),
+        "profile_url": raw.get("page_url") or profile_url,
+        "platform_id": raw.get("platform_id"),
+        "verified": bool(raw.get("verified")),
+        "followers": _count(raw.get("followers_text")),
+        "following": _count(raw.get("following_text")),
+        "likes": _count(raw.get("likes_text")),
+        "bio_verbatim": bio,
+        "intro_stated": intro,
+    }
+    path = out_dir / "profile_stated.json"
+    path.write_text(json.dumps(profile, ensure_ascii=False, indent=2), encoding="utf-8")
+    record(path, "profile_extract", "application/json")
+    log(f"Profile captured: {profile['display_name'] or 'unknown name'}")
+    return profile
 
 
 def capture_post(
@@ -239,6 +338,11 @@ def capture_post(
         record(text_path, "text_original", "text/plain")
 
         final_url = page.url
+        data["profile"] = None
+        if options.get("capture_profile", True) and data.get("author_url"):
+            if progress:
+                progress(58, "Capturing author profile")
+            data["profile"] = _capture_profile(context, data["author_url"], out_dir, log, record)
         context.close()
 
     if progress:
