@@ -5,6 +5,7 @@ import { Loader2, Save } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 import { PageHeader } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -87,7 +88,7 @@ function CaptureSettingsPage() {
       save_pdf: d.save_pdf,
       notes: d.notes ?? "",
     });
-    setRules(((d as { profile_fields?: FieldRules }).profile_fields ?? {}) as FieldRules);
+    setRules((d.profile_fields ?? {}) as unknown as FieldRules);
   }, [settings.data]);
 
   const save = async () => {
@@ -108,7 +109,7 @@ function CaptureSettingsPage() {
           expand_comments: form.expand_comments,
           save_pdf: form.save_pdf,
           notes: form.notes || null,
-          profile_fields: rules,
+          profile_fields: rules as unknown as Json,
           updated_by: userData.user?.id ?? null,
         })
         .eq("id", "default");
