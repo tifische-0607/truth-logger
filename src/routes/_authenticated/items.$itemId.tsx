@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { translateItems } from "@/lib/translate.functions";
 import { useState } from "react";
 import { Download, ExternalLink, Languages, X } from "lucide-react";
 import { toast } from "sonner";
@@ -27,6 +29,33 @@ type Artefact = {
   mime_type: string | null;
   captured_at: string;
 };
+
+function TranslateButton({ itemId }: { itemId: string }) {
+  const qc = useQueryClient();
+  const run = useServerFn(translateItems);
+  const [busy, setBusy] = useState(false);
+  return (
+    <Button
+      variant="outline"
+      className="mt-3"
+      disabled={busy}
+      onClick={async () => {
+        setBusy(true);
+        try {
+          const r = await run({ data: { itemId } });
+          toast.success(`Machine translation added to ${r.translated} item(s)`);
+          await qc.invalidateQueries();
+        } catch (e) {
+          toast.error(e instanceof Error ? e.message : "Translation failed");
+        } finally {
+          setBusy(false);
+        }
+      }}
+    >
+      <Languages className="size-4" /> {busy ? "Translating…" : "Translate (with replies)"}
+    </Button>
+  );
+}
 
 async function logAccess(artefact: Artefact, itemId: string, note: string) {
   const handler = localStorage.getItem("fbem.handler") ?? "unknown";
@@ -261,6 +290,11 @@ function ItemPage() {
             <div>
               <div className="text-muted-foreground mb-2 flex items-center gap-2 text-xs font-semibold uppercase">
                 <Languages className="size-3.5" /> English translation
+                {data.translator_statement?.startsWith("MACHINE") ? (
+                  <span className="border-primary/40 text-primary rounded border px-1.5 py-0.5 text-[10px] normal-case">
+                    Machine – not verified
+                  </span>
+                ) : null}
               </div>
               <p className="bg-muted/60 rounded-lg border p-4 text-sm whitespace-pre-wrap">
                 {data.text_en ?? "—"}
@@ -269,6 +303,9 @@ function ItemPage() {
                 <p className="text-muted-foreground mt-2 text-xs italic">
                   {data.translator_statement}
                 </p>
+              ) : null}
+              {!data.text_en && data.text_original ? (
+                <TranslateButton itemId={itemId} />
               ) : null}
             </div>
           </div>
