@@ -42,7 +42,11 @@ def sha256_file(path: Path) -> str:
 def handle_from_url(url: str) -> str:
     m = re.search(r"facebook\.com/(?:profile\.php\?id=(\d+)|groups/[^/]+/(?:posts|permalink)/|([^/?#]+))", url)
     if m:
-        return m.group(1) or m.group(3) or "unknown"
+        h = m.group(1) or m.group(2)
+        # Share / watch / reel links don't carry the page handle.
+        if not h or h in ("share", "watch", "reel", "reels", "story.php", "permalink.php"):
+            return "unknown"
+        return h
     return "unknown"
 
 
