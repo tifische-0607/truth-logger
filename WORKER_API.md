@@ -445,3 +445,12 @@ Example:
 ```
 CASE-2026-014/INC-03_2026-09-21/FB_@contoh.halaman/POST-123456789/artefacts/live_post.png
 ```
+
+### Live-stream jobs
+
+`options.mode = "live"` asks the worker to record a live video feed instead of a post capture.
+Extra options: `live_max_minutes` (int, default 30, max 240) and `live_segment_seconds`
+(int, default 60, min 15). Artefact kinds produced: `screenshot` (live_start.png, live_end.png),
+`live_video_segment` (video/mp4, one per segment), `live_recording_log` (text/plain), `link`.
+Ingest payload shape is unchanged: one `post` item whose `text_original` is
+`"[Live stream recording] <page title>"`.

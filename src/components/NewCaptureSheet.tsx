@@ -21,6 +21,8 @@ import { Separator } from "@/components/ui/separator";
 const HANDLER_KEY = "fbem.handler";
 
 type Options = {
+  mode: "post" | "live";
+  live_max_minutes: number;
   max_comments: number;
   live_comment_limit: number;
   include_replies: boolean;
@@ -33,6 +35,8 @@ type Options = {
 };
 
 const defaultOptions: Options = {
+  mode: "post",
+  live_max_minutes: 30,
   max_comments: 500,
   live_comment_limit: 100,
   include_replies: true,
@@ -395,6 +399,52 @@ export function NewCaptureSheet({
           <Separator />
 
           <div className="space-y-4">
+            <Label className="text-base">What to capture</Label>
+            <div className="grid grid-cols-2 gap-2">
+              {(
+                [
+                  { v: "post", t: "Post or video", h: "Screenshot, text, comments" },
+                  { v: "live", t: "Live stream", h: "Record the feed as it plays" },
+                ] as const
+              ).map((m) => (
+                <button
+                  key={m.v}
+                  type="button"
+                  onClick={() => setOptions({ ...options, mode: m.v })}
+                  className={`min-h-14 rounded-xl border px-4 py-3 text-left ${
+                    options.mode === m.v ? "border-primary bg-accent" : "hover:bg-muted"
+                  }`}
+                >
+                  <div className="text-sm font-medium">{m.t}</div>
+                  <div className="text-muted-foreground text-xs">{m.h}</div>
+                </button>
+              ))}
+            </div>
+            {options.mode === "live" ? (
+              <div className="space-y-2">
+                <Label htmlFor="livemax" className="text-muted-foreground text-xs">
+                  Record for up to (minutes, max 240) — stops earlier if the stream ends
+                </Label>
+                <Input
+                  id="livemax"
+                  type="number"
+                  min={1}
+                  max={240}
+                  value={options.live_max_minutes}
+                  onChange={(e) =>
+                    setOptions({
+                      ...options,
+                      live_max_minutes: Math.min(240, Math.max(1, Number(e.target.value) || 1)),
+                    })
+                  }
+                  className="h-12 text-base"
+                />
+                <p className="text-muted-foreground text-xs">
+                  Saved as 1-minute video pieces, each with its own SHA-256, plus start and end
+                  screenshots and a recording log.
+                </p>
+              </div>
+            ) : null}
             <Label className="text-base">Options</Label>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">

@@ -98,3 +98,20 @@ MISMATCH. Nothing is ever overwritten — a re-capture is new rows and new files
   until a human adds them.
 - Commenters are recorded with what is on screen only. No inferred ethnicity,
   religion, politics or age — ever.
+
+## Live-stream recording
+
+Choose **Live stream** in the New capture form to record a Facebook live feed as it plays.
+One-time setup on the Mac mini:
+
+```bash
+brew install ffmpeg yt-dlp
+```
+
+The worker opens the live page in the logged-in Chromium, takes a start screenshot, then
+copies the stream without re-encoding into 1-minute `live_seg_NNNN.mp4` pieces (each its own
+artefact and SHA-256) until the stream ends or the chosen maximum (default 30, cap 240 minutes)
+is reached. It finishes with an end screenshot, `live_recording_log.txt` (UTC start/stop, stop
+reason, tool versions, segment hashes) and `link.txt`. Progress on the Worker page shows the
+elapsed recording time. The temporary cookie file used to fetch the stream is deleted afterwards
+and never uploaded.
