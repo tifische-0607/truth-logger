@@ -74,15 +74,15 @@ async function fetchProfiles(caseId: string): Promise<Author[]> {
   }
   const authors = [...byHandle.values()];
   for (const a of authors) a.captures.sort((x, y) => x.capturedAt.localeCompare(y.capturedAt));
-  authors.sort((a, b) => a.captures[0].capturedAt.localeCompare(b.captures[0].capturedAt));
+  authors.sort((a, b) => (a.captures[0]?.capturedAt ?? "").localeCompare(b.captures[0]?.capturedAt ?? ""));
   return authors;
 }
 
-function fmt(n?: number) {
+function fmt(n?: number | undefined) {
   return n == null ? "—" : n.toLocaleString();
 }
 
-function Delta({ now, prev }: { now?: number; prev?: number }) {
+function Delta({ now, prev }: { now?: number | undefined; prev?: number | undefined }) {
   if (now == null || prev == null || now === prev) return null;
   const d = now - prev;
   return (

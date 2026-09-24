@@ -28,6 +28,7 @@ import { Route as AuthenticatedCasesIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedCasesCaseIdRouteImport } from './routes/_authenticated/cases.$caseId'
 import { Route as AuthenticatedItemsItemIdRouteImport } from './routes/_authenticated/items.$itemId'
 import { Route as AuthenticatedJobsJobIdRouteImport } from './routes/_authenticated/jobs.$jobId'
+import { Route as AuthenticatedProfilesCaseIdRouteImport } from './routes/_authenticated/profiles.$caseId'
 import { Route as AuthenticatedReportCaseIdRouteImport } from './routes/_authenticated/report.$caseId'
 import { Route as AuthenticatedReviewCaseIdRouteImport } from './routes/_authenticated/review.$caseId'
 import { Route as AuthenticatedTrailCaseIdRouteImport } from './routes/_authenticated/trail.$caseId'
@@ -135,6 +136,12 @@ const AuthenticatedJobsJobIdRoute = AuthenticatedJobsJobIdRouteImport.update({
   path: '/jobs/$jobId',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedProfilesCaseIdRoute =
+  AuthenticatedProfilesCaseIdRouteImport.update({
+    id: '/profiles/$caseId',
+    path: '/profiles/$caseId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedReportCaseIdRoute =
   AuthenticatedReportCaseIdRouteImport.update({
     id: '/report/$caseId',
@@ -204,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
   '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
+  '/profiles/$caseId': typeof AuthenticatedProfilesCaseIdRoute
   '/report/$caseId': typeof AuthenticatedReportCaseIdRoute
   '/review/$caseId': typeof AuthenticatedReviewCaseIdRoute
   '/trail/$caseId': typeof AuthenticatedTrailCaseIdRoute
@@ -233,6 +241,7 @@ export interface FileRoutesByTo {
   '/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
   '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
+  '/profiles/$caseId': typeof AuthenticatedProfilesCaseIdRoute
   '/report/$caseId': typeof AuthenticatedReportCaseIdRoute
   '/review/$caseId': typeof AuthenticatedReviewCaseIdRoute
   '/trail/$caseId': typeof AuthenticatedTrailCaseIdRoute
@@ -264,6 +273,7 @@ export interface FileRoutesById {
   '/_authenticated/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
   '/_authenticated/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/_authenticated/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
+  '/_authenticated/profiles/$caseId': typeof AuthenticatedProfilesCaseIdRoute
   '/_authenticated/report/$caseId': typeof AuthenticatedReportCaseIdRoute
   '/_authenticated/review/$caseId': typeof AuthenticatedReviewCaseIdRoute
   '/_authenticated/trail/$caseId': typeof AuthenticatedTrailCaseIdRoute
@@ -295,6 +305,7 @@ export interface FileRouteTypes {
     | '/cases/$caseId'
     | '/items/$itemId'
     | '/jobs/$jobId'
+    | '/profiles/$caseId'
     | '/report/$caseId'
     | '/review/$caseId'
     | '/trail/$caseId'
@@ -324,6 +335,7 @@ export interface FileRouteTypes {
     | '/cases/$caseId'
     | '/items/$itemId'
     | '/jobs/$jobId'
+    | '/profiles/$caseId'
     | '/report/$caseId'
     | '/review/$caseId'
     | '/trail/$caseId'
@@ -354,6 +366,7 @@ export interface FileRouteTypes {
     | '/_authenticated/cases/$caseId'
     | '/_authenticated/items/$itemId'
     | '/_authenticated/jobs/$jobId'
+    | '/_authenticated/profiles/$caseId'
     | '/_authenticated/report/$caseId'
     | '/_authenticated/review/$caseId'
     | '/_authenticated/trail/$caseId'
@@ -513,6 +526,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedJobsJobIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/profiles/$caseId': {
+      id: '/_authenticated/profiles/$caseId'
+      path: '/profiles/$caseId'
+      fullPath: '/profiles/$caseId'
+      preLoaderRoute: typeof AuthenticatedProfilesCaseIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/report/$caseId': {
       id: '/_authenticated/report/$caseId'
       path: '/report/$caseId'
@@ -595,6 +615,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCasesCaseIdRoute: typeof AuthenticatedCasesCaseIdRoute
   AuthenticatedItemsItemIdRoute: typeof AuthenticatedItemsItemIdRoute
   AuthenticatedJobsJobIdRoute: typeof AuthenticatedJobsJobIdRoute
+  AuthenticatedProfilesCaseIdRoute: typeof AuthenticatedProfilesCaseIdRoute
   AuthenticatedReportCaseIdRoute: typeof AuthenticatedReportCaseIdRoute
   AuthenticatedReviewCaseIdRoute: typeof AuthenticatedReviewCaseIdRoute
   AuthenticatedTrailCaseIdRoute: typeof AuthenticatedTrailCaseIdRoute
@@ -617,6 +638,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCasesCaseIdRoute: AuthenticatedCasesCaseIdRoute,
   AuthenticatedItemsItemIdRoute: AuthenticatedItemsItemIdRoute,
   AuthenticatedJobsJobIdRoute: AuthenticatedJobsJobIdRoute,
+  AuthenticatedProfilesCaseIdRoute: AuthenticatedProfilesCaseIdRoute,
   AuthenticatedReportCaseIdRoute: AuthenticatedReportCaseIdRoute,
   AuthenticatedReviewCaseIdRoute: AuthenticatedReviewCaseIdRoute,
   AuthenticatedTrailCaseIdRoute: AuthenticatedTrailCaseIdRoute,
