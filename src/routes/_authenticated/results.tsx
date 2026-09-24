@@ -43,12 +43,26 @@ type ResultRow = {
   incidentId: string | null;
   handle: string | null;
   artefacts: Artefact[];
+  errorScreens: string[];
 };
+
+const ERROR_RE = /Facebook showed an error screen: "([^"]+)"/i;
+
+function errorScreensFrom(lines: string[]): string[] {
+  const found = new Set<string>();
+  for (const l of lines) {
+    const m = ERROR_RE.exec(l);
+    if (m?.[1]) found.add(m[1]);
+  }
+  return [...found];
+}
+
+type Filter = "all" | "reached" | "errors";
 
 async function fetchResults(): Promise<ResultRow[]> {
   const { data: jobs, error } = await supabase
     .from("capture_jobs")
-    .select("id, url, result, finished_at")
+    .select("id, url, result, finished_at, log, warnings")
     .eq("status", "done")
     .order("finished_at", { ascending: false })
     .limit(50);
@@ -101,6 +115,7 @@ async function fetchResults(): Promise<ResultRow[]> {
       incidentId: incident?.incident_id ?? null,
       handle: account?.handle ?? null,
       artefacts: (item.artefacts ?? []) as Artefact[],
+      errorScreens: errorScreensFrom([...(job.log ?? []), ...(job.warnings ?? [])]),
     });
   }
   return rows;
@@ -116,6 +131,12 @@ function ResultsPage() {
   const viewerUrl = useSignedUrl(viewer?.storage_path ?? null, 300);
 
   const results = useQuery({ queryKey: ["capture-results"], queryFn: fetchResults });
+  const [filter, setFilter] = useState<Filter>("all");
+  const all = results.data ?? [];
+  const reachedCount = all.filter((r) => r.errorScreens.length === 0).length;
+  const shown = all.filter((r) =>
+    filter === "all" ? true : filter === "reached" ? r.errorScreens.length === 0 : r.errorScreens.length > 0,
+  );
 
   useEffect(() => {
     const channel = supabase
@@ -136,11 +157,41 @@ function ResultsPage() {
         subtitle="Every completed capture with its files — screenshot, PDF, saved page and text."
       />
 
+      {all.length ? (
+        <div className="mb-5 flex flex-wrap gap-2" role="group" aria-label="Filter by reliability">
+          {(
+            [
+              ["all", `All (${all.length})`],
+              ["reached", `Reached the post (${reachedCount})`],
+              ["errors", `Error screens saved (${all.length - reachedCount})`],
+            ] as [Filter, string][]
+          ).map(([key, label]) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setFilter(key)}
+              aria-pressed={filter === key}
+              className={`min-h-11 rounded-lg border px-4 text-sm font-medium transition-colors ${
+                filter === key
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-input hover:bg-accent"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      ) : null}
+
       {results.isLoading ? (
         <p className="text-muted-foreground">Loading results…</p>
-      ) : results.data?.length ? (
+      ) : all.length && !shown.length ? (
+        <div className="panel text-muted-foreground p-8 text-center text-sm">
+          No captures match this filter.
+        </div>
+      ) : shown.length ? (
         <div className="space-y-5">
-          {results.data.map((row) => {
+          {shown.map((row) => {
             const screenshot = pickArtefact(row.artefacts, ["screenshot", "render", "media"]);
             const pdf = pickArtefact(row.artefacts, ["screenshot_pdf", "render_pdf"]);
             const page = pickArtefact(row.artefacts, ["comments_page_raw"]);
@@ -177,7 +228,14 @@ function ResultsPage() {
                       <span className="text-muted-foreground text-xs">
                         {formatDateTime(row.finishedAt)}
                       </span>
+                      <ReliabilityBadge errors={row.errorScreens} />
                     </div>
+                    {row.errorScreens.length ? (
+                      <p className="text-destructive mt-1 text-xs">
+                        Screenshot shows Facebook's notice, not the post:{" "}
+                        {row.errorScreens.map((e) => `"${e}"`).join(", ")}
+                      </p>
+                    ) : null}
                     <div className="mt-1 text-sm font-medium">
                       {row.author ?? "Unknown author"}
                       {row.handle ? (
@@ -314,5 +372,22 @@ function ArtefactButton({
       {label}
       <span className="text-muted-foreground text-xs">{formatBytes(artefact.size_bytes)}</span>
     </button>
+  );
+}
+
+function ReliabilityBadge({ errors }: { errors: string[] }) {
+  const n = errors.length;
+  const score = Math.max(0, 100 - n * 50);
+  const cls =
+    n === 0
+      ? "border-primary/40 bg-primary/15 text-primary"
+      : "border-destructive/40 bg-destructive/15 text-destructive";
+  return (
+    <span
+      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${cls}`}
+      title={n ? `${n} Facebook error screen(s) saved` : "No Facebook error screens detected"}
+    >
+      Reliability {score}% · {n === 0 ? "reached the post" : `${n} error screen${n > 1 ? "s" : ""}`}
+    </span>
   );
 }
