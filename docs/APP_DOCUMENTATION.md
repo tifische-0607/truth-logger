@@ -99,7 +99,8 @@ playwright install chromium
 brew install ffmpeg yt-dlp        # only needed for live-stream recording
 
 cp worker/.env.example worker/.env
-# edit worker/.env: WORKER_BASE_URL and WORKER_TOKEN (token set in the app's Settings → Secrets)
+# edit worker/.env: keep WORKER_BASE_URL=https://spyglass2.sentinel2.org
+# and set WORKER_TOKEN to the token configured for the app
 
 python -m worker.login            # sign in to Facebook once in the window that opens
 ```
