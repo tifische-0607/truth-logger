@@ -24,6 +24,7 @@ from playwright.sync_api import Page, sync_playwright
 from . import config
 
 Logger = Callable[[str], None]
+ProgressReporter = Callable[[int, str], None]
 
 
 def utcnow() -> str:
@@ -129,7 +130,12 @@ _EXTRACT_JS = """
 """
 
 
-def capture_post(url: str, options: dict[str, Any], log: Logger) -> dict[str, Any]:
+def capture_post(
+    url: str,
+    options: dict[str, Any],
+    log: Logger,
+    progress: ProgressReporter | None = None,
+) -> dict[str, Any]:
     """Capture one post. Returns parsed data plus a list of local artefact files."""
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     out_dir = config.WORK_DIR / f"{stamp}_{post_id_from_url(url)}"
@@ -166,6 +172,8 @@ def capture_post(url: str, options: dict[str, Any], log: Logger) -> dict[str, An
         page.goto(url, wait_until="domcontentloaded")
         page.wait_for_timeout(3000)
         _dismiss_dialogs(page)
+        if progress:
+            progress(20, "Facebook post opened")
 
         if "login" in page.url or page.get_by_role("button", name=re.compile("^Log in$", re.I)).count():
             context.close()
@@ -174,10 +182,14 @@ def capture_post(url: str, options: dict[str, Any], log: Logger) -> dict[str, An
             )
 
         if options.get("include_replies", True) or options.get("max_comments", 0):
+            if progress:
+                progress(28, "Expanding comments and replies")
             _expand_comments(page, log)
 
         data = page.evaluate(_EXTRACT_JS)
         log(f"Parsed post and {len(data.get('comments') or [])} comment nodes")
+        if progress:
+            progress(45, "Post and comments processed")
 
         if options.get("live_screenshots", True):
             png = out_dir / "live_post.png"
@@ -190,6 +202,9 @@ def capture_post(url: str, options: dict[str, Any], log: Logger) -> dict[str, An
                 record(pdf, "screenshot_pdf", "application/pdf")
             except Exception as exc:  # pdf is Chromium-headless only in some builds
                 log(f"PDF skipped: {exc}")
+
+        if progress:
+            progress(55, "Screenshot and source files saved")
 
         html_path = out_dir / "comments_page.html"
         html_path.write_text(page.content(), encoding="utf-8")
@@ -209,6 +224,9 @@ def capture_post(url: str, options: dict[str, Any], log: Logger) -> dict[str, An
 
         final_url = page.url
         context.close()
+
+    if progress:
+        progress(62, "Artefacts hashed and ready to upload")
 
     data["final_url"] = final_url
     data["out_dir"] = out_dir
