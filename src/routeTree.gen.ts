@@ -36,6 +36,7 @@ import { Route as ApiPublicWorkerHeartbeatRouteImport } from './routes/api/publi
 import { Route as ApiPublicWorkerIngestRouteImport } from './routes/api/public/worker-ingest'
 import { Route as ApiPublicWorkerLogRouteImport } from './routes/api/public/worker-log'
 import { Route as ApiPublicWorkerUploadUrlRouteImport } from './routes/api/public/worker-upload-url'
+import { Route as AuthenticatedCasesCaseIdTrailRouteImport } from './routes/_authenticated/cases.$caseId.trail'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -178,6 +179,12 @@ const ApiPublicWorkerUploadUrlRoute =
     path: '/api/public/worker-upload-url',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedCasesCaseIdTrailRoute =
+  AuthenticatedCasesCaseIdTrailRouteImport.update({
+    id: '/trail',
+    path: '/trail',
+    getParentRoute: () => AuthenticatedCasesCaseIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -194,7 +201,7 @@ export interface FileRoutesByFullPath {
   '/templates': typeof AuthenticatedTemplatesRoute
   '/verify': typeof AuthenticatedVerifyRoute
   '/worker': typeof AuthenticatedWorkerRoute
-  '/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
+  '/cases/$caseId': typeof AuthenticatedCasesCaseIdRouteWithChildren
   '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
   '/report/$caseId': typeof AuthenticatedReportCaseIdRoute
@@ -206,6 +213,7 @@ export interface FileRoutesByFullPath {
   '/api/public/worker-log': typeof ApiPublicWorkerLogRoute
   '/api/public/worker-upload-url': typeof ApiPublicWorkerUploadUrlRoute
   '/cases/': typeof AuthenticatedCasesIndexRoute
+  '/cases/$caseId/trail': typeof AuthenticatedCasesCaseIdTrailRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -222,7 +230,7 @@ export interface FileRoutesByTo {
   '/templates': typeof AuthenticatedTemplatesRoute
   '/verify': typeof AuthenticatedVerifyRoute
   '/worker': typeof AuthenticatedWorkerRoute
-  '/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
+  '/cases/$caseId': typeof AuthenticatedCasesCaseIdRouteWithChildren
   '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
   '/report/$caseId': typeof AuthenticatedReportCaseIdRoute
@@ -234,6 +242,7 @@ export interface FileRoutesByTo {
   '/api/public/worker-log': typeof ApiPublicWorkerLogRoute
   '/api/public/worker-upload-url': typeof ApiPublicWorkerUploadUrlRoute
   '/cases': typeof AuthenticatedCasesIndexRoute
+  '/cases/$caseId/trail': typeof AuthenticatedCasesCaseIdTrailRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -252,7 +261,7 @@ export interface FileRoutesById {
   '/_authenticated/templates': typeof AuthenticatedTemplatesRoute
   '/_authenticated/verify': typeof AuthenticatedVerifyRoute
   '/_authenticated/worker': typeof AuthenticatedWorkerRoute
-  '/_authenticated/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
+  '/_authenticated/cases/$caseId': typeof AuthenticatedCasesCaseIdRouteWithChildren
   '/_authenticated/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/_authenticated/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
   '/_authenticated/report/$caseId': typeof AuthenticatedReportCaseIdRoute
@@ -264,6 +273,7 @@ export interface FileRoutesById {
   '/api/public/worker-log': typeof ApiPublicWorkerLogRoute
   '/api/public/worker-upload-url': typeof ApiPublicWorkerUploadUrlRoute
   '/_authenticated/cases/': typeof AuthenticatedCasesIndexRoute
+  '/_authenticated/cases/$caseId/trail': typeof AuthenticatedCasesCaseIdTrailRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -294,6 +304,7 @@ export interface FileRouteTypes {
     | '/api/public/worker-log'
     | '/api/public/worker-upload-url'
     | '/cases/'
+    | '/cases/$caseId/trail'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -322,6 +333,7 @@ export interface FileRouteTypes {
     | '/api/public/worker-log'
     | '/api/public/worker-upload-url'
     | '/cases'
+    | '/cases/$caseId/trail'
   id:
     | '__root__'
     | '/'
@@ -351,6 +363,7 @@ export interface FileRouteTypes {
     | '/api/public/worker-log'
     | '/api/public/worker-upload-url'
     | '/_authenticated/cases/'
+    | '/_authenticated/cases/$caseId/trail'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -556,8 +569,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWorkerUploadUrlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/cases/$caseId/trail': {
+      id: '/_authenticated/cases/$caseId/trail'
+      path: '/trail'
+      fullPath: '/cases/$caseId/trail'
+      preLoaderRoute: typeof AuthenticatedCasesCaseIdTrailRouteImport
+      parentRoute: typeof AuthenticatedCasesCaseIdRoute
+    }
   }
 }
+
+interface AuthenticatedCasesCaseIdRouteChildren {
+  AuthenticatedCasesCaseIdTrailRoute: typeof AuthenticatedCasesCaseIdTrailRoute
+}
+
+const AuthenticatedCasesCaseIdRouteChildren: AuthenticatedCasesCaseIdRouteChildren =
+  {
+    AuthenticatedCasesCaseIdTrailRoute: AuthenticatedCasesCaseIdTrailRoute,
+  }
+
+const AuthenticatedCasesCaseIdRouteWithChildren =
+  AuthenticatedCasesCaseIdRoute._addFileChildren(
+    AuthenticatedCasesCaseIdRouteChildren,
+  )
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedCaptureLogRoute: typeof AuthenticatedCaptureLogRoute
@@ -572,7 +606,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedTemplatesRoute: typeof AuthenticatedTemplatesRoute
   AuthenticatedVerifyRoute: typeof AuthenticatedVerifyRoute
   AuthenticatedWorkerRoute: typeof AuthenticatedWorkerRoute
-  AuthenticatedCasesCaseIdRoute: typeof AuthenticatedCasesCaseIdRoute
+  AuthenticatedCasesCaseIdRoute: typeof AuthenticatedCasesCaseIdRouteWithChildren
   AuthenticatedItemsItemIdRoute: typeof AuthenticatedItemsItemIdRoute
   AuthenticatedJobsJobIdRoute: typeof AuthenticatedJobsJobIdRoute
   AuthenticatedReportCaseIdRoute: typeof AuthenticatedReportCaseIdRoute
@@ -593,7 +627,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedTemplatesRoute: AuthenticatedTemplatesRoute,
   AuthenticatedVerifyRoute: AuthenticatedVerifyRoute,
   AuthenticatedWorkerRoute: AuthenticatedWorkerRoute,
-  AuthenticatedCasesCaseIdRoute: AuthenticatedCasesCaseIdRoute,
+  AuthenticatedCasesCaseIdRoute: AuthenticatedCasesCaseIdRouteWithChildren,
   AuthenticatedItemsItemIdRoute: AuthenticatedItemsItemIdRoute,
   AuthenticatedJobsJobIdRoute: AuthenticatedJobsJobIdRoute,
   AuthenticatedReportCaseIdRoute: AuthenticatedReportCaseIdRoute,
