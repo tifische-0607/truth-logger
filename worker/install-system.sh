@@ -38,7 +38,7 @@ if [ ! -f "$ROOT/worker/.env" ]; then
 fi
 
 # Remove the login-based agent if present so we don't run two copies.
-su "$RUN_AS" -c "launchctl unload '$HOME/Library/LaunchAgents/com.fbem.worker.plist'" 2>/dev/null || true
+su "$RUN_AS" -c "launchctl unload '/Users/$RUN_AS/Library/LaunchAgents/com.fbem.worker.plist'" 2>/dev/null || true
 rm -f "/Users/$RUN_AS/Library/LaunchAgents/com.fbem.worker.plist"
 
 mkdir -p "$LOGS"
