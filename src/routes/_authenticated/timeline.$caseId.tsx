@@ -193,7 +193,7 @@ function TimelinePage() {
   );
 }
 
-function Fact({ label, value }: { label: string; value?: string | null }) {
+function Fact({ label, value }: { label: string; value?: string | null | undefined }) {
   return (
     <div>
       <dt className="text-muted-foreground text-xs uppercase">{label}</dt>
