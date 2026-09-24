@@ -5,6 +5,7 @@ import { ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,6 +23,8 @@ export const Route = createFileRoute("/auth")({
         property: "og:description",
         content: "Sign in to the private evidence workspace for Facebook capture and custody.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -82,6 +85,23 @@ function AuthPage() {
     }
   }
 
+  async function signInWithGoogle() {
+    setBusy(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: `${window.location.origin}/auth`,
+        extraParams: { prompt: "select_account" },
+      });
+      if (result.error) throw result.error;
+      if (result.redirected) return;
+      void navigate({ to: "/dashboard", replace: true });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Google sign-in failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   const closed = signupOpen.data === false;
 
   return (
@@ -96,6 +116,25 @@ function AuthPage() {
         </div>
 
         <div className="panel p-6 md:p-8">
+          <Button
+            type="button"
+            variant="outline"
+            disabled={busy}
+            className="h-12 w-full text-base"
+            onClick={signInWithGoogle}
+          >
+            <span aria-hidden="true" className="font-mono text-base font-semibold">
+              G
+            </span>
+            Continue with Google
+          </Button>
+
+          <div className="my-5 flex items-center gap-3" aria-hidden="true">
+            <span className="bg-border h-px flex-1" />
+            <span className="text-muted-foreground text-xs uppercase">or use email</span>
+            <span className="bg-border h-px flex-1" />
+          </div>
+
           <form onSubmit={submit} className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
