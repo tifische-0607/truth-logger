@@ -227,6 +227,10 @@ function TimelinePage() {
           No items in this case have a published date yet. Dates are saved on captures made after the
           Mac mini update.
         </p>
+      ) : visible.length === 0 ? (
+        <p className="text-muted-foreground panel p-5 text-sm">
+          Nothing was published in the selected period. Widen the dates or clear them.
+        </p>
       ) : (
         [...days.entries()].map(([day, list]) => (
           <section key={day} className="mb-6">
