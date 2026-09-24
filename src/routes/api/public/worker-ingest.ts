@@ -288,6 +288,31 @@ export const Route = createFileRoute("/api/public/worker-ingest")({
         const primaryItem = sorted.find((i) => i.item_type === "post") ?? sorted[0];
         const primaryItemId = primaryItem ? (codeToId.get(primaryItem.item_code) ?? null) : null;
 
+        // Automatic machine translation for items with no English yet (labelled, never replaces the original).
+        let translated = 0;
+        try {
+          const apiKey = process.env["LOVABLE_API_KEY"];
+          const todo = sorted
+            .filter((i) => i.text_original?.trim() && !i.text_en)
+            .map((i) => ({ id: codeToId.get(i.item_code) as string, text: i.text_original as string }))
+            .filter((r) => r.id);
+          if (apiKey && todo.length) {
+            const { translateRows, MACHINE_TRANSLATION_STATEMENT } = await import("@/lib/translate.server");
+            const map = await translateRows(todo, apiKey);
+            for (const [id, english] of map) {
+              const { error: tErr } = await sb
+                .from("items")
+                .update({ text_en: english, translator_statement: MACHINE_TRANSLATION_STATEMENT })
+                .eq("id", id)
+                .is("text_en", null);
+              if (!tErr) translated++;
+            }
+          }
+        } catch (e) {
+          console.error("auto-translation failed", e);
+        }
+
+
         return jsonResponse({
           ok: true,
           job_id: body.job_id,
@@ -297,6 +322,7 @@ export const Route = createFileRoute("/api/public/worker-ingest")({
           item_id: primaryItemId,
           items: Object.fromEntries(codeToId),
           artefacts_inserted: insertedArtefacts.length,
+          items_translated: translated,
           verification,
         });
       },
