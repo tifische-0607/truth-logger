@@ -16,6 +16,13 @@ export const Route = createFileRoute("/api/public/worker-heartbeat")({
           body = {};
         }
 
+        // Public IP the worker is checking in from (as seen at the edge).
+        const fwd = request.headers.get("x-forwarded-for");
+        const publicIp =
+          request.headers.get("cf-connecting-ip") ??
+          (fwd ? (fwd.split(",")[0]?.trim() ?? null) : null) ??
+          request.headers.get("x-real-ip");
+
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const now = new Date().toISOString();
         const { error } = await supabaseAdmin.from("worker_status").upsert({
@@ -23,6 +30,7 @@ export const Route = createFileRoute("/api/public/worker-heartbeat")({
           last_seen: now,
           version: body.version ?? null,
           hostname: body.hostname ?? null,
+          public_ip: publicIp,
           info: (body.info ?? {}) as never,
         });
         if (error) return jsonResponse({ error: error.message }, 500);
