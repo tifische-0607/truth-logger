@@ -40,7 +40,7 @@ async function loadReport(caseId: string) {
   const { data: incidents, error: incErr } = await supabase
     .from("incidents")
     .select(
-      "id, incident_id, start_date, end_date, summary, escalation_stage, narrative_themes, created_at, accounts(id, handle, platform, display_name, profile_url, account_snapshots(id, captured_at, followers, following, verified, display_name), items(id, item_code, item_type, author_name, author_handle, url, published_at, captured_at, text_original, text_en, translator_statement))",
+      "id, incident_id, start_date, end_date, summary, escalation_stage, narrative_themes, created_at, accounts(id, handle, platform, display_name, profile_url, account_snapshots(id, captured_at, followers, following, verified, display_name), items(id, item_code, item_type, author_name, author_handle, url, published_at, captured_at, text_original, text_en, translator_statement, subject_profiles(subject_type, stated)))",
     )
     .eq("case_id", caseId)
     .order("incident_id");
@@ -96,6 +96,63 @@ function CaseReport() {
 
   const c = data.caseRow;
   const itemById = new Map(data.items.map((i) => [i.id, i]));
+
+  // Poster handles and their latest stated profile details.
+  type PosterRow = {
+    key: string;
+    account: string;
+    profileUrl: string | null;
+    displayName: string | null;
+    handle: string | null;
+    verified: boolean;
+    followers: number | null;
+    following: number | null;
+    likes: number | null;
+    bio: string | null;
+    posts: number;
+    lastCaptured: string | null;
+  };
+  const postersByKey = new Map<string, PosterRow>();
+  const toNum = (v: unknown): number | null =>
+    typeof v === "number" && Number.isFinite(v) ? v : null;
+  for (const item of data.items) {
+    if (item.item_type !== "post") continue;
+    const key = String(item.author_handle ?? item.author_name ?? item.account);
+    const posters = (item.subject_profiles ?? []).filter(
+      (p) => p.subject_type === "poster",
+    );
+    let latest: Record<string, unknown> | null = null;
+    for (const p of posters) {
+      const stated = p.stated as Record<string, unknown>;
+      if (!latest) latest = stated;
+      else {
+        // prefer the entry with the most fields filled
+        const filled = (s: Record<string, unknown>) =>
+          Object.values(s).filter((v) => v !== null && v !== undefined && v !== "").length;
+        if (filled(stated) >= filled(latest)) latest = stated;
+      }
+    }
+    const prev = postersByKey.get(key);
+    postersByKey.set(key, {
+      key,
+      account: item.account,
+      profileUrl: String(latest?.["profile_url"] ?? item.url ?? "") || null,
+      displayName: String(
+        latest?.["display_name"] ?? item.author_name ?? "",
+      ) || null,
+      handle: String(latest?.["handle"] ?? item.author_handle ?? "") || null,
+      verified: Boolean(latest?.["verified"]),
+      followers: toNum(latest?.["followers"]) ?? prev?.followers ?? null,
+      following: toNum(latest?.["following"]) ?? prev?.following ?? null,
+      likes: toNum(latest?.["likes"]) ?? prev?.likes ?? null,
+      bio: (String(latest?.["bio_verbatim"] ?? "") || null) ?? prev?.bio ?? null,
+      posts: (prev?.posts ?? 0) + 1,
+      lastCaptured: item.captured_at,
+    });
+  }
+  const posters = [...postersByKey.values()].sort((a, b) =>
+    String(a.handle ?? a.key).localeCompare(String(b.handle ?? b.key)),
+  );
 
   const timeline = [
     ...data.incidents.map((inc) => ({
@@ -158,8 +215,61 @@ function CaseReport() {
         {c.notes ? <p className="mt-3 text-sm whitespace-pre-wrap">{c.notes}</p> : null}
       </section>
 
+      <section className="panel print-break p-6">
+        <h2 className="text-lg font-semibold">1. Poster handles and profiles</h2>
+        <p className="text-muted-foreground text-xs">
+          Authors of captured posts, with the profile details Facebook publicly stated at capture
+          time. No details are inferred; empty fields were not shown on the profile.
+        </p>
+        <div className="mt-4 overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead className="text-muted-foreground uppercase">
+              <tr className="border-b">
+                <th className="py-2 pr-3">Poster</th>
+                <th className="py-2 pr-3">Handle</th>
+                <th className="py-2 pr-3">Profile link</th>
+                <th className="py-2 pr-3">Followers</th>
+                <th className="py-2 pr-3">Following</th>
+                <th className="py-2 pr-3">Likes</th>
+                <th className="py-2">Bio</th>
+              </tr>
+            </thead>
+            <tbody>
+              {posters.map((p) => (
+                <tr key={p.key} className="border-b align-top">
+                  <td className="py-2 pr-3 font-medium">
+                    {p.displayName ?? "Insufficient data"}
+                    {p.verified ? " ✓" : ""}
+                    <div className="text-muted-foreground font-normal">
+                      {p.posts} {p.posts === 1 ? "post" : "posts"} · last captured{" "}
+                      {p.lastCaptured ? formatDateTime(p.lastCaptured) : "—"}
+                    </div>
+                  </td>
+                  <td className="py-2 pr-3 font-mono">
+                    {p.handle ? `@${p.handle}` : "—"}
+                    <div className="text-muted-foreground font-normal">{p.account}</div>
+                  </td>
+                  <td className="py-2 pr-3 break-all">{p.profileUrl ?? "—"}</td>
+                  <td className="py-2 pr-3">{p.followers?.toLocaleString() ?? "—"}</td>
+                  <td className="py-2 pr-3">{p.following?.toLocaleString() ?? "—"}</td>
+                  <td className="py-2 pr-3">{p.likes?.toLocaleString() ?? "—"}</td>
+                  <td className="py-2 max-w-56 break-words">{p.bio ?? "—"}</td>
+                </tr>
+              ))}
+              {posters.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="text-muted-foreground py-3">
+                    No posters captured yet.
+                  </td>
+                </tr>
+              ) : null}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <section className="panel p-6">
-        <h2 className="text-lg font-semibold">1. Timeline of events</h2>
+        <h2 className="text-lg font-semibold">2. Timeline of events</h2>
         <p className="text-muted-foreground text-xs">{timeline.length} events, oldest first</p>
         <ol className="mt-4 space-y-3">
           {timeline.map((e, idx) => (
@@ -176,7 +286,7 @@ function CaseReport() {
       </section>
 
       <section className="panel print-break p-6">
-        <h2 className="text-lg font-semibold">2. Evidence items</h2>
+        <h2 className="text-lg font-semibold">3. Evidence items</h2>
         <div className="mt-4 space-y-5">
           {data.items.map((i) => (
             <article key={i.id} className="border-b pb-4 last:border-0">
@@ -217,7 +327,7 @@ function CaseReport() {
       </section>
 
       <section className="panel print-break p-6">
-        <h2 className="text-lg font-semibold">3. Artefact register</h2>
+        <h2 className="text-lg font-semibold">4. Artefact register</h2>
         <p className="text-muted-foreground text-xs">
           Every stored file with its SHA-256 hash at capture time.
         </p>
@@ -257,7 +367,7 @@ function CaseReport() {
       </section>
 
       <section className="panel print-break p-6">
-        <h2 className="text-lg font-semibold">4. Chain-of-custody log</h2>
+        <h2 className="text-lg font-semibold">5. Chain-of-custody log</h2>
         <p className="text-muted-foreground text-xs">
           Append-only record, newest first. Entries are never edited or deleted.
         </p>
