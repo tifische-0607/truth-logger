@@ -37,6 +37,7 @@ import { Route as ApiPublicWorkerCompleteRouteImport } from './routes/api/public
 import { Route as ApiPublicWorkerHeartbeatRouteImport } from './routes/api/public/worker-heartbeat'
 import { Route as ApiPublicWorkerIngestRouteImport } from './routes/api/public/worker-ingest'
 import { Route as ApiPublicWorkerLogRouteImport } from './routes/api/public/worker-log'
+import { Route as ApiPublicWorkerTranscribeRouteImport } from './routes/api/public/worker-transcribe'
 import { Route as ApiPublicWorkerUploadUrlRouteImport } from './routes/api/public/worker-upload-url'
 
 const IndexRoute = IndexRouteImport.update({
@@ -186,6 +187,12 @@ const ApiPublicWorkerLogRoute = ApiPublicWorkerLogRouteImport.update({
   path: '/api/public/worker-log',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicWorkerTranscribeRoute =
+  ApiPublicWorkerTranscribeRouteImport.update({
+    id: '/api/public/worker-transcribe',
+    path: '/api/public/worker-transcribe',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicWorkerUploadUrlRoute =
   ApiPublicWorkerUploadUrlRouteImport.update({
     id: '/api/public/worker-upload-url',
@@ -220,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/api/public/worker-heartbeat': typeof ApiPublicWorkerHeartbeatRoute
   '/api/public/worker-ingest': typeof ApiPublicWorkerIngestRoute
   '/api/public/worker-log': typeof ApiPublicWorkerLogRoute
+  '/api/public/worker-transcribe': typeof ApiPublicWorkerTranscribeRoute
   '/api/public/worker-upload-url': typeof ApiPublicWorkerUploadUrlRoute
   '/cases/': typeof AuthenticatedCasesIndexRoute
 }
@@ -250,6 +258,7 @@ export interface FileRoutesByTo {
   '/api/public/worker-heartbeat': typeof ApiPublicWorkerHeartbeatRoute
   '/api/public/worker-ingest': typeof ApiPublicWorkerIngestRoute
   '/api/public/worker-log': typeof ApiPublicWorkerLogRoute
+  '/api/public/worker-transcribe': typeof ApiPublicWorkerTranscribeRoute
   '/api/public/worker-upload-url': typeof ApiPublicWorkerUploadUrlRoute
   '/cases': typeof AuthenticatedCasesIndexRoute
 }
@@ -282,6 +291,7 @@ export interface FileRoutesById {
   '/api/public/worker-heartbeat': typeof ApiPublicWorkerHeartbeatRoute
   '/api/public/worker-ingest': typeof ApiPublicWorkerIngestRoute
   '/api/public/worker-log': typeof ApiPublicWorkerLogRoute
+  '/api/public/worker-transcribe': typeof ApiPublicWorkerTranscribeRoute
   '/api/public/worker-upload-url': typeof ApiPublicWorkerUploadUrlRoute
   '/_authenticated/cases/': typeof AuthenticatedCasesIndexRoute
 }
@@ -314,6 +324,7 @@ export interface FileRouteTypes {
     | '/api/public/worker-heartbeat'
     | '/api/public/worker-ingest'
     | '/api/public/worker-log'
+    | '/api/public/worker-transcribe'
     | '/api/public/worker-upload-url'
     | '/cases/'
   fileRoutesByTo: FileRoutesByTo
@@ -344,6 +355,7 @@ export interface FileRouteTypes {
     | '/api/public/worker-heartbeat'
     | '/api/public/worker-ingest'
     | '/api/public/worker-log'
+    | '/api/public/worker-transcribe'
     | '/api/public/worker-upload-url'
     | '/cases'
   id:
@@ -375,6 +387,7 @@ export interface FileRouteTypes {
     | '/api/public/worker-heartbeat'
     | '/api/public/worker-ingest'
     | '/api/public/worker-log'
+    | '/api/public/worker-transcribe'
     | '/api/public/worker-upload-url'
     | '/_authenticated/cases/'
   fileRoutesById: FileRoutesById
@@ -388,6 +401,7 @@ export interface RootRouteChildren {
   ApiPublicWorkerHeartbeatRoute: typeof ApiPublicWorkerHeartbeatRoute
   ApiPublicWorkerIngestRoute: typeof ApiPublicWorkerIngestRoute
   ApiPublicWorkerLogRoute: typeof ApiPublicWorkerLogRoute
+  ApiPublicWorkerTranscribeRoute: typeof ApiPublicWorkerTranscribeRoute
   ApiPublicWorkerUploadUrlRoute: typeof ApiPublicWorkerUploadUrlRoute
 }
 
@@ -589,6 +603,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWorkerLogRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/worker-transcribe': {
+      id: '/api/public/worker-transcribe'
+      path: '/api/public/worker-transcribe'
+      fullPath: '/api/public/worker-transcribe'
+      preLoaderRoute: typeof ApiPublicWorkerTranscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/worker-upload-url': {
       id: '/api/public/worker-upload-url'
       path: '/api/public/worker-upload-url'
@@ -657,6 +678,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicWorkerHeartbeatRoute: ApiPublicWorkerHeartbeatRoute,
   ApiPublicWorkerIngestRoute: ApiPublicWorkerIngestRoute,
   ApiPublicWorkerLogRoute: ApiPublicWorkerLogRoute,
+  ApiPublicWorkerTranscribeRoute: ApiPublicWorkerTranscribeRoute,
   ApiPublicWorkerUploadUrlRoute: ApiPublicWorkerUploadUrlRoute,
 }
 export const routeTree = rootRouteImport

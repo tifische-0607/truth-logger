@@ -60,10 +60,10 @@ export const Route = createFileRoute("/api/public/worker-transcribe")({
         }
         return jsonResponse({
           model: MODEL,
-          language: String(parsed.language ?? "unknown"),
-          has_speech: parsed.has_speech !== false,
-          transcript_original: String(parsed.transcript_original ?? ""),
-          transcript_en: String(parsed.transcript_en ?? ""),
+          language: String(parsed["language"] ?? "unknown"),
+          has_speech: parsed["has_speech"] !== false,
+          transcript_original: String(parsed["transcript_original"] ?? ""),
+          transcript_en: String(parsed["transcript_en"] ?? ""),
         });
       },
     },

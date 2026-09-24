@@ -74,6 +74,11 @@ def upload(storage_path: str, data: bytes, content_type: str) -> None:
         raise WorkerApiError(f"upload {storage_path} -> {put.status_code}: {put.text[:300]}")
 
 
+def transcribe(job_id: str, audio_base64: str, fmt: str = "mp3") -> dict[str, Any]:
+    return _post("/api/public/worker-transcribe",
+                 {"job_id": job_id, "audio_base64": audio_base64, "format": fmt}, timeout=600)
+
+
 def ingest(job_id: str, records: dict[str, Any]) -> dict[str, Any]:
     return _post("/api/public/worker-ingest", {"job_id": job_id, "records": records}, timeout=600)
 
