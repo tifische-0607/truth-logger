@@ -17,7 +17,7 @@ function formatDay(day: string) {
 }
 import { getCachedCase, offlineFirst } from "@/lib/offline";
 
-export const Route = createFileRoute("/_authenticated/cases/$caseId/trail")({
+export const Route = createFileRoute("/_authenticated/trail/$caseId")({
   component: CaseTrailPage,
 });
 

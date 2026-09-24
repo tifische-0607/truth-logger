@@ -120,7 +120,7 @@ function CasePage() {
               <Printer className="size-4" /> Case report
             </Link>
             <Link
-              to="/cases/$caseId/trail"
+              to="/trail/$caseId"
               params={{ caseId }}
               className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
             >
