@@ -17,11 +17,12 @@ export const Route = createFileRoute("/api/public/worker-heartbeat")({
         }
 
         // Public IP the worker is checking in from (as seen at the edge).
-        const fwd = request.headers.get("x-forwarded-for");
+        const pick = (name: string): string | null => request.headers.get(name) || null;
+        const fwd = pick("x-forwarded-for");
         const publicIp =
-          request.headers.get("cf-connecting-ip") ??
-          (fwd ? (fwd.split(",")[0]?.trim() ?? null) : null) ??
-          request.headers.get("x-real-ip");
+          pick("cf-connecting-ip") ??
+          (fwd ? fwd.split(",")[0]?.trim() || null : null) ??
+          pick("x-real-ip");
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const now = new Date().toISOString();
