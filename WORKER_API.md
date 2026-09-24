@@ -493,3 +493,12 @@ is attached to that comment's own evidence item (not the post) as artefact kind
 stored under `…/comments/{code}/artefacts/`, with its own SHA-256 and a
 `captured` custody event. Comments whose node can't be screenshotted are logged
 and skipped; their text record is still saved.
+
+## Original timestamps (items)
+
+Each item may carry `published_at` (ISO-8601, +08:00) and
+`engagement.published_time = { display, tooltip, basis, note }`:
+`display` is the label Facebook showed ("3d"), `tooltip` the exact hover text,
+`basis` is `"exact"` (from the tooltip), `"approximate"` (calculated from the
+label and capture time — never presented as exact) or `"unknown"`.
+Disable with job option `timestamps: false`.
