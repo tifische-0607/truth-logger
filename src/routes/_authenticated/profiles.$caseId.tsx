@@ -93,6 +93,98 @@ function Delta({ now, prev }: { now?: number | undefined; prev?: number | undefi
   );
 }
 
+const METRICS = [
+  ["Followers", "followers"],
+  ["Following", "following"],
+  ["Likes", "likes"],
+] as const;
+
+type Change = {
+  handle: string;
+  name: string | null;
+  label: string;
+  from: number;
+  to: number;
+  diff: number;
+  pct: number | null;
+  fromAt: string;
+  toAt: string;
+};
+
+function computeChanges(authors: Author[]): Change[] {
+  const out: Change[] = [];
+  for (const a of authors) {
+    for (const [label, key] of METRICS) {
+      const withVal = a.captures.filter((c) => c.stated[key] != null);
+      if (withVal.length < 2) continue;
+      const first = withVal[0]!;
+      const last = withVal[withVal.length - 1]!;
+      const from = first.stated[key]!;
+      const to = last.stated[key]!;
+      if (from === to) continue;
+      out.push({
+        handle: a.handle,
+        name: a.name,
+        label,
+        from,
+        to,
+        diff: to - from,
+        pct: from === 0 ? null : ((to - from) / from) * 100,
+        fromAt: first.capturedAt,
+        toAt: last.capturedAt,
+      });
+    }
+  }
+  return out.sort(
+    (x, y) =>
+      Math.abs(y.pct ?? Infinity) - Math.abs(x.pct ?? Infinity) || Math.abs(y.diff) - Math.abs(x.diff),
+  );
+}
+
+function BiggestChanges({ authors }: { authors: Author[] }) {
+  const changes = computeChanges(authors);
+  return (
+    <section className="panel space-y-3 p-4">
+      <div>
+        <h2 className="font-semibold">Biggest changes between captures</h2>
+        <p className="text-muted-foreground text-xs">
+          First vs latest capture for each author, largest change first. Counts are as stated on the
+          profile page when captured.
+        </p>
+      </div>
+      {changes.length === 0 ? (
+        <p className="text-muted-foreground text-sm">
+          No count changes yet. An author needs at least two captures with counts to compare.
+        </p>
+      ) : (
+        <ol className="space-y-2">
+          {changes.slice(0, 10).map((c, i) => (
+            <li
+              key={`${c.handle}-${c.label}`}
+              className={`flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border p-3 text-sm ${i === 0 ? "border-primary bg-primary/10" : ""}`}
+            >
+              <span className="font-medium">{c.name ?? "Name not stated"}</span>
+              <span className="hash text-muted-foreground text-xs">@{c.handle}</span>
+              <span className="bg-muted rounded px-2 py-0.5 text-xs uppercase">{c.label}</span>
+              <span>
+                {fmt(c.from)} → {fmt(c.to)}
+              </span>
+              <span className={c.diff > 0 ? "text-success font-semibold" : "text-destructive font-semibold"}>
+                {c.diff > 0 ? "+" : ""}
+                {c.diff.toLocaleString()}
+                {c.pct != null ? ` (${c.pct > 0 ? "+" : ""}${c.pct.toFixed(1)}%)` : ""}
+              </span>
+              <span className="text-muted-foreground text-xs">
+                {formatDateTime(c.fromAt)} → {formatDateTime(c.toAt)}
+              </span>
+            </li>
+          ))}
+        </ol>
+      )}
+    </section>
+  );
+}
+
 function ProfileTrailPage() {
   const { caseId } = Route.useParams();
   const q = useQuery({ queryKey: ["profile-trail", caseId], queryFn: () => fetchProfiles(caseId) });
