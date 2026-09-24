@@ -174,6 +174,54 @@ function TimelinePage() {
         ) : null}
       </section>
 
+      <section className="panel mb-6 flex flex-wrap items-end gap-4 p-4">
+        <div>
+          <label htmlFor="tl-from" className="text-muted-foreground mb-1 block text-xs uppercase">
+            Published from
+          </label>
+          <input
+            id="tl-from"
+            type="date"
+            value={from}
+            max={to || undefined}
+            onChange={(e) => setFrom(e.target.value)}
+            className="border-input bg-background min-h-12 rounded-lg border px-3 text-sm"
+          />
+        </div>
+        <div>
+          <label htmlFor="tl-to" className="text-muted-foreground mb-1 block text-xs uppercase">
+            Published until
+          </label>
+          <input
+            id="tl-to"
+            type="date"
+            value={to}
+            min={from || undefined}
+            onChange={(e) => setTo(e.target.value)}
+            className="border-input bg-background min-h-12 rounded-lg border px-3 text-sm"
+          />
+        </div>
+        {filtering ? (
+          <button
+            type="button"
+            onClick={() => {
+              setFrom("");
+              setTo("");
+            }}
+            className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
+          >
+            <X className="size-4" /> Clear dates
+          </button>
+        ) : null}
+        <p className="text-muted-foreground text-sm">
+          {filtering
+            ? `Showing ${visible.length} of ${dated.length} dated items${
+                undated.length ? ` · ${undated.length} without a date are always listed below` : ""
+              }`
+            : "Pick a start or end date to show only that period."}
+        </p>
+      </section>
+
       {dated.length === 0 ? (
         <p className="text-muted-foreground panel p-5 text-sm">
           No items in this case have a published date yet. Dates are saved on captures made after the
