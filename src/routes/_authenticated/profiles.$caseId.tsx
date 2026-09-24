@@ -131,6 +131,7 @@ function ProfileTrailPage() {
         </section>
       ) : (
         <div className="space-y-8">
+          <BiggestChanges authors={authors} />
           {authors.map((author) => (
             <section key={author.handle} className="space-y-3">
               <div className="flex items-center gap-3">
