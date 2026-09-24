@@ -143,16 +143,19 @@ function TranscriptCard({ entry }: { entry: Entry }) {
         <span className="text-muted-foreground text-xs">Captured {formatDateTime(entry.capturedAt)}</span>
       </div>
       <div className="mt-1 text-sm font-medium">
-        {entry.author ?? "Unknown author"}{" "}
+        {entry.author ?? "Insufficient data"}{" "}
         <span className="text-muted-foreground font-mono text-xs">@{entry.handle}</span>
       </div>
       {entry.url ? (
         <div className="text-muted-foreground mt-1 truncate font-mono text-xs">{entry.url}</div>
       ) : null}
       {entry.audio ? (
-        <div className="text-muted-foreground mt-2 flex items-center gap-2 text-xs">
-          <FileAudio className="size-4" /> Original audio saved ·{" "}
-          <span className="hash">{entry.audio.sha256?.slice(0, 16)}…</span>
+        <div className="mt-2">
+          <div className="text-muted-foreground flex items-center gap-2 text-xs">
+            <FileAudio className="size-4" /> Original audio saved
+          </div>
+          <div className="hash text-muted-foreground mt-1 break-all">{entry.audio.filename}</div>
+          <div className="hash mt-1 break-all">SHA-256 {entry.audio.sha256 ?? "—"}</div>
         </div>
       ) : null}
 
