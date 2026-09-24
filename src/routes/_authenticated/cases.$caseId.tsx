@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Camera, ChevronRight, Printer, Tablet , UserRound } from "lucide-react";
+import { Camera, ChevronRight, Printer, Tablet , UserRound, FileText } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -132,6 +132,13 @@ function CasePage() {
               className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
             >
               <UserRound className="size-4" /> Profile trail
+            </Link>
+            <Link
+              to="/transcripts/$caseId"
+              params={{ caseId }}
+              className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
+            >
+              <FileText className="size-4" /> Transcript trail
             </Link>
             <Link
               to="/review/$caseId"
