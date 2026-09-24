@@ -167,7 +167,12 @@ function ItemPage() {
     (a) => LIVE_KINDS.has(a.kind) || RENDER_KINDS.has(a.kind) || a.kind === "media",
   );
   const account = data.accounts;
-  const engagement = (data.engagement ?? {}) as Record<string, unknown>;
+  const { published_time: publishedTime, ...engagement } = (data.engagement ?? {}) as Record<
+    string,
+    unknown
+  > & {
+    published_time?: { display?: string; tooltip?: string; basis?: string; note?: string };
+  };
 
   return (
     <>
@@ -244,7 +249,24 @@ function ItemPage() {
           <Fact label="Type" value={data.item_type} />
           <Fact label="Author" value={data.author_name ?? "—"} />
           <Fact label="Author handle" value={data.author_handle ?? "—"} mono />
-          <Fact label="Published" value={formatDateTime(data.published_at)} />
+          <div>
+            <Fact
+              label="Published (original time)"
+              value={
+                data.published_at
+                  ? `${formatDateTime(data.published_at)}${publishedTime?.basis === "approximate" ? " (approximate)" : ""}`
+                  : "—"
+              }
+            />
+            {publishedTime ? (
+              <p className="text-muted-foreground mt-1 text-xs">
+                {publishedTime.basis === "exact"
+                  ? `Exact – from Facebook's hover text "${publishedTime.tooltip}"`
+                  : (publishedTime.note ?? "")}
+                {publishedTime.display ? ` · shown on page as "${publishedTime.display}"` : ""}
+              </p>
+            ) : null}
+          </div>
           <Fact label="Captured" value={formatDateTime(data.captured_at)} />
           <Fact label="Platform ID" value={data.platform_item_id ?? "—"} mono />
           <Fact label="Folder" value={data.folder_path ?? "—"} mono />
