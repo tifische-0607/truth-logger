@@ -179,6 +179,13 @@ _PROFILE_JS = """
   const h1 = main.querySelector('h1');
   const all = (main.innerText || '').split('\\n').map(s => s.trim()).filter(Boolean);
   const find = (re) => { const l = all.find(s => re.test(s)); return l || null; };
+  // Facebook often shows "582K followers • 120 following" on ONE line, so pull
+  // the number that sits directly before each keyword, not the line's first number.
+  const header = all.slice(0, 40).join(' • ');
+  const near = (word) => {
+    const m = header.match(new RegExp('([\\d][\\d.,]*\\s*[KkMm]?)\\s+' + word + '\\b', 'i'));
+    return m ? m[1] + ' ' + word : null;
+  };
   let intro = [];
   const introIdx = all.findIndex(s => /^Intro$/i.test(s));
   if (introIdx >= 0) intro = all.slice(introIdx + 1, introIdx + 12);
@@ -188,9 +195,9 @@ _PROFILE_JS = """
   const idm = idMeta.match(/(?:profile|page)\\/(\\d+)/);
   return {
     display_name: h1 ? h1.innerText.trim() : og('og:title'),
-    followers_text: find(/\\bfollowers?\\b/i),
-    following_text: find(/\\bfollowing\\b/i),
-    likes_text: find(/\\blikes?\\b/i),
+    followers_text: near('followers?'),
+    following_text: near('following'),
+    likes_text: near('likes?'),
     verified,
     intro,
     og_description: og('og:description'),
