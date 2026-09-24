@@ -263,6 +263,7 @@ def _build_records(job: dict[str, Any], data: dict[str, Any], handler: str) -> d
         },
         "account_snapshot": snapshot,
         "items": items,
+        "_comment_uploads": comment_uploads,
     }
 
 
