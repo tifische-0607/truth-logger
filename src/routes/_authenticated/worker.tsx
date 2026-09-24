@@ -215,6 +215,10 @@ function WorkerDashboard() {
   const workerLogs = logJob ? visibleWorkerLogs(logJob.log) : [];
   const failedJobs = rows.filter((j) => j.status === "failed");
   const latestFailure = failedJobs[0] ?? null;
+  const finished = rows.filter((j) => j.finished_at && (j.status === "done" || j.status === "failed"));
+  const lastRun = finished.sort(
+    (a, b) => new Date(b.finished_at!).getTime() - new Date(a.finished_at!).getTime(),
+  )[0] ?? null;
 
   // Keep the live output pinned to the newest line while a capture runs.
   const logBoxRef = useRef<HTMLDivElement>(null);
