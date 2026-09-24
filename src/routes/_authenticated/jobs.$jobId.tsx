@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/AppShell";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatDateTime } from "@/lib/format";
+import { visibleWorkerLogs } from "@/lib/capture-progress";
 
 export const Route = createFileRoute("/_authenticated/jobs/$jobId")({
   component: JobDetail,
@@ -112,7 +113,9 @@ function JobDetail() {
             <div className="bg-sidebar text-sidebar-foreground max-h-[26rem] overflow-y-auto p-4">
               {data.log?.length ? (
                 <pre className="hash whitespace-pre-wrap">
-                  {data.log.map((line, i) => `${String(i + 1).padStart(3, "0")}  ${line}`).join("\n")}
+                  {visibleWorkerLogs(data.log)
+                    .map((line, i) => `${String(i + 1).padStart(3, "0")}  ${line}`)
+                    .join("\n")}
                 </pre>
               ) : (
                 <p className="text-sidebar-foreground/60 text-sm">
