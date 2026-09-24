@@ -12,12 +12,12 @@ import { Label } from "@/components/ui/label";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — FB Evidence Monitor" },
+      { title: "Sign in — SpyGlass V2" },
       {
         name: "description",
         content: "Sign in to the private evidence workspace for Facebook capture and custody.",
       },
-      { property: "og:title", content: "Sign in — FB Evidence Monitor" },
+      { property: "og:title", content: "Sign in — SpyGlass V2" },
       {
         property: "og:description",
         content: "Sign in to the private evidence workspace for Facebook capture and custody.",
@@ -89,7 +89,7 @@ function AuthPage() {
       <div className="w-full max-w-md">
         <div className="text-sidebar-foreground mb-8 flex flex-col items-center gap-3 text-center">
           <img src="/app-icon.png" alt="" width={72} height={72} className="rounded-2xl" />
-          <h1 className="text-2xl font-bold tracking-tight">FB Evidence Monitor</h1>
+          <h1 className="text-2xl font-bold tracking-tight">SpyGlass V2</h1>
           <p className="text-sidebar-foreground/60 text-sm">
             Evidence capture and chain of custody
           </p>

@@ -1,6 +1,6 @@
 {
-  "name": "FB Evidence Monitor",
-  "short_name": "Evidence",
+  "name": "SpyGlass V2",
+  "short_name": "SpyGlass",
   "description": "Collect Facebook posts and comments as legal evidence with a full chain of custody.",
   "start_url": "/dashboard",
   "scope": "/",

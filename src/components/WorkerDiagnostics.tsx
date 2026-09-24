@@ -9,7 +9,7 @@ import { formatDateTime, timeAgo } from "@/lib/format";
 
 function report(d: WorkerDiagnostics): string {
   const lines = [
-    "FB Evidence Monitor — worker troubleshooting report",
+    "SpyGlass V2 — worker troubleshooting report",
     `Generated: ${d.checkedAt}`,
     `Base URL:  ${d.baseUrl}`,
     "",

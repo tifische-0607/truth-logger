@@ -19,13 +19,13 @@ import {
 export const Route = createFileRoute("/_authenticated/team")({
   head: () => ({
     meta: [
-      { title: "Team & case assignment — FB Evidence Monitor" },
+      { title: "Team & case assignment — SpyGlass V2" },
       {
         name: "description",
         content:
           "Grant investigator access and assign cases so only assigned investigators can verify and export them.",
       },
-      { property: "og:title", content: "Team & case assignment — FB Evidence Monitor" },
+      { property: "og:title", content: "Team & case assignment — SpyGlass V2" },
       {
         property: "og:description",
         content: "Manage investigators and which cases each of them can work on.",

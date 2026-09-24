@@ -15,13 +15,13 @@ import { formatDateTime, timeAgo } from "@/lib/format";
 export const Route = createFileRoute("/_authenticated/queue")({
   head: () => ({
     meta: [
-      { title: "Capture queue — FB Evidence Monitor" },
+      { title: "Capture queue — SpyGlass V2" },
       {
         name: "description",
         content:
           "Queue Facebook captures by hand from an iPad and watch each request move from queued to captured.",
       },
-      { property: "og:title", content: "Capture queue — FB Evidence Monitor" },
+      { property: "og:title", content: "Capture queue — SpyGlass V2" },
       {
         property: "og:description",
         content: "Manually queue Facebook captures and track their status.",

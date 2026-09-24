@@ -14,13 +14,13 @@ import { Textarea } from "@/components/ui/textarea";
 export const Route = createFileRoute("/_authenticated/templates")({
   head: () => ({
     meta: [
-      { title: "Case templates — FB Evidence Monitor" },
+      { title: "Case templates — SpyGlass V2" },
       {
         name: "description",
         content:
           "Define the fields and required artefacts for each kind of investigation so every new case follows the same shape.",
       },
-      { property: "og:title", content: "Case templates — FB Evidence Monitor" },
+      { property: "og:title", content: "Case templates — SpyGlass V2" },
       {
         property: "og:description",
         content: "Reusable field and artefact checklists for new investigations.",

@@ -11,7 +11,7 @@ import { getCachedCase, offlineFirst, queueCustodyEvent, useOnline } from "@/lib
 
 export const Route = createFileRoute("/_authenticated/review/$caseId")({
   head: ({ params }) => {
-    const title = `Review CASE-${params.caseId} — FB Evidence Monitor`;
+    const title = `Review CASE-${params.caseId} — SpyGlass V2`;
     const description =
       "iPad review deck: swipe through captured screenshots and renders for a case, with pinch-to-zoom and chain-of-custody details.";
     return {
