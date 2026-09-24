@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Clapperboard, FileText, MessageSquare, CornerDownRight } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, Clapperboard, FileText, MessageSquare, CornerDownRight, X } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/AppShell";
