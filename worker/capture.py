@@ -40,7 +40,8 @@ def sha256_file(path: Path) -> str:
 
 
 _NO_HANDLE = {"share", "watch", "reel", "reels", "story.php", "permalink.php",
-              "groups", "photo", "photo.php", "video.php", "events", "l.php", ""}
+              "groups", "photo", "photo.php", "video.php", "events", "l.php", "help",
+              "policies", "privacy", "business", "settings", "login", "legal", "ads", ""}
 
 
 def handle_from_url(url: str) -> str:
@@ -123,7 +124,8 @@ _EXTRACT_JS = """
   const root = posts[0] || document.querySelector('div[role="main"]');
   const isProfileLink = (a) => {
     const h = a.getAttribute('href') || '';
-    return h && !/comment_id|\\/photo|\\/videos\\/|\\/posts\\/|\\/reel|\\/share|\\/hashtag|\\/watch|#/.test(h)
+    return h && !/comment_id|\\/photo|\\/videos\\/|\\/posts\\/|\\/reel|\\/share|\\/hashtag|\\/watch|\\/help|\\/policies|\\/privacy|\\/business|\\/settings|\\/login|\\/l\\.php|\\/legal|\\/ads|#/.test(h)
+      && !a.closest('[role="dialog"], [role="alert"], [role="banner"], [role="navigation"]')
       && (a.innerText || '').trim().length > 1;
   };
   const pickAuthor = (node) => {
