@@ -16,6 +16,8 @@ export const Route = createFileRoute("/_authenticated/settings")({
 function SettingsPage() {
   const worker = useWorkerStatus();
   const [handler, setHandler] = useState("");
+  const publicIp =
+    (worker.data as { public_ip?: string | null } | null | undefined)?.public_ip ?? null;
 
   useEffect(() => {
     setHandler(localStorage.getItem("fbem.handler") ?? "");
