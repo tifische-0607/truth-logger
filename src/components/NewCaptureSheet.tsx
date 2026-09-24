@@ -130,6 +130,33 @@ export function NewCaptureSheet({
     if (!newCase && caseId && incidents.data && incidents.data.length === 0) setNewIncident(true);
   }, [newCase, caseId, incidents.data]);
 
+  // Auto-number: next case = YEAR-NNN (max for this year + 1)
+  useEffect(() => {
+    if (!newCase || !cases.data) return;
+    const year = new Date().getFullYear();
+    let max = 0;
+    for (const c of cases.data) {
+      const m = /^(\d{4})-(\d+)$/.exec(c.id);
+      if (m && Number(m[1]) === year) max = Math.max(max, Number(m[2]));
+    }
+    setCaseId(`${year}-${String(max + 1).padStart(3, "0")}`);
+  }, [newCase, cases.data]);
+
+  // Auto-number: next incident = max incident number in case + 1
+  useEffect(() => {
+    if (newCase) {
+      setIncidentId("01");
+      return;
+    }
+    if (!newIncident || !incidents.data) return;
+    let max = 0;
+    for (const i of incidents.data) {
+      const n = Number.parseInt(i.incident_id, 10);
+      if (Number.isFinite(n)) max = Math.max(max, n);
+    }
+    setIncidentId(String(max + 1).padStart(2, "0"));
+  }, [newCase, newIncident, incidents.data]);
+
   const submit = useMutation({
     mutationFn: async () => {
       if (!url.trim()) throw new Error("A Facebook URL is required");
