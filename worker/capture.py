@@ -348,6 +348,7 @@ def capture_post(
             headless=False,  # Facebook is far friendlier to a real window
             viewport={"width": 1280, "height": 1800},
             locale="en-GB",
+            timezone_id="Asia/Kuala_Lumpur",  # tooltip times are read as +08:00
             **({"proxy": {"server": proxy_url}} if proxy_url else {}),
         )
         page = context.pages[0] if context.pages else context.new_page()
@@ -378,6 +379,12 @@ def capture_post(
                 break
         data = page.evaluate(_EXTRACT_JS)
         log(f"Parsed post and {len(data.get('comments') or [])} comment nodes")
+        if options.get("timestamps", True):
+            from .timestamps import read_timestamps
+            stamps = read_timestamps(page, log)
+            data["post_timestamp"] = stamps.get("post")
+            for c in data.get("comments") or []:
+                c["timestamp"] = stamps.get(f"c{c.get('index', 0)}")
         if progress:
             progress(45, "Post and comments processed")
 
