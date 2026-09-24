@@ -694,6 +694,7 @@ export type Database = {
           info: Json
           last_seen: string | null
           public_ip: string | null
+          restart_requested_at: string | null
           version: string | null
         }
         Insert: {
@@ -702,6 +703,7 @@ export type Database = {
           info?: Json
           last_seen?: string | null
           public_ip?: string | null
+          restart_requested_at?: string | null
           version?: string | null
         }
         Update: {
@@ -710,6 +712,7 @@ export type Database = {
           info?: Json
           last_seen?: string | null
           public_ip?: string | null
+          restart_requested_at?: string | null
           version?: string | null
         }
         Relationships: []

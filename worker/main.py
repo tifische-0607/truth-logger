@@ -55,13 +55,26 @@ def _net_failed(where: str, exc: Exception) -> None:
     print(f"[{where}] {exc} (failure {NET_FAILURES['count']}/{NET_FAILURE_LIMIT})")
 
 
+PROCESS_STARTED_AT = int(time.time())
+
+
 def _heartbeat_forever() -> None:
     while True:
         try:
-            api.heartbeat(
-                {"os": "macOS", "work_dir": str(config.WORK_DIR), **_boot_info()}
+            resp = api.heartbeat(
+                {
+                    "os": "macOS",
+                    "work_dir": str(config.WORK_DIR),
+                    "process_started_at": PROCESS_STARTED_AT,
+                    **_boot_info(),
+                }
             )
             _net_ok()
+            if isinstance(resp, dict) and resp.get("restart"):
+                # Restart requested from the app. Exit non-zero so launchd
+                # relaunches a fresh process (kills any stuck Chromium run).
+                print("[restart] Restart requested from the app — exiting for launchd relaunch")
+                os._exit(1)
         except Exception as exc:
             _net_failed("heartbeat", exc)
         time.sleep(config.HEARTBEAT_SECONDS)

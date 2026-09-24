@@ -1,0 +1,1 @@
+ALTER TABLE public.worker_status ADD COLUMN IF NOT EXISTS restart_requested_at timestamptz;

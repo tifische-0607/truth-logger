@@ -35,7 +35,17 @@ export const Route = createFileRoute("/api/public/worker-heartbeat")({
           info: (body.info ?? {}) as never,
         });
         if (error) return jsonResponse({ error: error.message }, 500);
-        return jsonResponse({ ok: true, last_seen: now });
+
+        // Restart requested from the app after this worker process started?
+        const { data: st } = await supabaseAdmin
+          .from("worker_status")
+          .select("restart_requested_at")
+          .eq("id", "worker")
+          .maybeSingle();
+        const reqAt = st?.restart_requested_at ? Date.parse(st.restart_requested_at) / 1000 : 0;
+        const started = Number((body.info ?? {})["process_started_at"] ?? 0);
+        const restart = reqAt > 0 && started > 0 && reqAt > started;
+        return jsonResponse({ ok: true, last_seen: now, restart });
       },
     },
   },
