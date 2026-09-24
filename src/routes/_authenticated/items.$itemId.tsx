@@ -182,7 +182,7 @@ function ItemPage() {
                   className="group text-left"
                   onClick={() => {
                     setViewer(a);
-                    void logAccess(a, itemId, "Viewed full-size in FB Evidence Monitor");
+                    void logAccess(a, itemId, "Viewed full-size in SpyGlass V2");
                   }}
                 >
                   <EvidenceThumb path={a.storage_path} />
@@ -334,7 +334,7 @@ function ItemPage() {
                         variant="ghost"
                         size="sm"
                         onClick={async () => {
-                          await logAccess(a, itemId, "Downloaded from FB Evidence Monitor");
+                          await logAccess(a, itemId, "Downloaded from SpyGlass V2");
                           const { data: signed, error } = await supabase.storage
                             .from("evidence")
                             .createSignedUrl(a.storage_path, 300, { download: a.filename });

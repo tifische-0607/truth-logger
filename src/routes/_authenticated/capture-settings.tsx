@@ -16,13 +16,13 @@ import { formatDateTime } from "@/lib/format";
 export const Route = createFileRoute("/_authenticated/capture-settings")({
   head: () => ({
     meta: [
-      { title: "Capture settings — FB Evidence Monitor" },
+      { title: "Capture settings — SpyGlass V2" },
       {
         name: "description",
         content:
           "Set the Facebook account label, proxy address and capture timeout the Mac mini uses for every queued capture.",
       },
-      { property: "og:title", content: "Capture settings — FB Evidence Monitor" },
+      { property: "og:title", content: "Capture settings — SpyGlass V2" },
       {
         property: "og:description",
         content: "Account, proxy and timeout settings applied to every queued Facebook capture.",

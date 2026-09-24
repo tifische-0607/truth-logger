@@ -81,14 +81,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "viewport",
         content: "width=device-width, initial-scale=1, viewport-fit=cover",
       },
-      { title: "FB Evidence Monitor" },
+      { title: "SpyGlass V2" },
       {
         name: "description",
         content:
           "Collect Facebook posts and comments as legal evidence with a verifiable chain of custody.",
       },
       { name: "apple-mobile-web-app-capable", content: "yes" },
-      { name: "apple-mobile-web-app-title", content: "Evidence" },
+      { name: "apple-mobile-web-app-title", content: "SpyGlass" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { name: "theme-color", content: "#1b2233" },
       { property: "og:type", content: "website" },

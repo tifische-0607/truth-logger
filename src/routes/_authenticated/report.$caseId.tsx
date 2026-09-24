@@ -9,13 +9,13 @@ import { formatBytes, formatDateTime } from "@/lib/format";
 export const Route = createFileRoute("/_authenticated/report/$caseId")({
   head: () => ({
     meta: [
-      { title: "Case report — FB Evidence Monitor" },
+      { title: "Case report — SpyGlass V2" },
       {
         name: "description",
         content:
           "Printable case report: timeline of events, chain-of-custody log and the full artefact register with SHA-256 hashes.",
       },
-      { property: "og:title", content: "Case report — FB Evidence Monitor" },
+      { property: "og:title", content: "Case report — SpyGlass V2" },
       {
         property: "og:description",
         content: "A court-ready summary of a case: timeline, custody log and artefacts.",

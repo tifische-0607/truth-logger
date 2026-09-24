@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * FB Evidence Monitor — "evidence room" design system.
+ * SpyGlass V2 — "evidence room" design system.
  * Dark navy chrome, calm paper-light content area, ink-blue accents.
  * All colours are oklch tokens. Never hardcode colours in components.
  */

@@ -24,13 +24,13 @@ import { formatDateTime } from "@/lib/format";
 export const Route = createFileRoute("/_authenticated/verify")({
   head: () => ({
     meta: [
-      { title: "Re-hash & verify — FB Evidence Monitor" },
+      { title: "Re-hash & verify — SpyGlass V2" },
       {
         name: "description",
         content:
           "Re-hash every stored artefact in a case and compare against the recorded SHA-256 values.",
       },
-      { property: "og:title", content: "Re-hash & verify — FB Evidence Monitor" },
+      { property: "og:title", content: "Re-hash & verify — SpyGlass V2" },
       {
         property: "og:description",
         content: "Integrity check for captured Facebook evidence artefacts.",

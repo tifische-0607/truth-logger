@@ -16,12 +16,12 @@ import { getCaptureProgress } from "@/lib/capture-progress";
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
-      { title: "Evidence Room | FB Evidence Monitor" },
+      { title: "Evidence Room | SpyGlass V2" },
       {
         name: "description",
         content: "Monitor Facebook evidence captures, active cases and recently preserved evidence.",
       },
-      { property: "og:title", content: "Evidence Room | FB Evidence Monitor" },
+      { property: "og:title", content: "Evidence Room | SpyGlass V2" },
       {
         property: "og:description",
         content: "Monitor Facebook evidence captures, active cases and recently preserved evidence.",
