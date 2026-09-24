@@ -34,6 +34,22 @@ export const Route = createFileRoute("/_authenticated/capture-settings")({
   component: CaptureSettingsPage,
 });
 
+type FieldRule = { keep: boolean; reason: string };
+type FieldRules = Record<string, FieldRule>;
+
+const PROFILE_FIELDS: { key: string; label: string; locked?: string }[] = [
+  { key: "display_name", label: "Full name", locked: "Always kept — identifies who posted the evidence." },
+  { key: "profile_url", label: "Profile link", locked: "Always kept — needed to trace the account." },
+  { key: "profile_screenshot", label: "Profile screenshot" },
+  { key: "platform_id", label: "Facebook account ID" },
+  { key: "verified", label: "Verified badge" },
+  { key: "followers", label: "Followers count" },
+  { key: "following", label: "Following count" },
+  { key: "likes", label: "Likes count" },
+  { key: "bio_verbatim", label: "Bio" },
+  { key: "intro_stated", label: "Intro lines (work, city, etc.)" },
+];
+
 function CaptureSettingsPage() {
   const qc = useQueryClient();
   const [saving, setSaving] = useState(false);
@@ -45,6 +61,7 @@ function CaptureSettingsPage() {
     save_pdf: true,
     notes: "",
   });
+  const [rules, setRules] = useState<FieldRules>({});
 
   const settings = useQuery({
     queryKey: ["capture-settings"],
@@ -70,9 +87,15 @@ function CaptureSettingsPage() {
       save_pdf: d.save_pdf,
       notes: d.notes ?? "",
     });
+    setRules(((d as { profile_fields?: FieldRules }).profile_fields ?? {}) as FieldRules);
   }, [settings.data]);
 
   const save = async () => {
+    const missing = PROFILE_FIELDS.find((f) => rules[f.key]?.keep === false && !rules[f.key]?.reason.trim());
+    if (missing) {
+      toast.error(`Add a reason for dropping "${missing.label}".`);
+      return;
+    }
     setSaving(true);
     try {
       const { data: userData } = await supabase.auth.getUser();
@@ -85,6 +108,7 @@ function CaptureSettingsPage() {
           expand_comments: form.expand_comments,
           save_pdf: form.save_pdf,
           notes: form.notes || null,
+          profile_fields: rules,
           updated_by: userData.user?.id ?? null,
         })
         .eq("id", "default");
@@ -184,6 +208,52 @@ function CaptureSettingsPage() {
         <p className="text-muted-foreground text-xs">
           Last changed: {settings.data?.updated_at ? formatDateTime(settings.data.updated_at) : "—"}
         </p>
+      </section>
+
+      <section className="panel space-y-4 p-5">
+        <div>
+          <h2 className="font-semibold">Profile privacy</h2>
+          <p className="text-muted-foreground text-sm">
+            Choose which author profile details the Mac mini saves. Dropped details are never
+            stored; each drop needs a reason, and it is written to the capture log. Religion,
+            politics, ethnicity, birth date and age are always dropped (PDPA).
+          </p>
+        </div>
+        <div className="divide-y">
+          {PROFILE_FIELDS.map((f) => {
+            const rule = rules[f.key] ?? { keep: true, reason: "" };
+            const set = (patch: Partial<FieldRule>) =>
+              setRules({ ...rules, [f.key]: { ...rule, ...patch } });
+            return (
+              <div key={f.key} className="space-y-2 py-3">
+                <div className="flex items-center justify-between gap-4">
+                  <Label htmlFor={`pf-${f.key}`} className="text-sm">
+                    {f.label}
+                    <span className="text-muted-foreground ml-2 text-xs">
+                      {f.locked ? "Kept" : rule.keep ? "Saved" : "Dropped"}
+                    </span>
+                  </Label>
+                  <Switch
+                    id={`pf-${f.key}`}
+                    checked={f.locked ? true : rule.keep}
+                    disabled={!!f.locked}
+                    onCheckedChange={(v) => set({ keep: v })}
+                  />
+                </div>
+                {f.locked ? (
+                  <p className="text-muted-foreground text-xs">{f.locked}</p>
+                ) : (
+                  <Input
+                    className="h-11"
+                    value={rule.reason}
+                    onChange={(e) => set({ reason: e.target.value })}
+                    placeholder={rule.keep ? "Why it's saved (e.g. shows reach of the post)" : "Why it's dropped (required)"}
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
       </section>
     </div>
   );
