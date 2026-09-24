@@ -5,7 +5,16 @@ import { ArrowLeft, Camera, Loader2, MessageSquare, Video } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/AppShell";
 import { CaptureViewer } from "@/components/CaptureViewer";
-import { formatDate, formatDateTime } from "@/lib/format";
+import { formatDateTime } from "@/lib/format";
+
+function formatDay(day: string) {
+  return new Date(`${day}T00:00:00`).toLocaleDateString(undefined, {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
 import { getCachedCase, offlineFirst } from "@/lib/offline";
 
 export const Route = createFileRoute("/_authenticated/cases/$caseId/trail")({
