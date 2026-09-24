@@ -281,7 +281,7 @@ def run_job(job: dict[str, Any]) -> None:
 
         data = record_live(job["url"], merged_options, log, progress)
     else:
-        data = capture_post(job["url"], merged_options, log, progress)
+        data = capture_post(job["url"], {**merged_options, "_job_id": job["id"]}, log, progress)
     log(f"Saved {len(data['artefacts'])} artefacts to {data['out_dir']}")
 
     records = _build_records(job, data, handler)

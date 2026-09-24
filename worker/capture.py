@@ -22,6 +22,7 @@ from typing import Any, Callable
 from playwright.sync_api import Page, sync_playwright
 
 from . import config
+from .transcript import capture_transcript, is_video_url
 
 Logger = Callable[[str], None]
 ProgressReporter = Callable[[int, str], None]
@@ -380,6 +381,12 @@ def capture_post(
                 progress(58, "Capturing author profile")
             data["profile"] = _capture_profile(context, data["author_url"], out_dir, log, record,
                                                options.get("profile_fields") or {})
+        data["transcript"] = None
+        if options.get("transcript", True) and (is_video_url(url) or is_video_url(final_url)):
+            if progress:
+                progress(60, "Downloading audio and transcribing")
+            data["transcript"] = capture_transcript(context, final_url, options.get("_job_id"),
+                                                    out_dir, log, record)
         context.close()
 
     if progress:

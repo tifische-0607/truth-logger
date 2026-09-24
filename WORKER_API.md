@@ -390,6 +390,27 @@ recorded without comparison).
 
 ---
 
+## 5b. `POST /api/public/worker-transcribe`
+
+Machine transcript of a reel/video audio track. Called by the worker when the URL is a
+reel/video (disable with `options.transcript = false`).
+
+Request: `{ "job_id": "uuid", "audio_base64": "<mp3 bytes, base64, max ~20 MB>", "format": "mp3" }`
+
+Response 200:
+```json
+{ "model": "google/gemini-2.5-flash", "language": "Malay, English", "has_speech": true,
+  "transcript_original": "[00:03] ...verbatim...", "transcript_en": "[00:03] ...English..." }
+```
+Errors: 400 missing fields, 413 too large, 402/429 AI limits, 502 AI error.
+
+The worker saves these artefacts (each hashed, with custody events via ingest):
+`reel_audio.m4a` (kind `audio_original`, the original audio from yt-dlp),
+`transcript_original.txt` (kind `transcript_original`) and `transcript_en.txt`
+(kind `transcript_en`). Both text files start with the statement
+"MACHINE TRANSCRIPT – … Not verified by a human …"; the compressed mp3 sent for
+transcription is a working copy and is never uploaded.
+
 ## 6. `POST /api/public/worker-complete`
 
 Marks the job finished.
