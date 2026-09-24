@@ -55,6 +55,10 @@ def handle_from_url(url: str) -> str:
         if first == "profile.php":
             ids = parse_qs(p.query or "").get("id") or []
             return ids[0] if ids and ids[0] else "unknown"
+        if first == "people" and len(parts) >= 3:
+            return parts[2]
+        if first == "groups" and len(parts) >= 4 and parts[2] == "user":
+            return parts[3]
         if first.lower() in _NO_HANDLE:
             return "unknown"
         return first

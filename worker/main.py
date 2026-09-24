@@ -87,12 +87,31 @@ def _folder(job: dict[str, Any], handle: str, item_code: str) -> str:
     return f"CASE-{case_id}/INC-{inc}_{date}/FB_@{handle}/{item_code}"
 
 
+def _author_handle(author_url: str | None, fallback_url: str) -> str:
+    h = handle_from_url(author_url or "")
+    return h if h != "unknown" else handle_from_url(fallback_url)
+
+
 def _build_records(job: dict[str, Any], data: dict[str, Any], handler: str) -> dict[str, Any]:
     options = job.get("options") or {}
     url = data["final_url"]
-    handle = handle_from_url(url)
+    profile = data.get("profile") or {}
+    full_name = profile.get("display_name") or data.get("author_name")
+    handle = _author_handle(data.get("author_url"), url)
     post_code = f"POST-{post_id_from_url(url)}"
     post_folder = _folder(job, handle, post_code)
+    stated = {k: v for k, v in {
+        "display_name": full_name,
+        "handle": handle if handle != "unknown" else None,
+        "profile_url": profile.get("profile_url") or data.get("author_url"),
+        "platform_id": profile.get("platform_id"),
+        "verified": profile.get("verified"),
+        "followers": profile.get("followers"),
+        "following": profile.get("following"),
+        "likes": profile.get("likes"),
+        "bio_verbatim": profile.get("bio_verbatim"),
+        "intro_stated": profile.get("intro_stated") or None,
+    }.items() if v not in (None, "", [])}
 
     def artefact_rows(item_folder: str, files: list[dict[str, Any]]) -> list[dict[str, Any]]:
         rows = []
@@ -128,9 +147,9 @@ def _build_records(job: dict[str, Any], data: dict[str, Any], handler: str) -> d
         "parent_item_code": None,
         "url": url,
         "platform_item_id": post_id_from_url(url),
-        "author_name": data.get("author_name"),
+        "author_name": full_name,
         "author_handle": handle,
-        "author_url": data.get("author_url"),
+        "author_url": stated.get("profile_url"),
         "text_original": data.get("post_text"),
         "captured_at": utcnow(),
         "folder_path": post_folder,
@@ -138,9 +157,10 @@ def _build_records(job: dict[str, Any], data: dict[str, Any], handler: str) -> d
         "custody_events": custody,
         "subject_profile": {
             "subject_type": "poster",
-            "stated": {"display_name": data.get("author_name"), "profile_url": data.get("author_url")},
-            "observed": {"captured_from": url, "capture_locale": "en-GB"},
-            "insufficient_data": not bool(data.get("author_name")),
+            "stated": stated,
+            "observed": {"captured_from": url, "capture_locale": "en-GB",
+                         "profile_page_captured": bool(profile)},
+            "insufficient_data": not bool(full_name),
         },
     }
 
@@ -169,6 +189,12 @@ def _build_records(job: dict[str, Any], data: dict[str, Any], handler: str) -> d
             parent = post_code
             item_type = "comment"
 
+        c_handle = handle_from_url(comment.get("author_url") or "")
+        c_stated = {k: v for k, v in {
+            "display_name": comment.get("author_name"),
+            "handle": c_handle if c_handle != "unknown" else None,
+            "profile_url": comment.get("author_url"),
+        }.items() if v}
         items.append(
             {
                 "item_code": code,
@@ -176,21 +202,30 @@ def _build_records(job: dict[str, Any], data: dict[str, Any], handler: str) -> d
                 "parent_item_code": parent,
                 "url": comment.get("url"),
                 "author_name": comment.get("author_name"),
+                "author_handle": c_handle,
                 "author_url": comment.get("author_url"),
                 "text_original": comment.get("text"),
                 "captured_at": utcnow(),
                 "folder_path": f"{_folder(job, handle, post_code)}/comments/{code}",
                 "subject_profile": {
                     "subject_type": "commenter",
-                    "stated": {"display_name": comment.get("author_name")},
+                    "stated": c_stated,
                     "observed": {},
-                    "insufficient_data": not bool(comment.get("text")),
+                    "insufficient_data": not bool(comment.get("author_name")),
                 },
             }
         )
 
     case_meta = job.get("case_meta") or {}
     incident_meta = job.get("incident_meta") or {}
+    snapshot = {k: v for k, v in {
+        "display_name": full_name,
+        "followers": profile.get("followers"),
+        "following": profile.get("following"),
+        "verified": profile.get("verified"),
+        "bio_verbatim": profile.get("bio_verbatim"),
+    }.items() if v is not None}
+    snapshot["captured_at"] = utcnow()
     return {
         "case": {
             "id": job.get("case_id") or "UNFILED",
@@ -206,13 +241,11 @@ def _build_records(job: dict[str, Any], data: dict[str, Any], handler: str) -> d
         "account": {
             "platform": "FB",
             "handle": handle,
-            "display_name": data.get("author_name"),
-            "profile_url": data.get("author_url"),
+            "display_name": full_name,
+            "profile_url": stated.get("profile_url"),
+            "platform_id": profile.get("platform_id"),
         },
-        "account_snapshot": {
-            "display_name": data.get("author_name"),
-            "captured_at": utcnow(),
-        },
+        "account_snapshot": snapshot,
         "items": items,
     }
 
