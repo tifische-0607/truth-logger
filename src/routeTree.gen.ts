@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedCaptureLogRouteImport } from './routes/_authenticated/capture-log'
 import { Route as AuthenticatedCaptureSettingsRouteImport } from './routes/_authenticated/capture-settings'
+import { Route as AuthenticatedCaseDatabaseRouteImport } from './routes/_authenticated/case-database'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedExportRouteImport } from './routes/_authenticated/export'
 import { Route as AuthenticatedOfflineRouteImport } from './routes/_authenticated/offline'
@@ -68,6 +69,12 @@ const AuthenticatedCaptureSettingsRoute =
   AuthenticatedCaptureSettingsRouteImport.update({
     id: '/capture-settings',
     path: '/capture-settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCaseDatabaseRoute =
+  AuthenticatedCaseDatabaseRouteImport.update({
+    id: '/case-database',
+    path: '/case-database',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -240,6 +247,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/capture-log': typeof AuthenticatedCaptureLogRoute
   '/capture-settings': typeof AuthenticatedCaptureSettingsRoute
+  '/case-database': typeof AuthenticatedCaseDatabaseRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/export': typeof AuthenticatedExportRoute
   '/offline': typeof AuthenticatedOfflineRoute
@@ -276,6 +284,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/capture-log': typeof AuthenticatedCaptureLogRoute
   '/capture-settings': typeof AuthenticatedCaptureSettingsRoute
+  '/case-database': typeof AuthenticatedCaseDatabaseRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/export': typeof AuthenticatedExportRoute
   '/offline': typeof AuthenticatedOfflineRoute
@@ -314,6 +323,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/capture-log': typeof AuthenticatedCaptureLogRoute
   '/_authenticated/capture-settings': typeof AuthenticatedCaptureSettingsRoute
+  '/_authenticated/case-database': typeof AuthenticatedCaseDatabaseRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/export': typeof AuthenticatedExportRoute
   '/_authenticated/offline': typeof AuthenticatedOfflineRoute
@@ -352,6 +362,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/capture-log'
     | '/capture-settings'
+    | '/case-database'
     | '/dashboard'
     | '/export'
     | '/offline'
@@ -388,6 +399,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/capture-log'
     | '/capture-settings'
+    | '/case-database'
     | '/dashboard'
     | '/export'
     | '/offline'
@@ -425,6 +437,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/capture-log'
     | '/_authenticated/capture-settings'
+    | '/_authenticated/case-database'
     | '/_authenticated/dashboard'
     | '/_authenticated/export'
     | '/_authenticated/offline'
@@ -505,6 +518,13 @@ declare module '@tanstack/react-router' {
       path: '/capture-settings'
       fullPath: '/capture-settings'
       preLoaderRoute: typeof AuthenticatedCaptureSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/case-database': {
+      id: '/_authenticated/case-database'
+      path: '/case-database'
+      fullPath: '/case-database'
+      preLoaderRoute: typeof AuthenticatedCaseDatabaseRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/dashboard': {
@@ -723,6 +743,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedCaptureLogRoute: typeof AuthenticatedCaptureLogRoute
   AuthenticatedCaptureSettingsRoute: typeof AuthenticatedCaptureSettingsRoute
+  AuthenticatedCaseDatabaseRoute: typeof AuthenticatedCaseDatabaseRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedExportRoute: typeof AuthenticatedExportRoute
   AuthenticatedOfflineRoute: typeof AuthenticatedOfflineRoute
@@ -751,6 +772,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCaptureLogRoute: AuthenticatedCaptureLogRoute,
   AuthenticatedCaptureSettingsRoute: AuthenticatedCaptureSettingsRoute,
+  AuthenticatedCaseDatabaseRoute: AuthenticatedCaseDatabaseRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedExportRoute: AuthenticatedExportRoute,
   AuthenticatedOfflineRoute: AuthenticatedOfflineRoute,
