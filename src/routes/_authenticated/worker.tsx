@@ -177,7 +177,8 @@ function WorkerDashboard() {
   const active = rows.filter((j) => j.status === "running");
   const current = active[0] ?? null;
   const currentProgress = current ? getCaptureProgress(current.status, current.log) : null;
-  const workerLogs = current ? visibleWorkerLogs(current.log) : [];
+  const logJob = current ?? rows.find((j) => (j.log?.length ?? 0) > 0) ?? null;
+  const workerLogs = logJob ? visibleWorkerLogs(logJob.log) : [];
 
   const sendQueued = async () => {
     setSending(true);
