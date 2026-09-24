@@ -40,7 +40,7 @@ async function loadReport(caseId: string) {
   const { data: incidents, error: incErr } = await supabase
     .from("incidents")
     .select(
-      "id, incident_id, start_date, end_date, summary, escalation_stage, narrative_themes, created_at, accounts(id, handle, platform, display_name, profile_url, account_snapshots(id, captured_at, followers, following, verified, display_name), items(id, item_code, item_type, author_name, author_handle, url, published_at, captured_at, text_original, text_en, translator_statement))",
+      "id, incident_id, start_date, end_date, summary, escalation_stage, narrative_themes, created_at, accounts(id, handle, platform, display_name, profile_url, account_snapshots(id, captured_at, followers, following, verified, display_name), items(id, item_code, item_type, author_name, author_handle, url, published_at, captured_at, text_original, text_en, translator_statement, subject_profiles(subject_type, stated)))",
     )
     .eq("case_id", caseId)
     .order("incident_id");
