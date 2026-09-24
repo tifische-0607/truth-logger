@@ -1,0 +1,1 @@
+ALTER TABLE public.capture_settings ADD COLUMN profile_fields jsonb NOT NULL DEFAULT '{}'::jsonb;
