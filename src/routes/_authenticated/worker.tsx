@@ -213,6 +213,8 @@ function WorkerDashboard() {
   const currentProgress = current ? getCaptureProgress(current.status, current.log) : null;
   const logJob = current ?? rows.find((j) => (j.log?.length ?? 0) > 0) ?? null;
   const workerLogs = logJob ? visibleWorkerLogs(logJob.log) : [];
+  const failedJobs = rows.filter((j) => j.status === "failed");
+  const latestFailure = failedJobs[0] ?? null;
 
   // Keep the live output pinned to the newest line while a capture runs.
   const logBoxRef = useRef<HTMLDivElement>(null);
