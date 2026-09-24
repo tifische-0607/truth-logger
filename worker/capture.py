@@ -22,7 +22,6 @@ from typing import Any, Callable
 from playwright.sync_api import Page, sync_playwright
 
 from . import config
-from .transcript import capture_transcript, is_video_url
 
 Logger = Callable[[str], None]
 ProgressReporter = Callable[[int, str], None]
