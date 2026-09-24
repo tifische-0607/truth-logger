@@ -483,3 +483,13 @@ When the post author's link is found, the worker opens that profile (option `cap
 
 ### Profile privacy (`settings.profile_fields`)
 `/worker-claim` returns `settings.profile_fields`: `{ "<field>": { "keep": bool, "reason": string } }`. Fields: profile_screenshot, platform_id, verified, followers, following, likes, bio_verbatim, intro_stated. When `keep` is false the worker never stores that field (screenshot not taken) and logs the drop with its reason. display_name and profile_url are always kept.
+
+### Comment screenshots
+
+With `options.comment_screenshots` (default `true`) the worker takes an element
+screenshot of every comment and reply it parses (up to `max_comments`). Each file
+is attached to that comment's own evidence item (not the post) as artefact kind
+`comment_screenshot`, filename `CASE-{case}_INC-{inc}_FB_{CMT-0001[-R01]}_screenshot.png`,
+stored under `…/comments/{code}/artefacts/`, with its own SHA-256 and a
+`captured` custody event. Comments whose node can't be screenshotted are logged
+and skipped; their text record is still saved.

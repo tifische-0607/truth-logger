@@ -170,6 +170,7 @@ def _build_records(job: dict[str, Any], data: dict[str, Any], handler: str) -> d
     counter = 0
     reply_counters: dict[str, int] = {}
     last_top_code: str | None = None
+    comment_uploads: list[tuple[str, dict[str, Any]]] = []
 
     for comment in (data.get("comments") or [])[:max_comments]:
         if not (comment.get("text") or comment.get("author_name")):
@@ -195,26 +196,41 @@ def _build_records(job: dict[str, Any], data: dict[str, Any], handler: str) -> d
             "handle": c_handle if c_handle != "unknown" else None,
             "profile_url": comment.get("author_url"),
         }.items() if v}
-        items.append(
-            {
-                "item_code": code,
-                "item_type": item_type,
-                "parent_item_code": parent,
-                "url": comment.get("url"),
-                "author_name": comment.get("author_name"),
-                "author_handle": c_handle,
-                "author_url": comment.get("author_url"),
-                "text_original": comment.get("text"),
-                "captured_at": utcnow(),
-                "folder_path": f"{_folder(job, handle, post_code)}/comments/{code}",
-                "subject_profile": {
-                    "subject_type": "commenter",
-                    "stated": c_stated,
-                    "observed": {},
-                    "insufficient_data": not bool(comment.get("author_name")),
-                },
-            }
-        )
+        c_folder = f"{_folder(job, handle, post_code)}/comments/{code}"
+        c_item: dict[str, Any] = {
+            "item_code": code,
+            "item_type": item_type,
+            "parent_item_code": parent,
+            "url": comment.get("url"),
+            "author_name": comment.get("author_name"),
+            "author_handle": c_handle,
+            "author_url": comment.get("author_url"),
+            "text_original": comment.get("text"),
+            "captured_at": utcnow(),
+            "folder_path": c_folder,
+            "subject_profile": {
+                "subject_type": "commenter",
+                "stated": c_stated,
+                "observed": {},
+                "insufficient_data": not bool(comment.get("author_name")),
+            },
+        }
+        shot = comment.get("screenshot")
+        if shot:
+            shot = {**shot, "filename": (
+                f"CASE-{job.get('case_id') or 'UNFILED'}_INC-{job.get('incident_id') or '00'}"
+                f"_FB_{code}_screenshot.png")}
+            comment_uploads.append((f"{c_folder}/artefacts/{shot['filename']}", shot))
+            c_item["artefacts"] = artefact_rows(c_folder, [shot])
+            c_item["custody_events"] = [{
+                "filename": shot["filename"],
+                "sha256": shot["sha256"],
+                "action": "captured",
+                "handler": handler,
+                "tool_version": config.VERSION,
+                "notes": f"Comment screenshot captured live in Chromium on {config.HOSTNAME}",
+            }]
+        items.append(c_item)
 
     case_meta = job.get("case_meta") or {}
     incident_meta = job.get("incident_meta") or {}
@@ -247,6 +263,7 @@ def _build_records(job: dict[str, Any], data: dict[str, Any], handler: str) -> d
         },
         "account_snapshot": snapshot,
         "items": items,
+        "_comment_uploads": comment_uploads,
     }
 
 
