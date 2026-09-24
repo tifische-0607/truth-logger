@@ -215,6 +215,10 @@ function WorkerDashboard() {
   const workerLogs = logJob ? visibleWorkerLogs(logJob.log) : [];
   const failedJobs = rows.filter((j) => j.status === "failed");
   const latestFailure = failedJobs[0] ?? null;
+  const finished = rows.filter((j) => j.finished_at && (j.status === "done" || j.status === "failed"));
+  const lastRun = finished.sort(
+    (a, b) => new Date(b.finished_at!).getTime() - new Date(a.finished_at!).getTime(),
+  )[0] ?? null;
 
   // Keep the live output pinned to the newest line while a capture runs.
   const logBoxRef = useRef<HTMLDivElement>(null);
@@ -252,7 +256,7 @@ function WorkerDashboard() {
         }
       />
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <section className="panel p-5">
           <h2 className="flex items-center gap-2 font-semibold">
             <Radio className="size-4" /> Mac mini
@@ -279,6 +283,34 @@ function WorkerDashboard() {
             </div>
             <div>Last reboot: {bootTime ? formatDateTime(bootTime) : "—"}</div>
           </dl>
+        </section>
+
+        <section className="panel p-5">
+          <h2 className="flex items-center gap-2 font-semibold">
+            <Clock3 className="size-4" /> Last run
+          </h2>
+          {lastRun ? (
+            <div className="mt-3 space-y-1.5">
+              <div className="flex items-center gap-2">
+                <StatusBadge status={lastRun.status} />
+                <span className="text-lg font-semibold">
+                  {duration(lastRun.claimed_at, lastRun.finished_at) ?? "—"}
+                </span>
+              </div>
+              <div className="text-muted-foreground text-xs">
+                Finished {timeAgo(lastRun.finished_at!)}
+              </div>
+              <Link
+                to="/jobs/$jobId"
+                params={{ jobId: lastRun.id }}
+                className="text-primary block truncate text-xs underline-offset-4 hover:underline"
+              >
+                {lastRun.url}
+              </Link>
+            </div>
+          ) : (
+            <p className="text-muted-foreground mt-3 text-sm">No captures have finished yet.</p>
+          )}
         </section>
 
         <section className="panel p-5">
