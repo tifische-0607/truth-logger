@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { Activity, Clock3, Loader2, RefreshCw, Radio, Terminal, UploadCloud } from "lucide-react";
+import { Activity, Clock3, Loader2, RefreshCw, Radio, Terminal, TriangleAlert, UploadCloud } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -436,6 +436,48 @@ function WorkerDashboard() {
           </div>
         </section>
       </div>
+
+      {latestFailure ? (
+        <section className="panel border-failed-foreground/40 p-5">
+          <div className="flex items-center justify-between gap-4">
+            <h2 className="flex items-center gap-2 font-semibold">
+              <TriangleAlert className="text-failed-foreground size-4" /> Latest failure
+            </h2>
+            <span className="text-muted-foreground text-xs">
+              {latestFailure.finished_at ? formatDateTime(latestFailure.finished_at) : ""}
+            </span>
+          </div>
+          <Link
+            to="/jobs/$jobId"
+            params={{ jobId: latestFailure.id }}
+            className="mt-2 block truncate text-sm font-medium hover:underline"
+          >
+            {latestFailure.url}
+          </Link>
+          <div className="text-muted-foreground mt-1 font-mono text-xs">
+            CASE-{latestFailure.case_id ?? "—"} · INC-{latestFailure.incident_id ?? "—"}
+          </div>
+          <div className="bg-sidebar text-sidebar-foreground mt-3 max-h-48 overflow-y-auto rounded-lg p-3">
+            <pre className="hash whitespace-pre-wrap">
+              {visibleWorkerLogs(latestFailure.log).slice(-10).join("\n") || "No log lines recorded."}
+            </pre>
+          </div>
+          {(latestFailure.warnings ?? []).length > 0 ? (
+            <ul className="text-failed-foreground mt-2 space-y-1 text-xs">
+              {(latestFailure.warnings ?? []).map((w, i) => (
+                <li key={i}>⚠ {w}</li>
+              ))}
+            </ul>
+          ) : null}
+          <div className="mt-3 flex gap-2">
+            <Button asChild variant="outline" className="h-11">
+              <Link to="/jobs/$jobId" params={{ jobId: latestFailure.id }}>
+                Open full capture
+              </Link>
+            </Button>
+          </div>
+        </section>
+      ) : null}
 
       <section className="panel">
         <div className="flex items-center justify-between px-5 pt-5 pb-3">
