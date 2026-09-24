@@ -286,7 +286,7 @@ function CaseReport() {
       </section>
 
       <section className="panel print-break p-6">
-        <h2 className="text-lg font-semibold">2. Evidence items</h2>
+        <h2 className="text-lg font-semibold">3. Evidence items</h2>
         <div className="mt-4 space-y-5">
           {data.items.map((i) => (
             <article key={i.id} className="border-b pb-4 last:border-0">
@@ -327,7 +327,7 @@ function CaseReport() {
       </section>
 
       <section className="panel print-break p-6">
-        <h2 className="text-lg font-semibold">3. Artefact register</h2>
+        <h2 className="text-lg font-semibold">4. Artefact register</h2>
         <p className="text-muted-foreground text-xs">
           Every stored file with its SHA-256 hash at capture time.
         </p>
@@ -367,7 +367,7 @@ function CaseReport() {
       </section>
 
       <section className="panel print-break p-6">
-        <h2 className="text-lg font-semibold">4. Chain-of-custody log</h2>
+        <h2 className="text-lg font-semibold">5. Chain-of-custody log</h2>
         <p className="text-muted-foreground text-xs">
           Append-only record, newest first. Entries are never edited or deleted.
         </p>
