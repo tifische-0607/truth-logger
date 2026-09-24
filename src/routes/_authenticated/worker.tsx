@@ -344,9 +344,18 @@ function WorkerDashboard() {
         <section className="panel overflow-hidden">
           <div className="flex items-center justify-between px-5 pt-5 pb-3">
             <h2 className="flex items-center gap-2 font-semibold">
-              <Terminal className="size-4" /> Worker logs
+              <Terminal className="size-4" />
+              {current ? "Live capture output" : "Worker logs"}
             </h2>
-            <span className="text-muted-foreground text-xs">{workerLogs.length} lines</span>
+            <span className="text-muted-foreground flex items-center gap-2 text-xs">
+              {current ? (
+                <span className="text-done-foreground flex items-center gap-1.5">
+                  <span className="bg-done-foreground size-2 animate-pulse rounded-full" />
+                  streaming
+                </span>
+              ) : null}
+              {workerLogs.length} lines
+            </span>
           </div>
           {logJob && !current ? (
             <div className="border-border text-muted-foreground mx-4 mb-2 rounded-lg border px-3 py-1.5 text-xs">
@@ -356,7 +365,7 @@ function WorkerDashboard() {
               </Link>
             </div>
           ) : null}
-          <div className="bg-sidebar text-sidebar-foreground h-64 overflow-y-auto p-4">
+          <div ref={logBoxRef} className="bg-sidebar text-sidebar-foreground h-80 overflow-y-auto p-4">
             {workerLogs.length ? (
               <pre className="hash whitespace-pre-wrap">
                 {workerLogs
@@ -365,7 +374,9 @@ function WorkerDashboard() {
               </pre>
             ) : (
               <p className="text-sidebar-foreground/60 text-sm">
-                {current ? "Waiting for the next worker message…" : "Logs appear when a capture starts."}
+                {current
+                  ? "Waiting for the next worker message…"
+                  : "Logs appear when a capture starts."}
               </p>
             )}
           </div>
