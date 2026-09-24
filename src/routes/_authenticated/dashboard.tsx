@@ -175,7 +175,7 @@ function Dashboard() {
         <section className="panel p-5">
           <div className="flex items-center gap-2">
             <Radio className="size-4" />
-            <h2 className="font-semibold">FridayAnalytics.org</h2>
+            <h2 className="font-semibold">FridayAnalytics - Facebook</h2>
           </div>
           <div className="mt-4 flex items-center gap-3">
             <span

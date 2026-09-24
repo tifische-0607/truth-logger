@@ -156,7 +156,7 @@ export function WorkerStatusCard() {
           )}
         />
         <span className="text-xs font-semibold">
-          {online ? "Friday Analytics online" : "Friday Analytics offline"}
+           {online ? "Friday Analytics FB  online" : "Friday Analytics offline"}
         </span>
         <Radio className="text-sidebar-foreground/50 ml-auto size-3.5" />
       </div>
