@@ -160,8 +160,38 @@ export function NewCaptureSheet({
   const submit = useMutation({
     mutationFn: async () => {
       if (!url.trim()) throw new Error("A Facebook URL is required");
-      if (!caseId.trim()) throw new Error("A case reference is required");
-      if (!incidentId.trim()) throw new Error("An incident number is required");
+
+      // Re-derive the next numbers at submit time so two captures can't collide.
+      let finalCaseId = caseId.trim();
+      let finalIncidentId = incidentId.trim();
+      if (newCase) {
+        const year = new Date().getFullYear();
+        const { data, error } = await supabase.from("cases").select("id");
+        if (error) throw error;
+        let max = 0;
+        for (const c of data ?? []) {
+          const m = /^(\d{4})-(\d+)$/.exec(c.id);
+          if (m && Number(m[1]) === year) max = Math.max(max, Number(m[2]));
+        }
+        finalCaseId = `${year}-${String(max + 1).padStart(3, "0")}`;
+      }
+      if (!finalCaseId) throw new Error("Pick a case first");
+      if (newCase || newIncident) {
+        const { data, error } = await supabase
+          .from("incidents")
+          .select("incident_id")
+          .eq("case_id", finalCaseId);
+        if (error) throw error;
+        let max = 0;
+        for (const i of data ?? []) {
+          const n = Number.parseInt(i.incident_id, 10);
+          if (Number.isFinite(n)) max = Math.max(max, n);
+        }
+        finalIncidentId = String(max + 1).padStart(2, "0");
+      }
+      if (!finalIncidentId) throw new Error("Pick an incident first");
+      setCaseId(finalCaseId);
+      setIncidentId(finalIncidentId);
 
       const { data: userData } = await supabase.auth.getUser();
 
@@ -169,8 +199,8 @@ export function NewCaptureSheet({
         .from("capture_jobs")
         .insert({
           url: url.trim(),
-          case_id: caseId.trim(),
-          incident_id: incidentId.trim(),
+          case_id: finalCaseId,
+          incident_id: finalIncidentId,
           incident_date: incidentDate || null,
           handler: handler.trim() || null,
           options,
@@ -194,7 +224,7 @@ export function NewCaptureSheet({
       if (newCase) {
         await supabase.from("cases").upsert(
           {
-            id: caseId.trim(),
+            id: finalCaseId,
             target_of_complaint: caseTarget || null,
             offence_alleged: caseOffence || null,
             jurisdiction_agency: caseAgency || null,
@@ -203,11 +233,11 @@ export function NewCaptureSheet({
           { onConflict: "id" },
         );
       }
-      if (newIncident) {
+      if (newCase || newIncident) {
         await supabase.from("incidents").upsert(
           {
-            case_id: caseId.trim(),
-            incident_id: incidentId.trim(),
+            case_id: finalCaseId,
+            incident_id: finalIncidentId,
             start_date: incidentDate || null,
             summary: incidentSummary || null,
           },
@@ -308,10 +338,13 @@ export function NewCaptureSheet({
               <div className="space-y-3">
                 <Input
                   value={caseId}
-                  onChange={(e) => setCaseId(e.target.value)}
-                  placeholder="Case reference, e.g. 2026-014"
-                  className="h-12 text-base"
+                  readOnly
+                  aria-readonly
+                  className="bg-muted h-12 font-mono text-base"
                 />
+                <p className="text-muted-foreground text-xs">
+                  Case number assigned automatically — the next number after your latest case.
+                </p>
                 <Input
                   value={caseTarget}
                   onChange={(e) => setCaseTarget(e.target.value)}
@@ -379,10 +412,13 @@ export function NewCaptureSheet({
                 <div className="space-y-3">
                   <Input
                     value={incidentId}
-                    onChange={(e) => setIncidentId(e.target.value)}
-                    placeholder="Incident number, e.g. 03"
-                    className="h-12 text-base"
+                    readOnly
+                    aria-readonly
+                    className="bg-muted h-12 font-mono text-base"
                   />
+                  <p className="text-muted-foreground text-xs">
+                    Incident number assigned automatically — the next number in this case.
+                  </p>
                   <Input
                     type="date"
                     value={incidentDate}
