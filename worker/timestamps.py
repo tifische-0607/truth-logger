@@ -31,7 +31,7 @@ MARK_JS = """
     if (!a) a = links.find((l) => { const t = (l.innerText || l.getAttribute('aria-label') || '').trim(); return t.length < 40 && rel.test(t); });
     return a || null;
   };
-  if (/instagram\.com$/.test(location.hostname)) {
+  if (/instagram\\.com$/.test(location.hostname)) {
     // Instagram puts the exact time in <time datetime="..."> (hover text = title).
     const t = document.querySelector('main time[datetime], article time[datetime], time[datetime]');
     if (!t) return {};
