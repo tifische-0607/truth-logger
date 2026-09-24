@@ -272,6 +272,7 @@ def run_job(job: dict[str, Any]) -> None:
         "timeout_seconds": settings.get("timeout_seconds") or 180,
         "expand_comments": settings.get("expand_comments", True),
         "save_pdf": settings.get("save_pdf", True),
+        "profile_fields": settings.get("profile_fields") or {},
     }
     merged_options.update(job.get("options") or {})  # per-job options win
     progress(10, "Opening Facebook in Chromium")

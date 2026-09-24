@@ -211,8 +211,14 @@ def _count(text: str | None) -> int | None:
     return int(n * mult)
 
 
+def _dropped(fields: dict[str, Any], key: str) -> bool:
+    cfg = fields.get(key)
+    return isinstance(cfg, dict) and cfg.get("keep") is False
+
+
 def _capture_profile(context: Any, profile_url: str, out_dir: Path, log: Logger,
-                     record: Any) -> dict[str, Any] | None:
+                     record: Any, fields: dict[str, Any] | None = None) -> dict[str, Any] | None:
+    fields = fields or {}
     """Open the author's profile, save a screenshot and the stated public fields."""
     try:
         page = context.new_page()
@@ -220,9 +226,10 @@ def _capture_profile(context: Any, profile_url: str, out_dir: Path, log: Logger,
         page.wait_for_timeout(3000)
         _dismiss_dialogs(page)
         raw = page.evaluate(_PROFILE_JS)
-        png = out_dir / "profile_page.png"
-        page.screenshot(path=str(png), full_page=False)
-        record(png, "profile_screenshot", "image/png")
+        if not _dropped(fields, "profile_screenshot"):
+            png = out_dir / "profile_page.png"
+            page.screenshot(path=str(png), full_page=False)
+            record(png, "profile_screenshot", "image/png")
         page.close()
     except Exception as exc:
         log(f"Profile capture skipped: {exc}")
@@ -242,6 +249,13 @@ def _capture_profile(context: Any, profile_url: str, out_dir: Path, log: Logger,
         "bio_verbatim": bio,
         "intro_stated": intro,
     }
+    dropped = []
+    for key in list(profile):
+        if key not in ("display_name", "profile_url") and _dropped(fields, key):
+            profile.pop(key)
+            dropped.append(f"{key} ({fields[key].get('reason') or 'no reason given'})")
+    if dropped:
+        log("Profile fields dropped by privacy setting: " + "; ".join(dropped))
     path = out_dir / "profile_stated.json"
     path.write_text(json.dumps(profile, ensure_ascii=False, indent=2), encoding="utf-8")
     record(path, "profile_extract", "application/json")
@@ -346,7 +360,8 @@ def capture_post(
         if options.get("capture_profile", True) and data.get("author_url"):
             if progress:
                 progress(58, "Capturing author profile")
-            data["profile"] = _capture_profile(context, data["author_url"], out_dir, log, record)
+            data["profile"] = _capture_profile(context, data["author_url"], out_dir, log, record,
+                                               options.get("profile_fields") or {})
         context.close()
 
     if progress:

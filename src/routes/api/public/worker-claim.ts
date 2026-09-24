@@ -16,7 +16,7 @@ export const Route = createFileRoute("/api/public/worker-claim")({
         const { data: settingsRow } = await supabaseAdmin
           .from("capture_settings")
           .select(
-            "fb_account_label, proxy_url, timeout_seconds, expand_comments, save_pdf, notes",
+            "fb_account_label, proxy_url, timeout_seconds, expand_comments, save_pdf, notes, profile_fields",
           )
           .eq("id", "default")
           .maybeSingle();
