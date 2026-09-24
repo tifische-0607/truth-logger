@@ -39,15 +39,27 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+_NO_HANDLE = {"share", "watch", "reel", "reels", "story.php", "permalink.php",
+              "groups", "photo", "photo.php", "video.php", "events", "l.php", ""}
+
+
 def handle_from_url(url: str) -> str:
-    m = re.search(r"facebook\.com/(?:profile\.php\?id=(\d+)|groups/[^/]+/(?:posts|permalink)/|([^/?#]+))", url)
-    if m:
-        h = m.group(1) or m.group(2)
-        # Share / watch / reel links don't carry the page handle.
-        if not h or h in ("share", "watch", "reel", "reels", "story.php", "permalink.php"):
+    """Page handle from a Facebook URL, or "unknown". Never raises."""
+    try:
+        from urllib.parse import urlparse, parse_qs
+        p = urlparse(url or "")
+        if "facebook.com" not in (p.netloc or "").lower():
             return "unknown"
-        return h
-    return "unknown"
+        parts = [s for s in (p.path or "").split("/") if s]
+        first = parts[0] if parts else ""
+        if first == "profile.php":
+            ids = parse_qs(p.query or "").get("id") or []
+            return ids[0] if ids and ids[0] else "unknown"
+        if first.lower() in _NO_HANDLE:
+            return "unknown"
+        return first
+    except Exception:
+        return "unknown"
 
 
 def post_id_from_url(url: str) -> str:
