@@ -97,6 +97,63 @@ function CaseReport() {
   const c = data.caseRow;
   const itemById = new Map(data.items.map((i) => [i.id, i]));
 
+  // Poster handles and their latest stated profile details.
+  type PosterRow = {
+    key: string;
+    account: string;
+    profileUrl: string | null;
+    displayName: string | null;
+    handle: string | null;
+    verified: boolean;
+    followers: number | null;
+    following: number | null;
+    likes: number | null;
+    bio: string | null;
+    posts: number;
+    lastCaptured: string | null;
+  };
+  const postersByKey = new Map<string, PosterRow>();
+  const toNum = (v: unknown): number | null =>
+    typeof v === "number" && Number.isFinite(v) ? v : null;
+  for (const item of data.items) {
+    if (item.item_type !== "post") continue;
+    const key = String(item.author_handle ?? item.author_name ?? item.account);
+    const posters = (item.subject_profiles ?? []).filter(
+      (p) => p.subject_type === "poster",
+    );
+    let latest: Record<string, unknown> | null = null;
+    for (const p of posters) {
+      const stated = p.stated as Record<string, unknown>;
+      if (!latest) latest = stated;
+      else {
+        // prefer the entry with the most fields filled
+        const filled = (s: Record<string, unknown>) =>
+          Object.values(s).filter((v) => v !== null && v !== undefined && v !== "").length;
+        if (filled(stated) >= filled(latest)) latest = stated;
+      }
+    }
+    const prev = postersByKey.get(key);
+    postersByKey.set(key, {
+      key,
+      account: item.account,
+      profileUrl: String(latest?.["profile_url"] ?? item.url ?? "") || null,
+      displayName: String(
+        latest?.["display_name"] ?? item.author_name ?? "",
+      ) || null,
+      handle: String(latest?.["handle"] ?? item.author_handle ?? "") || null,
+      verified: Boolean(latest?.["verified"]),
+      followers: toNum(latest?.["followers"]) ?? prev?.followers ?? null,
+      following: toNum(latest?.["following"]) ?? prev?.following ?? null,
+      likes: toNum(latest?.["likes"]) ?? prev?.likes ?? null,
+      bio: (String(latest?.["bio_verbatim"] ?? "") || null) ?? prev?.bio ?? null,
+      posts: (prev?.posts ?? 0) + 1,
+      lastCaptured: item.captured_at,
+    });
+  }
+  const posters = [...postersByKey.values()].sort((a, b) =>
+    String(a.handle ?? a.key).localeCompare(String(b.handle ?? b.key)),
+  );
+
   const timeline = [
     ...data.incidents.map((inc) => ({
       at: inc.start_date ? `${inc.start_date}T00:00:00Z` : inc.created_at,
