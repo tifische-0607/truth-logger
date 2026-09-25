@@ -337,6 +337,13 @@ def run_job(job: dict[str, Any]) -> None:
         log(f"Uploaded {artefact['filename']} ({artefact['size_bytes']} bytes)")
         progress(65 + round(((index + 1) / artefact_count) * 20), f"Uploaded {index + 1} of {len(artefacts)} artefacts")
 
+    comment_uploads = records.get("_comment_uploads") or []
+    for c_index, (storage_path, shot) in enumerate(comment_uploads):
+        payload = Path(shot["path"]).read_bytes()
+        api.upload(storage_path, payload, shot.get("mime_type") or "image/png")
+        log(f"Uploaded comment screenshot {shot['filename']} ({shot.get('size_bytes', len(payload))} bytes)")
+        progress(85 + round(((c_index + 1) / len(comment_uploads)) * 5), f"Uploaded {c_index + 1} of {len(comment_uploads)} comment screenshots")
+
     progress(90, "Writing evidence records")
     log("Writing records to the evidence database")
     result = api.ingest(job_id, records)
