@@ -148,6 +148,7 @@ _EXTRACT_JS = """
   const authorLink = pickAuthor(root);
 
   const comments = posts.slice(1).map((node, i) => {
+    node.setAttribute('data-fbem-cmt', String(i));  // stable handle for the screenshot step
     const a = pickAuthor(node);
     const body = node.querySelector('div[dir="auto"]');
     const time = node.querySelector('a[href*="comment_id"]');
@@ -286,19 +287,45 @@ def _screenshot_comments(page: Page, comments: list[dict[str, Any]], out_dir: Pa
     """Element screenshot of every comment node; attaches file info to comment['screenshot']."""
     shots_dir = out_dir / "comments"
     shots_dir.mkdir(exist_ok=True)
-    nodes = page.locator('div[role="article"]')
     saved = 0
     for comment in comments[:limit]:
         if not (comment.get("text") or comment.get("author_name")):
             continue
-        idx = int(comment.get("index", 0)) + 1  # node 0 is the post itself
+        ci = int(comment.get("index", 0))
+        idx = ci + 1
         path = shots_dir / f"comment_{idx:04d}.png"
         try:
-            node = nodes.nth(idx)
-            node.scroll_into_view_if_needed(timeout=3000)
-            node.screenshot(path=str(path), timeout=8000)
+            # Facebook often reports comment nodes as "not visible" to Playwright
+            # (zero-size wrappers, virtualised lists). Scroll with plain JS and
+            # clip a viewport screenshot to the node's real on-screen box instead.
+            box = page.evaluate(
+                """(i) => {
+                  let el = document.querySelector(`[data-fbem-cmt="${i}"]`);
+                  if (!el) return null;
+                  let r = el.getBoundingClientRect();
+                  if (r.width < 2 || r.height < 2) {
+                    const inner = Array.from(el.querySelectorAll('div'))
+                      .find(d => { const b = d.getBoundingClientRect(); return b.width > 50 && b.height > 20; });
+                    if (!inner) return null;
+                    el = inner;
+                  }
+                  el.scrollIntoView({block: 'center'});
+                  r = el.getBoundingClientRect();
+                  return {x: r.left, y: r.top, width: r.width, height: r.height,
+                          vw: window.innerWidth, vh: window.innerHeight};
+                }""",
+                ci,
+            )
+            if not box:
+                raise RuntimeError("comment not rendered on page")
+            page.wait_for_timeout(250)
+            x = max(0, box["x"]); y = max(0, box["y"])
+            w = min(box["width"], box["vw"] - x); h = min(box["height"], box["vh"] - y)
+            if w < 2 or h < 2:
+                raise RuntimeError("comment outside visible area")
+            page.screenshot(path=str(path), clip={"x": x, "y": y, "width": w, "height": h}, timeout=8000)
         except Exception as exc:
-            log(f"Comment {idx} screenshot skipped: {exc}")
+            log(f"Comment {idx} screenshot skipped: {str(exc).splitlines()[0]}")
             continue
         comment["screenshot"] = {
             "path": path,
