@@ -89,3 +89,14 @@ def complete(job_id: str, status: str, result: dict[str, Any] | None = None) -> 
         {"job_id": job_id, "status": status, "result": result or {}},
         timeout=60,
     )
+
+
+def watch_due() -> list[dict[str, Any]]:
+    return _post("/api/public/worker-watch-due", {}, timeout=30).get("targets") or []
+
+
+def watch_report(target_id: str, post_urls: list[str], error: str | None = None) -> dict[str, Any]:
+    body: dict[str, Any] = {"target_id": target_id, "post_urls": post_urls}
+    if error:
+        body["error"] = error[:1000]
+    return _post("/api/public/worker-watch-report", body, timeout=60)

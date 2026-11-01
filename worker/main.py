@@ -381,6 +381,29 @@ def _run_safely(job: dict[str, Any], slot: int, free: "queue.Queue[int]") -> Non
         free.put(slot)
 
 
+WATCH_STATE = {"last": 0.0}
+
+
+def _watch_safely(targets: list[dict[str, Any]], slot: int, free: "queue.Queue[int]") -> None:
+    from . import watch
+    try:
+        config.use_slot(slot)
+        for t in targets:
+            try:
+                links = watch.scan(t)
+                r = api.watch_report(t["id"], links)
+                print(f"[watch] {t['url']}: {r.get('new', 0)} new, {r.get('queued', 0)} queued"
+                      + (" (baseline)" if r.get("baseline") else ""))
+            except Exception as exc:
+                print(f"[watch] {t.get('url')} failed: {exc}")
+                try:
+                    api.watch_report(t["id"], [], error=str(exc).splitlines()[0])
+                except Exception:
+                    pass
+    finally:
+        free.put(slot)
+
+
 def main() -> None:
     import queue
 
@@ -395,6 +418,16 @@ def main() -> None:
             print(f"[net] {NET_FAILURE_LIMIT} consecutive failures — exiting for restart")
             os._exit(1)
         slot = free.get()  # wait for a free capture slot
+        if time.time() - WATCH_STATE["last"] >= 60:
+            WATCH_STATE["last"] = time.time()
+            try:
+                targets = api.watch_due()
+            except Exception as exc:
+                targets = []
+                print(f"[watch] could not fetch watched pages: {exc}")
+            if targets:
+                threading.Thread(target=_watch_safely, args=(targets, slot, free), daemon=True).start()
+                continue
         try:
             job = api.claim()
             _net_ok()

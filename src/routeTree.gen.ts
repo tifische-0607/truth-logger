@@ -24,6 +24,7 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as AuthenticatedTemplatesRouteImport } from './routes/_authenticated/templates'
 import { Route as AuthenticatedVerifyRouteImport } from './routes/_authenticated/verify'
+import { Route as AuthenticatedWatchlistRouteImport } from './routes/_authenticated/watchlist'
 import { Route as AuthenticatedWorkerRouteImport } from './routes/_authenticated/worker'
 import { Route as AuthenticatedCasesIndexRouteImport } from './routes/_authenticated/cases.index'
 import { Route as AuthenticatedCasesCaseIdRouteImport } from './routes/_authenticated/cases.$caseId'
@@ -45,6 +46,8 @@ import { Route as ApiPublicWorkerIngestRouteImport } from './routes/api/public/w
 import { Route as ApiPublicWorkerLogRouteImport } from './routes/api/public/worker-log'
 import { Route as ApiPublicWorkerTranscribeRouteImport } from './routes/api/public/worker-transcribe'
 import { Route as ApiPublicWorkerUploadUrlRouteImport } from './routes/api/public/worker-upload-url'
+import { Route as ApiPublicWorkerWatchDueRouteImport } from './routes/api/public/worker-watch-due'
+import { Route as ApiPublicWorkerWatchReportRouteImport } from './routes/api/public/worker-watch-report'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -120,6 +123,11 @@ const AuthenticatedTemplatesRoute = AuthenticatedTemplatesRouteImport.update({
 const AuthenticatedVerifyRoute = AuthenticatedVerifyRouteImport.update({
   id: '/verify',
   path: '/verify',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedWatchlistRoute = AuthenticatedWatchlistRouteImport.update({
+  id: '/watchlist',
+  path: '/watchlist',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedWorkerRoute = AuthenticatedWorkerRouteImport.update({
@@ -241,6 +249,17 @@ const ApiPublicWorkerUploadUrlRoute =
     path: '/api/public/worker-upload-url',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicWorkerWatchDueRoute = ApiPublicWorkerWatchDueRouteImport.update({
+  id: '/api/public/worker-watch-due',
+  path: '/api/public/worker-watch-due',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicWorkerWatchReportRoute =
+  ApiPublicWorkerWatchReportRouteImport.update({
+    id: '/api/public/worker-watch-report',
+    path: '/api/public/worker-watch-report',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -257,6 +276,7 @@ export interface FileRoutesByFullPath {
   '/team': typeof AuthenticatedTeamRoute
   '/templates': typeof AuthenticatedTemplatesRoute
   '/verify': typeof AuthenticatedVerifyRoute
+  '/watchlist': typeof AuthenticatedWatchlistRoute
   '/worker': typeof AuthenticatedWorkerRoute
   '/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
   '/comments/$caseId': typeof AuthenticatedCommentsCaseIdRoute
@@ -277,6 +297,8 @@ export interface FileRoutesByFullPath {
   '/api/public/worker-log': typeof ApiPublicWorkerLogRoute
   '/api/public/worker-transcribe': typeof ApiPublicWorkerTranscribeRoute
   '/api/public/worker-upload-url': typeof ApiPublicWorkerUploadUrlRoute
+  '/api/public/worker-watch-due': typeof ApiPublicWorkerWatchDueRoute
+  '/api/public/worker-watch-report': typeof ApiPublicWorkerWatchReportRoute
   '/cases/': typeof AuthenticatedCasesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -294,6 +316,7 @@ export interface FileRoutesByTo {
   '/team': typeof AuthenticatedTeamRoute
   '/templates': typeof AuthenticatedTemplatesRoute
   '/verify': typeof AuthenticatedVerifyRoute
+  '/watchlist': typeof AuthenticatedWatchlistRoute
   '/worker': typeof AuthenticatedWorkerRoute
   '/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
   '/comments/$caseId': typeof AuthenticatedCommentsCaseIdRoute
@@ -314,6 +337,8 @@ export interface FileRoutesByTo {
   '/api/public/worker-log': typeof ApiPublicWorkerLogRoute
   '/api/public/worker-transcribe': typeof ApiPublicWorkerTranscribeRoute
   '/api/public/worker-upload-url': typeof ApiPublicWorkerUploadUrlRoute
+  '/api/public/worker-watch-due': typeof ApiPublicWorkerWatchDueRoute
+  '/api/public/worker-watch-report': typeof ApiPublicWorkerWatchReportRoute
   '/cases': typeof AuthenticatedCasesIndexRoute
 }
 export interface FileRoutesById {
@@ -333,6 +358,7 @@ export interface FileRoutesById {
   '/_authenticated/team': typeof AuthenticatedTeamRoute
   '/_authenticated/templates': typeof AuthenticatedTemplatesRoute
   '/_authenticated/verify': typeof AuthenticatedVerifyRoute
+  '/_authenticated/watchlist': typeof AuthenticatedWatchlistRoute
   '/_authenticated/worker': typeof AuthenticatedWorkerRoute
   '/_authenticated/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
   '/_authenticated/comments/$caseId': typeof AuthenticatedCommentsCaseIdRoute
@@ -353,6 +379,8 @@ export interface FileRoutesById {
   '/api/public/worker-log': typeof ApiPublicWorkerLogRoute
   '/api/public/worker-transcribe': typeof ApiPublicWorkerTranscribeRoute
   '/api/public/worker-upload-url': typeof ApiPublicWorkerUploadUrlRoute
+  '/api/public/worker-watch-due': typeof ApiPublicWorkerWatchDueRoute
+  '/api/public/worker-watch-report': typeof ApiPublicWorkerWatchReportRoute
   '/_authenticated/cases/': typeof AuthenticatedCasesIndexRoute
 }
 export interface FileRouteTypes {
@@ -372,6 +400,7 @@ export interface FileRouteTypes {
     | '/team'
     | '/templates'
     | '/verify'
+    | '/watchlist'
     | '/worker'
     | '/cases/$caseId'
     | '/comments/$caseId'
@@ -392,6 +421,8 @@ export interface FileRouteTypes {
     | '/api/public/worker-log'
     | '/api/public/worker-transcribe'
     | '/api/public/worker-upload-url'
+    | '/api/public/worker-watch-due'
+    | '/api/public/worker-watch-report'
     | '/cases/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -409,6 +440,7 @@ export interface FileRouteTypes {
     | '/team'
     | '/templates'
     | '/verify'
+    | '/watchlist'
     | '/worker'
     | '/cases/$caseId'
     | '/comments/$caseId'
@@ -429,6 +461,8 @@ export interface FileRouteTypes {
     | '/api/public/worker-log'
     | '/api/public/worker-transcribe'
     | '/api/public/worker-upload-url'
+    | '/api/public/worker-watch-due'
+    | '/api/public/worker-watch-report'
     | '/cases'
   id:
     | '__root__'
@@ -447,6 +481,7 @@ export interface FileRouteTypes {
     | '/_authenticated/team'
     | '/_authenticated/templates'
     | '/_authenticated/verify'
+    | '/_authenticated/watchlist'
     | '/_authenticated/worker'
     | '/_authenticated/cases/$caseId'
     | '/_authenticated/comments/$caseId'
@@ -467,6 +502,8 @@ export interface FileRouteTypes {
     | '/api/public/worker-log'
     | '/api/public/worker-transcribe'
     | '/api/public/worker-upload-url'
+    | '/api/public/worker-watch-due'
+    | '/api/public/worker-watch-report'
     | '/_authenticated/cases/'
   fileRoutesById: FileRoutesById
 }
@@ -481,6 +518,8 @@ export interface RootRouteChildren {
   ApiPublicWorkerLogRoute: typeof ApiPublicWorkerLogRoute
   ApiPublicWorkerTranscribeRoute: typeof ApiPublicWorkerTranscribeRoute
   ApiPublicWorkerUploadUrlRoute: typeof ApiPublicWorkerUploadUrlRoute
+  ApiPublicWorkerWatchDueRoute: typeof ApiPublicWorkerWatchDueRoute
+  ApiPublicWorkerWatchReportRoute: typeof ApiPublicWorkerWatchReportRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -588,6 +627,13 @@ declare module '@tanstack/react-router' {
       path: '/verify'
       fullPath: '/verify'
       preLoaderRoute: typeof AuthenticatedVerifyRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/watchlist': {
+      id: '/_authenticated/watchlist'
+      path: '/watchlist'
+      fullPath: '/watchlist'
+      preLoaderRoute: typeof AuthenticatedWatchlistRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/worker': {
@@ -737,6 +783,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWorkerUploadUrlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/worker-watch-due': {
+      id: '/api/public/worker-watch-due'
+      path: '/api/public/worker-watch-due'
+      fullPath: '/api/public/worker-watch-due'
+      preLoaderRoute: typeof ApiPublicWorkerWatchDueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/worker-watch-report': {
+      id: '/api/public/worker-watch-report'
+      path: '/api/public/worker-watch-report'
+      fullPath: '/api/public/worker-watch-report'
+      preLoaderRoute: typeof ApiPublicWorkerWatchReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -753,6 +813,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRoute
   AuthenticatedTemplatesRoute: typeof AuthenticatedTemplatesRoute
   AuthenticatedVerifyRoute: typeof AuthenticatedVerifyRoute
+  AuthenticatedWatchlistRoute: typeof AuthenticatedWatchlistRoute
   AuthenticatedWorkerRoute: typeof AuthenticatedWorkerRoute
   AuthenticatedCasesCaseIdRoute: typeof AuthenticatedCasesCaseIdRoute
   AuthenticatedCommentsCaseIdRoute: typeof AuthenticatedCommentsCaseIdRoute
@@ -782,6 +843,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedTeamRoute: AuthenticatedTeamRoute,
   AuthenticatedTemplatesRoute: AuthenticatedTemplatesRoute,
   AuthenticatedVerifyRoute: AuthenticatedVerifyRoute,
+  AuthenticatedWatchlistRoute: AuthenticatedWatchlistRoute,
   AuthenticatedWorkerRoute: AuthenticatedWorkerRoute,
   AuthenticatedCasesCaseIdRoute: AuthenticatedCasesCaseIdRoute,
   AuthenticatedCommentsCaseIdRoute: AuthenticatedCommentsCaseIdRoute,
@@ -812,6 +874,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicWorkerLogRoute: ApiPublicWorkerLogRoute,
   ApiPublicWorkerTranscribeRoute: ApiPublicWorkerTranscribeRoute,
   ApiPublicWorkerUploadUrlRoute: ApiPublicWorkerUploadUrlRoute,
+  ApiPublicWorkerWatchDueRoute: ApiPublicWorkerWatchDueRoute,
+  ApiPublicWorkerWatchReportRoute: ApiPublicWorkerWatchReportRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
