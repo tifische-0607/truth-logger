@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/AppShell";
+import { HomeVaultExport } from "@/components/HomeVaultExport";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,13 +26,13 @@ import { formatBytes } from "@/lib/format";
 export const Route = createFileRoute("/_authenticated/export")({
   head: () => ({
     meta: [
-      { title: "Export bundle — SpyGlass V2" },
+      { title: "Export bundle — Evidence Hub" },
       {
         name: "description",
         content:
           "Verify every artefact, then build a ZIP evidence bundle with manifest and chain-of-custody log.",
       },
-      { property: "og:title", content: "Export bundle — SpyGlass V2" },
+      { property: "og:title", content: "Export bundle — Evidence Hub" },
       {
         property: "og:description",
         content: "Court-ready ZIP bundle of captured Facebook evidence with SHA-256 manifest.",
@@ -187,6 +188,8 @@ function ExportPage() {
           {report.verify.results.length > 0 && <VerifyResultTable report={report.verify} />}
         </div>
       )}
+
+      {caseId ? <HomeVaultExport caseId={caseId} recipient={recipient} purpose={purpose} /> : null}
     </div>
   );
 }

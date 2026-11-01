@@ -15,12 +15,15 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedCaptureLogRouteImport } from './routes/_authenticated/capture-log'
 import { Route as AuthenticatedCaptureSettingsRouteImport } from './routes/_authenticated/capture-settings'
 import { Route as AuthenticatedCaseDatabaseRouteImport } from './routes/_authenticated/case-database'
+import { Route as AuthenticatedCollectRouteImport } from './routes/_authenticated/collect'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedExportRouteImport } from './routes/_authenticated/export'
 import { Route as AuthenticatedOfflineRouteImport } from './routes/_authenticated/offline'
 import { Route as AuthenticatedQueueRouteImport } from './routes/_authenticated/queue'
 import { Route as AuthenticatedResultsRouteImport } from './routes/_authenticated/results'
+import { Route as AuthenticatedSearchRouteImport } from './routes/_authenticated/search'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedSourcesRouteImport } from './routes/_authenticated/sources'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as AuthenticatedTemplatesRouteImport } from './routes/_authenticated/templates'
 import { Route as AuthenticatedVerifyRouteImport } from './routes/_authenticated/verify'
@@ -48,6 +51,7 @@ import { Route as ApiPublicWorkerTranscribeRouteImport } from './routes/api/publ
 import { Route as ApiPublicWorkerUploadUrlRouteImport } from './routes/api/public/worker-upload-url'
 import { Route as ApiPublicWorkerWatchDueRouteImport } from './routes/api/public/worker-watch-due'
 import { Route as ApiPublicWorkerWatchReportRouteImport } from './routes/api/public/worker-watch-report'
+import { Route as AuthenticatedVaultSourceIdRecordIdRouteImport } from './routes/_authenticated/vault.$sourceId.$recordId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -80,6 +84,11 @@ const AuthenticatedCaseDatabaseRoute =
     path: '/case-database',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedCollectRoute = AuthenticatedCollectRouteImport.update({
+  id: '/collect',
+  path: '/collect',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -105,9 +114,19 @@ const AuthenticatedResultsRoute = AuthenticatedResultsRouteImport.update({
   path: '/results',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSearchRoute = AuthenticatedSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSourcesRoute = AuthenticatedSourcesRouteImport.update({
+  id: '/sources',
+  path: '/sources',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
@@ -260,6 +279,12 @@ const ApiPublicWorkerWatchReportRoute =
     path: '/api/public/worker-watch-report',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedVaultSourceIdRecordIdRoute =
+  AuthenticatedVaultSourceIdRecordIdRouteImport.update({
+    id: '/vault/$sourceId/$recordId',
+    path: '/vault/$sourceId/$recordId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -267,12 +292,15 @@ export interface FileRoutesByFullPath {
   '/capture-log': typeof AuthenticatedCaptureLogRoute
   '/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/case-database': typeof AuthenticatedCaseDatabaseRoute
+  '/collect': typeof AuthenticatedCollectRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/export': typeof AuthenticatedExportRoute
   '/offline': typeof AuthenticatedOfflineRoute
   '/queue': typeof AuthenticatedQueueRoute
   '/results': typeof AuthenticatedResultsRoute
+  '/search': typeof AuthenticatedSearchRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/sources': typeof AuthenticatedSourcesRoute
   '/team': typeof AuthenticatedTeamRoute
   '/templates': typeof AuthenticatedTemplatesRoute
   '/verify': typeof AuthenticatedVerifyRoute
@@ -300,6 +328,7 @@ export interface FileRoutesByFullPath {
   '/api/public/worker-watch-due': typeof ApiPublicWorkerWatchDueRoute
   '/api/public/worker-watch-report': typeof ApiPublicWorkerWatchReportRoute
   '/cases/': typeof AuthenticatedCasesIndexRoute
+  '/vault/$sourceId/$recordId': typeof AuthenticatedVaultSourceIdRecordIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -307,12 +336,15 @@ export interface FileRoutesByTo {
   '/capture-log': typeof AuthenticatedCaptureLogRoute
   '/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/case-database': typeof AuthenticatedCaseDatabaseRoute
+  '/collect': typeof AuthenticatedCollectRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/export': typeof AuthenticatedExportRoute
   '/offline': typeof AuthenticatedOfflineRoute
   '/queue': typeof AuthenticatedQueueRoute
   '/results': typeof AuthenticatedResultsRoute
+  '/search': typeof AuthenticatedSearchRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/sources': typeof AuthenticatedSourcesRoute
   '/team': typeof AuthenticatedTeamRoute
   '/templates': typeof AuthenticatedTemplatesRoute
   '/verify': typeof AuthenticatedVerifyRoute
@@ -340,6 +372,7 @@ export interface FileRoutesByTo {
   '/api/public/worker-watch-due': typeof ApiPublicWorkerWatchDueRoute
   '/api/public/worker-watch-report': typeof ApiPublicWorkerWatchReportRoute
   '/cases': typeof AuthenticatedCasesIndexRoute
+  '/vault/$sourceId/$recordId': typeof AuthenticatedVaultSourceIdRecordIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -349,12 +382,15 @@ export interface FileRoutesById {
   '/_authenticated/capture-log': typeof AuthenticatedCaptureLogRoute
   '/_authenticated/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/_authenticated/case-database': typeof AuthenticatedCaseDatabaseRoute
+  '/_authenticated/collect': typeof AuthenticatedCollectRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/export': typeof AuthenticatedExportRoute
   '/_authenticated/offline': typeof AuthenticatedOfflineRoute
   '/_authenticated/queue': typeof AuthenticatedQueueRoute
   '/_authenticated/results': typeof AuthenticatedResultsRoute
+  '/_authenticated/search': typeof AuthenticatedSearchRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/sources': typeof AuthenticatedSourcesRoute
   '/_authenticated/team': typeof AuthenticatedTeamRoute
   '/_authenticated/templates': typeof AuthenticatedTemplatesRoute
   '/_authenticated/verify': typeof AuthenticatedVerifyRoute
@@ -382,6 +418,7 @@ export interface FileRoutesById {
   '/api/public/worker-watch-due': typeof ApiPublicWorkerWatchDueRoute
   '/api/public/worker-watch-report': typeof ApiPublicWorkerWatchReportRoute
   '/_authenticated/cases/': typeof AuthenticatedCasesIndexRoute
+  '/_authenticated/vault/$sourceId/$recordId': typeof AuthenticatedVaultSourceIdRecordIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -391,12 +428,15 @@ export interface FileRouteTypes {
     | '/capture-log'
     | '/capture-settings'
     | '/case-database'
+    | '/collect'
     | '/dashboard'
     | '/export'
     | '/offline'
     | '/queue'
     | '/results'
+    | '/search'
     | '/settings'
+    | '/sources'
     | '/team'
     | '/templates'
     | '/verify'
@@ -424,6 +464,7 @@ export interface FileRouteTypes {
     | '/api/public/worker-watch-due'
     | '/api/public/worker-watch-report'
     | '/cases/'
+    | '/vault/$sourceId/$recordId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -431,12 +472,15 @@ export interface FileRouteTypes {
     | '/capture-log'
     | '/capture-settings'
     | '/case-database'
+    | '/collect'
     | '/dashboard'
     | '/export'
     | '/offline'
     | '/queue'
     | '/results'
+    | '/search'
     | '/settings'
+    | '/sources'
     | '/team'
     | '/templates'
     | '/verify'
@@ -464,6 +508,7 @@ export interface FileRouteTypes {
     | '/api/public/worker-watch-due'
     | '/api/public/worker-watch-report'
     | '/cases'
+    | '/vault/$sourceId/$recordId'
   id:
     | '__root__'
     | '/'
@@ -472,12 +517,15 @@ export interface FileRouteTypes {
     | '/_authenticated/capture-log'
     | '/_authenticated/capture-settings'
     | '/_authenticated/case-database'
+    | '/_authenticated/collect'
     | '/_authenticated/dashboard'
     | '/_authenticated/export'
     | '/_authenticated/offline'
     | '/_authenticated/queue'
     | '/_authenticated/results'
+    | '/_authenticated/search'
     | '/_authenticated/settings'
+    | '/_authenticated/sources'
     | '/_authenticated/team'
     | '/_authenticated/templates'
     | '/_authenticated/verify'
@@ -505,6 +553,7 @@ export interface FileRouteTypes {
     | '/api/public/worker-watch-due'
     | '/api/public/worker-watch-report'
     | '/_authenticated/cases/'
+    | '/_authenticated/vault/$sourceId/$recordId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -566,6 +615,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCaseDatabaseRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/collect': {
+      id: '/_authenticated/collect'
+      path: '/collect'
+      fullPath: '/collect'
+      preLoaderRoute: typeof AuthenticatedCollectRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -601,11 +657,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedResultsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/search': {
+      id: '/_authenticated/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof AuthenticatedSearchRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/settings': {
       id: '/_authenticated/settings'
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/sources': {
+      id: '/_authenticated/sources'
+      path: '/sources'
+      fullPath: '/sources'
+      preLoaderRoute: typeof AuthenticatedSourcesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/team': {
@@ -797,6 +867,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWorkerWatchReportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/vault/$sourceId/$recordId': {
+      id: '/_authenticated/vault/$sourceId/$recordId'
+      path: '/vault/$sourceId/$recordId'
+      fullPath: '/vault/$sourceId/$recordId'
+      preLoaderRoute: typeof AuthenticatedVaultSourceIdRecordIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -804,12 +881,15 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCaptureLogRoute: typeof AuthenticatedCaptureLogRoute
   AuthenticatedCaptureSettingsRoute: typeof AuthenticatedCaptureSettingsRoute
   AuthenticatedCaseDatabaseRoute: typeof AuthenticatedCaseDatabaseRoute
+  AuthenticatedCollectRoute: typeof AuthenticatedCollectRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedExportRoute: typeof AuthenticatedExportRoute
   AuthenticatedOfflineRoute: typeof AuthenticatedOfflineRoute
   AuthenticatedQueueRoute: typeof AuthenticatedQueueRoute
   AuthenticatedResultsRoute: typeof AuthenticatedResultsRoute
+  AuthenticatedSearchRoute: typeof AuthenticatedSearchRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedSourcesRoute: typeof AuthenticatedSourcesRoute
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRoute
   AuthenticatedTemplatesRoute: typeof AuthenticatedTemplatesRoute
   AuthenticatedVerifyRoute: typeof AuthenticatedVerifyRoute
@@ -828,18 +908,22 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedTrailCaseIdRoute: typeof AuthenticatedTrailCaseIdRoute
   AuthenticatedTranscriptsCaseIdRoute: typeof AuthenticatedTranscriptsCaseIdRoute
   AuthenticatedCasesIndexRoute: typeof AuthenticatedCasesIndexRoute
+  AuthenticatedVaultSourceIdRecordIdRoute: typeof AuthenticatedVaultSourceIdRecordIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCaptureLogRoute: AuthenticatedCaptureLogRoute,
   AuthenticatedCaptureSettingsRoute: AuthenticatedCaptureSettingsRoute,
   AuthenticatedCaseDatabaseRoute: AuthenticatedCaseDatabaseRoute,
+  AuthenticatedCollectRoute: AuthenticatedCollectRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedExportRoute: AuthenticatedExportRoute,
   AuthenticatedOfflineRoute: AuthenticatedOfflineRoute,
   AuthenticatedQueueRoute: AuthenticatedQueueRoute,
   AuthenticatedResultsRoute: AuthenticatedResultsRoute,
+  AuthenticatedSearchRoute: AuthenticatedSearchRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedSourcesRoute: AuthenticatedSourcesRoute,
   AuthenticatedTeamRoute: AuthenticatedTeamRoute,
   AuthenticatedTemplatesRoute: AuthenticatedTemplatesRoute,
   AuthenticatedVerifyRoute: AuthenticatedVerifyRoute,
@@ -858,6 +942,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedTrailCaseIdRoute: AuthenticatedTrailCaseIdRoute,
   AuthenticatedTranscriptsCaseIdRoute: AuthenticatedTranscriptsCaseIdRoute,
   AuthenticatedCasesIndexRoute: AuthenticatedCasesIndexRoute,
+  AuthenticatedVaultSourceIdRecordIdRoute:
+    AuthenticatedVaultSourceIdRecordIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

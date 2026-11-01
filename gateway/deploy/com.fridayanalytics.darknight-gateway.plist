@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Installed by gateway/deploy/install.sh. Paths are filled in by the script. -->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.fridayanalytics.darknight-gateway</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>__VENV__/bin/python</string>
+    <string>-m</string>
+    <string>darknight_gateway</string>
+    <string>serve</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>__GATEWAY_DIR__</string>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>ThrottleInterval</key>
+  <integer>10</integer>
+  <key>StandardOutPath</key>
+  <string>__STATE_DIR__/gateway.log</string>
+  <key>StandardErrorPath</key>
+  <string>__STATE_DIR__/gateway.err.log</string>
+</dict>
+</plist>

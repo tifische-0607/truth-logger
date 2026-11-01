@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/AppShell";
 import { formatDateTime } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/summary/$caseId")({
-  head: () => ({ meta: [{ title: "Case summary — SpyGlass V2" }] }),
+  head: () => ({ meta: [{ title: "Case summary — Evidence Hub" }] }),
   component: CaseSummaryPage,
 });
 

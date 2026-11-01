@@ -1,0 +1,99 @@
+# DarkNight → Evidence Hub mapping
+#
+# The gateway never guesses DarkNight's schema. Every read is one of the SQL
+# queries below, and each query must return the column names listed under
+# "returns". Change the FROM/JOIN/WHERE parts to fit DarkNight; keep the
+# output column names (use AS aliases) and the %(name)s parameters.
+#
+# PLACEHOLDER: the table and column names here (findings, finding_files, …)
+# are assumptions written before the real schema arrived. Replace them with
+# the real ones from darknight_schema.sql, then run:
+#     python -m darknight_gateway check
+# which runs every query once and reports missing columns.
+#
+# All queries run in a READ ONLY transaction as a read-only database user.
+
+source_id: darknight
+
+# Short code shown in the hub, e.g. DN-TT-00418. Built by the queries below.
+record_code_hint: "DN-<platform letters>-<id padded to 5>"
+
+queries:
+
+  count:
+    sql: |
+      SELECT count(*) AS total FROM findings
+    returns: [total]
+
+  search:
+    # %(q)s may be NULL (no text filter). Filters may each be NULL.
+    sql: |
+      SELECT
+        f.id::text                                     AS record_id,
+        'DN-' || upper(left(f.platform, 2)) || '-' || lpad(f.id::text, 5, '0') AS record_code,
+        f.platform                                     AS platform,
+        f.item_type                                    AS item_type,
+        f.handle                                       AS author_handle,
+        f.published_at                                 AS published_at,
+        f.collected_at                                 AS collected_at,
+        left(coalesce(f.text_original, ''), 280)       AS snippet,
+        f.classification                               AS classification,
+        (SELECT count(*) FROM finding_files ff WHERE ff.finding_id = f.id) AS file_count
+      FROM findings f
+      WHERE (%(q)s::text IS NULL
+             OR f.text_original ILIKE '%%' || %(q)s || '%%'
+             OR f.text_en       ILIKE '%%' || %(q)s || '%%'
+             OR f.handle        ILIKE '%%' || %(q)s || '%%')
+        AND (%(platform)s::text  IS NULL OR f.platform  = %(platform)s)
+        AND (%(item_type)s::text IS NULL OR f.item_type = %(item_type)s)
+        AND (%(date_from)s::date IS NULL OR f.published_at >= %(date_from)s::date)
+        AND (%(date_to)s::date   IS NULL OR f.published_at <  %(date_to)s::date + 1)
+      ORDER BY f.published_at DESC NULLS LAST, f.id DESC
+      LIMIT %(limit)s OFFSET %(offset)s
+    returns: [record_id, record_code, platform, item_type, author_handle, published_at,
+              collected_at, snippet, classification, file_count]
+
+  record:
+    sql: |
+      SELECT
+        f.id::text                                     AS record_id,
+        'DN-' || upper(left(f.platform, 2)) || '-' || lpad(f.id::text, 5, '0') AS record_code,
+        f.platform                                     AS platform,
+        f.item_type                                    AS item_type,
+        f.handle                                       AS author_handle,
+        f.profile_url                                  AS author_url,
+        f.post_url                                     AS url,
+        f.published_at                                 AS published_at,
+        f.collected_at                                 AS collected_at,
+        f.collected_by                                 AS collected_by,
+        f.text_original                                AS text_original,
+        f.language                                     AS language,
+        f.text_en                                      AS text_en,
+        f.translator                                   AS translator_statement,
+        f.classification                               AS classification,
+        concat_ws(', ', f.location_area, f.location_state) AS location,
+        f.outcome                                      AS outcome,
+        jsonb_build_object('severity', f.severity, 'confidence', f.confidence) AS extra
+      FROM findings f
+      WHERE f.id::text = %(record_id)s
+    returns: [record_id, record_code, platform, item_type, author_handle, author_url, url,
+              published_at, collected_at, collected_by, text_original, language, text_en,
+              translator_statement, classification, location, outcome, extra]
+
+  files:
+    # rel_path is relative to NAS_EVIDENCE_ROOT. sha256_stored may be NULL when
+    # DarkNight doesn't keep hashes; the gateway then computes and caches them.
+    sql: |
+      SELECT
+        ff.id::text        AS file_id,
+        ff.filename        AS filename,
+        ff.kind            AS kind,
+        ff.mime_type       AS mime_type,
+        ff.size_bytes      AS size_bytes,
+        ff.rel_path        AS rel_path,
+        ff.sha256          AS sha256_stored,
+        ff.created_at      AS created_at
+      FROM finding_files ff
+      WHERE ff.finding_id::text = %(record_id)s
+      ORDER BY ff.created_at, ff.id
+    returns: [file_id, filename, kind, mime_type, size_bytes, rel_path, sha256_stored, created_at]

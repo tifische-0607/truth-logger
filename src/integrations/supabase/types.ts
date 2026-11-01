@@ -426,6 +426,8 @@ export type Database = {
           item_id: string | null
           notes: string | null
           sha256: string | null
+          source_id: string
+          evidence_ref_id: string | null
           tool_version: string | null
         }
         Insert: {
@@ -438,6 +440,8 @@ export type Database = {
           item_id?: string | null
           notes?: string | null
           sha256?: string | null
+          source_id?: string
+          evidence_ref_id?: string | null
           tool_version?: string | null
         }
         Update: {
@@ -450,9 +454,25 @@ export type Database = {
           item_id?: string | null
           notes?: string | null
           sha256?: string | null
+          source_id?: string
+          evidence_ref_id?: string | null
           tool_version?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "custody_events_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "sources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "custody_events_evidence_ref_id_fkey"
+            columns: ["evidence_ref_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_refs"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "custody_events_artefact_id_fkey"
             columns: ["artefact_id"]
@@ -465,6 +485,79 @@ export type Database = {
             columns: ["item_id"]
             isOneToOne: false
             referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      evidence_refs: {
+        Row: {
+          case_id: string
+          files: Json
+          id: string
+          incident_id: string | null
+          item_type: string | null
+          linked_at: string
+          linked_by: string | null
+          linked_by_name: string | null
+          note: string | null
+          platform: string | null
+          published_at: string | null
+          record_code: string
+          record_id: string
+          source_id: string
+        }
+        Insert: {
+          case_id: string
+          files?: Json
+          id?: string
+          incident_id?: string | null
+          item_type?: string | null
+          linked_at?: string
+          linked_by?: string | null
+          linked_by_name?: string | null
+          note?: string | null
+          platform?: string | null
+          published_at?: string | null
+          record_code: string
+          record_id: string
+          source_id: string
+        }
+        Update: {
+          case_id?: string
+          files?: Json
+          id?: string
+          incident_id?: string | null
+          item_type?: string | null
+          linked_at?: string
+          linked_by?: string | null
+          linked_by_name?: string | null
+          note?: string | null
+          platform?: string | null
+          published_at?: string | null
+          record_code?: string
+          record_id?: string
+          source_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evidence_refs_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_refs_incident_id_fkey"
+            columns: ["incident_id"]
+            isOneToOne: false
+            referencedRelation: "incidents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_refs_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "sources"
             referencedColumns: ["id"]
           },
         ]
@@ -618,6 +711,42 @@ export type Database = {
           email?: string | null
           id?: string
           is_owner?: boolean
+        }
+        Relationships: []
+      }
+      sources: {
+        Row: {
+          created_at: string
+          description: string | null
+          enabled: boolean
+          gateway_url: string | null
+          id: string
+          kind: string
+          name: string
+          settings: Json
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          enabled?: boolean
+          gateway_url?: string | null
+          id: string
+          kind: string
+          name: string
+          settings?: Json
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          enabled?: boolean
+          gateway_url?: string | null
+          id?: string
+          kind?: string
+          name?: string
+          settings?: Json
+          updated_at?: string
         }
         Relationships: []
       }

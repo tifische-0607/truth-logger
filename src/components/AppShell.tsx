@@ -1,23 +1,20 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type ReactNode } from "react";
 import {
-  CloudDownload,
+  Camera,
+  Database,
   FolderClosed,
-  Gauge,
-  Images,
-  LayoutTemplate,
+  House,
   ListPlus,
   Loader2,
-  ScrollText,
-  SlidersHorizontal,
   LogOut,
-  PackageCheck,
+  Plus,
   Radio,
-  Settings,
-  ShieldCheck,
+  Search,
   Server,
-  Users,
+  ShieldCheck,
+  SlidersHorizontal,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -25,23 +22,22 @@ import { cn } from "@/lib/utils";
 import { timeAgo } from "@/lib/format";
 import { OfflineBanner } from "@/components/OfflineBanner";
 import { NewCaptureSheet } from "@/components/NewCaptureSheet";
+import { CaseWorkspaceHeader, caseIdFromPath } from "@/components/CaseWorkspaceHeader";
+import { SectionTabs, sectionForPath, type SectionId } from "@/components/SectionTabs";
+import { SourceStatusPanel } from "@/components/SourceStatusPanel";
 
-const nav = [
-  { to: "/dashboard", label: "Dashboard", icon: Gauge },
-  { to: "/cases", label: "Cases", icon: FolderClosed },
-  { to: "/case-database", label: "Case database", icon: FolderClosed },
-  { to: "/watchlist", label: "Watched pages", icon: FolderClosed },
-  { to: "/verify", label: "Verify", icon: ShieldCheck },
-  { to: "/offline", label: "Offline", icon: CloudDownload },
-  { to: "/export", label: "Export", icon: PackageCheck },
-  { to: "/queue", label: "Queue", icon: ListPlus },
-  { to: "/worker", label: "Worker", icon: Server },
-  { to: "/results", label: "Results", icon: Images },
-  { to: "/capture-log", label: "Capture log", icon: ScrollText },
-  { to: "/capture-settings", label: "Capture setup", icon: SlidersHorizontal },
-  { to: "/templates", label: "Templates", icon: LayoutTemplate },
-  { to: "/team", label: "Team", icon: Users },
-  { to: "/settings", label: "Settings", icon: Settings },
+/** Five workspaces, then Sources and Admin. Each entry owns a section of paths. */
+const workspaces = [
+  { to: "/dashboard", label: "Home", icon: House, section: "home" },
+  { to: "/search", label: "Search", icon: Search, section: "search" },
+  { to: "/cases", label: "Cases", icon: FolderClosed, section: "cases" },
+  { to: "/collect", label: "Collect", icon: Camera, section: "collect" },
+  { to: "/verify", label: "Integrity", icon: ShieldCheck, section: "integrity" },
+] as const;
+
+const system = [
+  { to: "/sources", label: "Sources", icon: Database, section: "sources" },
+  { to: "/team", label: "Admin", icon: SlidersHorizontal, section: "admin" },
 ] as const;
 
 export function useWorkerStatus() {
@@ -158,12 +154,12 @@ export function WorkerStatusCard() {
           )}
         />
         <span className="text-xs font-semibold">
-           {online ? "Friday Analytics FB  online" : "Friday Analytics offline"}
+          {online ? "Friday Analytics FB  online" : "Friday Analytics offline"}
         </span>
         <Radio className="text-sidebar-foreground/50 ml-auto size-3.5" />
       </div>
       <div className="text-sidebar-foreground/60 space-y-0.5 text-[11px] leading-snug">
-        <div>FridayA · seen {timeAgo(lastSeen)}</div>
+        <div>Mac mini · seen {timeAgo(lastSeen)}</div>
         {hostname ? <div className="truncate">{hostname}</div> : null}
       </div>
       <div className="text-sidebar-foreground/70 space-y-1 text-[11px]">
@@ -200,6 +196,34 @@ function shortUrl(url: string) {
   }
 }
 
+/** Running and queued captures, under the source status in the sidebar. */
+function ActiveCaptures() {
+  const jobs = useActiveJobs();
+  const running = (jobs.data ?? []).filter((j) => j.status === "running");
+  const queued = (jobs.data ?? []).filter((j) => j.status === "queued");
+  if (!running.length && !queued.length) return null;
+  return (
+    <div className="text-sidebar-foreground/75 space-y-1 text-[11px]">
+      {running.map((j) => (
+        <Link
+          key={j.id}
+          to="/jobs/$jobId"
+          params={{ jobId: j.id }}
+          className="hover:bg-sidebar-accent flex items-center gap-1.5 rounded-md px-1.5 py-1"
+        >
+          <Loader2 className="text-running-foreground size-3 animate-spin" />
+          <span className="truncate">Capturing… {shortUrl(j.url)}</span>
+        </Link>
+      ))}
+      {queued.length ? (
+        <Link to="/collect" className="hover:bg-sidebar-accent block rounded-md px-1.5 py-1">
+          {queued.length} capture{queued.length === 1 ? "" : "s"} queued
+        </Link>
+      ) : null}
+    </div>
+  );
+}
+
 function WorkerOfflineBanner() {
   const { online, isLoading } = useWorkerStatus();
   const [dismissed, setDismissed] = useState(false);
@@ -211,8 +235,8 @@ function WorkerOfflineBanner() {
         <Server className="size-4 shrink-0" />
         <p className="min-w-0 flex-1 leading-snug">
           The Mac mini worker isn't checking in. Captures will wait until it starts — on the Mac
-          mini, run <code className="font-mono text-xs">sudo bash worker/install-system.sh</code>{" "}
-          so it starts at boot, even before login.
+          mini, run <code className="font-mono text-xs">sudo bash worker/install-system.sh</code> so
+          it starts at boot, even before login.
         </p>
         <button
           type="button"
@@ -252,26 +276,50 @@ export function AppShell({ children }: { children: ReactNode }) {
     void navigate({ to: "/auth", replace: true });
   }
 
+  const pathname = useRouterState({ select: (st) => st.location.pathname });
+  const section = sectionForPath(pathname);
+  const caseId = caseIdFromPath(pathname);
+  const sectionTabs: SectionId | null =
+    section === "collect" || section === "integrity" || section === "admin" ? section : null;
+  const openCapture = () => {
+    setCaptureUrl("");
+    setCaptureOpen(true);
+  };
+
+  const navClass = (active: boolean) =>
+    cn(
+      "flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors",
+      active
+        ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold"
+        : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+    );
+
   return (
     <div className="bg-background flex min-h-screen">
-      <aside className="bg-sidebar text-sidebar-foreground safe-top safe-bottom sticky top-0 hidden h-screen w-64 shrink-0 flex-col p-5 md:flex">
+      <aside className="bg-sidebar text-sidebar-foreground safe-top safe-bottom sticky top-0 hidden h-screen w-64 shrink-0 flex-col gap-5 overflow-y-auto p-5 md:flex">
         <Link to="/dashboard" className="flex items-center gap-3">
           <img src="/favicon.png" alt="" width={36} height={36} className="rounded-lg" />
           <div className="leading-tight">
-            <div className="text-sm font-bold tracking-tight">SpyGlass V2</div>
-            <div className="text-sidebar-foreground/60 text-xs">Monitor</div>
+            <div className="text-sm font-bold tracking-tight">Evidence Hub</div>
+            <div className="text-sidebar-foreground/60 text-xs">FridayAnalytics</div>
           </div>
         </Link>
 
-        <nav className="mt-8 flex flex-1 flex-col gap-1">
-          {nav.map((entry) => (
+        <button
+          type="button"
+          onClick={openCapture}
+          className="bg-sidebar-primary text-sidebar-primary-foreground flex min-h-12 items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-transform active:scale-[0.98]"
+        >
+          <Plus className="size-5" /> New capture
+        </button>
+
+        <nav aria-label="Main" className="flex flex-col gap-1">
+          {workspaces.map((entry) => (
             <Link
               key={entry.to}
               to={entry.to}
-              className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground/80 flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors"
-              activeProps={{
-                className: "bg-sidebar-accent text-sidebar-accent-foreground",
-              }}
+              aria-current={section === entry.section ? "page" : undefined}
+              className={navClass(section === entry.section)}
             >
               <entry.icon className="size-5" />
               {entry.label}
@@ -279,8 +327,26 @@ export function AppShell({ children }: { children: ReactNode }) {
           ))}
         </nav>
 
-        <div className="border-sidebar-border space-y-3 border-t pt-4">
-          <WorkerStatusCard />
+        <nav aria-label="System" className="flex flex-col gap-1">
+          <div className="text-sidebar-foreground/55 px-3 pb-1 text-[11px] font-semibold tracking-wider uppercase">
+            System
+          </div>
+          {system.map((entry) => (
+            <Link
+              key={entry.to}
+              to={entry.to}
+              aria-current={section === entry.section ? "page" : undefined}
+              className={navClass(section === entry.section)}
+            >
+              <entry.icon className="size-5" />
+              {entry.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="mt-auto space-y-3">
+          <SourceStatusPanel />
+          <ActiveCaptures />
           <button
             onClick={signOut}
             className="text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-sm transition-colors"
@@ -291,46 +357,57 @@ export function AppShell({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="bg-sidebar text-sidebar-foreground safe-top flex items-center justify-between px-4 py-3 md:hidden">
+        <header className="bg-sidebar text-sidebar-foreground safe-top flex items-center justify-between gap-3 px-4 py-3 md:hidden">
           <Link to="/dashboard" className="flex items-center gap-2 text-sm font-bold">
             <img src="/favicon.png" alt="" width={28} height={28} className="rounded-md" />
-            SpyGlass V2
+            Evidence Hub
           </Link>
-          <WorkerPill compact />
+          <div className="flex items-center gap-3">
+            <WorkerPill compact />
+            <Link
+              to="/sources"
+              aria-label="Sources"
+              className="flex size-11 items-center justify-center rounded-lg"
+            >
+              <Database className="size-5" />
+            </Link>
+          </div>
         </header>
 
         <OfflineBanner />
         <WorkerOfflineBanner />
 
-
-        <main className="min-w-0 flex-1 px-4 pt-6 pb-28 md:px-8 md:pt-8 md:pb-12">{children}</main>
+        <main className="min-w-0 flex-1 px-4 pt-6 pb-28 md:px-8 md:pt-8 md:pb-12">
+          {caseId ? <CaseWorkspaceHeader caseId={caseId} pathname={pathname} /> : null}
+          {sectionTabs ? <SectionTabs section={sectionTabs} /> : null}
+          {children}
+        </main>
 
         <button
           type="button"
-          onClick={() => {
-            setCaptureUrl("");
-            setCaptureOpen(true);
-          }}
+          onClick={openCapture}
           aria-label="New capture"
-          className="bg-primary text-primary-foreground safe-bottom fixed right-5 bottom-24 z-50 flex min-h-14 items-center gap-2 rounded-full px-5 text-base font-semibold shadow-lg transition-transform active:scale-95 md:bottom-8"
+          className="bg-primary text-primary-foreground safe-bottom fixed right-5 bottom-24 z-50 flex min-h-14 items-center gap-2 rounded-full px-5 text-base font-semibold shadow-lg transition-transform active:scale-95 md:hidden"
         >
           <ListPlus className="size-5" />
           New capture
         </button>
 
-        <NewCaptureSheet
-          open={captureOpen}
-          onOpenChange={setCaptureOpen}
-          initialUrl={captureUrl}
-        />
+        <NewCaptureSheet open={captureOpen} onOpenChange={setCaptureOpen} initialUrl={captureUrl} />
 
-        <nav className="bg-sidebar text-sidebar-foreground safe-bottom fixed inset-x-0 bottom-0 z-40 flex justify-around border-t border-white/10 md:hidden">
-          {nav.map((entry) => (
+        <nav
+          aria-label="Main"
+          className="bg-sidebar text-sidebar-foreground safe-bottom fixed inset-x-0 bottom-0 z-40 flex justify-around border-t border-white/10 md:hidden"
+        >
+          {workspaces.map((entry) => (
             <Link
               key={entry.to}
               to={entry.to}
-              className="text-sidebar-foreground/70 flex min-h-16 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-medium"
-              activeProps={{ className: "text-sidebar-primary" }}
+              aria-current={section === entry.section ? "page" : undefined}
+              className={cn(
+                "flex min-h-16 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-medium",
+                section === entry.section ? "text-sidebar-primary" : "text-sidebar-foreground/70",
+              )}
             >
               <entry.icon className="size-5" />
               {entry.label}

@@ -30,13 +30,13 @@ const capabilities = [
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "SpyGlass V2 — Facebook evidence capture" },
+      { title: "Evidence Hub — evidence capture and review" },
       {
         name: "description",
         content:
           "Private workspace for collecting Facebook posts and comments as legal evidence with a verifiable chain of custody.",
       },
-      { property: "og:title", content: "SpyGlass V2 — Facebook evidence capture" },
+      { property: "og:title", content: "Evidence Hub — evidence capture and review" },
       {
         property: "og:description",
         content:
@@ -56,7 +56,7 @@ function LandingPage() {
     <div className="bg-background text-foreground flex min-h-screen flex-col">
       <header className="border-border border-b">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5 sm:px-8">
-          <Link to="/" className="flex items-center gap-3" aria-label="SpyGlass V2 home">
+          <Link to="/" className="flex items-center gap-3" aria-label="Evidence Hub home">
             <img src="/favicon.png" alt="" width={32} height={32} className="rounded-md" />
             <span className="font-bold">SPYGLASS V2</span>
           </Link>
@@ -77,9 +77,9 @@ function LandingPage() {
               Preserve every post, comment and file before the evidence disappears.
             </h1>
             <p className="text-muted-foreground mt-6 max-w-2xl text-base leading-relaxed text-pretty sm:text-lg">
-              SpyGlass captures Facebook content from a dedicated Mac mini, keeps the original
-              context intact and records every transfer, access and verification in a defensible
-              custody trail.
+              Evidence Hub brings Facebook captures from a dedicated Mac mini and findings from
+              the home vault into one place, keeps the original context intact and records every
+              transfer, access and verification in a defensible custody trail.
             </p>
             <div className="mt-9">
               <Button asChild size="lg" className="min-h-12 px-6 text-base">

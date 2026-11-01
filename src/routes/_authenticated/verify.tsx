@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/AppShell";
 import { HashChip } from "@/components/HashChip";
+import { HomeVaultVerify } from "@/components/HomeVaultVerify";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,13 +25,13 @@ import { formatDateTime } from "@/lib/format";
 export const Route = createFileRoute("/_authenticated/verify")({
   head: () => ({
     meta: [
-      { title: "Re-hash & verify — SpyGlass V2" },
+      { title: "Re-hash & verify — Evidence Hub" },
       {
         name: "description",
         content:
           "Re-hash every stored artefact in a case and compare against the recorded SHA-256 values.",
       },
-      { property: "og:title", content: "Re-hash & verify — SpyGlass V2" },
+      { property: "og:title", content: "Re-hash & verify — Evidence Hub" },
       {
         property: "og:description",
         content: "Integrity check for captured Facebook evidence artefacts.",
@@ -130,7 +131,7 @@ function VerifyPage() {
     <div className="space-y-6">
       <PageHeader
         title="Re-hash & verify"
-        subtitle="Downloads every stored artefact, recomputes its SHA-256 and writes a re-hashed custody event."
+        subtitle="Cloud-vault files are re-hashed by the server; home-vault files by the gateway at home. Every check writes a re-hashed custody event."
       />
 
       <div className="panel grid gap-4 p-5 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
@@ -200,6 +201,8 @@ function VerifyPage() {
           )}
         </div>
       )}
+
+      {caseId ? <HomeVaultVerify caseId={caseId} /> : null}
     </div>
   );
 }

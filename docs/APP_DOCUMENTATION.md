@@ -1,11 +1,12 @@
-# SpyGlass V2 — App Documentation
+# Evidence Hub — App Documentation
 
-SpyGlass V2 is an evidence-capture system for preserving Facebook content (posts, comments, and live streams) as legal evidence for escalation in Malaysia: police reports, MCMC complaints under the Communications and Multimedia Act 1998 (s.233), and civil action.
+Evidence Hub (formerly SpyGlass V2) is the single place to find, review, verify and export evidence from every FridayAnalytics source, for escalation in Malaysia: police reports, MCMC complaints under the Communications and Multimedia Act 1998 (s.233), and civil action.
 
-The system has two halves:
+The system has three parts:
 
-- **The web app** (this repository, hosted at your published address) — case management, evidence review, verification, export, and the capture queue.
-- **The Mac mini worker** (`worker/` folder) — a Python program running on a dedicated Mac mini that holds the logged-in Facebook session, performs the captures, and uploads the artefacts.
+- **The web app** (this repository, hosted at your published address) — search, case workspaces, evidence review, verification, export, and the capture queue.
+- **The Mac mini worker** (`worker/` folder) — a Python program running on a dedicated Mac mini that holds the logged-in Facebook session, performs the captures, and uploads the artefacts to the **cloud vault**.
+- **The DarkNight gateway** (`gateway/` folder) — a read-only service on the Mac Studio that lets the app read DarkNight, the **home vault**, live over Tailscale. Home-vault content never enters the cloud. See §10.
 
 > **Evidence integrity beats convenience.** Files are append-only, never overwritten. Every artefact has a SHA-256 fingerprint, every action is logged, and exports are blocked if any re-hash fails.
 
@@ -147,22 +148,20 @@ The worker talks to six endpoints under `/api/public/`, authenticated with `Auth
 
 ## 5. Pages
 
-| Page | What it does |
-|---|---|
-| **Dashboard** | Worker status card, queue with live progress bars, recent activity |
-| **Cases** | Case tree: case → incidents → accounts → items; per-case timeline of every dated event |
-| **Evidence item** | Live screenshot vs *Render* gallery, original text + English translation + translator statement, artefacts with copyable SHA-256, custody timeline, AI case-ready summary |
-| **Results** | Each completed capture as a card: screenshot preview, one-tap file buttons (screenshot / PDF / saved page / text / video), custody trail, link to full evidence page |
-| **Worker** | Worker status, current capture with live output streaming beside the progress bar, queued jobs, worker logs, **Restart worker** button, diagnostics |
-| **Queue** | All capture jobs; My captures / Everyone's toggle |
-| **Capture log** | Every run with date, duration, success/failure, case link; live-updating |
-| **Capture setup** | Workspace capture settings (owner only): account label, proxy, timeout, comment expansion, PDF toggle |
-| **Templates** | Case templates (owner only): define fields and required artefacts per investigation type |
-| **Verify** | Re-hash every stored file; MATCH / MISMATCH / MISSING per artefact |
-| **Export** | Verify first (blocks on failure), then ZIP per case with manifest, verification report, texts + translations, custody log |
-| **Settings** | Worker card (public IP, port note, diagnostics), secrets, sign-out |
-| **Offline** | Manage cases downloaded to this device; sync button |
-| **Review** (`/review/$caseId`) | iPad-only case viewer: swipeable artefact deck, full-screen zoom viewer (double-tap / pinch, 1–6×) |
+The sidebar has five workspaces, then Sources and Admin. Old addresses still work; each page now sits inside one of these.
+
+| Place | Pages | What it does |
+|---|---|---|
+| **Home** (`/dashboard`) | — | What needs attention (failed captures, worker or DarkNight offline), capture in progress, source status, recent evidence from both vaults, open cases |
+| **Search** (`/search`) | — | One search across original text, English translations, handles and item codes: the cloud vault, linked home-vault references, and DarkNight itself when it is online. "Add to case" on DarkNight results |
+| **Cases** | Overview, Evidence, Timeline, People, Comments, Transcripts, Custody, Report, Dossier | Every per-case page is a tab under one case header (ID, status, home-vault count, Verify / Export / Present). The Evidence tab lists home-vault items beside the case tree |
+| **Evidence item** (`/items/…`) | — | Cloud-vault item: Live screenshot vs *Render* gallery, text + translation, artefacts with SHA-256, custody, AI case-ready summary |
+| **Home-vault item** (`/vault/darknight/…`) | — | DarkNight record streamed live: files viewed or downloaded straight from the gateway and re-hashed on the device, text, DarkNight details, cases it is in, case and home custody logs. Offline: reference and hashes only |
+| **Collect** | Now, All jobs, Watched pages, Results, Capture log, Worker, Capture setup | Everything about the Mac mini capture pipeline. "Now" shows the running capture by stage, worker health, queued and failed jobs, and today's finished captures |
+| **Integrity** | Verify, Export bundle, Offline library | Verify re-hashes cloud files on the server and home-vault files at home. Export builds the cloud ZIP on the server and a separate home-vault ZIP on the device |
+| **Sources** (`/sources`) | — | One card per source: where it is kept, how it is read, health, and (owner) the DarkNight gateway address and connection checklist |
+| **Admin** | Team and case access, Case templates, Settings | Owner settings |
+| **Review** (`/review/$caseId`) | — | iPad case viewer ("Present" on the case header): swipeable artefact deck, full-screen zoom viewer |
 
 ### AI case-ready summary
 
@@ -172,7 +171,7 @@ Each evidence item can generate an AI-assisted draft summary: factual summary, n
 
 ## 6. iPad and offline use
 
-- **Install:** Safari → sign in → Share → Add to Home Screen. The app runs full-screen as "SpyGlass". Chrome on iPad cannot install web apps. Long-press the icon for a "New capture" shortcut.
+- **Install:** Safari → sign in → Share → Add to Home Screen. The app runs full-screen as "Evidence Hub". Chrome on iPad cannot install web apps. Long-press the icon for a "New capture" shortcut.
 - **Offline mode:** cases can be downloaded to the device (records + files, each file re-hashed on download — mismatches are rejected). Viewing offline works from local copies; custody "accessed" events queue up and sync back when you're online again. A banner shows when you're offline; the Offline page has the sync button. Files over 40 MB are skipped on download.
 - **If the worker isn't checking in**, a red banner appears across the top of every signed-in screen with the exact fix command.
 
@@ -189,11 +188,13 @@ Each evidence item can generate an AI-assisted draft summary: factual summary, n
 ## 8. Repository layout
 
 ```text
-src/routes/                 app pages, incl. api/public/worker-* endpoints
+src/routes/                 app pages, incl. api/public/worker-* endpoints and vault.$sourceId.$recordId
 src/lib/                    shared helpers (offline db, capture progress, worker shared)
 src/components/             AppShell, capture sheet, custody trail, viewers
 supabase/migrations/        database schema and security rules
 worker/                     Mac mini capture worker (Python) — see worker/README.md
+gateway/                    DarkNight gateway (Python, read-only) — see gateway/README.md
+GATEWAY_API.md              gateway HTTP API contract, called from the browser
 WORKER_API.md               worker HTTP API contract — keep in sync with endpoint changes
 public/manifest.webmanifest iPad install metadata
 ```
@@ -205,3 +206,22 @@ public/manifest.webmanifest iPad install metadata
 - **Emailing files to contacts** — designed (secure expiring links + custody logging, no attachments) but blocked until an email domain is connected to the project.
 - **Live-stream recording** — implemented; needs `ffmpeg` + `yt-dlp` on the Mac mini; records only streams currently playing and visible to the logged-in account.
 - The app cannot start a fully stopped worker remotely — the boot-time service (§4) is the fix for that; the in-app Restart button works while the worker is still online.
+
+---
+
+## 10. Sources: cloud vault and home vault
+
+| | Cloud vault | Home vault |
+|---|---|---|
+| Source | Mac mini captures (`sources.id = 'cloud'`) | DarkNight (`sources.id = 'darknight'`) |
+| Content kept | In this project: `artefacts` + the private `evidence` bucket | At home only: DarkNight's database on the Mac Studio, files on the NAS |
+| How the app reads it | Supabase, signed links | The browser calls the gateway directly over Tailscale |
+| What the cloud stores | Everything | `evidence_refs` only: case, record id, platform, type, published date, note, and the SHA-256 of each file at linking |
+| Custody | `custody_events` | `custody_events` with `source_id = 'darknight'` and `evidence_ref_id` (linked items), plus the gateway's hash-chained home log for every read |
+| Verify | Server re-hash | Gateway re-hash at home, compared with the hash at linking |
+| Export | Server-built ZIP | Device-built ZIP; each file re-hashed on the device and must match |
+
+`evidence_refs` and `custody_events` are append-only. Only the owner can set the gateway address (Sources → DarkNight).
+
+The DarkNight field mapping lives in `gateway/mapping.yaml`. **Its table and column names are placeholders** until they are checked against DarkNight's real schema; run `python -m darknight_gateway check` on the Mac Studio after editing it.
+

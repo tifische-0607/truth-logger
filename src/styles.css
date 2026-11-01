@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * SpyGlass V2 — "evidence room" design system.
+ * Evidence Hub — "evidence room" design system.
  * Dark navy chrome, calm paper-light content area, ink-blue accents.
  * All colours are oklch tokens. Never hardcode colours in components.
  */
@@ -53,6 +53,12 @@
   --color-failed-foreground: var(--failed-foreground);
   --color-warn: var(--warn);
   --color-warn-foreground: var(--warn-foreground);
+
+  /* Evidence Hub vaults: always shown with an icon and a word, never colour alone */
+  --color-cloud: var(--cloud);
+  --color-cloud-foreground: var(--cloud-foreground);
+  --color-home: var(--home);
+  --color-home-foreground: var(--home-foreground);
 
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
@@ -106,6 +112,11 @@
   --warn: oklch(0.95 0.07 88);
   --warn-foreground: oklch(0.44 0.11 68);
 
+  --cloud: oklch(0.93 0.035 250);
+  --cloud-foreground: oklch(0.4 0.1 258);
+  --home: oklch(0.93 0.05 55);
+  --home-foreground: oklch(0.45 0.12 50);
+
   --chart-1: oklch(0.55 0.11 255);
   --chart-2: oklch(0.6 0.1 190);
   --chart-3: oklch(0.65 0.12 85);
@@ -155,6 +166,11 @@
   --failed-foreground: oklch(0.85 0.12 28);
   --warn: oklch(0.36 0.08 85);
   --warn-foreground: oklch(0.88 0.12 90);
+
+  --cloud: oklch(0.33 0.06 255);
+  --cloud-foreground: oklch(0.86 0.06 250);
+  --home: oklch(0.35 0.07 50);
+  --home-foreground: oklch(0.87 0.08 55);
 
   --chart-1: oklch(0.68 0.12 250);
   --chart-2: oklch(0.7 0.12 185);

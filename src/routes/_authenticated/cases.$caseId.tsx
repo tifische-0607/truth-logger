@@ -1,12 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Camera, ChevronRight, LayoutList, Printer, Tablet , UserRound, FileText, MessageSquare } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
-import { PageHeader } from "@/components/AppShell";
-import { StatusBadge } from "@/components/StatusBadge";
+import { HomeVaultItems } from "@/components/HomeVaultItems";
 import { CaseTimeline } from "@/components/CaseTimeline";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -68,7 +67,6 @@ function CasePage() {
       ),
   });
 
-
   const [form, setForm] = useState({
     target_of_complaint: "",
     offence_alleged: "",
@@ -107,79 +105,6 @@ function CasePage() {
 
   return (
     <>
-      <PageHeader
-        title={`CASE-${caseId}`}
-        subtitle={`Opened ${formatDateTime(caseQuery.data.opened_on)}`}
-        actions={
-          <div className="flex items-center gap-3">
-            <Link
-              to="/report/$caseId"
-              params={{ caseId }}
-              className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
-            >
-              <Printer className="size-4" /> Case report
-            </Link>
-            <Link
-              to="/summary/$caseId"
-              params={{ caseId }}
-              className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
-            >
-              <LayoutList className="size-4" /> Case summary
-            </Link>
-            <Link
-              to="/timeline/$caseId"
-              params={{ caseId }}
-              className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
-            >
-              <LayoutList className="size-4" /> Published timeline
-            </Link>
-            <Link
-              to="/dossier/$caseId"
-              params={{ caseId }}
-              className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
-            >
-              <Printer className="size-4" /> Case dossier
-            </Link>
-            <Link
-              to="/trail/$caseId"
-              params={{ caseId }}
-              className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
-            >
-              <Camera className="size-4" /> Evidence trail
-            </Link>
-            <Link
-              to="/profiles/$caseId"
-              params={{ caseId }}
-              className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
-            >
-              <UserRound className="size-4" /> Profile trail
-            </Link>
-            <Link
-              to="/comments/$caseId"
-              params={{ caseId }}
-              className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
-            >
-              <MessageSquare className="size-4" /> Comment trail
-            </Link>
-            <Link
-              to="/transcripts/$caseId"
-              params={{ caseId }}
-              className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
-            >
-              <FileText className="size-4" /> Transcript trail
-            </Link>
-            <Link
-              to="/review/$caseId"
-              params={{ caseId }}
-              className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
-            >
-              <Tablet className="size-4" /> Review mode
-            </Link>
-            <StatusBadge status={caseQuery.data.status} className="text-sm" />
-          </div>
-        }
-      />
-
       <div className="grid gap-5 lg:grid-cols-3">
         <section className="panel space-y-4 p-5">
           <h2 className="font-semibold">Case sheet</h2>
@@ -229,6 +154,7 @@ function CasePage() {
         </section>
 
         <section className="space-y-5 lg:col-span-2">
+          <HomeVaultItems caseId={caseId} />
           <CaseTimeline caseId={caseId} />
           {incidents.data?.length ? (
             incidents.data.map((inc) => (
@@ -298,9 +224,7 @@ function CasePage() {
                             >
                               <span className="font-mono font-semibold">{post.item_code}</span>
                               <span className="text-muted-foreground flex items-center gap-1 text-xs">
-                                {
-                                  (acct.items ?? []).filter((i) => i.item_type !== "post").length
-                                }{" "}
+                                {(acct.items ?? []).filter((i) => i.item_type !== "post").length}{" "}
                                 comments <ChevronRight className="size-4" />
                               </span>
                             </Link>

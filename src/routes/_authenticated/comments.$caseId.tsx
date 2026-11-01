@@ -8,7 +8,7 @@ import { EvidenceThumb } from "@/components/EvidenceThumb";
 import { formatDateTime } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/comments/$caseId")({
-  head: () => ({ meta: [{ title: "Comment trail — SpyGlass V2" }] }),
+  head: () => ({ meta: [{ title: "Comment trail — Evidence Hub" }] }),
   component: CommentTrailPage,
 });
 

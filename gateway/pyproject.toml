@@ -1,0 +1,9 @@
+[project]
+name = "darknight-gateway"
+version = "0.1.0"
+description = "Read-only gateway between DarkNight (home vault) and the Evidence Hub"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

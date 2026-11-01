@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/_authenticated/case-database")({
-  head: () => ({ meta: [{ title: "Case database — SpyGlass V2" }] }),
+  head: () => ({ meta: [{ title: "Case database — Evidence Hub" }] }),
   component: CaseDatabasePage,
 });
 
