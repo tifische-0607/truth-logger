@@ -337,7 +337,9 @@ def run_job(job: dict[str, Any]) -> None:
         log(f"Uploaded {artefact['filename']} ({artefact['size_bytes']} bytes)")
         progress(65 + round(((index + 1) / artefact_count) * 20), f"Uploaded {index + 1} of {len(artefacts)} artefacts")
 
-    comment_uploads = records.get("_comment_uploads") or []
+    # Pop (not get): the upload entries hold local PosixPath objects that are
+    # not JSON-serializable, so the key must not reach api.ingest.
+    comment_uploads = records.pop("_comment_uploads", None) or []
     for c_index, (storage_path, shot) in enumerate(comment_uploads):
         payload = Path(shot["path"]).read_bytes()
         api.upload(storage_path, payload, shot.get("mime_type") or "image/png")
