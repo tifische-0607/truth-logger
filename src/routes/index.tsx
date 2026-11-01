@@ -43,10 +43,10 @@ export const Route = createFileRoute("/")({
           "Collect Facebook evidence, preserve its context and verify every file through a complete chain of custody.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://spyglassv2.lovable.app/" },
+      { property: "og:url", content: "https://spyglass2.sentinel2.org/" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://spyglassv2.lovable.app/" }],
+    links: [{ rel: "canonical", href: "https://spyglass2.sentinel2.org/" }],
   }),
   component: LandingPage,
 });
