@@ -690,6 +690,94 @@ export type Database = {
         }
         Relationships: []
       }
+      watch_seen: {
+        Row: {
+          baseline: boolean
+          first_seen_at: string
+          id: string
+          job_id: string | null
+          post_url: string
+          target_id: string
+        }
+        Insert: {
+          baseline?: boolean
+          first_seen_at?: string
+          id?: string
+          job_id?: string | null
+          post_url: string
+          target_id: string
+        }
+        Update: {
+          baseline?: boolean
+          first_seen_at?: string
+          id?: string
+          job_id?: string | null
+          post_url?: string
+          target_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "watch_seen_target_id_fkey"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "watch_targets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      watch_targets: {
+        Row: {
+          active: boolean
+          case_id: string
+          created_at: string
+          created_by: string | null
+          id: string
+          interval_minutes: number
+          label: string | null
+          last_checked_at: string | null
+          last_error: string | null
+          last_found: number | null
+          platform: string
+          url: string
+        }
+        Insert: {
+          active?: boolean
+          case_id: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          interval_minutes?: number
+          label?: string | null
+          last_checked_at?: string | null
+          last_error?: string | null
+          last_found?: number | null
+          platform?: string
+          url: string
+        }
+        Update: {
+          active?: boolean
+          case_id?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          interval_minutes?: number
+          label?: string | null
+          last_checked_at?: string | null
+          last_error?: string | null
+          last_found?: number | null
+          platform?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "watch_targets_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       worker_status: {
         Row: {
           hostname: string | null
