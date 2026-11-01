@@ -10,9 +10,9 @@ import { Input } from "@/components/ui/input";
 export const Route = createFileRoute("/_authenticated/watchlist")({
   head: () => ({
     meta: [
-      { title: "Watched pages — SpyGlass V2" },
+      { title: "Watched pages — Evidence Hub" },
       { name: "description", content: "Pages the Mac mini checks for new posts and captures automatically." },
-      { property: "og:title", content: "Watched pages — SpyGlass V2" },
+      { property: "og:title", content: "Watched pages — Evidence Hub" },
       { property: "og:description", content: "Automatic capture of new Facebook and Instagram posts." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { formatDateTime } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/dossier/$caseId")({
-  head: () => ({ meta: [{ title: "Case dossier — SpyGlass V2" }] }),
+  head: () => ({ meta: [{ title: "Case dossier — Evidence Hub" }] }),
   component: DossierPage,
 });
 
@@ -260,7 +260,7 @@ function DossierPage() {
       <section id="declaration" className="panel print-break p-6 text-sm">
         <h2 className="mb-3 text-lg font-semibold">5. Declaration</h2>
         <p>
-          The material above was captured by SpyGlass V2 and preserved in append-only storage. Each file is identified by the
+          The material above was captured by Evidence Hub and preserved in append-only storage. Each file is identified by the
           SHA-256 fingerprint shown; any alteration would change the fingerprint. Translations and transcripts are machine-generated
           unless stated otherwise and are kept separate from the original text.
         </p>
