@@ -45,6 +45,8 @@ import { Route as ApiPublicWorkerIngestRouteImport } from './routes/api/public/w
 import { Route as ApiPublicWorkerLogRouteImport } from './routes/api/public/worker-log'
 import { Route as ApiPublicWorkerTranscribeRouteImport } from './routes/api/public/worker-transcribe'
 import { Route as ApiPublicWorkerUploadUrlRouteImport } from './routes/api/public/worker-upload-url'
+import { Route as ApiPublicWorkerWatchDueRouteImport } from './routes/api/public/worker-watch-due'
+import { Route as ApiPublicWorkerWatchReportRouteImport } from './routes/api/public/worker-watch-report'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -241,6 +243,17 @@ const ApiPublicWorkerUploadUrlRoute =
     path: '/api/public/worker-upload-url',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicWorkerWatchDueRoute = ApiPublicWorkerWatchDueRouteImport.update({
+  id: '/api/public/worker-watch-due',
+  path: '/api/public/worker-watch-due',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicWorkerWatchReportRoute =
+  ApiPublicWorkerWatchReportRouteImport.update({
+    id: '/api/public/worker-watch-report',
+    path: '/api/public/worker-watch-report',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -277,6 +290,8 @@ export interface FileRoutesByFullPath {
   '/api/public/worker-log': typeof ApiPublicWorkerLogRoute
   '/api/public/worker-transcribe': typeof ApiPublicWorkerTranscribeRoute
   '/api/public/worker-upload-url': typeof ApiPublicWorkerUploadUrlRoute
+  '/api/public/worker-watch-due': typeof ApiPublicWorkerWatchDueRoute
+  '/api/public/worker-watch-report': typeof ApiPublicWorkerWatchReportRoute
   '/cases/': typeof AuthenticatedCasesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -314,6 +329,8 @@ export interface FileRoutesByTo {
   '/api/public/worker-log': typeof ApiPublicWorkerLogRoute
   '/api/public/worker-transcribe': typeof ApiPublicWorkerTranscribeRoute
   '/api/public/worker-upload-url': typeof ApiPublicWorkerUploadUrlRoute
+  '/api/public/worker-watch-due': typeof ApiPublicWorkerWatchDueRoute
+  '/api/public/worker-watch-report': typeof ApiPublicWorkerWatchReportRoute
   '/cases': typeof AuthenticatedCasesIndexRoute
 }
 export interface FileRoutesById {
@@ -353,6 +370,8 @@ export interface FileRoutesById {
   '/api/public/worker-log': typeof ApiPublicWorkerLogRoute
   '/api/public/worker-transcribe': typeof ApiPublicWorkerTranscribeRoute
   '/api/public/worker-upload-url': typeof ApiPublicWorkerUploadUrlRoute
+  '/api/public/worker-watch-due': typeof ApiPublicWorkerWatchDueRoute
+  '/api/public/worker-watch-report': typeof ApiPublicWorkerWatchReportRoute
   '/_authenticated/cases/': typeof AuthenticatedCasesIndexRoute
 }
 export interface FileRouteTypes {
@@ -392,6 +411,8 @@ export interface FileRouteTypes {
     | '/api/public/worker-log'
     | '/api/public/worker-transcribe'
     | '/api/public/worker-upload-url'
+    | '/api/public/worker-watch-due'
+    | '/api/public/worker-watch-report'
     | '/cases/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -429,6 +450,8 @@ export interface FileRouteTypes {
     | '/api/public/worker-log'
     | '/api/public/worker-transcribe'
     | '/api/public/worker-upload-url'
+    | '/api/public/worker-watch-due'
+    | '/api/public/worker-watch-report'
     | '/cases'
   id:
     | '__root__'
@@ -467,6 +490,8 @@ export interface FileRouteTypes {
     | '/api/public/worker-log'
     | '/api/public/worker-transcribe'
     | '/api/public/worker-upload-url'
+    | '/api/public/worker-watch-due'
+    | '/api/public/worker-watch-report'
     | '/_authenticated/cases/'
   fileRoutesById: FileRoutesById
 }
@@ -481,6 +506,8 @@ export interface RootRouteChildren {
   ApiPublicWorkerLogRoute: typeof ApiPublicWorkerLogRoute
   ApiPublicWorkerTranscribeRoute: typeof ApiPublicWorkerTranscribeRoute
   ApiPublicWorkerUploadUrlRoute: typeof ApiPublicWorkerUploadUrlRoute
+  ApiPublicWorkerWatchDueRoute: typeof ApiPublicWorkerWatchDueRoute
+  ApiPublicWorkerWatchReportRoute: typeof ApiPublicWorkerWatchReportRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -737,6 +764,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWorkerUploadUrlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/worker-watch-due': {
+      id: '/api/public/worker-watch-due'
+      path: '/api/public/worker-watch-due'
+      fullPath: '/api/public/worker-watch-due'
+      preLoaderRoute: typeof ApiPublicWorkerWatchDueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/worker-watch-report': {
+      id: '/api/public/worker-watch-report'
+      path: '/api/public/worker-watch-report'
+      fullPath: '/api/public/worker-watch-report'
+      preLoaderRoute: typeof ApiPublicWorkerWatchReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -812,6 +853,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicWorkerLogRoute: ApiPublicWorkerLogRoute,
   ApiPublicWorkerTranscribeRoute: ApiPublicWorkerTranscribeRoute,
   ApiPublicWorkerUploadUrlRoute: ApiPublicWorkerUploadUrlRoute,
+  ApiPublicWorkerWatchDueRoute: ApiPublicWorkerWatchDueRoute,
+  ApiPublicWorkerWatchReportRoute: ApiPublicWorkerWatchReportRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
