@@ -108,7 +108,7 @@ function AuthPage() {
     <div className="bg-sidebar flex min-h-screen items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <div className="text-sidebar-foreground mb-8 flex flex-col items-center gap-3 text-center">
-          <img src="/app-icon.png" alt="" width={72} height={72} className="rounded-2xl" />
+          <img src="/icon-192.png" alt="" width={72} height={72} />
           <h1 className="text-2xl font-bold tracking-tight">Evidence Hub</h1>
           <p className="text-sidebar-foreground/60 text-sm">
             Evidence capture and chain of custody
