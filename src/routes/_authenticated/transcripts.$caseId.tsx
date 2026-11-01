@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/AppShell";
 import { formatDateTime } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/transcripts/$caseId")({
-  head: () => ({ meta: [{ title: "Transcript trail — SpyGlass V2" }] }),
+  head: () => ({ meta: [{ title: "Transcript trail — Evidence Hub" }] }),
   component: TranscriptTrailPage,
 });
 

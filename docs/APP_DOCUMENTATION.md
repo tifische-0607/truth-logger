@@ -1,6 +1,6 @@
-# SpyGlass V2 — App Documentation
+# Evidence Hub — App Documentation
 
-SpyGlass V2 is an evidence-capture system for preserving Facebook content (posts, comments, and live streams) as legal evidence for escalation in Malaysia: police reports, MCMC complaints under the Communications and Multimedia Act 1998 (s.233), and civil action.
+Evidence Hub is an evidence-capture system for preserving Facebook content (posts, comments, and live streams) as legal evidence for escalation in Malaysia: police reports, MCMC complaints under the Communications and Multimedia Act 1998 (s.233), and civil action.
 
 The system has two halves:
 
@@ -172,7 +172,7 @@ Each evidence item can generate an AI-assisted draft summary: factual summary, n
 
 ## 6. iPad and offline use
 
-- **Install:** Safari → sign in → Share → Add to Home Screen. The app runs full-screen as "SpyGlass". Chrome on iPad cannot install web apps. Long-press the icon for a "New capture" shortcut.
+- **Install:** Safari → sign in → Share → Add to Home Screen. The app runs full-screen as "Evidence Hub". Chrome on iPad cannot install web apps. Long-press the icon for a "New capture" shortcut.
 - **Offline mode:** cases can be downloaded to the device (records + files, each file re-hashed on download — mismatches are rejected). Viewing offline works from local copies; custody "accessed" events queue up and sync back when you're online again. A banner shows when you're offline; the Offline page has the sync button. Files over 40 MB are skipped on download.
 - **If the worker isn't checking in**, a red banner appears across the top of every signed-in screen with the exact fix command.
 

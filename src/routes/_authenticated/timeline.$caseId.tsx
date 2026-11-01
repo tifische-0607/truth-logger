@@ -8,7 +8,7 @@ import { PageHeader } from "@/components/AppShell";
 import { formatDateTime } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/timeline/$caseId")({
-  head: () => ({ meta: [{ title: "Published timeline — SpyGlass V2" }] }),
+  head: () => ({ meta: [{ title: "Published timeline — Evidence Hub" }] }),
   component: TimelinePage,
 });
 

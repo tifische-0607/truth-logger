@@ -8,7 +8,7 @@ import { EvidenceThumb } from "@/components/EvidenceThumb";
 import { formatDateTime } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/profiles/$caseId")({
-  head: () => ({ meta: [{ title: "Profile trail — SpyGlass V2" }] }),
+  head: () => ({ meta: [{ title: "Profile trail — Evidence Hub" }] }),
   component: ProfileTrailPage,
 });
 

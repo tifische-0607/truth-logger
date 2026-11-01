@@ -25,13 +25,13 @@ import { formatBytes } from "@/lib/format";
 export const Route = createFileRoute("/_authenticated/export")({
   head: () => ({
     meta: [
-      { title: "Export bundle — SpyGlass V2" },
+      { title: "Export bundle — Evidence Hub" },
       {
         name: "description",
         content:
           "Verify every artefact, then build a ZIP evidence bundle with manifest and chain-of-custody log.",
       },
-      { property: "og:title", content: "Export bundle — SpyGlass V2" },
+      { property: "og:title", content: "Export bundle — Evidence Hub" },
       {
         property: "og:description",
         content: "Court-ready ZIP bundle of captured Facebook evidence with SHA-256 manifest.",

@@ -216,7 +216,7 @@ function ItemPage() {
                   className="group text-left"
                   onClick={() => {
                     setViewer(a);
-                    void logAccess(a, itemId, "Viewed full-size in SpyGlass V2");
+                    void logAccess(a, itemId, "Viewed full-size in Evidence Hub");
                   }}
                 >
                   <EvidenceThumb path={a.storage_path} />
@@ -393,7 +393,7 @@ function ItemPage() {
                         variant="ghost"
                         size="sm"
                         onClick={async () => {
-                          await logAccess(a, itemId, "Downloaded from SpyGlass V2");
+                          await logAccess(a, itemId, "Downloaded from Evidence Hub");
                           const { data: signed, error } = await supabase.storage
                             .from("evidence")
                             .createSignedUrl(a.storage_path, 300, { download: a.filename });
