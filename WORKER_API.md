@@ -502,3 +502,11 @@ Each item may carry `published_at` (ISO-8601, +08:00) and
 `basis` is `"exact"` (from the tooltip), `"approximate"` (calculated from the
 label and capture time — never presented as exact) or `"unknown"`.
 Disable with job option `timestamps: false`.
+
+## Watched pages (automatic capture)
+
+`POST /api/public/worker-watch-due` — body `{}`. Returns `{"targets":[{"id":"uuid","url":"https://www.facebook.com/page","platform":"facebook|instagram"}]}` (max 3). Returned targets are leased: their `last_checked_at` is set to now.
+
+`POST /api/public/worker-watch-report` — body `{"target_id":"uuid","post_urls":["https://www.facebook.com/page/posts/pfbid..."],"error":"optional one-line failure"}`. Returns `{"ok":true,"baseline":bool,"new":n,"queued":n}`. The first scan of a target only records a baseline. Later scans queue each unseen link as a capture_job in the target's case, all under one new auto-numbered incident, with `options.auto_watch=true` and `options.watch_target_id`.
+
+The worker checks for due targets at most once a minute, using a free capture slot.
