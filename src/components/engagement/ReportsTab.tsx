@@ -540,7 +540,7 @@ function OutputCard({
           </>
         ) : null}
         {status === "held" ? (
-          <span className="text-xs">Held for the Curator's written approval (G5, Overview).</span>
+          <span className="text-xs">Held for the Curator's written approval (G5, Release tab).</span>
         ) : null}
         {released && ws.canManage ? (
           <Button

@@ -35,7 +35,7 @@ import {
 } from "@/lib/projects";
 import { cn } from "@/lib/utils";
 
-type TabId = "brief" | "discovery" | "plan" | "design" | "reading" | "evidence" | "reports";
+type TabId = "brief" | "discovery" | "intake" | "plan" | "success" | "gates" | "release" | "design" | "reading" | "evidence" | "reports";
 
 export function PhaseStrip({ ws }: { ws: Workspace }) {
   const now = currentPhase(ws);
@@ -219,7 +219,7 @@ function SignDialog({
   );
 }
 
-function GateCard({ ws, id, cycle }: { ws: Workspace; id: GateId; cycle?: number }) {
+export function GateCard({ ws, id, cycle }: { ws: Workspace; id: GateId; cycle?: number }) {
   const [open, setOpen] = useState(false);
   const def = GATES.find((g) => g.id === id)!;
   const signed =
@@ -370,7 +370,7 @@ export function OverviewTab({ ws }: { ws: Workspace }) {
     },
     {
       label: "Log client research content in the intake register",
-      tab: "discovery",
+      tab: "intake",
       done: ws.intake.length > 0,
     },
     {
@@ -411,7 +411,7 @@ export function OverviewTab({ ws }: { ws: Workspace }) {
     },
     {
       label: "Report against the brief, QA, then G5 release",
-      tab: "reports",
+      tab: "release",
       done: ws.outputs.some((o) => o.status === "released"),
     },
   ];

@@ -417,12 +417,6 @@ function RqForm({ ws }: { ws: Workspace }) {
 }
 
 export function DiscoveryTab({ ws }: { ws: Workspace }) {
-  const claimTone = (c: string) =>
-    c === "FACT_CHECKED_BY_FA"
-      ? "bg-done text-done-foreground"
-      : c === "CLIENT_CLAIM"
-        ? "bg-queued text-queued-foreground"
-        : "bg-warn text-warn-foreground";
   return (
     <div className="space-y-6">
       <Section
@@ -507,6 +501,19 @@ export function DiscoveryTab({ ws }: { ws: Workspace }) {
         )}
       </Section>
 
+    </div>
+  );
+}
+
+export function IntakeRegister({ ws }: { ws: Workspace }) {
+  const claimTone = (c: string) =>
+    c === "FACT_CHECKED_BY_FA"
+      ? "bg-done text-done-foreground"
+      : c === "CLIENT_CLAIM"
+        ? "bg-queued text-queued-foreground"
+        : "bg-warn text-warn-foreground";
+  return (
+    <div className="space-y-6">
       <Section
         id="intake-h"
         title="Research content intake register (FA-CEF-T03)"
