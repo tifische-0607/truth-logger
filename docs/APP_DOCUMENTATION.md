@@ -227,20 +227,33 @@ public/manifest.webmanifest iPad install metadata
 The DarkNight field mapping lives in `gateway/mapping.yaml`. **Its table and column names are placeholders** until they are checked against DarkNight's real schema; run `python -m darknight_gateway check` on the Mac Studio after editing it.
 
 
-## 11. Clients and projects
+## 11. Clients and engagements (FA-CEF V1.10)
 
-FridayAnalytics works for several clients, each with several projects. A **client** holds projects (owner adds and edits clients). A **project** has its own brief, criteria, team, linked evidence and outputs.
+FridayAnalytics works for several clients, each with several engagements (shown as "projects"). Every engagement follows the **Client Engagement Framework FA-CEF-V1.10**: eleven phases, six control gates, fixed deliverables. The database enforces the framework; screens show the database's own message when it refuses something, because that message names what is missing.
 
-- **Evidence is a shared pool.** A project *links* cases and items (cloud-vault items and home-vault references); nothing is copied, and one item can serve many projects. Project members who are investigators can open the cases linked to their project.
-- **Brief and criteria are versioned and append-only.** A change is a new version with a change note. Criteria belong to one brief version.
-- **Assessment.** Each linked item is assessed per criterion (meets / does not meet / unclear / N/A). An item *meets the brief* when every required and inclusion criterion is met and no exclusion criterion is. Every assessment is kept with who and when.
-- **Outputs** (each tied to the brief version it answers; draft → in review → approved → delivered, lead approves and delivers; fixed once approved; can be withdrawn):
-  - *Evidence bundle*: ZIP built on the device; every file re-hashed against its capture or linking hash, nothing is packed if any file fails; manifest, brief, criteria, items and assessments included. A bundle containing home-vault files is not uploaded; the hub keeps its hash.
-  - *Report*: Markdown skeleton from the brief and numbers; attach the final file.
-  - *Dashboard*: live numbers by criterion, platform and month; an output stores a dated snapshot.
-  - *Dataset*: CSV of items with criteria results and file hashes.
-- **Roles per project:** lead, analyst, reviewer, client viewer. Owner can do everything.
-- **Client portal: designed, not built.** `clients.portal_enabled` is off. When on, client viewers would see only the project, its brief and outputs that are delivered and shared, never cases, evidence, assessments or the log (enforced by row-level security today).
-- **Project log** is written by database triggers and cannot be edited.
+**Roles.** The **Curator** is a new global role (owner grants it): it reads every engagement, signs G1, G2 and G5, approves brief amendments and rules on judgement calls. Engagement roles: engagement lead, lead analyst, analyst, collection operator, evidence officer, data steward, reviewer, client viewer (portal off).
 
-Migration `20261102090000_evidence_hub_clients_projects.sql`; client code in `src/lib/projects.ts` and `src/lib/project-outputs.ts`.
+| Gate | Signed by | Pass condition enforced by the database |
+|---|---|---|
+| G0 Brief signed | Engagement lead records the client sponsor | Appendix H sections complete; interviews, research questions, scenarios, success plan recorded; sponsor and read-back date |
+| G1 Mandate | Curator | Scope sheet, risk screen and legal note done. No collection, case link, target or design before it |
+| G2 Design approved | Curator | Lexicon tested (incl. obfuscated spellings), each choice traced to a brief section or flagged ASSUMPTION, target register resolved. Later design or scope changes need G2 again |
+| G3 Read complete (per cycle) | Lead analyst | Every candidate decided; every CRITICAL or HIGH flag confirmed by a second reader |
+| G4 Evidence and QA (per cycle) | Evidence officer or data steward | Reconciled single-transaction load report with manifest; evidence tier on every flagged item |
+| G5 Release (per output) | Curator, in writing | Output HELD after QA; mandate allows release; attribution checked; recipient and written approval recorded. Default is HELD |
+
+**Brief.** Appendix H template, versioned and append-only. After G0 it changes only through numbered amendments (A1, A2…) with what changed, why and who asked; the Curator approves; a scope or lexicon change makes the design stale until G2 is signed again. Scenarios (T04) and success measures (T05) change after G0 only through an approved amendment. Thresholds and targets are the client's; probability only if the client supplies it; impact only from client records; unobservable measures are listed as out of reach, never estimated.
+
+**Registers.** Interviews (two different FA people), research-content intake register with SHA-256 (T03), research questions, scenario register and scenario watch events (declaration needs the confidence rule: N distinct confirming readers and the evidence tier).
+
+**Reading.** Cycles (0 baseline, then delta cycles, same-day re-run tagged). Candidates come only from case folders linked to the engagement. Every candidate gets a flag (category, severity, target group, note) or an exclusion code with a reason; judgement calls are listed for the Curator; after G3 only a Curator ruling can change a decision. Nothing is deleted: duplicates and withdrawn items are voided with a note.
+
+**Evidence.** Tiers API_RAW_ONLY, BROWSER_DOM_ONLY, ELEMENT_CROP (none are proof) and FA_STD_001_V2 (proof; needs a complete capture record and a two-person check).
+
+**Outputs.** Executive brief, findings tables, network map, limits statement, evidence bundle, dashboard snapshot, dataset, release pack. Each answers the brief in force. An executive brief cannot pass QA until it reports every research question, every success measure and every scenario; QA is passed by someone other than the author; once HELD its file and hash are fixed. Released only through G5. Bundles with home-vault files stay on the building device; the hub keeps only their hash. Every document carries "Produced by FridayAnalytics.org for the Ansarian Collective."
+
+**Close-out.** Freeze the design, archive manifest hash, retention (five years unless the contract says otherwise), lessons learned.
+
+**Client portal: designed, not built.** `clients.portal_enabled` is off; a client viewer would see only the brief in force and released outputs shared with them.
+
+Migrations `20261102090000_evidence_hub_curator_role.sql` and `20261102090100_evidence_hub_engagements.sql`; tests in `supabase/tests/engagement_gates_test.sql`; client code in `src/lib/projects.ts`, `src/lib/engagement-outputs.ts`, `src/components/engagement/`.

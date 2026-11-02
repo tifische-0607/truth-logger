@@ -239,7 +239,7 @@ function GateCard({ ws, id, cycle }: { ws: Workspace; id: GateId; cycle?: number
   const g2Resign = id === "G2" && ws.project.design_stale;
   return (
     <li className="flex flex-wrap items-start justify-between gap-3 px-5 py-4">
-      <div className="min-w-0 flex-1">
+      <div className="min-w-[14rem] flex-1">
         <div className="flex flex-wrap items-center gap-2">
           {signed.length && !g2Resign ? (
             <CheckCircle2 className="text-done-foreground size-4" aria-hidden />
