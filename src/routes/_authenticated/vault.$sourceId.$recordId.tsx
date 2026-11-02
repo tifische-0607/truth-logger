@@ -1,7 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Download, FileText, House, Loader2, RefreshCw, ShieldCheck } from "lucide-react";
+import {
+  Crop,
+  Download,
+  FileText,
+  House,
+  Loader2,
+  RefreshCw,
+  ShieldCheck,
+  Stamp,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -42,6 +51,13 @@ const VERDICT_STYLE: Record<string, string> = {
   MISMATCH: "bg-failed text-failed-foreground",
   MISSING: "bg-failed text-failed-foreground",
   NO_BASELINE: "bg-queued text-queued-foreground",
+  AMBIGUOUS: "bg-failed text-failed-foreground",
+};
+
+const PATH_NOTE: Record<string, string> = {
+  MISSING: "Not found on the NAS",
+  AMBIGUOUS: "Path matches two different files — run reconcile",
+  UNSAFE: "Path is outside the evidence share",
 };
 
 function VaultItemPage() {
@@ -239,7 +255,7 @@ function VaultItemPage() {
             </span>
           </div>
           <p className="text-muted-foreground text-sm">
-            {r?.item_type ?? firstRef?.item_type ?? "Record"} ·{" "}
+            {r?.collection_label ?? r?.item_type ?? firstRef?.item_type ?? "Record"} ·{" "}
             {platformLabel(r?.platform ?? firstRef?.platform)}
             {r?.author_handle ? ` · @${r.author_handle}` : ""} · published{" "}
             {formatDateTime(r?.published_at ?? firstRef?.published_at)}
@@ -300,6 +316,19 @@ function VaultItemPage() {
           </Link>
         </div>
       )}
+
+      {r?.element_crop ? (
+        <div
+          role="note"
+          className="bg-queued/60 border-queued-foreground/30 flex items-center gap-3 rounded-xl border px-4 py-3 text-sm"
+        >
+          <Crop className="text-queued-foreground size-5 shrink-0" aria-hidden />
+          <span>
+            <strong>{r.crop_label ?? "Element crop"}.</strong> Pair it with the full-page capture
+            before relying on it.
+          </span>
+        </div>
+      ) : null}
 
       {record.error ? (
         <p className="text-failed-foreground text-sm">
@@ -395,12 +424,13 @@ function VaultItemPage() {
             <h2 id="files-h" className="border-b px-5 py-4 font-semibold">
               Files
             </h2>
-            <table className="w-full min-w-[640px] text-sm">
+            <table className="w-full min-w-[760px] text-sm">
               <thead className="text-muted-foreground text-left text-xs uppercase">
                 <tr>
                   <th className="px-4 py-3">File</th>
                   <th className="px-4 py-3">Size</th>
                   <th className="px-4 py-3">SHA-256 at linking</th>
+                  <th className="px-4 py-3">DarkNight hashes</th>
                   <th className="px-4 py-3">Now</th>
                   <th className="px-4 py-3">
                     <span className="sr-only">Actions</span>
@@ -410,7 +440,7 @@ function VaultItemPage() {
               <tbody>
                 {(
                   r?.files ??
-                  refFiles(firstRef?.files).map((f) => ({
+                  refFiles(firstRef?.files).map((f): DarkNightFile => ({
                     ...f,
                     mime_type: null,
                     created_at: null,
@@ -424,7 +454,9 @@ function VaultItemPage() {
                     re?.status ??
                     (r
                       ? !f.available
-                        ? "MISSING"
+                        ? f.path_status === "AMBIGUOUS"
+                          ? "AMBIGUOUS"
+                          : "MISSING"
                         : !expected
                           ? "NO_BASELINE"
                           : f.sha256 === expected
@@ -435,11 +467,54 @@ function VaultItemPage() {
                     <tr key={f.file_id} className="border-border/60 border-t">
                       <td className="px-4 py-3">
                         <div className="font-mono text-xs">{f.filename ?? f.file_id}</div>
-                        <div className="text-muted-foreground text-xs">{f.kind ?? ""}</div>
+                        <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-xs">
+                          <span>{f.kind ?? ""}</span>
+                          {f.element_crop ? (
+                            <span className="bg-queued text-queued-foreground inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-semibold">
+                              <Crop className="size-3" aria-hidden /> Element crop
+                            </span>
+                          ) : null}
+                        </div>
+                        {f.path_status && f.path_status !== "OK" ? (
+                          <div className="text-failed-foreground text-xs">
+                            {PATH_NOTE[f.path_status]}
+                          </div>
+                        ) : null}
                       </td>
                       <td className="px-4 py-3">{formatBytes(f.size_bytes)}</td>
                       <td className="px-4 py-3">
                         <HashChip value={expected} />
+                      </td>
+                      <td className="px-4 py-3">
+                        {f.integrity ? (
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span
+                              className={cn(
+                                "rounded-full px-2.5 py-0.5 text-xs font-semibold",
+                                VERDICT_STYLE[f.integrity],
+                              )}
+                              title={[
+                                f.sha256_stored ? "database" : null,
+                                f.baselines?.post_manifest ? "post manifest" : null,
+                                f.baselines?.case_manifest ? "case manifest" : null,
+                              ]
+                                .filter(Boolean)
+                                .join(", ")}
+                            >
+                              {f.integrity === "NO_BASELINE" ? "None kept" : f.integrity}
+                            </span>
+                            {f.baselines?.timestamped ? (
+                              <span
+                                className="text-muted-foreground inline-flex items-center gap-1 text-xs"
+                                title={f.baselines.case_manifest_path ?? undefined}
+                              >
+                                <Stamp className="size-3" aria-hidden /> Timestamped
+                              </span>
+                            ) : null}
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground text-xs">—</span>
+                        )}
                       </td>
                       <td className="px-4 py-3">
                         {now ? (

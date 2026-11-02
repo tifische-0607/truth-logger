@@ -20,8 +20,9 @@ from .audit import AuditLog
 from .auth import Authenticator, Caller
 from .config import VERSION, Settings, load_settings
 from .db import Database
-from .files import HashCache, UnsafePath, guess_mime, resolve_evidence_path
-from .mapping import Mapping, load_mapping
+from .files import HashCache, guess_mime
+from .mapping import Collection, Mapping, load_mapping
+from .paths import AMBIGUOUS, MISSING, OK, UNSAFE, ManifestReader, compare, resolve
 
 
 def create_app(
@@ -53,51 +54,85 @@ def create_app(
         allow_origins=settings.allowed_origins,
         allow_methods=["GET", "POST"],
         allow_headers=["Authorization", "Content-Type"],
-        expose_headers=["X-Evidence-SHA256", "X-Evidence-Stored-SHA256", "Content-Disposition"],
+        expose_headers=["X-Evidence-SHA256", "X-Evidence-Stored-SHA256", "X-Evidence-Tier",
+                        "Content-Disposition"],
         max_age=600,
     )
 
-    def files_for(record_id: str, *, with_hash: bool) -> list[dict[str, Any]]:
-        rows = db.fetch_all(mapping.sql("files"), {"record_id": record_id})
-        out = []
-        for row in rows:
-            entry = {
-                "file_id": str(row["file_id"]),
-                "filename": row.get("filename"),
-                "kind": row.get("kind"),
-                "mime_type": row.get("mime_type"),
-                "size_bytes": row.get("size_bytes"),
-                "created_at": row.get("created_at"),
-                "sha256_stored": row.get("sha256_stored"),
-                "sha256": None,
-                "available": False,
-            }
-            try:
-                path = resolve_evidence_path(settings.nas_evidence_root, str(row["rel_path"]))
-                if path.is_file():
-                    entry["available"] = True
-                    entry["size_bytes"] = entry["size_bytes"] or path.stat().st_size
-                    entry["mime_type"] = guess_mime(path, entry["mime_type"])
-                    if with_hash:
-                        entry["sha256"] = hashes.sha256(path)
-            except UnsafePath:
-                entry["available"] = False
-            out.append(entry)
-        return out
+    manifests = ManifestReader(settings.nas_evidence_root, mapping.manifests)
+    root = settings.nas_evidence_root
 
-    def load_record(record_id: str) -> dict[str, Any]:
-        row = db.fetch_one(mapping.sql("record"), {"record_id": record_id})
+    def collection_for(hub_id: str) -> tuple[Collection, str]:
+        try:
+            return mapping.split_id(hub_id)
+        except KeyError as exc:
+            raise HTTPException(404, "No DarkNight record with that id") from exc
+
+    def file_rows(coll: Collection, raw_id: str) -> list[dict[str, Any]]:
+        return db.fetch_all(coll.sql("files"), {"record_id": raw_id})
+
+    def describe_file(coll: Collection, row: dict[str, Any], *, with_hash: bool) -> dict[str, Any]:
+        tier = row.get("evidence_tier")
+        entry: dict[str, Any] = {
+            "file_id": str(row["file_id"]),
+            "filename": row.get("filename"),
+            "kind": row.get("kind"),
+            "mime_type": row.get("mime_type"),
+            "size_bytes": row.get("size_bytes"),
+            "created_at": row.get("created_at"),
+            "sha256_stored": row.get("sha256_stored"),
+            "sha256": None,
+            "available": False,
+            "path_status": None,
+            "resolved_path": None,
+            "resolved_via": None,
+            "baselines": None,
+            "evidence_tier": tier,
+            "element_crop": mapping.is_element_crop(tier),
+            "crop_label": mapping.element_crop_label if mapping.is_element_crop(tier) else None,
+        }
+        res = resolve(root, row.get("rel_path"), coll, mapping)
+        entry["path_status"] = res.status
+        if res.status == OK and res.path is not None:
+            entry.update(available=True, resolved_path=res.rel_path, resolved_via=res.via)
+            entry["size_bytes"] = entry["size_bytes"] or res.path.stat().st_size
+            entry["mime_type"] = guess_mime(res.path, entry["mime_type"])
+            entry["baselines"] = manifests.baselines(res.path)
+            if with_hash:
+                entry["sha256"] = hashes.sha256(res.path)
+                entry["integrity"] = compare(entry["sha256"], entry["sha256_stored"], entry["baselines"])
+        return entry
+
+    def load_record(coll: Collection, raw_id: str) -> dict[str, Any]:
+        row = db.fetch_one(coll.sql("record"), {"record_id": raw_id})
         if not row:
             raise HTTPException(404, "No DarkNight record with that id")
         return row
+
+    def hub_row(coll: Collection, row: dict[str, Any]) -> dict[str, Any]:
+        out = dict(row)
+        out["record_id"] = f"{coll.name}.{row['record_id']}"
+        out["collection"] = coll.name
+        out["collection_label"] = coll.label
+        tier = out.get("evidence_tier")
+        out["element_crop"] = mapping.is_element_crop(tier)
+        out["crop_label"] = mapping.element_crop_label if out["element_crop"] else None
+        return out
+
+    def total_records() -> int:
+        total = 0
+        for coll in mapping.collections.values():
+            row = db.fetch_one(coll.sql("count"), {}) or {}
+            total += int(row.get("total") or 0)
+        return total
 
     # ---- health ---------------------------------------------------------------
     @app.get("/health")
     def health() -> dict[str, Any]:
         """Unauthenticated: says only whether the parts are reachable."""
-        checks = {"database": False, "nas": settings.nas_evidence_root.is_dir()}
+        checks = {"database": False, "nas": root.is_dir()}
         try:
-            db.fetch_one(mapping.sql("count"), {})
+            total_records()
             checks["database"] = True
         except Exception:  # noqa: BLE001
             checks["database"] = False
@@ -106,10 +141,13 @@ def create_app(
 
     @app.get("/v1/status")
     def status(caller: Caller = Depends(auth)) -> dict[str, Any]:
-        total = db.fetch_one(mapping.sql("count"), {}) or {"total": 0}
+        per = {}
+        for coll in mapping.collections.values():
+            row = db.fetch_one(coll.sql("count"), {}) or {}
+            per[coll.name] = int(row.get("total") or 0)
         return {"ok": True, "version": VERSION, "source_id": mapping.source_id,
-                "records": total.get("total", 0), "nas_root_available": settings.nas_evidence_root.is_dir(),
-                "signed_in_as": caller.handler}
+                "records": sum(per.values()), "collections": per,
+                "nas_root_available": root.is_dir(), "signed_in_as": caller.handler}
 
     # ---- search & records -----------------------------------------------------
     @app.get("/v1/search")
@@ -117,6 +155,7 @@ def create_app(
         q: str | None = Query(None, max_length=200),
         platform: str | None = None,
         item_type: str | None = None,
+        collection: str | None = None,
         date_from: date | None = None,
         date_to: date | None = None,
         limit: int = Query(25, ge=1),
@@ -124,65 +163,75 @@ def create_app(
         caller: Caller = Depends(auth),
     ) -> dict[str, Any]:
         limit = min(limit, settings.max_search_limit)
-        rows = db.fetch_all(mapping.sql("search"), {
-            "q": (q or "").strip() or None, "platform": platform, "item_type": item_type,
-            "date_from": date_from, "date_to": date_to, "limit": limit + 1, "offset": offset,
-        })
-        audit.append("searched", handler=caller.handler, query=q, results=min(len(rows), limit))
-        return {"results": rows[:limit], "next_offset": offset + limit if len(rows) > limit else None}
+        if collection and collection not in mapping.collections:
+            raise HTTPException(400, "Unknown collection")
+        colls = [mapping.collections[collection]] if collection else list(mapping.collections.values())
+        params = {"q": (q or "").strip() or None, "platform": platform, "item_type": item_type,
+                  "date_from": date_from, "date_to": date_to, "limit": offset + limit + 1, "offset": 0}
+        merged: list[dict[str, Any]] = []
+        for coll in colls:
+            merged += [hub_row(coll, r) for r in db.fetch_all(coll.sql("search"), params)]
+        if item_type:
+            merged = [r for r in merged if r.get("item_type") == item_type]
+        merged.sort(key=lambda r: str(r.get("published_at") or r.get("collected_at") or ""), reverse=True)
+        page = merged[offset:offset + limit]
+        audit.append("searched", handler=caller.handler, query=q, results=len(page))
+        return {"results": page, "next_offset": offset + limit if len(merged) > offset + limit else None}
 
     @app.get("/v1/records/{record_id}")
     def record(record_id: str, caller: Caller = Depends(auth)) -> dict[str, Any]:
-        row = load_record(record_id)
-        row["files"] = files_for(record_id, with_hash=True)
+        coll, raw_id = collection_for(record_id)
+        row = hub_row(coll, load_record(coll, raw_id))
+        row["files"] = [describe_file(coll, f, with_hash=True) for f in file_rows(coll, raw_id)]
         audit.append("accessed", handler=caller.handler, record_id=record_id, what="record")
         return row
 
     @app.get("/v1/records/{record_id}/files/{file_id}")
     async def file(record_id: str, file_id: str, download: bool = False,
                    caller: Caller = Depends(auth)) -> FileResponse:
-        rows = await run_in_threadpool(db.fetch_all, mapping.sql("files"), {"record_id": record_id})
+        coll, raw_id = collection_for(record_id)
+        rows = await run_in_threadpool(file_rows, coll, raw_id)
         match = next((r for r in rows if str(r["file_id"]) == file_id), None)
         if not match:
             raise HTTPException(404, "No such file on this record")
-        try:
-            path = resolve_evidence_path(settings.nas_evidence_root, str(match["rel_path"]))
-        except UnsafePath as exc:
-            raise HTTPException(403, "File path is outside the evidence share") from exc
-        if not path.is_file():
+        res = resolve(root, match.get("rel_path"), coll, mapping)
+        if res.status == UNSAFE:
+            raise HTTPException(403, "File path is outside the evidence share")
+        if res.status == AMBIGUOUS:
+            raise HTTPException(409, "File path matches more than one file; run reconcile")
+        if res.status != OK or res.path is None:
             raise HTTPException(410, "File is missing from the NAS")
-        digest = await run_in_threadpool(hashes.sha256, path)
+        digest = await run_in_threadpool(hashes.sha256, res.path)
         audit.append("accessed", handler=caller.handler, record_id=record_id, file_id=file_id,
                      filename=match.get("filename"), sha256=digest, download=download)
         headers = {"X-Evidence-SHA256": digest, "Cache-Control": "no-store"}
         if match.get("sha256_stored"):
             headers["X-Evidence-Stored-SHA256"] = str(match["sha256_stored"])
+        if mapping.is_element_crop(match.get("evidence_tier")):
+            headers["X-Evidence-Tier"] = str(match.get("evidence_tier"))
         return FileResponse(
-            path,
-            media_type=guess_mime(path, match.get("mime_type")),
-            filename=match.get("filename") or path.name,
+            res.path,
+            media_type=guess_mime(res.path, match.get("mime_type")),
+            filename=match.get("filename") or res.path.name,
             content_disposition_type="attachment" if download else "inline",
             headers=headers,
         )
 
     @app.post("/v1/records/{record_id}/rehash")
     def rehash(record_id: str, caller: Caller = Depends(auth)) -> dict[str, Any]:
-        load_record(record_id)
-        rows = db.fetch_all(mapping.sql("files"), {"record_id": record_id})
+        coll, raw_id = collection_for(record_id)
+        load_record(coll, raw_id)
         results = []
-        for row in rows:
-            result = {"file_id": str(row["file_id"]), "filename": row.get("filename"),
-                      "sha256": None, "status": "MISSING"}
-            try:
-                path = resolve_evidence_path(settings.nas_evidence_root, str(row["rel_path"]))
-                if path.is_file():
-                    result["sha256"] = hashes.sha256(path, force=True)
-                    stored = row.get("sha256_stored")
-                    result["status"] = (
-                        "NO_BASELINE" if not stored else "MATCH" if stored == result["sha256"] else "MISMATCH"
-                    )
-            except UnsafePath:
-                result["status"] = "MISSING"
+        for row in file_rows(coll, raw_id):
+            result: dict[str, Any] = {"file_id": str(row["file_id"]), "filename": row.get("filename"),
+                                      "sha256": None, "status": MISSING, "baselines": None}
+            res = resolve(root, row.get("rel_path"), coll, mapping)
+            if res.status == OK and res.path is not None:
+                result["sha256"] = hashes.sha256(res.path, force=True)
+                result["baselines"] = manifests.baselines(res.path)
+                result["status"] = compare(result["sha256"], row.get("sha256_stored"), result["baselines"])
+            elif res.status == AMBIGUOUS:
+                result["status"] = AMBIGUOUS
             results.append(result)
             audit.append("re-hashed", handler=caller.handler, record_id=record_id,
                          file_id=result["file_id"], sha256=result["sha256"], status=result["status"])

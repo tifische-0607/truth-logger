@@ -1,99 +1,258 @@
-# DarkNight → Evidence Hub mapping
+# DarkNight → Evidence Hub mapping (v2)
 #
-# The gateway never guesses DarkNight's schema. Every read is one of the SQL
-# queries below, and each query must return the column names listed under
-# "returns". Change the FROM/JOIN/WHERE parts to fit DarkNight; keep the
-# output column names (use AS aliases) and the %(name)s parameters.
+# DarkNight keeps evidence in several tables. Each becomes a "collection" here
+# with its own SQL. Every query must return the column names listed under
+# "returns" (use AS aliases); extra columns are ignored. Parameters use %(name)s.
 #
-# PLACEHOLDER: the table and column names here (findings, finding_files, …)
-# are assumptions written before the real schema arrived. Replace them with
-# the real ones from darknight_schema.sql, then run:
+# Known from the NAS report of 2026-11-01: the four tables, their file-path and
+# hash columns, and the folder layout. Columns marked "# CONFIRM" are still
+# guesses until darknight_schema.sql arrives. After editing, on the Mac Studio:
 #     python -m darknight_gateway check
-# which runs every query once and reports missing columns.
+#     python -m darknight_gateway reconcile --out ~/darknight-gateway/reconcile.csv
 #
 # All queries run in a READ ONLY transaction as a read-only database user.
 
 source_id: darknight
 
-# Short code shown in the hub, e.g. DN-TT-00418. Built by the queries below.
-record_code_hint: "DN-<platform letters>-<id padded to 5>"
+# File paths in DarkNight are resolved against the evidence SHARE root
+# (NAS_SHARE_ROOT, the mount of "005. Friday_Analytics"). Each collection lists
+# the folders its relative paths are relative to, tried in order; the first that
+# exists wins and the answer records which one it was. Two different existing
+# files for one path is reported as AMBIGUOUS, never guessed.
+darknight_root: "300. Projects/Project DarkNight"
 
-queries:
+# Absolute paths written under old mount points are translated to share-relative
+# candidates. Nothing outside the share root is ever opened.
+legacy_prefixes:
+  - from: "/Users/hermes/NAS_Ficus1513/Friday_Analytics/"
+    to: [""]
+  - from: "/Users/hermes/NAS_Friday_Analytics/"
+    to: ["", "300. Projects/Project DarkNight/07_UNFILED/", "300. Projects/Project DarkNight/"]
 
-  count:
-    sql: |
-      SELECT count(*) AS total FROM findings
-    returns: [total]
+# Hash manifests written next to the evidence by the scan pipeline.
+manifests:
+  post: "HASHES.sha256.json"          # one per post folder
+  case: "HASHES_CASE.sha256.json"     # one per case folder, with RFC-3161 files beside it
+  timestamp_suffixes: [".tsr"]        # presence of <case manifest stem>.tsr = timestamped
 
-  search:
-    # %(q)s may be NULL (no text filter). Filters may each be NULL.
-    sql: |
-      SELECT
-        f.id::text                                     AS record_id,
-        'DN-' || upper(left(f.platform, 2)) || '-' || lpad(f.id::text, 5, '0') AS record_code,
-        f.platform                                     AS platform,
-        f.item_type                                    AS item_type,
-        f.handle                                       AS author_handle,
-        f.published_at                                 AS published_at,
-        f.collected_at                                 AS collected_at,
-        left(coalesce(f.text_original, ''), 280)       AS snippet,
-        f.classification                               AS classification,
-        (SELECT count(*) FROM finding_files ff WHERE ff.finding_id = f.id) AS file_count
-      FROM findings f
-      WHERE (%(q)s::text IS NULL
-             OR f.text_original ILIKE '%%' || %(q)s || '%%'
-             OR f.text_en       ILIKE '%%' || %(q)s || '%%'
-             OR f.handle        ILIKE '%%' || %(q)s || '%%')
-        AND (%(platform)s::text  IS NULL OR f.platform  = %(platform)s)
-        AND (%(item_type)s::text IS NULL OR f.item_type = %(item_type)s)
-        AND (%(date_from)s::date IS NULL OR f.published_at >= %(date_from)s::date)
-        AND (%(date_to)s::date   IS NULL OR f.published_at <  %(date_to)s::date + 1)
-      ORDER BY f.published_at DESC NULLS LAST, f.id DESC
-      LIMIT %(limit)s OFFSET %(offset)s
-    returns: [record_id, record_code, platform, item_type, author_handle, published_at,
-              collected_at, snippet, classification, file_count]
+# Evidence tiers that are crops of page elements: shown with a warning label.
+element_crop_tiers: ["ELEMENT_CROP_V1"]
+element_crop_label: "ELEMENT CROP – not proof by itself (FA-STD-001)"
 
-  record:
-    sql: |
-      SELECT
-        f.id::text                                     AS record_id,
-        'DN-' || upper(left(f.platform, 2)) || '-' || lpad(f.id::text, 5, '0') AS record_code,
-        f.platform                                     AS platform,
-        f.item_type                                    AS item_type,
-        f.handle                                       AS author_handle,
-        f.profile_url                                  AS author_url,
-        f.post_url                                     AS url,
-        f.published_at                                 AS published_at,
-        f.collected_at                                 AS collected_at,
-        f.collected_by                                 AS collected_by,
-        f.text_original                                AS text_original,
-        f.language                                     AS language,
-        f.text_en                                      AS text_en,
-        f.translator                                   AS translator_statement,
-        f.classification                               AS classification,
-        concat_ws(', ', f.location_area, f.location_state) AS location,
-        f.outcome                                      AS outcome,
-        jsonb_build_object('severity', f.severity, 'confidence', f.confidence) AS extra
-      FROM findings f
-      WHERE f.id::text = %(record_id)s
-    returns: [record_id, record_code, platform, item_type, author_handle, author_url, url,
-              published_at, collected_at, collected_by, text_original, language, text_en,
-              translator_statement, classification, location, outcome, extra]
+collections:
 
-  files:
-    # rel_path is relative to NAS_EVIDENCE_ROOT. sha256_stored may be NULL when
-    # DarkNight doesn't keep hashes; the gateway then computes and caches them.
-    sql: |
-      SELECT
-        ff.id::text        AS file_id,
-        ff.filename        AS filename,
-        ff.kind            AS kind,
-        ff.mime_type       AS mime_type,
-        ff.size_bytes      AS size_bytes,
-        ff.rel_path        AS rel_path,
-        ff.sha256          AS sha256_stored,
-        ff.created_at      AS created_at
-      FROM finding_files ff
-      WHERE ff.finding_id::text = %(record_id)s
-      ORDER BY ff.created_at, ff.id
-    returns: [file_id, filename, kind, mime_type, size_bytes, rel_path, sha256_stored, created_at]
+  finding:
+    label: Mobilization finding
+    path_bases: ["300. Projects/Project DarkNight/01_Intake", "300. Projects/Project DarkNight"]
+    queries:
+      count:
+        sql: SELECT count(*) AS total FROM mobilization.mobilization_findings
+        returns: [total]
+      search:
+        sql: |
+          SELECT
+            f.id::text                                   AS record_id,
+            'DN-MF-' || lpad(f.id::text, 6, '0')         AS record_code,
+            f.platform                                   AS platform,        -- CONFIRM
+            'finding'                                    AS item_type,
+            f.handle                                     AS author_handle,   -- CONFIRM
+            f.published_at                               AS published_at,    -- CONFIRM
+            f.created_at                                 AS collected_at,    -- CONFIRM
+            left(coalesce(f.text_original, ''), 280)     AS snippet,         -- CONFIRM
+            f.mobilization_type                          AS classification,  -- CONFIRM
+            CASE WHEN f.evidence_screenshot_path IS NULL THEN 0 ELSE 1 END AS file_count
+          FROM mobilization.mobilization_findings f
+          WHERE (%(q)s::text IS NULL
+                 OR f.text_original ILIKE '%%' || %(q)s || '%%'
+                 OR f.text_en       ILIKE '%%' || %(q)s || '%%'                     -- CONFIRM
+                 OR f.handle        ILIKE '%%' || %(q)s || '%%')
+            AND (%(platform)s::text IS NULL OR f.platform = %(platform)s)
+            AND (%(date_from)s::date IS NULL OR f.published_at >= %(date_from)s::date)
+            AND (%(date_to)s::date   IS NULL OR f.published_at <  %(date_to)s::date + 1)
+          ORDER BY f.published_at DESC NULLS LAST, f.id DESC
+          LIMIT %(limit)s OFFSET %(offset)s
+        returns: [record_id, record_code, platform, item_type, author_handle, published_at,
+                  collected_at, snippet, classification, file_count]
+      record:
+        sql: |
+          SELECT
+            f.id::text AS record_id,
+            'DN-MF-' || lpad(f.id::text, 6, '0') AS record_code,
+            f.platform AS platform, 'finding' AS item_type,
+            f.handle AS author_handle, NULL::text AS author_url, f.post_url AS url,   -- CONFIRM
+            f.published_at AS published_at, f.created_at AS collected_at,             -- CONFIRM
+            'Friday OSINT agent' AS collected_by,
+            f.text_original AS text_original, f.language AS language,                 -- CONFIRM
+            f.text_en AS text_en, NULL::text AS translator_statement,                 -- CONFIRM
+            f.mobilization_type AS classification,                                    -- CONFIRM
+            concat_ws(', ', f.location_area, f.location_state) AS location,           -- CONFIRM
+            f.outcome AS outcome,                                                     -- CONFIRM
+            f.evidence_tier AS evidence_tier,                                         -- CONFIRM column name
+            jsonb_build_object('severity', f.severity, 'confidence', f.confidence) AS extra  -- CONFIRM
+          FROM mobilization.mobilization_findings f
+          WHERE f.id::text = %(record_id)s
+        returns: [record_id, record_code, platform, item_type, published_at, evidence_tier]
+      files:
+        sql: |
+          SELECT 'screenshot' AS file_id,
+                 regexp_replace(f.evidence_screenshot_path, '^.*/', '') AS filename,
+                 'screenshot' AS kind, 'image/png' AS mime_type, NULL::bigint AS size_bytes,
+                 f.evidence_screenshot_path AS rel_path,
+                 f.evidence_sha256 AS sha256_stored,
+                 f.evidence_tier AS evidence_tier,                                    -- CONFIRM column name
+                 NULL::timestamptz AS created_at
+          FROM mobilization.mobilization_findings f
+          WHERE f.id::text = %(record_id)s AND f.evidence_screenshot_path IS NOT NULL
+        returns: [file_id, filename, rel_path, sha256_stored]
+      paths:
+        sql: |
+          SELECT f.id::text AS record_id, 'screenshot' AS file_id,
+                 f.evidence_screenshot_path AS rel_path, f.evidence_sha256 AS sha256_stored
+          FROM mobilization.mobilization_findings f
+          WHERE f.evidence_screenshot_path IS NOT NULL
+        returns: [record_id, file_id, rel_path, sha256_stored]
+
+  comment:
+    label: HSDB comment
+    path_bases: ["300. Projects/Project DarkNight/01_Intake", "300. Projects/Project DarkNight/07_UNFILED", "300. Projects/Project DarkNight"]
+    queries:
+      count:
+        sql: SELECT count(*) AS total FROM hsdb.comments
+        returns: [total]
+      search:
+        sql: |
+          SELECT c.id::text AS record_id, 'DN-HC-' || lpad(c.id::text, 6, '0') AS record_code,
+                 c.platform AS platform, 'comment' AS item_type, c.author_handle AS author_handle,  -- CONFIRM
+                 c.published_at AS published_at, c.created_at AS collected_at,                       -- CONFIRM
+                 left(coalesce(c.text, ''), 280) AS snippet, c.label AS classification,              -- CONFIRM
+                 CASE WHEN c.screenshot_path IS NULL THEN 0 ELSE 1 END AS file_count
+          FROM hsdb.comments c
+          WHERE (%(q)s::text IS NULL OR c.text ILIKE '%%' || %(q)s || '%%'
+                 OR c.text_en ILIKE '%%' || %(q)s || '%%' OR c.author_handle ILIKE '%%' || %(q)s || '%%')
+            AND (%(platform)s::text IS NULL OR c.platform = %(platform)s)
+            AND (%(date_from)s::date IS NULL OR c.published_at >= %(date_from)s::date)
+            AND (%(date_to)s::date   IS NULL OR c.published_at <  %(date_to)s::date + 1)
+          ORDER BY c.published_at DESC NULLS LAST, c.id DESC
+          LIMIT %(limit)s OFFSET %(offset)s
+        returns: [record_id, record_code, platform, item_type, published_at]
+      record:
+        sql: |
+          SELECT c.id::text AS record_id, 'DN-HC-' || lpad(c.id::text, 6, '0') AS record_code,
+                 c.platform AS platform, 'comment' AS item_type, c.author_handle AS author_handle,
+                 NULL::text AS author_url, c.comment_url AS url,                                     -- CONFIRM
+                 c.published_at AS published_at, c.created_at AS collected_at,
+                 NULL::text AS collected_by, c.text AS text_original, NULL::text AS language,
+                 c.text_en AS text_en, NULL::text AS translator_statement,                           -- CONFIRM
+                 c.label AS classification, NULL::text AS location, NULL::text AS outcome,
+                 NULL::text AS evidence_tier, '{}'::jsonb AS extra
+          FROM hsdb.comments c WHERE c.id::text = %(record_id)s
+        returns: [record_id, record_code, platform, item_type, published_at]
+      files:
+        sql: |
+          SELECT 'screenshot' AS file_id, regexp_replace(c.screenshot_path, '^.*/', '') AS filename,
+                 'screenshot' AS kind, 'image/png' AS mime_type, NULL::bigint AS size_bytes,
+                 c.screenshot_path AS rel_path, NULL::text AS sha256_stored,
+                 NULL::text AS evidence_tier, NULL::timestamptz AS created_at
+          FROM hsdb.comments c WHERE c.id::text = %(record_id)s AND c.screenshot_path IS NOT NULL
+        returns: [file_id, filename, rel_path, sha256_stored]
+      paths:
+        sql: |
+          SELECT c.id::text AS record_id, 'screenshot' AS file_id, c.screenshot_path AS rel_path,
+                 NULL::text AS sha256_stored
+          FROM hsdb.comments c WHERE c.screenshot_path IS NOT NULL
+        returns: [record_id, file_id, rel_path, sha256_stored]
+
+  profile:
+    label: HSDB profile
+    path_bases: ["300. Projects/Project DarkNight/01_Intake", "300. Projects/Project DarkNight/07_UNFILED", "300. Projects/Project DarkNight"]
+    queries:
+      count:
+        sql: SELECT count(*) AS total FROM hsdb.profiles
+        returns: [total]
+      search:
+        sql: |
+          SELECT p.id::text AS record_id, 'DN-HP-' || lpad(p.id::text, 6, '0') AS record_code,
+                 p.platform AS platform, 'profile' AS item_type, p.handle AS author_handle,   -- CONFIRM
+                 NULL::timestamptz AS published_at, p.created_at AS collected_at,
+                 left(coalesce(p.display_name, ''), 280) AS snippet, NULL::text AS classification,  -- CONFIRM
+                 CASE WHEN p.screenshot_path IS NULL THEN 0 ELSE 1 END AS file_count
+          FROM hsdb.profiles p
+          WHERE (%(q)s::text IS NULL OR p.handle ILIKE '%%' || %(q)s || '%%' OR p.display_name ILIKE '%%' || %(q)s || '%%')
+            AND (%(platform)s::text IS NULL OR p.platform = %(platform)s)
+            AND %(date_from)s::date IS NULL AND %(date_to)s::date IS NULL
+          ORDER BY p.id DESC
+          LIMIT %(limit)s OFFSET %(offset)s
+        returns: [record_id, record_code, platform, item_type, published_at]
+      record:
+        sql: |
+          SELECT p.id::text AS record_id, 'DN-HP-' || lpad(p.id::text, 6, '0') AS record_code,
+                 p.platform AS platform, 'profile' AS item_type, p.handle AS author_handle,
+                 p.profile_url AS author_url, p.profile_url AS url,                            -- CONFIRM
+                 NULL::timestamptz AS published_at, p.created_at AS collected_at,
+                 NULL::text AS collected_by, p.bio AS text_original, NULL::text AS language,  -- CONFIRM
+                 NULL::text AS text_en, NULL::text AS translator_statement,
+                 NULL::text AS classification, NULL::text AS location, NULL::text AS outcome,
+                 NULL::text AS evidence_tier, '{}'::jsonb AS extra
+          FROM hsdb.profiles p WHERE p.id::text = %(record_id)s
+        returns: [record_id, record_code, platform, item_type, published_at]
+      files:
+        sql: |
+          SELECT 'screenshot' AS file_id, regexp_replace(p.screenshot_path, '^.*/', '') AS filename,
+                 'screenshot' AS kind, 'image/png' AS mime_type, NULL::bigint AS size_bytes,
+                 p.screenshot_path AS rel_path, NULL::text AS sha256_stored,
+                 NULL::text AS evidence_tier, NULL::timestamptz AS created_at
+          FROM hsdb.profiles p WHERE p.id::text = %(record_id)s AND p.screenshot_path IS NOT NULL
+        returns: [file_id, filename, rel_path, sha256_stored]
+      paths:
+        sql: |
+          SELECT p.id::text AS record_id, 'screenshot' AS file_id, p.screenshot_path AS rel_path,
+                 NULL::text AS sha256_stored
+          FROM hsdb.profiles p WHERE p.screenshot_path IS NOT NULL
+        returns: [record_id, file_id, rel_path, sha256_stored]
+
+  artifact:
+    label: Ansarian artefact
+    path_bases: ["300. Projects/Project DarkNight/07_UNFILED"]
+    queries:
+      count:
+        sql: SELECT count(*) AS total FROM ansarian.artifact_files
+        returns: [total]
+      search:
+        sql: |
+          SELECT a.id::text AS record_id, 'DN-AF-' || lpad(a.id::text, 6, '0') AS record_code,
+                 NULL::text AS platform, 'file' AS item_type, NULL::text AS author_handle,
+                 NULL::timestamptz AS published_at, a.created_at AS collected_at,               -- CONFIRM
+                 regexp_replace(a.nas_path, '^.*/', '') AS snippet, NULL::text AS classification,
+                 1 AS file_count
+          FROM ansarian.artifact_files a
+          WHERE (%(q)s::text IS NULL OR a.nas_path ILIKE '%%' || %(q)s || '%%')
+            AND %(platform)s::text IS NULL AND %(date_from)s::date IS NULL AND %(date_to)s::date IS NULL
+          ORDER BY a.id DESC
+          LIMIT %(limit)s OFFSET %(offset)s
+        returns: [record_id, record_code, platform, item_type, published_at]
+      record:
+        sql: |
+          SELECT a.id::text AS record_id, 'DN-AF-' || lpad(a.id::text, 6, '0') AS record_code,
+                 NULL::text AS platform, 'file' AS item_type, NULL::text AS author_handle,
+                 NULL::text AS author_url, NULL::text AS url, NULL::timestamptz AS published_at,
+                 a.created_at AS collected_at, NULL::text AS collected_by,
+                 NULL::text AS text_original, NULL::text AS language, NULL::text AS text_en,
+                 NULL::text AS translator_statement, NULL::text AS classification,
+                 NULL::text AS location, NULL::text AS outcome, NULL::text AS evidence_tier,
+                 '{}'::jsonb AS extra
+          FROM ansarian.artifact_files a WHERE a.id::text = %(record_id)s
+        returns: [record_id, record_code, platform, item_type, published_at]
+      files:
+        sql: |
+          SELECT 'file' AS file_id, regexp_replace(a.nas_path, '^.*/', '') AS filename,
+                 'file' AS kind, NULL::text AS mime_type, NULL::bigint AS size_bytes,
+                 a.nas_path AS rel_path, a.sha256 AS sha256_stored,
+                 NULL::text AS evidence_tier, a.created_at AS created_at
+          FROM ansarian.artifact_files a WHERE a.id::text = %(record_id)s
+        returns: [file_id, filename, rel_path, sha256_stored]
+      paths:
+        sql: |
+          SELECT a.id::text AS record_id, 'file' AS file_id, a.nas_path AS rel_path,
+                 a.sha256 AS sha256_stored
+          FROM ansarian.artifact_files a
+        returns: [record_id, file_id, rel_path, sha256_stored]

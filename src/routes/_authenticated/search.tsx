@@ -330,9 +330,14 @@ function SearchPage() {
                     {r.record_code}
                   </Link>
                   <span className="text-muted-foreground text-xs">
-                    {r.item_type ?? "record"} · {platformLabel(r.platform)} · @
-                    {r.author_handle ?? "—"} · {formatDateTime(r.published_at)}
+                    {r.collection_label ?? r.item_type ?? "record"} · {platformLabel(r.platform)} ·
+                    @{r.author_handle ?? "—"} · {formatDateTime(r.published_at)}
                   </span>
+                  {r.element_crop ? (
+                    <span className="bg-queued text-queued-foreground rounded-full px-2.5 py-0.5 text-xs font-semibold">
+                      Element crop
+                    </span>
+                  ) : null}
                   {classificationLabel(r.classification) ? (
                     <span className="bg-secondary text-secondary-foreground rounded-full px-2.5 py-0.5 text-xs font-medium">
                       {classificationLabel(r.classification)}

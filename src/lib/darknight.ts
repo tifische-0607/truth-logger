@@ -32,6 +32,24 @@ export type DarkNightSummary = {
   snippet: string | null;
   classification: string | null;
   file_count: number | null;
+  /** DarkNight table the record comes from: finding, comment, profile, artifact. */
+  collection?: string | undefined;
+  collection_label?: string | undefined;
+  evidence_tier?: string | null | undefined;
+  /** True for ELEMENT_CROP tiers: a crop of a page element, not proof by itself. */
+  element_crop?: boolean | undefined;
+  crop_label?: string | null | undefined;
+};
+
+export type PathStatus = "OK" | "MISSING" | "AMBIGUOUS" | "UNSAFE";
+
+/** Hashes DarkNight keeps for a file: its own column and the manifests beside it. */
+export type DarkNightBaselines = {
+  post_manifest: string | null;
+  case_manifest: string | null;
+  case_manifest_path: string | null;
+  /** An RFC-3161 timestamp (.tsr) sits next to the case manifest. */
+  timestamped: boolean;
 };
 
 export type DarkNightFile = {
@@ -44,6 +62,15 @@ export type DarkNightFile = {
   sha256_stored: string | null;
   sha256: string | null;
   available: boolean;
+  path_status?: PathStatus | null | undefined;
+  resolved_path?: string | null | undefined;
+  resolved_via?: string | null | undefined;
+  baselines?: DarkNightBaselines | null | undefined;
+  /** The file's hash compared with every DarkNight baseline. */
+  integrity?: "MATCH" | "MISMATCH" | "NO_BASELINE" | undefined;
+  evidence_tier?: string | null | undefined;
+  element_crop?: boolean | undefined;
+  crop_label?: string | null | undefined;
 };
 
 export type DarkNightRecord = DarkNightSummary & {

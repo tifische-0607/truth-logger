@@ -34,26 +34,30 @@ In `psql` as DarkNight's owner:
 CREATE ROLE evidence_hub_ro LOGIN PASSWORD 'choose-a-long-password';
 ALTER ROLE evidence_hub_ro SET default_transaction_read_only = on;
 GRANT CONNECT ON DATABASE darknight TO evidence_hub_ro;
-GRANT USAGE ON SCHEMA public TO evidence_hub_ro;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO evidence_hub_ro;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO evidence_hub_ro;
+GRANT USAGE ON SCHEMA mobilization, hsdb, ansarian TO evidence_hub_ro;
+GRANT SELECT ON mobilization.mobilization_findings, hsdb.comments, hsdb.profiles,
+                ansarian.artifact_files TO evidence_hub_ro;
 ```
 
 Postgres stays listening on localhost only. The gateway is on the same machine.
 
 ### 2. Mount the evidence share read-only
 
-On the NAS, create an account (e.g. `evidence-hub-ro`) with **read-only**
-permission on the DarkNight evidence share. On the Mac Studio, mount the share
-with that account and set it to reconnect at login (System Settings → General →
-Login Items, or an `automount` entry). Note the mount path, e.g.
-`/Volumes/Evidence/darknight`.
+Mount the share that holds `300. Projects/Project DarkNight` (on the Synology,
+`005. Friday_Analytics`) **read-only**: the NFS `evidence-ro` autofs mount, or SMB
+with a NAS account that has read-only permission. Put the mount point in
+`NAS_SHARE_ROOT`, e.g. `/System/Volumes/Data/nas/evidence-ro`. Paths in
+DarkNight are resolved against it with the per-table folders and old-prefix
+rules in `mapping.yaml`.
 
 ### 3. Fill in the mapping
 
-`mapping.yaml` holds the SQL that turns DarkNight rows into hub records. The
-table and column names in it are **placeholders**. Replace them with the real
-ones from `darknight_schema.sql`, keeping the output column names.
+`mapping.yaml` has one collection per DarkNight table (findings, comments,
+profiles, artefacts), each with its SQL and the folders its paths are relative
+to. Table names and path/hash columns come from the NAS report; columns marked
+`# CONFIRM` are guesses until `darknight_schema.sql` is in. Keep the output
+column names. Then run `check` and `reconcile` (below) and read the report
+before turning the source on.
 
 ### 4. Configure and install
 
@@ -78,6 +82,7 @@ signed in to Tailscale.
 ```sh
 cd gateway
 .venv/bin/python -m darknight_gateway check        # run every mapping query once
+.venv/bin/python -m darknight_gateway reconcile --orphans   # path report to ~/darknight-gateway/reconcile.csv
 .venv/bin/python -m darknight_gateway verify-log   # check the custody log chain
 tail -f ~/darknight-gateway/gateway.err.log        # service log
 launchctl kickstart -k gui/$(id -u)/com.fridayanalytics.darknight-gateway   # restart
@@ -91,8 +96,8 @@ cd gateway
 DARKNIGHT_TEST_DSN=postgresql://postgres@localhost/dn_test .venv/bin/python -m pytest
 ```
 
-The API tests create their own `findings` / `finding_files` tables in the test
-database. Never point `DARKNIGHT_TEST_DSN` at DarkNight itself.
+The API tests create their own `mobilization`, `hsdb` and `ansarian` schemas in
+the test database (and drop them first). Never point `DARKNIGHT_TEST_DSN` at DarkNight itself.
 
 ## Moving to the SQL server
 

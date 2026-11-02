@@ -6,7 +6,7 @@ import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
-VERSION = "gateway-0.1.0"
+VERSION = "gateway-0.2.0"
 
 
 def _load_dotenv(path: Path) -> None:
@@ -28,7 +28,8 @@ def _list(name: str) -> list[str]:
 class Settings:
     # DarkNight database, connected as a READ-ONLY user.
     database_url: str
-    # Root of the evidence share as mounted on this machine, e.g. /Volumes/Evidence/darknight
+    # Root of the evidence share ("005. Friday_Analytics") as mounted here, read-only.
+    # DarkNight's paths are resolved against it using mapping.yaml's rules.
     nas_evidence_root: Path
     mapping_path: Path
     # Where the gateway keeps its own state: hash cache and the home custody log.
@@ -50,7 +51,9 @@ def load_settings() -> Settings:
     base = Path(__file__).resolve().parent.parent
     return Settings(
         database_url=os.environ.get("DARKNIGHT_DATABASE_URL", ""),
-        nas_evidence_root=Path(os.environ.get("NAS_EVIDENCE_ROOT", "/Volumes/Evidence/darknight")),
+        nas_evidence_root=Path(os.environ.get("NAS_SHARE_ROOT")
+                               or os.environ.get("NAS_EVIDENCE_ROOT")
+                               or "/System/Volumes/Data/nas/evidence-ro"),
         mapping_path=Path(os.environ.get("GATEWAY_MAPPING", str(base / "mapping.yaml"))),
         state_dir=Path(os.environ.get("GATEWAY_STATE_DIR", str(Path.home() / "darknight-gateway"))),
         supabase_url=os.environ.get("SUPABASE_URL", "").rstrip("/"),
