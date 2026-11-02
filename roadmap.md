@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Recheck approved implementation in order and close any schema, screen or test gaps
+- [x] Rechecked approved implementation in order; tightened output provenance/storage/log guards and added real hash-mismatch tests
 
 - [x] Evidence Hub identity and six-workspace navigation; existing routes retained
 - [x] Sources, home references and custody extensions with restrictive policies
