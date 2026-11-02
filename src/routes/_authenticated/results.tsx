@@ -1,3 +1,4 @@
+import { hubHead } from '@/lib/hub';
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -19,6 +20,7 @@ import { CaptureCustodyTrail } from "@/components/CaptureCustodyTrail";
 import { formatBytes, formatDateTime } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/results")({
+  head: () => hubHead('Capture results'),
   component: ResultsPage,
 });
 

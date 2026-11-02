@@ -1,3 +1,4 @@
+import { hubHead } from '@/lib/hub';
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Camera, Loader2, MessageSquare, Video } from "lucide-react";
@@ -18,6 +19,7 @@ function formatDay(day: string) {
 import { getCachedCase, offlineFirst } from "@/lib/offline";
 
 export const Route = createFileRoute("/_authenticated/trail/$caseId")({
+  head: () => hubHead('Evidence trail'),
   component: CaseTrailPage,
 });
 

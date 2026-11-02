@@ -1,3 +1,4 @@
+import { hubHead } from '@/lib/hub';
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, BadgeCheck, LayoutList } from "lucide-react";
@@ -7,7 +8,7 @@ import { PageHeader } from "@/components/AppShell";
 import { formatDateTime } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/summary/$caseId")({
-  head: () => ({ meta: [{ title: "Case summary — Evidence Hub" }] }),
+  head: () => hubHead('Case summary'),
   component: CaseSummaryPage,
 });
 

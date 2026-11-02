@@ -1,3 +1,4 @@
+import { hubHead } from '@/lib/hub';
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -10,6 +11,7 @@ import { WorkerDiagnosticsPanel } from "@/components/WorkerDiagnostics";
 import { formatDateTime, timeAgo } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/settings")({
+  head: () => hubHead('Settings'),
   component: SettingsPage,
 });
 

@@ -1,3 +1,4 @@
+import { hubHead } from '@/lib/hub';
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -16,6 +17,7 @@ import { formatBytes, formatDateTime, LIVE_KINDS, RENDER_KINDS } from "@/lib/for
 import { findCachedItem, offlineFirst, queueCustodyEvent, useOnline } from "@/lib/offline";
 
 export const Route = createFileRoute("/_authenticated/items/$itemId")({
+  head: () => hubHead('Evidence item'),
   component: ItemPage,
 });
 

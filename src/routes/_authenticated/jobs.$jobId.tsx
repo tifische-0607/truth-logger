@@ -1,3 +1,4 @@
+import { hubHead } from '@/lib/hub';
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
@@ -12,6 +13,7 @@ import { CaptureCustodyTrail } from "@/components/CaptureCustodyTrail";
 import { CaptureViewer } from "@/components/CaptureViewer";
 
 export const Route = createFileRoute("/_authenticated/jobs/$jobId")({
+  head: () => hubHead('Capture job'),
   component: JobDetail,
 });
 

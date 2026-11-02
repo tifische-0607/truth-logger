@@ -1,3 +1,4 @@
+import { hubHead } from '@/lib/hub';
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Loader2, MessageSquare } from "lucide-react";
@@ -8,7 +9,7 @@ import { EvidenceThumb } from "@/components/EvidenceThumb";
 import { formatDateTime } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/comments/$caseId")({
-  head: () => ({ meta: [{ title: "Comment trail — Evidence Hub" }] }),
+  head: () => hubHead('Comment trail'),
   component: CommentTrailPage,
 });
 

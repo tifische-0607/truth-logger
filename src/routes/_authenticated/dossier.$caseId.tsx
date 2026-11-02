@@ -1,3 +1,4 @@
+import { hubHead } from '@/lib/hub';
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Printer } from "lucide-react";
@@ -7,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { formatDateTime } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/dossier/$caseId")({
-  head: () => ({ meta: [{ title: "Case dossier — Evidence Hub" }] }),
+  head: () => hubHead('Case dossier'),
   component: DossierPage,
 });
 

@@ -1,3 +1,4 @@
+import { hubHead } from '@/lib/hub';
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -8,7 +9,7 @@ import { PageHeader } from "@/components/AppShell";
 import { formatDateTime } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/timeline/$caseId")({
-  head: () => ({ meta: [{ title: "Published timeline — Evidence Hub" }] }),
+  head: () => hubHead('Published timeline'),
   component: TimelinePage,
 });
 
