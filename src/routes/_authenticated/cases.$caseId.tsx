@@ -1,3 +1,4 @@
+import { hubHead } from '@/lib/hub';
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -16,6 +17,7 @@ import { formatDateTime } from "@/lib/format";
 import { getCachedCase, offlineFirst } from "@/lib/offline";
 
 export const Route = createFileRoute("/_authenticated/cases/$caseId")({
+  head: () => hubHead('Case overview'),
   component: CasePage,
 });
 
@@ -108,76 +110,9 @@ function CasePage() {
   return (
     <>
       <PageHeader
-        title={`CASE-${caseId}`}
+        title="Overview"
         subtitle={`Opened ${formatDateTime(caseQuery.data.opened_on)}`}
-        actions={
-          <div className="flex items-center gap-3">
-            <Link
-              to="/report/$caseId"
-              params={{ caseId }}
-              className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
-            >
-              <Printer className="size-4" /> Case report
-            </Link>
-            <Link
-              to="/summary/$caseId"
-              params={{ caseId }}
-              className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
-            >
-              <LayoutList className="size-4" /> Case summary
-            </Link>
-            <Link
-              to="/timeline/$caseId"
-              params={{ caseId }}
-              className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
-            >
-              <LayoutList className="size-4" /> Published timeline
-            </Link>
-            <Link
-              to="/dossier/$caseId"
-              params={{ caseId }}
-              className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
-            >
-              <Printer className="size-4" /> Case dossier
-            </Link>
-            <Link
-              to="/trail/$caseId"
-              params={{ caseId }}
-              className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
-            >
-              <Camera className="size-4" /> Evidence trail
-            </Link>
-            <Link
-              to="/profiles/$caseId"
-              params={{ caseId }}
-              className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
-            >
-              <UserRound className="size-4" /> Profile trail
-            </Link>
-            <Link
-              to="/comments/$caseId"
-              params={{ caseId }}
-              className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
-            >
-              <MessageSquare className="size-4" /> Comment trail
-            </Link>
-            <Link
-              to="/transcripts/$caseId"
-              params={{ caseId }}
-              className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
-            >
-              <FileText className="size-4" /> Transcript trail
-            </Link>
-            <Link
-              to="/review/$caseId"
-              params={{ caseId }}
-              className="border-input hover:bg-accent inline-flex min-h-12 items-center gap-2 rounded-lg border px-4 text-sm font-medium"
-            >
-              <Tablet className="size-4" /> Review mode
-            </Link>
-            <StatusBadge status={caseQuery.data.status} className="text-sm" />
-          </div>
-        }
+        actions={<StatusBadge status={caseQuery.data.status} className="text-sm" />}
       />
 
       <div className="grid gap-5 lg:grid-cols-3">

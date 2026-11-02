@@ -1,3 +1,4 @@
+import { hubHead } from '@/lib/hub';
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, BadgeCheck, Loader2, UserRound } from "lucide-react";
@@ -8,7 +9,7 @@ import { EvidenceThumb } from "@/components/EvidenceThumb";
 import { formatDateTime } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/profiles/$caseId")({
-  head: () => ({ meta: [{ title: "Profile trail — Evidence Hub" }] }),
+  head: () => hubHead('Profile trail'),
   component: ProfileTrailPage,
 });
 

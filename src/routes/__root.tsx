@@ -86,12 +86,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Collect Facebook posts and comments as legal evidence with a verifiable chain of custody.",
+          "FridayAnalytics shared evidence hub with clients, projects, private vaults and verifiable custody.",
       },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-title", content: "Evidence Hub" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-      { name: "theme-color", content: "#1b2233" },
+      { name: "theme-color", content: "#121F34" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

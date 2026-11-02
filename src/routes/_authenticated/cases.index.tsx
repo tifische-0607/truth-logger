@@ -1,3 +1,4 @@
+import { hubHead } from '@/lib/hub';
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 
@@ -8,6 +9,7 @@ import { formatDateTime } from "@/lib/format";
 import { listCachedCases, offlineFirst } from "@/lib/offline";
 
 export const Route = createFileRoute("/_authenticated/cases/")({
+  head: () => hubHead('Cases'),
   component: CasesList,
 });
 

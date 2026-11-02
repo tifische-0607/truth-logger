@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { verifyEvidence, type VerifyReport } from "@/lib/evidence.functions";
 import { formatDateTime } from "@/lib/format";
+import { HomeIntegrity } from '@/components/HomeIntegrity';
 
 export const Route = createFileRoute("/_authenticated/verify")({
   head: () => ({
@@ -174,6 +175,7 @@ function VerifyPage() {
         </Button>
       </div>
 
+      <HomeIntegrity caseId={caseId} />
       {report && (
         <div className="space-y-4">
           <div className="panel flex flex-wrap items-center gap-4 p-5">

@@ -1,0 +1,13 @@
+import { supabase } from '@/integrations/supabase/client';
+import { verdict } from './hub';
+export const projectsQuery={queryKey:['hub-projects'],queryFn:async()=>{const {data,error}=await supabase.from('projects').select('*, clients(id,code,name), project_cases(case_id), project_items(id,unlinked_at), project_outputs(id,status), project_briefs(id,version,project_criteria(id,kind,required)), project_assessments(project_item_id,criterion_id,result,assessed_at)').order('created_at',{ascending:false});if(error)throw error;return data;}};
+export const clientsQuery={queryKey:['hub-clients'],queryFn:async()=>{const {data,error}=await supabase.from('clients').select('*').order('name');if(error)throw error;return data;}};
+export function projectQuery(id:string){return {queryKey:['hub-project',id],queryFn:async()=>{
+ const results=await Promise.all([supabase.from('projects').select('*,clients(*)').eq('id',id).single(),supabase.from('project_briefs').select('*,project_criteria(*)').eq('project_id',id).order('version',{ascending:false}),supabase.from('project_items').select('*,items(*,accounts(platform),artefacts(*)),evidence_refs(*)').eq('project_id',id).is('unlinked_at',null),supabase.from('project_cases').select('*,cases(*)').eq('project_id',id),supabase.from('project_assessments').select('*').eq('project_id',id).order('assessed_at',{ascending:false}),supabase.from('project_outputs').select('*').eq('project_id',id).order('created_at',{ascending:false}),supabase.from('project_members').select('*,profiles(id,display_name,email)').eq('project_id',id),supabase.from('project_events').select('*').eq('project_id',id).order('created_at',{ascending:false}).limit(250)]);
+ for(const r of results)if(r.error)throw r.error;
+ const project=results[0].data; if(!project)throw new Error("Project unavailable");
+ return {project,briefs:results[1].data??[],items:results[2].data??[],cases:results[3].data??[],assessments:results[4].data??[],outputs:results[5].data??[],members:results[6].data??[],events:results[7].data??[]};
+}};}
+export type ProjectData=Awaited<ReturnType<ReturnType<typeof projectQuery>['queryFn']>>;
+export function itemResults(data:ProjectData,itemId:string){const results:Record<string,string>={};for(const a of data.assessments)if(a.project_item_id===itemId&&results[a.criterion_id]===undefined)results[a.criterion_id]=a.result;return results;}
+export function projectStats(data:ProjectData){const criteria=data.briefs[0]?.project_criteria??[];const counts={'meets the brief':0,excluded:0,'to assess':0};for(const item of data.items)counts[verdict(criteria,itemResults(data,item.id))]++;return counts;}

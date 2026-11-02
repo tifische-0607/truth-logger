@@ -111,7 +111,7 @@ function AuthPage() {
           <img src="/app-icon.png" alt="" width={72} height={72} className="rounded-2xl" />
           <h1 className="text-2xl font-bold tracking-tight">Evidence Hub</h1>
           <p className="text-sidebar-foreground/60 text-sm">
-            Evidence capture and chain of custody
+            FridayAnalytics
           </p>
         </div>
 

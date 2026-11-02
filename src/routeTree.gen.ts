@@ -15,12 +15,16 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedCaptureLogRouteImport } from './routes/_authenticated/capture-log'
 import { Route as AuthenticatedCaptureSettingsRouteImport } from './routes/_authenticated/capture-settings'
 import { Route as AuthenticatedCaseDatabaseRouteImport } from './routes/_authenticated/case-database'
+import { Route as AuthenticatedCollectRouteImport } from './routes/_authenticated/collect'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedExportRouteImport } from './routes/_authenticated/export'
+import { Route as AuthenticatedIntegrityRouteImport } from './routes/_authenticated/integrity'
 import { Route as AuthenticatedOfflineRouteImport } from './routes/_authenticated/offline'
 import { Route as AuthenticatedQueueRouteImport } from './routes/_authenticated/queue'
 import { Route as AuthenticatedResultsRouteImport } from './routes/_authenticated/results'
+import { Route as AuthenticatedSearchRouteImport } from './routes/_authenticated/search'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedSourcesRouteImport } from './routes/_authenticated/sources'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as AuthenticatedTemplatesRouteImport } from './routes/_authenticated/templates'
 import { Route as AuthenticatedVerifyRouteImport } from './routes/_authenticated/verify'
@@ -28,11 +32,15 @@ import { Route as AuthenticatedWatchlistRouteImport } from './routes/_authentica
 import { Route as AuthenticatedWorkerRouteImport } from './routes/_authenticated/worker'
 import { Route as AuthenticatedCasesIndexRouteImport } from './routes/_authenticated/cases.index'
 import { Route as AuthenticatedCasesCaseIdRouteImport } from './routes/_authenticated/cases.$caseId'
+import { Route as AuthenticatedClientsClientIdRouteImport } from './routes/_authenticated/clients.$clientId'
 import { Route as AuthenticatedCommentsCaseIdRouteImport } from './routes/_authenticated/comments.$caseId'
+import { Route as AuthenticatedCustodyCaseIdRouteImport } from './routes/_authenticated/custody.$caseId'
 import { Route as AuthenticatedDossierCaseIdRouteImport } from './routes/_authenticated/dossier.$caseId'
 import { Route as AuthenticatedItemsItemIdRouteImport } from './routes/_authenticated/items.$itemId'
 import { Route as AuthenticatedJobsJobIdRouteImport } from './routes/_authenticated/jobs.$jobId'
 import { Route as AuthenticatedProfilesCaseIdRouteImport } from './routes/_authenticated/profiles.$caseId'
+import { Route as AuthenticatedProjectsIndexRouteImport } from './routes/_authenticated/projects.index'
+import { Route as AuthenticatedProjectsProjectIdRouteImport } from './routes/_authenticated/projects.$projectId'
 import { Route as AuthenticatedReportCaseIdRouteImport } from './routes/_authenticated/report.$caseId'
 import { Route as AuthenticatedReviewCaseIdRouteImport } from './routes/_authenticated/review.$caseId'
 import { Route as AuthenticatedSummaryCaseIdRouteImport } from './routes/_authenticated/summary.$caseId'
@@ -48,6 +56,7 @@ import { Route as ApiPublicWorkerTranscribeRouteImport } from './routes/api/publ
 import { Route as ApiPublicWorkerUploadUrlRouteImport } from './routes/api/public/worker-upload-url'
 import { Route as ApiPublicWorkerWatchDueRouteImport } from './routes/api/public/worker-watch-due'
 import { Route as ApiPublicWorkerWatchReportRouteImport } from './routes/api/public/worker-watch-report'
+import { Route as AuthenticatedVaultSourceIdRecordIdRouteImport } from './routes/_authenticated/vault.$sourceId.$recordId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -80,6 +89,11 @@ const AuthenticatedCaseDatabaseRoute =
     path: '/case-database',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedCollectRoute = AuthenticatedCollectRouteImport.update({
+  id: '/collect',
+  path: '/collect',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -88,6 +102,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 const AuthenticatedExportRoute = AuthenticatedExportRouteImport.update({
   id: '/export',
   path: '/export',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedIntegrityRoute = AuthenticatedIntegrityRouteImport.update({
+  id: '/integrity',
+  path: '/integrity',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedOfflineRoute = AuthenticatedOfflineRouteImport.update({
@@ -105,9 +124,19 @@ const AuthenticatedResultsRoute = AuthenticatedResultsRouteImport.update({
   path: '/results',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSearchRoute = AuthenticatedSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSourcesRoute = AuthenticatedSourcesRouteImport.update({
+  id: '/sources',
+  path: '/sources',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
@@ -146,10 +175,22 @@ const AuthenticatedCasesCaseIdRoute =
     path: '/cases/$caseId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedClientsClientIdRoute =
+  AuthenticatedClientsClientIdRouteImport.update({
+    id: '/clients/$clientId',
+    path: '/clients/$clientId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedCommentsCaseIdRoute =
   AuthenticatedCommentsCaseIdRouteImport.update({
     id: '/comments/$caseId',
     path: '/comments/$caseId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCustodyCaseIdRoute =
+  AuthenticatedCustodyCaseIdRouteImport.update({
+    id: '/custody/$caseId',
+    path: '/custody/$caseId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedDossierCaseIdRoute =
@@ -173,6 +214,18 @@ const AuthenticatedProfilesCaseIdRoute =
   AuthenticatedProfilesCaseIdRouteImport.update({
     id: '/profiles/$caseId',
     path: '/profiles/$caseId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProjectsIndexRoute =
+  AuthenticatedProjectsIndexRouteImport.update({
+    id: '/projects/',
+    path: '/projects/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProjectsProjectIdRoute =
+  AuthenticatedProjectsProjectIdRouteImport.update({
+    id: '/projects/$projectId',
+    path: '/projects/$projectId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedReportCaseIdRoute =
@@ -260,6 +313,12 @@ const ApiPublicWorkerWatchReportRoute =
     path: '/api/public/worker-watch-report',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedVaultSourceIdRecordIdRoute =
+  AuthenticatedVaultSourceIdRecordIdRouteImport.update({
+    id: '/vault/$sourceId/$recordId',
+    path: '/vault/$sourceId/$recordId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -267,23 +326,30 @@ export interface FileRoutesByFullPath {
   '/capture-log': typeof AuthenticatedCaptureLogRoute
   '/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/case-database': typeof AuthenticatedCaseDatabaseRoute
+  '/collect': typeof AuthenticatedCollectRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/export': typeof AuthenticatedExportRoute
+  '/integrity': typeof AuthenticatedIntegrityRoute
   '/offline': typeof AuthenticatedOfflineRoute
   '/queue': typeof AuthenticatedQueueRoute
   '/results': typeof AuthenticatedResultsRoute
+  '/search': typeof AuthenticatedSearchRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/sources': typeof AuthenticatedSourcesRoute
   '/team': typeof AuthenticatedTeamRoute
   '/templates': typeof AuthenticatedTemplatesRoute
   '/verify': typeof AuthenticatedVerifyRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
   '/worker': typeof AuthenticatedWorkerRoute
   '/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
+  '/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
   '/comments/$caseId': typeof AuthenticatedCommentsCaseIdRoute
+  '/custody/$caseId': typeof AuthenticatedCustodyCaseIdRoute
   '/dossier/$caseId': typeof AuthenticatedDossierCaseIdRoute
   '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
   '/profiles/$caseId': typeof AuthenticatedProfilesCaseIdRoute
+  '/projects/$projectId': typeof AuthenticatedProjectsProjectIdRoute
   '/report/$caseId': typeof AuthenticatedReportCaseIdRoute
   '/review/$caseId': typeof AuthenticatedReviewCaseIdRoute
   '/summary/$caseId': typeof AuthenticatedSummaryCaseIdRoute
@@ -300,6 +366,8 @@ export interface FileRoutesByFullPath {
   '/api/public/worker-watch-due': typeof ApiPublicWorkerWatchDueRoute
   '/api/public/worker-watch-report': typeof ApiPublicWorkerWatchReportRoute
   '/cases/': typeof AuthenticatedCasesIndexRoute
+  '/projects/': typeof AuthenticatedProjectsIndexRoute
+  '/vault/$sourceId/$recordId': typeof AuthenticatedVaultSourceIdRecordIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -307,23 +375,30 @@ export interface FileRoutesByTo {
   '/capture-log': typeof AuthenticatedCaptureLogRoute
   '/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/case-database': typeof AuthenticatedCaseDatabaseRoute
+  '/collect': typeof AuthenticatedCollectRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/export': typeof AuthenticatedExportRoute
+  '/integrity': typeof AuthenticatedIntegrityRoute
   '/offline': typeof AuthenticatedOfflineRoute
   '/queue': typeof AuthenticatedQueueRoute
   '/results': typeof AuthenticatedResultsRoute
+  '/search': typeof AuthenticatedSearchRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/sources': typeof AuthenticatedSourcesRoute
   '/team': typeof AuthenticatedTeamRoute
   '/templates': typeof AuthenticatedTemplatesRoute
   '/verify': typeof AuthenticatedVerifyRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
   '/worker': typeof AuthenticatedWorkerRoute
   '/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
+  '/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
   '/comments/$caseId': typeof AuthenticatedCommentsCaseIdRoute
+  '/custody/$caseId': typeof AuthenticatedCustodyCaseIdRoute
   '/dossier/$caseId': typeof AuthenticatedDossierCaseIdRoute
   '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
   '/profiles/$caseId': typeof AuthenticatedProfilesCaseIdRoute
+  '/projects/$projectId': typeof AuthenticatedProjectsProjectIdRoute
   '/report/$caseId': typeof AuthenticatedReportCaseIdRoute
   '/review/$caseId': typeof AuthenticatedReviewCaseIdRoute
   '/summary/$caseId': typeof AuthenticatedSummaryCaseIdRoute
@@ -340,6 +415,8 @@ export interface FileRoutesByTo {
   '/api/public/worker-watch-due': typeof ApiPublicWorkerWatchDueRoute
   '/api/public/worker-watch-report': typeof ApiPublicWorkerWatchReportRoute
   '/cases': typeof AuthenticatedCasesIndexRoute
+  '/projects': typeof AuthenticatedProjectsIndexRoute
+  '/vault/$sourceId/$recordId': typeof AuthenticatedVaultSourceIdRecordIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -349,23 +426,30 @@ export interface FileRoutesById {
   '/_authenticated/capture-log': typeof AuthenticatedCaptureLogRoute
   '/_authenticated/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/_authenticated/case-database': typeof AuthenticatedCaseDatabaseRoute
+  '/_authenticated/collect': typeof AuthenticatedCollectRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/export': typeof AuthenticatedExportRoute
+  '/_authenticated/integrity': typeof AuthenticatedIntegrityRoute
   '/_authenticated/offline': typeof AuthenticatedOfflineRoute
   '/_authenticated/queue': typeof AuthenticatedQueueRoute
   '/_authenticated/results': typeof AuthenticatedResultsRoute
+  '/_authenticated/search': typeof AuthenticatedSearchRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/sources': typeof AuthenticatedSourcesRoute
   '/_authenticated/team': typeof AuthenticatedTeamRoute
   '/_authenticated/templates': typeof AuthenticatedTemplatesRoute
   '/_authenticated/verify': typeof AuthenticatedVerifyRoute
   '/_authenticated/watchlist': typeof AuthenticatedWatchlistRoute
   '/_authenticated/worker': typeof AuthenticatedWorkerRoute
   '/_authenticated/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
+  '/_authenticated/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
   '/_authenticated/comments/$caseId': typeof AuthenticatedCommentsCaseIdRoute
+  '/_authenticated/custody/$caseId': typeof AuthenticatedCustodyCaseIdRoute
   '/_authenticated/dossier/$caseId': typeof AuthenticatedDossierCaseIdRoute
   '/_authenticated/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/_authenticated/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
   '/_authenticated/profiles/$caseId': typeof AuthenticatedProfilesCaseIdRoute
+  '/_authenticated/projects/$projectId': typeof AuthenticatedProjectsProjectIdRoute
   '/_authenticated/report/$caseId': typeof AuthenticatedReportCaseIdRoute
   '/_authenticated/review/$caseId': typeof AuthenticatedReviewCaseIdRoute
   '/_authenticated/summary/$caseId': typeof AuthenticatedSummaryCaseIdRoute
@@ -382,6 +466,8 @@ export interface FileRoutesById {
   '/api/public/worker-watch-due': typeof ApiPublicWorkerWatchDueRoute
   '/api/public/worker-watch-report': typeof ApiPublicWorkerWatchReportRoute
   '/_authenticated/cases/': typeof AuthenticatedCasesIndexRoute
+  '/_authenticated/projects/': typeof AuthenticatedProjectsIndexRoute
+  '/_authenticated/vault/$sourceId/$recordId': typeof AuthenticatedVaultSourceIdRecordIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -391,23 +477,30 @@ export interface FileRouteTypes {
     | '/capture-log'
     | '/capture-settings'
     | '/case-database'
+    | '/collect'
     | '/dashboard'
     | '/export'
+    | '/integrity'
     | '/offline'
     | '/queue'
     | '/results'
+    | '/search'
     | '/settings'
+    | '/sources'
     | '/team'
     | '/templates'
     | '/verify'
     | '/watchlist'
     | '/worker'
     | '/cases/$caseId'
+    | '/clients/$clientId'
     | '/comments/$caseId'
+    | '/custody/$caseId'
     | '/dossier/$caseId'
     | '/items/$itemId'
     | '/jobs/$jobId'
     | '/profiles/$caseId'
+    | '/projects/$projectId'
     | '/report/$caseId'
     | '/review/$caseId'
     | '/summary/$caseId'
@@ -424,6 +517,8 @@ export interface FileRouteTypes {
     | '/api/public/worker-watch-due'
     | '/api/public/worker-watch-report'
     | '/cases/'
+    | '/projects/'
+    | '/vault/$sourceId/$recordId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -431,23 +526,30 @@ export interface FileRouteTypes {
     | '/capture-log'
     | '/capture-settings'
     | '/case-database'
+    | '/collect'
     | '/dashboard'
     | '/export'
+    | '/integrity'
     | '/offline'
     | '/queue'
     | '/results'
+    | '/search'
     | '/settings'
+    | '/sources'
     | '/team'
     | '/templates'
     | '/verify'
     | '/watchlist'
     | '/worker'
     | '/cases/$caseId'
+    | '/clients/$clientId'
     | '/comments/$caseId'
+    | '/custody/$caseId'
     | '/dossier/$caseId'
     | '/items/$itemId'
     | '/jobs/$jobId'
     | '/profiles/$caseId'
+    | '/projects/$projectId'
     | '/report/$caseId'
     | '/review/$caseId'
     | '/summary/$caseId'
@@ -464,6 +566,8 @@ export interface FileRouteTypes {
     | '/api/public/worker-watch-due'
     | '/api/public/worker-watch-report'
     | '/cases'
+    | '/projects'
+    | '/vault/$sourceId/$recordId'
   id:
     | '__root__'
     | '/'
@@ -472,23 +576,30 @@ export interface FileRouteTypes {
     | '/_authenticated/capture-log'
     | '/_authenticated/capture-settings'
     | '/_authenticated/case-database'
+    | '/_authenticated/collect'
     | '/_authenticated/dashboard'
     | '/_authenticated/export'
+    | '/_authenticated/integrity'
     | '/_authenticated/offline'
     | '/_authenticated/queue'
     | '/_authenticated/results'
+    | '/_authenticated/search'
     | '/_authenticated/settings'
+    | '/_authenticated/sources'
     | '/_authenticated/team'
     | '/_authenticated/templates'
     | '/_authenticated/verify'
     | '/_authenticated/watchlist'
     | '/_authenticated/worker'
     | '/_authenticated/cases/$caseId'
+    | '/_authenticated/clients/$clientId'
     | '/_authenticated/comments/$caseId'
+    | '/_authenticated/custody/$caseId'
     | '/_authenticated/dossier/$caseId'
     | '/_authenticated/items/$itemId'
     | '/_authenticated/jobs/$jobId'
     | '/_authenticated/profiles/$caseId'
+    | '/_authenticated/projects/$projectId'
     | '/_authenticated/report/$caseId'
     | '/_authenticated/review/$caseId'
     | '/_authenticated/summary/$caseId'
@@ -505,6 +616,8 @@ export interface FileRouteTypes {
     | '/api/public/worker-watch-due'
     | '/api/public/worker-watch-report'
     | '/_authenticated/cases/'
+    | '/_authenticated/projects/'
+    | '/_authenticated/vault/$sourceId/$recordId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -566,6 +679,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCaseDatabaseRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/collect': {
+      id: '/_authenticated/collect'
+      path: '/collect'
+      fullPath: '/collect'
+      preLoaderRoute: typeof AuthenticatedCollectRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -578,6 +698,13 @@ declare module '@tanstack/react-router' {
       path: '/export'
       fullPath: '/export'
       preLoaderRoute: typeof AuthenticatedExportRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/integrity': {
+      id: '/_authenticated/integrity'
+      path: '/integrity'
+      fullPath: '/integrity'
+      preLoaderRoute: typeof AuthenticatedIntegrityRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/offline': {
@@ -601,11 +728,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedResultsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/search': {
+      id: '/_authenticated/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof AuthenticatedSearchRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/settings': {
       id: '/_authenticated/settings'
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/sources': {
+      id: '/_authenticated/sources'
+      path: '/sources'
+      fullPath: '/sources'
+      preLoaderRoute: typeof AuthenticatedSourcesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/team': {
@@ -657,11 +798,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCasesCaseIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/clients/$clientId': {
+      id: '/_authenticated/clients/$clientId'
+      path: '/clients/$clientId'
+      fullPath: '/clients/$clientId'
+      preLoaderRoute: typeof AuthenticatedClientsClientIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/comments/$caseId': {
       id: '/_authenticated/comments/$caseId'
       path: '/comments/$caseId'
       fullPath: '/comments/$caseId'
       preLoaderRoute: typeof AuthenticatedCommentsCaseIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/custody/$caseId': {
+      id: '/_authenticated/custody/$caseId'
+      path: '/custody/$caseId'
+      fullPath: '/custody/$caseId'
+      preLoaderRoute: typeof AuthenticatedCustodyCaseIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/dossier/$caseId': {
@@ -690,6 +845,20 @@ declare module '@tanstack/react-router' {
       path: '/profiles/$caseId'
       fullPath: '/profiles/$caseId'
       preLoaderRoute: typeof AuthenticatedProfilesCaseIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/projects/': {
+      id: '/_authenticated/projects/'
+      path: '/projects'
+      fullPath: '/projects/'
+      preLoaderRoute: typeof AuthenticatedProjectsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/projects/$projectId': {
+      id: '/_authenticated/projects/$projectId'
+      path: '/projects/$projectId'
+      fullPath: '/projects/$projectId'
+      preLoaderRoute: typeof AuthenticatedProjectsProjectIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/report/$caseId': {
@@ -797,6 +966,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWorkerWatchReportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/vault/$sourceId/$recordId': {
+      id: '/_authenticated/vault/$sourceId/$recordId'
+      path: '/vault/$sourceId/$recordId'
+      fullPath: '/vault/$sourceId/$recordId'
+      preLoaderRoute: typeof AuthenticatedVaultSourceIdRecordIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -804,23 +980,30 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCaptureLogRoute: typeof AuthenticatedCaptureLogRoute
   AuthenticatedCaptureSettingsRoute: typeof AuthenticatedCaptureSettingsRoute
   AuthenticatedCaseDatabaseRoute: typeof AuthenticatedCaseDatabaseRoute
+  AuthenticatedCollectRoute: typeof AuthenticatedCollectRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedExportRoute: typeof AuthenticatedExportRoute
+  AuthenticatedIntegrityRoute: typeof AuthenticatedIntegrityRoute
   AuthenticatedOfflineRoute: typeof AuthenticatedOfflineRoute
   AuthenticatedQueueRoute: typeof AuthenticatedQueueRoute
   AuthenticatedResultsRoute: typeof AuthenticatedResultsRoute
+  AuthenticatedSearchRoute: typeof AuthenticatedSearchRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedSourcesRoute: typeof AuthenticatedSourcesRoute
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRoute
   AuthenticatedTemplatesRoute: typeof AuthenticatedTemplatesRoute
   AuthenticatedVerifyRoute: typeof AuthenticatedVerifyRoute
   AuthenticatedWatchlistRoute: typeof AuthenticatedWatchlistRoute
   AuthenticatedWorkerRoute: typeof AuthenticatedWorkerRoute
   AuthenticatedCasesCaseIdRoute: typeof AuthenticatedCasesCaseIdRoute
+  AuthenticatedClientsClientIdRoute: typeof AuthenticatedClientsClientIdRoute
   AuthenticatedCommentsCaseIdRoute: typeof AuthenticatedCommentsCaseIdRoute
+  AuthenticatedCustodyCaseIdRoute: typeof AuthenticatedCustodyCaseIdRoute
   AuthenticatedDossierCaseIdRoute: typeof AuthenticatedDossierCaseIdRoute
   AuthenticatedItemsItemIdRoute: typeof AuthenticatedItemsItemIdRoute
   AuthenticatedJobsJobIdRoute: typeof AuthenticatedJobsJobIdRoute
   AuthenticatedProfilesCaseIdRoute: typeof AuthenticatedProfilesCaseIdRoute
+  AuthenticatedProjectsProjectIdRoute: typeof AuthenticatedProjectsProjectIdRoute
   AuthenticatedReportCaseIdRoute: typeof AuthenticatedReportCaseIdRoute
   AuthenticatedReviewCaseIdRoute: typeof AuthenticatedReviewCaseIdRoute
   AuthenticatedSummaryCaseIdRoute: typeof AuthenticatedSummaryCaseIdRoute
@@ -828,29 +1011,38 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedTrailCaseIdRoute: typeof AuthenticatedTrailCaseIdRoute
   AuthenticatedTranscriptsCaseIdRoute: typeof AuthenticatedTranscriptsCaseIdRoute
   AuthenticatedCasesIndexRoute: typeof AuthenticatedCasesIndexRoute
+  AuthenticatedProjectsIndexRoute: typeof AuthenticatedProjectsIndexRoute
+  AuthenticatedVaultSourceIdRecordIdRoute: typeof AuthenticatedVaultSourceIdRecordIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCaptureLogRoute: AuthenticatedCaptureLogRoute,
   AuthenticatedCaptureSettingsRoute: AuthenticatedCaptureSettingsRoute,
   AuthenticatedCaseDatabaseRoute: AuthenticatedCaseDatabaseRoute,
+  AuthenticatedCollectRoute: AuthenticatedCollectRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedExportRoute: AuthenticatedExportRoute,
+  AuthenticatedIntegrityRoute: AuthenticatedIntegrityRoute,
   AuthenticatedOfflineRoute: AuthenticatedOfflineRoute,
   AuthenticatedQueueRoute: AuthenticatedQueueRoute,
   AuthenticatedResultsRoute: AuthenticatedResultsRoute,
+  AuthenticatedSearchRoute: AuthenticatedSearchRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedSourcesRoute: AuthenticatedSourcesRoute,
   AuthenticatedTeamRoute: AuthenticatedTeamRoute,
   AuthenticatedTemplatesRoute: AuthenticatedTemplatesRoute,
   AuthenticatedVerifyRoute: AuthenticatedVerifyRoute,
   AuthenticatedWatchlistRoute: AuthenticatedWatchlistRoute,
   AuthenticatedWorkerRoute: AuthenticatedWorkerRoute,
   AuthenticatedCasesCaseIdRoute: AuthenticatedCasesCaseIdRoute,
+  AuthenticatedClientsClientIdRoute: AuthenticatedClientsClientIdRoute,
   AuthenticatedCommentsCaseIdRoute: AuthenticatedCommentsCaseIdRoute,
+  AuthenticatedCustodyCaseIdRoute: AuthenticatedCustodyCaseIdRoute,
   AuthenticatedDossierCaseIdRoute: AuthenticatedDossierCaseIdRoute,
   AuthenticatedItemsItemIdRoute: AuthenticatedItemsItemIdRoute,
   AuthenticatedJobsJobIdRoute: AuthenticatedJobsJobIdRoute,
   AuthenticatedProfilesCaseIdRoute: AuthenticatedProfilesCaseIdRoute,
+  AuthenticatedProjectsProjectIdRoute: AuthenticatedProjectsProjectIdRoute,
   AuthenticatedReportCaseIdRoute: AuthenticatedReportCaseIdRoute,
   AuthenticatedReviewCaseIdRoute: AuthenticatedReviewCaseIdRoute,
   AuthenticatedSummaryCaseIdRoute: AuthenticatedSummaryCaseIdRoute,
@@ -858,6 +1050,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedTrailCaseIdRoute: AuthenticatedTrailCaseIdRoute,
   AuthenticatedTranscriptsCaseIdRoute: AuthenticatedTranscriptsCaseIdRoute,
   AuthenticatedCasesIndexRoute: AuthenticatedCasesIndexRoute,
+  AuthenticatedProjectsIndexRoute: AuthenticatedProjectsIndexRoute,
+  AuthenticatedVaultSourceIdRecordIdRoute:
+    AuthenticatedVaultSourceIdRecordIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
