@@ -9,4 +9,8 @@
 - [ ] (Open) Replace placeholder table/column names in `gateway/mapping.yaml` with DarkNight's real schema; confirm NAS path format
 - [ ] (Open) Install the gateway on the Mac Studio, read-only DB user and NAS account, `tailscale serve`
 - [ ] (Open) Decisions 2 to 5 in the redesign plan: home-vault custody log location, offline copies, local-model AI, partner access
-
+- [x] Gateway v0.2: four DarkNight collections, per-table path bases, legacy prefix rule, hash manifests and RFC-3161 detection, element-crop label, read-only `reconcile` report
+- [x] Clients and projects: versioned briefs and criteria, shared evidence pool, assessments, four output kinds, project log (migration 20261102090000)
+- [ ] (Open) Run `reconcile` on the Mac Studio and review the unresolved-path report; confirm `# CONFIRM` columns once `darknight_schema.sql` is available
+- [ ] (Open) Client portal (data model and access rules are in place; no screens)
+- [ ] (Open) Server-side PDF rendering for reports; today the report is a Markdown skeleton plus an attached final file

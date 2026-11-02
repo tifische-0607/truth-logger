@@ -148,11 +148,12 @@ The worker talks to six endpoints under `/api/public/`, authenticated with `Auth
 
 ## 5. Pages
 
-The sidebar has five workspaces, then Sources and Admin. Old addresses still work; each page now sits inside one of these.
+The sidebar has six workspaces, then Sources and Admin. Old addresses still work; each page now sits inside one of these.
 
 | Place | Pages | What it does |
 |---|---|---|
 | **Home** (`/dashboard`) | — | What needs attention (failed captures, worker or DarkNight offline), capture in progress, source status, recent evidence from both vaults, open cases |
+| **Projects** (`/projects`, `/clients/…`) | Overview, Brief & criteria, Evidence, Outputs, Dashboard, Team, Log | Clients and their projects; see §11 |
 | **Search** (`/search`) | — | One search across original text, English translations, handles and item codes: the cloud vault, linked home-vault references, and DarkNight itself when it is online. "Add to case" on DarkNight results |
 | **Cases** | Overview, Evidence, Timeline, People, Comments, Transcripts, Custody, Report, Dossier | Every per-case page is a tab under one case header (ID, status, home-vault count, Verify / Export / Present). The Evidence tab lists home-vault items beside the case tree |
 | **Evidence item** (`/items/…`) | — | Cloud-vault item: Live screenshot vs *Render* gallery, text + translation, artefacts with SHA-256, custody, AI case-ready summary |
@@ -225,3 +226,21 @@ public/manifest.webmanifest iPad install metadata
 
 The DarkNight field mapping lives in `gateway/mapping.yaml`. **Its table and column names are placeholders** until they are checked against DarkNight's real schema; run `python -m darknight_gateway check` on the Mac Studio after editing it.
 
+
+## 11. Clients and projects
+
+FridayAnalytics works for several clients, each with several projects. A **client** holds projects (owner adds and edits clients). A **project** has its own brief, criteria, team, linked evidence and outputs.
+
+- **Evidence is a shared pool.** A project *links* cases and items (cloud-vault items and home-vault references); nothing is copied, and one item can serve many projects. Project members who are investigators can open the cases linked to their project.
+- **Brief and criteria are versioned and append-only.** A change is a new version with a change note. Criteria belong to one brief version.
+- **Assessment.** Each linked item is assessed per criterion (meets / does not meet / unclear / N/A). An item *meets the brief* when every required and inclusion criterion is met and no exclusion criterion is. Every assessment is kept with who and when.
+- **Outputs** (each tied to the brief version it answers; draft → in review → approved → delivered, lead approves and delivers; fixed once approved; can be withdrawn):
+  - *Evidence bundle*: ZIP built on the device; every file re-hashed against its capture or linking hash, nothing is packed if any file fails; manifest, brief, criteria, items and assessments included. A bundle containing home-vault files is not uploaded; the hub keeps its hash.
+  - *Report*: Markdown skeleton from the brief and numbers; attach the final file.
+  - *Dashboard*: live numbers by criterion, platform and month; an output stores a dated snapshot.
+  - *Dataset*: CSV of items with criteria results and file hashes.
+- **Roles per project:** lead, analyst, reviewer, client viewer. Owner can do everything.
+- **Client portal: designed, not built.** `clients.portal_enabled` is off. When on, client viewers would see only the project, its brief and outputs that are delivered and shared, never cases, evidence, assessments or the log (enforced by row-level security today).
+- **Project log** is written by database triggers and cannot be edited.
+
+Migration `20261102090000_evidence_hub_clients_projects.sql`; client code in `src/lib/projects.ts` and `src/lib/project-outputs.ts`.

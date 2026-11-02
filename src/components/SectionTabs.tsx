@@ -41,6 +41,7 @@ export const SECTION_TABS: Record<SectionId, { title: string; tabs: Tab[] }> = {
 export function sectionForPath(pathname: string): string {
   if (pathname === "/" || pathname.startsWith("/dashboard")) return "home";
   if (pathname.startsWith("/search")) return "search";
+  if (pathname.startsWith("/projects") || pathname.startsWith("/clients")) return "projects";
   if (pathname.startsWith("/sources")) return "sources";
   for (const [id, cfg] of Object.entries(SECTION_TABS)) {
     if (cfg.tabs.some((t) => isTabActive(t, pathname))) return id;

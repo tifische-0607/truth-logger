@@ -9,6 +9,7 @@ import { useDarkNight } from "@/lib/darknight";
 import { formatDateTime } from "@/lib/format";
 import { getCachedCase } from "@/lib/offline";
 import { cn } from "@/lib/utils";
+import { AddCaseToProject } from "@/components/projects/AddToProjectDialog";
 
 /** Per-case routes that live as tabs in one case workspace. */
 export const CASE_TABS = [
@@ -119,6 +120,7 @@ export function CaseWorkspaceHeader({ caseId, pathname }: { caseId: string; path
         </div>
         <div className="flex flex-wrap gap-2">
           <HeaderAction to="/search" icon={Search} label="Add evidence" />
+          <AddCaseToProject caseId={caseId} />
           <HeaderAction to="/verify" icon={ShieldCheck} label="Verify" />
           <HeaderAction to="/export" icon={PackageCheck} label="Export" />
           <Link

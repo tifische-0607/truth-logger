@@ -2,6 +2,7 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type ReactNode } from "react";
 import {
+  Briefcase,
   Camera,
   Database,
   FolderClosed,
@@ -26,9 +27,10 @@ import { CaseWorkspaceHeader, caseIdFromPath } from "@/components/CaseWorkspaceH
 import { SectionTabs, sectionForPath, type SectionId } from "@/components/SectionTabs";
 import { SourceStatusPanel } from "@/components/SourceStatusPanel";
 
-/** Five workspaces, then Sources and Admin. Each entry owns a section of paths. */
+/** Six workspaces, then Sources and Admin. Each entry owns a section of paths. */
 const workspaces = [
   { to: "/dashboard", label: "Home", icon: House, section: "home" },
+  { to: "/projects", label: "Projects", icon: Briefcase, section: "projects" },
   { to: "/search", label: "Search", icon: Search, section: "search" },
   { to: "/cases", label: "Cases", icon: FolderClosed, section: "cases" },
   { to: "/collect", label: "Collect", icon: Camera, section: "collect" },
