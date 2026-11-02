@@ -1,5 +1,8 @@
 # Roadmap
 
+- [x] Scope reduced to identity/navigation and home vault; hide project navigation and case Projects button without deleting existing work
+- [ ] Clients/projects work paused — waiting for revised FA-CEF-V1.10 specification
+
 - [x] Rechecked approved implementation in order; tightened output provenance/storage/log guards and added real hash-mismatch tests
 
 - [x] Evidence Hub identity and six-workspace navigation; existing routes retained
