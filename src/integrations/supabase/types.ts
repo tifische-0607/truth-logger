@@ -621,6 +621,42 @@ export type Database = {
         }
         Relationships: []
       }
+      sources: {
+        Row: {
+          created_at: string
+          description: string | null
+          enabled: boolean
+          gateway_url: string | null
+          id: string
+          kind: string
+          name: string
+          settings: Json
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          enabled?: boolean
+          gateway_url?: string | null
+          id: string
+          kind: string
+          name: string
+          settings?: Json
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          enabled?: boolean
+          gateway_url?: string | null
+          id?: string
+          kind?: string
+          name?: string
+          settings?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       subject_profiles: {
         Row: {
           account_id: string | null
