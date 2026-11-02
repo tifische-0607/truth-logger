@@ -25,7 +25,7 @@ export async function gatewayHealth(source: Source): Promise<'online'|'degraded'
     const res = await fetch(gatewayBase(source) + '/health', { credentials: 'omit', redirect: 'error', signal: AbortSignal.timeout(8_000) });
     if (!res.ok) return 'offline';
     const data = await res.json();
-    return data.status === 'degraded' ? 'degraded' : data.status === 'offline' ? 'offline' : 'online';
+    return data.status === 'online' || data.status === 'ok' || data.status === 'healthy' ? 'online' : data.status === 'degraded' ? 'degraded' : 'offline';
   } catch { return 'offline'; }
 }
 export function recordFrom(raw: unknown): VaultRecord {
