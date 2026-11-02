@@ -30,13 +30,13 @@ const capabilities = [
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Evidence Hub — Facebook evidence capture" },
+      { title: "Evidence Hub — FridayAnalytics" },
       {
         name: "description",
         content:
           "Private workspace for collecting Facebook posts and comments as legal evidence with a verifiable chain of custody.",
       },
-      { property: "og:title", content: "Evidence Hub — Facebook evidence capture" },
+      { property: "og:title", content: "Evidence Hub — FridayAnalytics" },
       {
         property: "og:description",
         content:
@@ -71,10 +71,10 @@ function LandingPage() {
         <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8 sm:py-24 lg:py-28">
           <div className="max-w-4xl">
             <p className="text-muted-foreground mb-6 font-mono text-xs font-medium uppercase tracking-widest">
-              Evidence capture &amp; chain of custody
+              FridayAnalytics
             </p>
             <h1 className="max-w-4xl text-4xl font-bold leading-[1.08] text-balance sm:text-5xl lg:text-6xl">
-              Preserve every post, comment and file before the evidence disappears.
+              Evidence Hub
             </h1>
             <p className="text-muted-foreground mt-6 max-w-2xl text-base leading-relaxed text-pretty sm:text-lg">
               Evidence Hub captures Facebook content from a dedicated Mac mini, keeps the original

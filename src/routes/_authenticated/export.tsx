@@ -21,6 +21,7 @@ import {
 import { exportBundle, type ExportReport } from "@/lib/evidence.functions";
 import { VerifyResultTable } from "@/routes/_authenticated/verify";
 import { formatBytes } from "@/lib/format";
+import { HomeIntegrity } from '@/components/HomeIntegrity';
 
 export const Route = createFileRoute("/_authenticated/export")({
   head: () => ({
@@ -154,6 +155,7 @@ function ExportPage() {
         </p>
       </div>
 
+      <HomeIntegrity caseId={caseId} exporting />
       {report && (
         <div className="space-y-4">
           {report.ok ? (

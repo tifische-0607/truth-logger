@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useLocation } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type ReactNode } from "react";
 import {
@@ -18,6 +18,8 @@ import {
   ShieldCheck,
   Server,
   Users,
+  Search,
+  Briefcase,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -25,24 +27,22 @@ import { cn } from "@/lib/utils";
 import { timeAgo } from "@/lib/format";
 import { OfflineBanner } from "@/components/OfflineBanner";
 import { NewCaptureSheet } from "@/components/NewCaptureSheet";
+import { SourceStatus } from '@/components/SourceStatus';
+import { CaseWorkspace, CASE_TABS } from '@/components/CaseWorkspace';
+import { HomeReferences } from '@/components/HomeReferences';
+import { Button } from '@/components/ui/button';
 
 const nav = [
-  { to: "/dashboard", label: "Dashboard", icon: Gauge },
+  { to: "/dashboard", label: "Home", icon: Gauge },
+  { to: "/projects", label: "Projects", icon: Briefcase },
+  { to: "/search", label: "Search", icon: Search },
   { to: "/cases", label: "Cases", icon: FolderClosed },
-  { to: "/case-database", label: "Case database", icon: FolderClosed },
-  { to: "/watchlist", label: "Watched pages", icon: FolderClosed },
-  { to: "/verify", label: "Verify", icon: ShieldCheck },
-  { to: "/offline", label: "Offline", icon: CloudDownload },
-  { to: "/export", label: "Export", icon: PackageCheck },
-  { to: "/queue", label: "Queue", icon: ListPlus },
-  { to: "/worker", label: "Worker", icon: Server },
-  { to: "/results", label: "Results", icon: Images },
-  { to: "/capture-log", label: "Capture log", icon: ScrollText },
-  { to: "/capture-settings", label: "Capture setup", icon: SlidersHorizontal },
-  { to: "/templates", label: "Templates", icon: LayoutTemplate },
-  { to: "/team", label: "Team", icon: Users },
-  { to: "/settings", label: "Settings", icon: Settings },
+  { to: "/collect", label: "Collect", icon: ListPlus },
+  { to: "/integrity", label: "Integrity", icon: ShieldCheck },
 ] as const;
+const collectTabs = [['/collect','Now'],['/queue','All jobs'],['/watchlist','Watched pages'],['/results','Results'],['/capture-log','Capture log'],['/worker','Worker'],['/capture-settings','Capture setup']] as const;
+const integrityTabs = [['/verify','Verify'],['/export','Export bundle'],['/offline','Offline library']] as const;
+const adminTabs = [['/team','Team'],['/templates','Case templates'],['/settings','Settings']] as const;
 
 export function useWorkerStatus() {
   const queryClient = useQueryClient();
@@ -228,6 +228,11 @@ function WorkerOfflineBanner() {
 
 export function AppShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const caseMatch = /^\/(cases|trail|timeline|profiles|comments|transcripts|custody|report|dossier|summary)\/([^/]+)$/.exec(pathname);
+  const caseId = caseMatch?.[2];
+  const workspaceTabs = collectTabs.some(([to]) => pathname === to) ? collectTabs : integrityTabs.some(([to]) => pathname === to) || pathname === '/integrity' ? integrityTabs : adminTabs.some(([to]) => pathname === to) ? adminTabs : pathname === '/cases' || pathname === '/case-database' ? [['/cases','Cases'],['/case-database','Case database']] as const : [];
+  const activeWorkspace = caseId || pathname === '/case-database' ? '/cases' : collectTabs.some(([to])=>pathname===to) || pathname.startsWith('/jobs/') ? '/collect' : integrityTabs.some(([to])=>pathname===to) ? '/integrity' : pathname.startsWith('/projects') || pathname.startsWith('/clients/') ? '/projects' : pathname;
   const queryClient = useQueryClient();
   const [captureOpen, setCaptureOpen] = useState(false);
   const [captureUrl, setCaptureUrl] = useState("");
@@ -254,12 +259,12 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="bg-background flex min-h-screen">
-      <aside className="bg-sidebar text-sidebar-foreground safe-top safe-bottom sticky top-0 hidden h-screen w-64 shrink-0 flex-col p-5 md:flex">
+      <aside className="bg-sidebar text-sidebar-foreground safe-top safe-bottom sticky top-0 hidden h-screen w-64 shrink-0 flex-col overflow-y-auto p-5 md:flex">
         <Link to="/dashboard" className="flex items-center gap-3">
           <img src="/favicon.png" alt="" width={36} height={36} className="rounded-lg" />
           <div className="leading-tight">
             <div className="text-sm font-bold tracking-tight">Evidence Hub</div>
-            <div className="text-sidebar-foreground/60 text-xs">Monitor</div>
+            <div className="text-sidebar-foreground/60 text-xs">FridayAnalytics</div>
           </div>
         </Link>
 
@@ -268,7 +273,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Link
               key={entry.to}
               to={entry.to}
-              className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground/80 flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors"
+              className={cn("hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground/80 flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors", activeWorkspace===entry.to && 'bg-sidebar-accent text-sidebar-accent-foreground')}
               activeProps={{
                 className: "bg-sidebar-accent text-sidebar-accent-foreground",
               }}
@@ -277,16 +282,20 @@ export function AppShell({ children }: { children: ReactNode }) {
               {entry.label}
             </Link>
           ))}
+          <p className="mt-5 px-3 text-xs text-sidebar-foreground/60">System</p>
+          <Link to="/sources" className="flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm hover:bg-sidebar-accent"><Server className="size-5"/>Sources</Link>
+          <Link to="/team" className="flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm hover:bg-sidebar-accent"><Users className="size-5"/>Admin</Link>
         </nav>
 
         <div className="border-sidebar-border space-y-3 border-t pt-4">
+          <SourceStatus />
           <WorkerStatusCard />
-          <button
+          <Button variant="ghost"
             onClick={signOut}
             className="text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-sm transition-colors"
           >
             <LogOut className="size-4" /> Sign out
-          </button>
+          </Button>
         </div>
       </aside>
 
@@ -303,9 +312,15 @@ export function AppShell({ children }: { children: ReactNode }) {
         <WorkerOfflineBanner />
 
 
-        <main className="min-w-0 flex-1 px-4 pt-6 pb-28 md:px-8 md:pt-8 md:pb-12">{children}</main>
+        <main className="min-w-0 flex-1 px-4 pt-6 pb-28 md:px-8 md:pt-8 md:pb-12">
+          <div className="md:hidden no-print mb-4 flex gap-3 text-sm"><Link to="/sources" className="inline-flex min-h-11 items-center border rounded px-3">Sources</Link><Link to="/team" className="inline-flex min-h-11 items-center border rounded px-3">Admin</Link></div>
+          {workspaceTabs.length>0 && <nav aria-label="Workspace pages" className="no-print mb-6 relative flex overflow-x-auto border-b">{workspaceTabs.map(([to,label])=><Link key={to} to={to} className={cn('shrink-0 min-h-12 px-4 py-3 border-b-2 text-sm',pathname===to?'border-primary text-primary font-semibold':'border-transparent text-muted-foreground')}>{label}</Link>)}</nav>}
+          {caseId && <CaseWorkspace caseId={caseId} path={pathname}/>}
+          {children}
+          {caseId && pathname.startsWith('/trail/') && <HomeReferences caseId={caseId}/>}
+        </main>
 
-        <button
+        <Button
           type="button"
           onClick={() => {
             setCaptureUrl("");
@@ -316,7 +331,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         >
           <ListPlus className="size-5" />
           New capture
-        </button>
+        </Button>
 
         <NewCaptureSheet
           open={captureOpen}
@@ -324,12 +339,12 @@ export function AppShell({ children }: { children: ReactNode }) {
           initialUrl={captureUrl}
         />
 
-        <nav className="bg-sidebar text-sidebar-foreground safe-bottom fixed inset-x-0 bottom-0 z-40 flex justify-around border-t border-white/10 md:hidden">
+        <nav className="bg-sidebar text-sidebar-foreground safe-bottom fixed inset-x-0 bottom-0 z-40 flex justify-around border-t border-sidebar-border md:hidden">
           {nav.map((entry) => (
             <Link
               key={entry.to}
               to={entry.to}
-              className="text-sidebar-foreground/70 flex min-h-16 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-medium"
+              className={cn("text-sidebar-foreground/70 flex min-h-16 min-w-0 flex-1 flex-col items-center justify-center gap-1 text-[10px] font-medium",activeWorkspace===entry.to && 'text-sidebar-primary')}
               activeProps={{ className: "text-sidebar-primary" }}
             >
               <entry.icon className="size-5" />
