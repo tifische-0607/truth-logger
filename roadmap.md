@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Recheck approved implementation in order and close any schema, screen or test gaps
+
 - [x] Evidence Hub identity and six-workspace navigation; existing routes retained
 - [x] Sources, home references and custody extensions with restrictive policies
 - [x] DarkNight integration UI, gateway calls, browser hashing and device-only exports
