@@ -654,7 +654,7 @@ function BriefForm({ ws, amend, onDone }: { ws: Workspace; amend: boolean; onDon
       <Section
         id="s10"
         title={num(10, "Governance")}
-        hint="Section 11, the sign-off, is recorded at gate G0 (Overview)."
+        hint="Section 11, the sign-off, is recorded at gate G0 (Gates tab)."
       >
         <div className="grid gap-4 sm:grid-cols-3">
           <AreaIn
