@@ -2,6 +2,7 @@ import { Link, useNavigate, useLocation } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type ReactNode } from "react";
 import {
+  Briefcase,
   CloudDownload,
   FolderClosed,
   Gauge,
@@ -33,6 +34,7 @@ import { Button } from '@/components/ui/button';
 
 const nav = [
   { to: "/dashboard", label: "Home", icon: Gauge },
+  { to: "/projects", label: "Projects", icon: Briefcase },
   { to: "/search", label: "Search", icon: Search },
   { to: "/cases", label: "Cases", icon: FolderClosed },
   { to: "/collect", label: "Collect", icon: ListPlus },
