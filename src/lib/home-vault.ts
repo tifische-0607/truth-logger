@@ -31,23 +31,23 @@ export async function gatewayHealth(source: Source): Promise<'online'|'degraded'
 export function recordFrom(raw: unknown): VaultRecord {
   if (!raw || typeof raw !== 'object') throw new Error('Invalid home-vault record');
   const obj = raw as Record<string, unknown>;
-  const id = String(obj.record_id ?? obj.id ?? '');
+  const id = String(obj['record_id'] ?? obj['id'] ?? '');
   if (!/^(finding|comment|profile|artifact)\..+$/.test(id)) throw new Error('Home-vault record ID must include its collection');
-  const files = Array.isArray(obj.files) ? obj.files.filter(f => f && typeof f === 'object').map(f => {
+  const files = Array.isArray(obj['files']) ? obj['files'].filter(f => f && typeof f === 'object').map(f => {
     const file = f as Record<string, unknown>;
-    return { ...file, file_id: String(file.file_id ?? ''), filename: String(file.filename ?? ''), kind: String(file.kind ?? 'file'), sha256: String(file.sha256 ?? ''), path_status: String(file.path_status ?? 'UNKNOWN') } as VaultFile;
+    return { ...file, file_id: String(file['file_id'] ?? ''), filename: String(file['filename'] ?? ''), kind: String(file['kind'] ?? 'file'), sha256: String(file['sha256'] ?? ''), path_status: String(file['path_status'] ?? 'UNKNOWN') } as VaultFile;
   }) : [];
   return { ...obj, id, files } as VaultRecord;
 }
 export function refFiles(ref: EvidenceRef): VaultFile[] { return Array.isArray(ref.files) ? ref.files as unknown as VaultFile[] : []; }
 export async function logHome(ref: EvidenceRef, action: 'accessed'|'re-hashed'|'exported', file?: VaultFile, notes?: string) {
-  const { error } = await supabase.from('custody_events').insert({ source_id: ref.source_id, evidence_ref_id: ref.id, action, filename: file?.filename, sha256: file?.sha256, notes });
+  const { error } = await supabase.from('custody_events').insert({ source_id: ref.source_id, evidence_ref_id: ref.id, action, filename: file?.filename ?? null, sha256: file?.sha256 ?? null, notes: notes ?? null });
   if (error) throw error;
 }
 export function fileProblem(file: VaultFile): string | null {
-  if (!validHash(file.sha256)) return 'NO_BASELINE';
-  if (file.path_status !== 'OK') return file.path_status ?? 'UNKNOWN';
-  if (!file.file_id || !file.filename) return 'Invalid file identity';
+  if (!validHash(file['sha256'])) return 'NO_BASELINE';
+  if (file['path_status'] !== 'OK') return file['path_status'] ?? 'UNKNOWN';
+  if (!file['file_id'] || !file['filename']) return 'Invalid file identity';
   return null;
 }
 export async function verifiedHomeFile(source: Source, ref: EvidenceRef, baseline: VaultFile): Promise<Uint8Array> {
@@ -73,8 +73,8 @@ export async function homeBundle(refs: EvidenceRef[], sources: Source[]) {
     for (const file of refFiles(ref)) {
       try {
         const bytes = await verifiedHomeFile(source, ref, file);
-        const path = `${safeName(ref.record_id)}/${safeName(file.file_id)}_${safeName(file.filename)}`;
-        entries[path] = bytes; manifest.push(`${file.sha256}  ${path}`);
+        const path = `${safeName(ref.record_id)}/${safeName(file['file_id'])}_${safeName(file['filename'])}`;
+        entries[path] = bytes; manifest.push(`${file['sha256']}  ${path}`);
       } catch (e) { problems.push(e instanceof Error ? e.message : 'File unavailable'); }
     }
   }

@@ -5,7 +5,8 @@ export const clientsQuery={queryKey:['hub-clients'],queryFn:async()=>{const {dat
 export function projectQuery(id:string){return {queryKey:['hub-project',id],queryFn:async()=>{
  const results=await Promise.all([supabase.from('projects').select('*,clients(*)').eq('id',id).single(),supabase.from('project_briefs').select('*,project_criteria(*)').eq('project_id',id).order('version',{ascending:false}),supabase.from('project_items').select('*,items(*,accounts(platform),artefacts(*)),evidence_refs(*)').eq('project_id',id),supabase.from('project_cases').select('*,cases(*)').eq('project_id',id),supabase.from('project_assessments').select('*').eq('project_id',id).order('assessed_at',{ascending:false}),supabase.from('project_outputs').select('*').eq('project_id',id).order('created_at',{ascending:false}),supabase.from('project_members').select('*,profiles(id,display_name,email)').eq('project_id',id),supabase.from('project_events').select('*').eq('project_id',id).order('created_at',{ascending:false}).limit(250)]);
  for(const r of results)if(r.error)throw r.error;
- return {project:results[0].data,briefs:results[1].data??[],items:results[2].data??[],cases:results[3].data??[],assessments:results[4].data??[],outputs:results[5].data??[],members:results[6].data??[],events:results[7].data??[]};
+ const project=results[0].data; if(!project)throw new Error("Project unavailable");
+ return {project,briefs:results[1].data??[],items:results[2].data??[],cases:results[3].data??[],assessments:results[4].data??[],outputs:results[5].data??[],members:results[6].data??[],events:results[7].data??[]};
 }};}
 export type ProjectData=Awaited<ReturnType<ReturnType<typeof projectQuery>['queryFn']>>;
 export function itemResults(data:ProjectData,itemId:string){const results:Record<string,string>={};for(const a of data.assessments)if(a.project_item_id===itemId&&results[a.criterion_id]===undefined)results[a.criterion_id]=a.result;return results;}
