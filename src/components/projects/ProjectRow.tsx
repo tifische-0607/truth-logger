@@ -26,8 +26,10 @@ export function ProjectStatusChip({ status }: { status: string }) {
 
 export function ProjectRow({ p }: { p: ProjectListRow }) {
   const outputs = p.project_outputs ?? [];
-  const delivered = outputs.filter((o) => o.status === "delivered").length;
-  const review = outputs.filter((o) => o.status === "in_review").length;
+  const signed = [...new Set((p.project_gates ?? []).map((g) => g.gate))].sort();
+  const gatesText = signed.length ? signed.join(" ") : "none";
+  const delivered = outputs.filter((o) => o.status === "released").length;
+  const review = outputs.filter((o) => o.status === "qa_review").length;
   return (
     <Link
       to="/projects/$projectId"
@@ -41,14 +43,14 @@ export function ProjectRow({ p }: { p: ProjectListRow }) {
           <ProjectStatusChip status={p.status} />
           {review ? (
             <span className="bg-warn text-warn-foreground rounded-full px-2 py-0.5 text-xs font-semibold">
-              {review} to review
+              {review} in QA
             </span>
           ) : null}
         </div>
         <div className="truncate text-sm font-medium">{p.name}</div>
         <div className="text-muted-foreground text-xs">
-          {p.project_cases?.length ?? 0} cases · {p.project_items?.length ?? 0} items · {delivered}/
-          {outputs.length} outputs delivered
+          {plural((p.project_cases ?? []).length, "case")} · gates signed: {gatesText} · {delivered}
+          /{outputs.length} released
           {p.due_on ? ` · due ${formatDay(p.due_on)}` : ""}
         </div>
       </div>

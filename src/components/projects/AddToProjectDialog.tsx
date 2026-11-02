@@ -1,12 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Briefcase, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
 
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -16,78 +16,56 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useProjectPool, useWorkableProjects } from "@/lib/projects";
+import { useLinkableProjects } from "@/lib/projects";
 
-/** Case header action: link this case (and optionally all its items) to a project. */
+/**
+ * Case header action: put this case folder in an engagement's scope. Only possible after the
+ * engagement's mandate (G1). Items are chosen as candidates later, per cycle, after the design (G2).
+ */
 export function AddCaseToProject({ caseId }: { caseId: string }) {
   const [open, setOpen] = useState(false);
   const qc = useQueryClient();
-  const projects = useWorkableProjects(open);
+  const projects = useLinkableProjects(open);
   const [projectId, setProjectId] = useState("");
-  const [withItems, setWithItems] = useState(true);
-  const pool = useProjectPool([caseId], open && withItems);
-
   const linked = useQuery({
     queryKey: ["case-projects", caseId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("project_cases")
-        .select("project_id, projects(code, name)")
+        .select("project_id, voided_at, projects(code, name)")
         .eq("case_id", caseId);
       if (error) return [];
-      return (data ?? []) as unknown as {
-        project_id: string;
-        projects: { code: string; name: string } | null;
-      }[];
+      return (
+        (data ?? []) as unknown as {
+          project_id: string;
+          voided_at: string | null;
+          projects: { code: string; name: string } | null;
+        }[]
+      ).filter((l) => !l.voided_at);
     },
   });
-
   useEffect(() => {
-    if (open) {
-      setProjectId("");
-      setWithItems(true);
-    }
+    if (open) setProjectId("");
   }, [open]);
-
   const already = new Set((linked.data ?? []).map((l) => l.project_id));
   const choices = (projects.data ?? []).filter((p) => !already.has(p.id));
-
   const save = useMutation({
     mutationFn: async () => {
       const { error } = await supabase
         .from("project_cases")
         .insert({ project_id: projectId, case_id: caseId });
       if (error) throw error;
-      let n = 0;
-      if (withItems && pool.data?.length) {
-        const rows = pool.data.map((i) =>
-          i.kind === "cloud_item"
-            ? { project_id: projectId, item_kind: "cloud_item", item_id: i.refId }
-            : { project_id: projectId, item_kind: "home_ref", evidence_ref_id: i.refId },
-        );
-        const { error: iErr } = await supabase.from("project_items").insert(rows);
-        if (iErr) throw iErr;
-        n = rows.length;
-      }
-      return n;
     },
-    onSuccess: (n) => {
+    onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ["case-projects", caseId] });
       void qc.invalidateQueries({ queryKey: ["project", projectId] });
       void qc.invalidateQueries({ queryKey: ["clients-projects"] });
-      toast.success(n ? `Case and ${n} items added to the project` : "Case added to the project");
+      toast.success("Case folder linked to the engagement");
       setOpen(false);
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not add to the project"),
+    onError: (e) =>
+      toast.error(e instanceof Error ? e.message : "Could not link", { duration: 12000 }),
   });
-
   return (
     <>
       <Button variant="outline" className="min-h-11" onClick={() => setOpen(true)}>
@@ -101,9 +79,10 @@ export function AddCaseToProject({ caseId }: { caseId: string }) {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>CASE-{caseId} in projects</DialogTitle>
+            <DialogTitle>CASE-{caseId} in engagements</DialogTitle>
             <DialogDescription>
-              Linking shares the case's evidence with a project; nothing is copied.
+              Linking puts the case folder in an engagement's scope; nothing is copied. Only
+              engagements past the mandate (G1) are listed.
             </DialogDescription>
           </DialogHeader>
           {linked.data?.length ? (
@@ -113,7 +92,7 @@ export function AddCaseToProject({ caseId }: { caseId: string }) {
                   <Link
                     to="/projects/$projectId"
                     params={{ projectId: l.project_id }}
-                    search={{ tab: "evidence" }}
+                    search={{ tab: "reading" }}
                     className="hover:underline"
                     onClick={() => setOpen(false)}
                   >
@@ -124,45 +103,37 @@ export function AddCaseToProject({ caseId }: { caseId: string }) {
               ))}
             </ul>
           ) : (
-            <p className="text-muted-foreground text-sm">Not in any project yet.</p>
+            <p className="text-muted-foreground text-sm">Not in any engagement yet.</p>
           )}
           <div className="grid gap-3 border-t pt-4">
-            <Label>Add to another project</Label>
-            <Select value={projectId} onValueChange={setProjectId}>
-              <SelectTrigger aria-label="Project">
-                <SelectValue
-                  placeholder={
-                    projects.isLoading
-                      ? "Loading…"
-                      : choices.length
-                        ? "Choose a project"
-                        : "No open projects you can add to"
-                  }
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {choices.map((p) => (
-                  <SelectItem key={p.id} value={p.id}>
-                    {p.code} · {p.name}
-                    {p.clients ? ` (${p.clients.name})` : ""}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <label className="flex items-center gap-2 text-sm">
-              <Checkbox checked={withItems} onCheckedChange={(v) => setWithItems(Boolean(v))} />
-              Also add all {pool.data ? pool.data.length : ""} items in this case
-            </label>
+            <Label htmlFor="add-proj">Add to another engagement</Label>
+            <select
+              id="add-proj"
+              className="border-input bg-background min-h-11 rounded-md border px-3 text-sm"
+              value={projectId}
+              onChange={(e) => setProjectId(e.target.value)}
+            >
+              <option value="">
+                {projects.isLoading
+                  ? "Loading…"
+                  : choices.length
+                    ? "Choose an engagement"
+                    : "None past the mandate"}
+              </option>
+              {choices.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.code} · {p.name}
+                  {p.clients ? ` (${p.clients.name})` : ""}
+                </option>
+              ))}
+            </select>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>
               Close
             </Button>
-            <Button
-              disabled={!projectId || save.isPending || (withItems && pool.isLoading)}
-              onClick={() => save.mutate()}
-            >
-              {save.isPending ? <Loader2 className="size-4 animate-spin" /> : null} Add
+            <Button disabled={!projectId || save.isPending} onClick={() => save.mutate()}>
+              {save.isPending ? <Loader2 className="size-4 animate-spin" /> : null} Link case
             </Button>
           </DialogFooter>
         </DialogContent>
