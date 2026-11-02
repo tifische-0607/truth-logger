@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { FolderPlus } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { projectsQuery,currentAccess as ignored } from '@/lib/projects';
+import { projectsQuery } from '@/lib/projects';
 import { currentAccess } from '@/lib/hub';
 import { Button } from './ui/button';
 import { Dialog,DialogContent,DialogHeader,DialogTitle } from './ui/dialog';
