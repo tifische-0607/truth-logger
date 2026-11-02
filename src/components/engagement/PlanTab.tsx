@@ -574,7 +574,7 @@ function WatchForm({ ws }: { ws: Workspace }) {
   );
 }
 
-export function PlanTab({ ws }: { ws: Workspace }) {
+export function ScenarioRegister({ ws }: { ws: Workspace }) {
   const canWrite = ws.has("owner", "engagement_lead");
   return (
     <div className="space-y-6">
@@ -640,6 +640,35 @@ export function PlanTab({ ws }: { ws: Workspace }) {
       </Section>
 
       <Section
+        id="watch-h"
+        title="Scenario watch (Phase 8 and 10)"
+        hint="Review the register every cycle. A scenario is declared only when the confidence rule is met, with the evidence tier, then stood down or amended through the brief."
+      >
+        <ul className="divide-border mb-5 divide-y">
+          {ws.scenarioEvents.map((e) => (
+            <li key={e.id} className="py-2 text-sm">
+              <span className="font-mono font-bold">{e.scenario_no}</span>{" "}
+              {e.event.replace("_", " ")} · cycle {e.cycle_no} · {formatDateTime(e.created_at)}
+              {e.evidence_tier ? ` · ${tierLabel(e.evidence_tier)}` : ""}
+              {e.confirmed_by.length ? ` · ${e.confirmed_by.length} reader(s)` : ""}
+              {e.note ? ` — ${e.note}` : ""}
+            </li>
+          ))}
+          {!ws.scenarioEvents.length ? (
+            <li className="text-muted-foreground py-2 text-sm">Nothing recorded.</li>
+          ) : null}
+        </ul>
+        <WatchForm ws={ws} />
+      </Section>
+    </div>
+  );
+}
+
+export function SuccessPlan({ ws }: { ws: Workspace }) {
+  const canWrite = ws.has("owner", "engagement_lead");
+  return (
+    <div className="space-y-6">
+      <Section
         id="suc-h"
         title="Success plan (FA-CEF-T05, brief section 8)"
         hint="Agreed up front and reported against in Phase 8."
@@ -703,27 +732,6 @@ export function PlanTab({ ws }: { ws: Workspace }) {
         )}
       </Section>
 
-      <Section
-        id="watch-h"
-        title="Scenario watch (Phase 8 and 10)"
-        hint="Review the register every cycle. A scenario is declared only when the confidence rule is met, with the evidence tier, then stood down or amended through the brief."
-      >
-        <ul className="divide-border mb-5 divide-y">
-          {ws.scenarioEvents.map((e) => (
-            <li key={e.id} className="py-2 text-sm">
-              <span className="font-mono font-bold">{e.scenario_no}</span>{" "}
-              {e.event.replace("_", " ")} · cycle {e.cycle_no} · {formatDateTime(e.created_at)}
-              {e.evidence_tier ? ` · ${tierLabel(e.evidence_tier)}` : ""}
-              {e.confirmed_by.length ? ` · ${e.confirmed_by.length} reader(s)` : ""}
-              {e.note ? ` — ${e.note}` : ""}
-            </li>
-          ))}
-          {!ws.scenarioEvents.length ? (
-            <li className="text-muted-foreground py-2 text-sm">Nothing recorded.</li>
-          ) : null}
-        </ul>
-        <WatchForm ws={ws} />
-      </Section>
     </div>
   );
 }
