@@ -6,11 +6,13 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { BriefTab } from "@/components/engagement/BriefTab";
 import { DesignTab } from "@/components/engagement/DesignTab";
-import { DiscoveryTab } from "@/components/engagement/DiscoveryTab";
+import { DiscoveryTab, IntakeRegister } from "@/components/engagement/DiscoveryTab";
+import { GatesTab } from "@/components/engagement/GatesTab";
+import { ReleaseTab } from "@/components/engagement/ReleaseTab";
 import { EvidenceTab } from "@/components/engagement/EvidenceTab";
 import { LogTab } from "@/components/engagement/LogTab";
 import { OverviewTab } from "@/components/engagement/OverviewTab";
-import { PlanTab } from "@/components/engagement/PlanTab";
+import { ScenarioRegister, SuccessPlan } from "@/components/engagement/PlanTab";
 import { ReadingTab } from "@/components/engagement/ReadingTab";
 import { ReportsTab } from "@/components/engagement/ReportsTab";
 import { TeamTab } from "@/components/engagement/TeamTab";
@@ -22,11 +24,15 @@ const TABS = [
   { id: "overview", label: "Overview" },
   { id: "brief", label: "Brief" },
   { id: "discovery", label: "Discovery" },
-  { id: "plan", label: "Scenarios & success" },
+  { id: "intake", label: "Intake register" },
+  { id: "plan", label: "Scenario register" },
+  { id: "success", label: "Success plan" },
+  { id: "gates", label: "Gates" },
   { id: "design", label: "Mandate & design" },
   { id: "reading", label: "Collect & read" },
   { id: "evidence", label: "Evidence & load" },
-  { id: "reports", label: "Reports & release" },
+  { id: "reports", label: "Reports" },
+  { id: "release", label: "Release (HELD)" },
   { id: "team", label: "Team" },
   { id: "log", label: "Log" },
 ] as const;
@@ -163,7 +169,8 @@ function ProjectPage() {
             )}
           >
             {t.label}
-            {(t.id === "reports" && w.outputs.some((o) => o.status === "qa_review")) ||
+            {(t.id === "release" && w.outputs.some((o) => o.status === "held")) ||
+            (t.id === "reports" && w.outputs.some((o) => o.status === "qa_review")) ||
             (t.id === "brief" && needsAction && w.me.isCurator) ? (
               <span className="bg-warn ml-1.5 size-2 rounded-full" aria-label="needs action" />
             ) : null}
@@ -174,7 +181,11 @@ function ProjectPage() {
       {tab === "overview" ? <OverviewTab ws={w} /> : null}
       {tab === "brief" ? <BriefTab ws={w} /> : null}
       {tab === "discovery" ? <DiscoveryTab ws={w} /> : null}
-      {tab === "plan" ? <PlanTab ws={w} /> : null}
+      {tab === "intake" ? <IntakeRegister ws={w} /> : null}
+      {tab === "plan" ? <ScenarioRegister ws={w} /> : null}
+      {tab === "success" ? <SuccessPlan ws={w} /> : null}
+      {tab === "gates" ? <GatesTab ws={w} /> : null}
+      {tab === "release" ? <ReleaseTab ws={w} /> : null}
       {tab === "design" ? <DesignTab ws={w} /> : null}
       {tab === "reading" ? <ReadingTab ws={w} /> : null}
       {tab === "evidence" ? <EvidenceTab ws={w} /> : null}
