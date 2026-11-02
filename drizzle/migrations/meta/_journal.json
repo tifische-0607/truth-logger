@@ -8,6 +8,13 @@
       "when": 1793596354290,
       "tag": "0000_hub_sources",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793596403316,
+      "tag": "0001_hub_projects_and_references",
+      "breakpoints": true
     }
   ]
 }

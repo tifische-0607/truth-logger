@@ -415,41 +415,95 @@ export type Database = {
         }
         Relationships: []
       }
+      clients: {
+        Row: {
+          code: string
+          contact_email: string | null
+          contact_name: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          legal_name: string | null
+          name: string
+          notes: string | null
+          portal_enabled: boolean
+          sector: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          contact_email?: string | null
+          contact_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          legal_name?: string | null
+          name: string
+          notes?: string | null
+          portal_enabled?: boolean
+          sector?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          contact_email?: string | null
+          contact_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          legal_name?: string | null
+          name?: string
+          notes?: string | null
+          portal_enabled?: boolean
+          sector?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       custody_events: {
         Row: {
           action: string
           artefact_id: string | null
           created_at: string
+          evidence_ref_id: string | null
           filename: string | null
           handler: string | null
           id: string
           item_id: string | null
           notes: string | null
           sha256: string | null
+          source_id: string
           tool_version: string | null
         }
         Insert: {
           action: string
           artefact_id?: string | null
           created_at?: string
+          evidence_ref_id?: string | null
           filename?: string | null
           handler?: string | null
           id?: string
           item_id?: string | null
           notes?: string | null
           sha256?: string | null
+          source_id?: string
           tool_version?: string | null
         }
         Update: {
           action?: string
           artefact_id?: string | null
           created_at?: string
+          evidence_ref_id?: string | null
           filename?: string | null
           handler?: string | null
           id?: string
           item_id?: string | null
           notes?: string | null
           sha256?: string | null
+          source_id?: string
           tool_version?: string | null
         }
         Relationships: [
@@ -461,10 +515,97 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "custody_events_evidence_ref_id_fkey"
+            columns: ["evidence_ref_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_refs"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "custody_events_item_id_fkey"
             columns: ["item_id"]
             isOneToOne: false
             referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "custody_events_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      evidence_refs: {
+        Row: {
+          case_id: string
+          files: Json
+          id: string
+          incident_id: string | null
+          item_type: string | null
+          linked_at: string
+          linked_by: string | null
+          linked_by_name: string | null
+          note: string | null
+          platform: string | null
+          published_at: string | null
+          record_code: string | null
+          record_id: string
+          source_id: string
+        }
+        Insert: {
+          case_id: string
+          files?: Json
+          id?: string
+          incident_id?: string | null
+          item_type?: string | null
+          linked_at?: string
+          linked_by?: string | null
+          linked_by_name?: string | null
+          note?: string | null
+          platform?: string | null
+          published_at?: string | null
+          record_code?: string | null
+          record_id: string
+          source_id: string
+        }
+        Update: {
+          case_id?: string
+          files?: Json
+          id?: string
+          incident_id?: string | null
+          item_type?: string | null
+          linked_at?: string
+          linked_by?: string | null
+          linked_by_name?: string | null
+          note?: string | null
+          platform?: string | null
+          published_at?: string | null
+          record_code?: string | null
+          record_id?: string
+          source_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evidence_refs_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_refs_incident_id_fkey"
+            columns: ["incident_id"]
+            isOneToOne: false
+            referencedRelation: "incidents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_refs_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "sources"
             referencedColumns: ["id"]
           },
         ]
@@ -620,6 +761,475 @@ export type Database = {
           is_owner?: boolean
         }
         Relationships: []
+      }
+      project_assessments: {
+        Row: {
+          assessed_at: string
+          assessed_by: string
+          assessed_by_name: string | null
+          criterion_id: string
+          id: string
+          note: string | null
+          project_id: string
+          project_item_id: string
+          result: string
+        }
+        Insert: {
+          assessed_at?: string
+          assessed_by?: string
+          assessed_by_name?: string | null
+          criterion_id: string
+          id?: string
+          note?: string | null
+          project_id: string
+          project_item_id: string
+          result: string
+        }
+        Update: {
+          assessed_at?: string
+          assessed_by?: string
+          assessed_by_name?: string | null
+          criterion_id?: string
+          id?: string
+          note?: string | null
+          project_id?: string
+          project_item_id?: string
+          result?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_assessments_criterion_id_project_id_fkey"
+            columns: ["criterion_id", "project_id"]
+            isOneToOne: false
+            referencedRelation: "project_criteria"
+            referencedColumns: ["id", "project_id"]
+          },
+          {
+            foreignKeyName: "project_assessments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_assessments_project_item_id_project_id_fkey"
+            columns: ["project_item_id", "project_id"]
+            isOneToOne: false
+            referencedRelation: "project_items"
+            referencedColumns: ["id", "project_id"]
+          },
+        ]
+      }
+      project_briefs: {
+        Row: {
+          audience: string | null
+          authored_at: string
+          authored_by: string
+          authored_by_name: string | null
+          background: string | null
+          change_note: string
+          constraints: string | null
+          id: string
+          out_of_scope: string | null
+          output_kinds: string[]
+          period_from: string | null
+          period_to: string | null
+          platforms: string[]
+          project_id: string
+          question: string
+          scope: string | null
+          version: number
+        }
+        Insert: {
+          audience?: string | null
+          authored_at?: string
+          authored_by?: string
+          authored_by_name?: string | null
+          background?: string | null
+          change_note: string
+          constraints?: string | null
+          id?: string
+          out_of_scope?: string | null
+          output_kinds?: string[]
+          period_from?: string | null
+          period_to?: string | null
+          platforms?: string[]
+          project_id: string
+          question: string
+          scope?: string | null
+          version?: number
+        }
+        Update: {
+          audience?: string | null
+          authored_at?: string
+          authored_by?: string
+          authored_by_name?: string | null
+          background?: string | null
+          change_note?: string
+          constraints?: string | null
+          id?: string
+          out_of_scope?: string | null
+          output_kinds?: string[]
+          period_from?: string | null
+          period_to?: string | null
+          platforms?: string[]
+          project_id?: string
+          question?: string
+          scope?: string | null
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_briefs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_cases: {
+        Row: {
+          case_id: string
+          project_id: string
+        }
+        Insert: {
+          case_id: string
+          project_id: string
+        }
+        Update: {
+          case_id?: string
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_cases_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_cases_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_criteria: {
+        Row: {
+          brief_id: string
+          description: string | null
+          id: string
+          kind: string
+          label: string
+          position: number
+          project_id: string
+          required: boolean
+          weight: number
+        }
+        Insert: {
+          brief_id: string
+          description?: string | null
+          id?: string
+          kind: string
+          label: string
+          position?: number
+          project_id: string
+          required?: boolean
+          weight?: number
+        }
+        Update: {
+          brief_id?: string
+          description?: string | null
+          id?: string
+          kind?: string
+          label?: string
+          position?: number
+          project_id?: string
+          required?: boolean
+          weight?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_criteria_brief_id_project_id_fkey"
+            columns: ["brief_id", "project_id"]
+            isOneToOne: false
+            referencedRelation: "project_briefs"
+            referencedColumns: ["id", "project_id"]
+          },
+          {
+            foreignKeyName: "project_criteria_brief_id_project_id_fkey"
+            columns: ["brief_id", "project_id"]
+            isOneToOne: false
+            referencedRelation: "project_current_briefs"
+            referencedColumns: ["id", "project_id"]
+          },
+          {
+            foreignKeyName: "project_criteria_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_events: {
+        Row: {
+          actor_id: string | null
+          actor_name: string | null
+          created_at: string
+          details: Json
+          event: string
+          id: string
+          project_id: string
+        }
+        Insert: {
+          actor_id?: string | null
+          actor_name?: string | null
+          created_at?: string
+          details?: Json
+          event: string
+          id?: string
+          project_id: string
+        }
+        Update: {
+          actor_id?: string | null
+          actor_name?: string | null
+          created_at?: string
+          details?: Json
+          event?: string
+          id?: string
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_events_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_items: {
+        Row: {
+          evidence_ref_id: string | null
+          id: string
+          item_id: string | null
+          item_kind: string
+          project_id: string
+        }
+        Insert: {
+          evidence_ref_id?: string | null
+          id?: string
+          item_id?: string | null
+          item_kind: string
+          project_id: string
+        }
+        Update: {
+          evidence_ref_id?: string | null
+          id?: string
+          item_id?: string | null
+          item_kind?: string
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_items_evidence_ref_id_fkey"
+            columns: ["evidence_ref_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_refs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_items_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_items_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_members: {
+        Row: {
+          project_id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          project_id: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          project_id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_members_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_outputs: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          brief_id: string
+          created_at: string
+          created_by: string
+          created_by_name: string | null
+          delivered_at: string | null
+          file_name: string | null
+          id: string
+          item_count: number
+          kind: string
+          location: string | null
+          params: Json
+          project_id: string
+          sha256: string | null
+          shared_with_client: boolean
+          size_bytes: number | null
+          status: string
+          title: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          brief_id: string
+          created_at?: string
+          created_by?: string
+          created_by_name?: string | null
+          delivered_at?: string | null
+          file_name?: string | null
+          id?: string
+          item_count?: number
+          kind: string
+          location?: string | null
+          params?: Json
+          project_id: string
+          sha256?: string | null
+          shared_with_client?: boolean
+          size_bytes?: number | null
+          status?: string
+          title: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          brief_id?: string
+          created_at?: string
+          created_by?: string
+          created_by_name?: string | null
+          delivered_at?: string | null
+          file_name?: string | null
+          id?: string
+          item_count?: number
+          kind?: string
+          location?: string | null
+          params?: Json
+          project_id?: string
+          sha256?: string | null
+          shared_with_client?: boolean
+          size_bytes?: number | null
+          status?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_outputs_brief_id_project_id_fkey"
+            columns: ["brief_id", "project_id"]
+            isOneToOne: false
+            referencedRelation: "project_briefs"
+            referencedColumns: ["id", "project_id"]
+          },
+          {
+            foreignKeyName: "project_outputs_brief_id_project_id_fkey"
+            columns: ["brief_id", "project_id"]
+            isOneToOne: false
+            referencedRelation: "project_current_briefs"
+            referencedColumns: ["id", "project_id"]
+          },
+          {
+            foreignKeyName: "project_outputs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          client_id: string
+          code: string
+          created_at: string
+          created_by: string
+          due_on: string | null
+          id: string
+          name: string
+          opened_on: string
+          status: string
+          summary: string | null
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          code?: string
+          created_at?: string
+          created_by?: string
+          due_on?: string | null
+          id?: string
+          name: string
+          opened_on?: string
+          status?: string
+          summary?: string | null
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          code?: string
+          created_at?: string
+          created_by?: string
+          due_on?: string | null
+          id?: string
+          name?: string
+          opened_on?: string
+          status?: string
+          summary?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sources: {
         Row: {
@@ -846,7 +1456,36 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      project_current_briefs: {
+        Row: {
+          audience: string | null
+          authored_at: string | null
+          authored_by: string | null
+          authored_by_name: string | null
+          background: string | null
+          change_note: string | null
+          constraints: string | null
+          id: string | null
+          out_of_scope: string | null
+          output_kinds: string[] | null
+          period_from: string | null
+          period_to: string | null
+          platforms: string[] | null
+          project_id: string | null
+          question: string | null
+          scope: string | null
+          version: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_briefs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       append_job_log: {
@@ -855,6 +1494,22 @@ export type Database = {
       }
       can_access_case: {
         Args: { _case_id: string; _user_id: string }
+        Returns: boolean
+      }
+      can_access_project: {
+        Args: { _project_id: string; _user_id: string }
+        Returns: boolean
+      }
+      can_manage_project: {
+        Args: { _project_id: string; _user_id: string }
+        Returns: boolean
+      }
+      can_view_project_as_client: {
+        Args: { _project_id: string; _user_id: string }
+        Returns: boolean
+      }
+      can_work_project: {
+        Args: { _project_id: string; _user_id: string }
         Returns: boolean
       }
       claim_next_job: {
@@ -894,6 +1549,14 @@ export type Database = {
         Returns: boolean
       }
       is_investigator: { Args: { _user_id: string }; Returns: boolean }
+      project_item_case: {
+        Args: { _item_id: string; _ref_id: string }
+        Returns: string
+      }
+      project_role: {
+        Args: { _project_id: string; _user_id: string }
+        Returns: string
+      }
       signup_open: { Args: never; Returns: boolean }
     }
     Enums: {
