@@ -1021,6 +1021,7 @@ export type Database = {
           item_id: string | null
           item_kind: string
           project_id: string
+          unlinked_at: string | null
         }
         Insert: {
           evidence_ref_id?: string | null
@@ -1028,6 +1029,7 @@ export type Database = {
           item_id?: string | null
           item_kind: string
           project_id: string
+          unlinked_at?: string | null
         }
         Update: {
           evidence_ref_id?: string | null
@@ -1035,6 +1037,7 @@ export type Database = {
           item_id?: string | null
           item_kind?: string
           project_id?: string
+          unlinked_at?: string | null
         }
         Relationships: [
           {
@@ -1546,6 +1549,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      hub_storage_project: {
+        Args: { path: string; write_access: boolean }
         Returns: boolean
       }
       is_investigator: { Args: { _user_id: string }; Returns: boolean }
