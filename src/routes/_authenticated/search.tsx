@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import type { Json } from '@/integrations/supabase/types';
 import { hubHead, hubDate, sourcesQuery } from '@/lib/hub';
-import { gatewayFetch, recordFrom, validHash as unused } from '@/lib/home-vault';
+import { gatewayFetch, recordFrom } from '@/lib/home-vault';
 import { validHash } from '@/lib/hub';
 import { PageHeader } from '@/components/AppShell';
 import { SourceBadge } from '@/components/SourceStatus';
