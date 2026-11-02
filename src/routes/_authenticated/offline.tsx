@@ -28,6 +28,8 @@ export const Route = createFileRoute("/_authenticated/offline")({
           "Download cases and their artefacts to this device so evidence can be reviewed without an internet connection.",
       },
       { property: "og:title", content: "Offline library · Evidence Hub" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       {
         property: "og:description",
         content: "Review downloaded cases and artefacts without an internet connection.",

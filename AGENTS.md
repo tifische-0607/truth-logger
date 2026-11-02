@@ -14,3 +14,4 @@
 - Read DarkNight directly from the browser with HTTPS, redirect-blocked bearer requests; never proxy or persist home files in cloud storage.
 - Store project output files under immutable hash-qualified paths; home-containing ZIP outputs remain device-only.
 - Use shared hub/project modules for verdicts, hashing and metadata so all project surfaces apply the same rules.
+- Build each output against its recorded brief version, not the current brief, to keep deliverable provenance consistent.
