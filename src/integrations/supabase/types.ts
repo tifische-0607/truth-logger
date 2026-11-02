@@ -1557,6 +1557,10 @@ export type Database = {
         Args: { _project_id: string; _user_id: string }
         Returns: string
       }
+      save_project_brief: {
+        Args: { p_brief: Json; p_criteria: Json; p_project_id: string }
+        Returns: string
+      }
       signup_open: { Args: never; Returns: boolean }
     }
     Enums: {
