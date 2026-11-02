@@ -1,13 +1,13 @@
 {
   "name": "Evidence Hub",
   "short_name": "Evidence Hub",
-  "description": "Collect Facebook posts and comments as legal evidence with a full chain of custody.",
+  "description": "FridayAnalytics shared evidence hub for clients, projects and verifiable custody.",
   "start_url": "/dashboard",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#1b2233",
-  "theme_color": "#1b2233",
+  "background_color": "#121F34",
+  "theme_color": "#121F34",
   "shortcuts": [
     {
       "name": "New capture",

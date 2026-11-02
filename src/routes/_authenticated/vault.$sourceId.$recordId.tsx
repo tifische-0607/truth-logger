@@ -9,12 +9,13 @@ import { gatewayFetch, gatewayHealth, recordFrom, refFiles, verifiedHomeFile, ty
 import { PageHeader } from '@/components/AppShell';
 import { SourceBadge } from '@/components/SourceStatus';
 import { Button } from '@/components/ui/button';
+import { cachedReferences } from '@/lib/reference-cache';
 
 export const Route=createFileRoute('/_authenticated/vault/$sourceId/$recordId')({head:()=>hubHead('Home vault record'),component:VaultPage});
 function VaultPage(){
  const {sourceId,recordId}=Route.useParams(); const sources=useQuery(sourcesQuery); const source=sources.data?.find(s=>s.id===sourceId); const [preview,setPreview]=useState<{url:string;kind:string}|null>(null); const [busy,setBusy]=useState(false);
  useEffect(()=>()=>{if(preview) URL.revokeObjectURL(preview.url);},[preview]);
- const refs=useQuery({queryKey:['vault-refs',sourceId,recordId],queryFn:async()=>{const {data,error}=await supabase.from('evidence_refs').select('*').eq('source_id',sourceId).eq('record_id',recordId);if(error) throw error;return data;}});
+ const refs=useQuery({queryKey:['vault-refs',sourceId,recordId],networkMode:'always',queryFn:()=>cachedReferences(undefined,sourceId,recordId)});
  const health=useQuery({queryKey:['source-health',sourceId,source?.gateway_url,source?.enabled],enabled:Boolean(source),queryFn:()=>source?gatewayHealth(source):Promise.resolve('not configured'),refetchInterval:30000});
  const online=health.data==='online'||health.data==='degraded';
  const record=useQuery({queryKey:['vault-record',sourceId,recordId,source?.updated_at],enabled:Boolean(source?.enabled)&&online,retry:false,queryFn:async()=>{if(!source)throw new Error('Source unavailable');return recordFrom(await(await gatewayFetch(source,`/v1/records/${encodeURIComponent(recordId)}`)).json());}});
