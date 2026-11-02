@@ -19,7 +19,6 @@ import {
   Server,
   Users,
   Search,
-  Briefcase,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -34,7 +33,6 @@ import { Button } from '@/components/ui/button';
 
 const nav = [
   { to: "/dashboard", label: "Home", icon: Gauge },
-  { to: "/projects", label: "Projects", icon: Briefcase },
   { to: "/search", label: "Search", icon: Search },
   { to: "/cases", label: "Cases", icon: FolderClosed },
   { to: "/collect", label: "Collect", icon: ListPlus },
