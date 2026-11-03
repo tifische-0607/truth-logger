@@ -23,6 +23,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedExportRouteImport } from './routes/_authenticated/export'
 import { Route as AuthenticatedInboxRouteImport } from './routes/_authenticated/inbox'
 import { Route as AuthenticatedIntegrityRouteImport } from './routes/_authenticated/integrity'
+import { Route as AuthenticatedLibraryRouteImport } from './routes/_authenticated/library'
 import { Route as AuthenticatedManagementRouteImport } from './routes/_authenticated/management'
 import { Route as AuthenticatedOfflineRouteImport } from './routes/_authenticated/offline'
 import { Route as AuthenticatedQueueRouteImport } from './routes/_authenticated/queue'
@@ -132,6 +133,11 @@ const AuthenticatedInboxRoute = AuthenticatedInboxRouteImport.update({
 const AuthenticatedIntegrityRoute = AuthenticatedIntegrityRouteImport.update({
   id: '/integrity',
   path: '/integrity',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLibraryRoute = AuthenticatedLibraryRouteImport.update({
+  id: '/library',
+  path: '/library',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedManagementRoute = AuthenticatedManagementRouteImport.update({
@@ -364,6 +370,7 @@ export interface FileRoutesByFullPath {
   '/export': typeof AuthenticatedExportRoute
   '/inbox': typeof AuthenticatedInboxRoute
   '/integrity': typeof AuthenticatedIntegrityRoute
+  '/library': typeof AuthenticatedLibraryRoute
   '/management': typeof AuthenticatedManagementRoute
   '/offline': typeof AuthenticatedOfflineRoute
   '/queue': typeof AuthenticatedQueueRoute
@@ -418,6 +425,7 @@ export interface FileRoutesByTo {
   '/export': typeof AuthenticatedExportRoute
   '/inbox': typeof AuthenticatedInboxRoute
   '/integrity': typeof AuthenticatedIntegrityRoute
+  '/library': typeof AuthenticatedLibraryRoute
   '/management': typeof AuthenticatedManagementRoute
   '/offline': typeof AuthenticatedOfflineRoute
   '/queue': typeof AuthenticatedQueueRoute
@@ -474,6 +482,7 @@ export interface FileRoutesById {
   '/_authenticated/export': typeof AuthenticatedExportRoute
   '/_authenticated/inbox': typeof AuthenticatedInboxRoute
   '/_authenticated/integrity': typeof AuthenticatedIntegrityRoute
+  '/_authenticated/library': typeof AuthenticatedLibraryRoute
   '/_authenticated/management': typeof AuthenticatedManagementRoute
   '/_authenticated/offline': typeof AuthenticatedOfflineRoute
   '/_authenticated/queue': typeof AuthenticatedQueueRoute
@@ -530,6 +539,7 @@ export interface FileRouteTypes {
     | '/export'
     | '/inbox'
     | '/integrity'
+    | '/library'
     | '/management'
     | '/offline'
     | '/queue'
@@ -584,6 +594,7 @@ export interface FileRouteTypes {
     | '/export'
     | '/inbox'
     | '/integrity'
+    | '/library'
     | '/management'
     | '/offline'
     | '/queue'
@@ -639,6 +650,7 @@ export interface FileRouteTypes {
     | '/_authenticated/export'
     | '/_authenticated/inbox'
     | '/_authenticated/integrity'
+    | '/_authenticated/library'
     | '/_authenticated/management'
     | '/_authenticated/offline'
     | '/_authenticated/queue'
@@ -796,6 +808,13 @@ declare module '@tanstack/react-router' {
       path: '/integrity'
       fullPath: '/integrity'
       preLoaderRoute: typeof AuthenticatedIntegrityRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/library': {
+      id: '/_authenticated/library'
+      path: '/library'
+      fullPath: '/library'
+      preLoaderRoute: typeof AuthenticatedLibraryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/management': {
@@ -1083,6 +1102,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedExportRoute: typeof AuthenticatedExportRoute
   AuthenticatedInboxRoute: typeof AuthenticatedInboxRoute
   AuthenticatedIntegrityRoute: typeof AuthenticatedIntegrityRoute
+  AuthenticatedLibraryRoute: typeof AuthenticatedLibraryRoute
   AuthenticatedManagementRoute: typeof AuthenticatedManagementRoute
   AuthenticatedOfflineRoute: typeof AuthenticatedOfflineRoute
   AuthenticatedQueueRoute: typeof AuthenticatedQueueRoute
@@ -1124,6 +1144,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedExportRoute: AuthenticatedExportRoute,
   AuthenticatedInboxRoute: AuthenticatedInboxRoute,
   AuthenticatedIntegrityRoute: AuthenticatedIntegrityRoute,
+  AuthenticatedLibraryRoute: AuthenticatedLibraryRoute,
   AuthenticatedManagementRoute: AuthenticatedManagementRoute,
   AuthenticatedOfflineRoute: AuthenticatedOfflineRoute,
   AuthenticatedQueueRoute: AuthenticatedQueueRoute,

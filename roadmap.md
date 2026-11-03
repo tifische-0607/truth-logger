@@ -5,7 +5,7 @@
 - [ ] Stage 1 SQL suite execution: tests/sql/portal_foundation_test.sql saved; blocked by absence of a privileged test connection (managed shell cannot execute functions or update rows). No database privileges widened.
 - [ ] Production auth Site URL confirmation: user must set https://spyglass2.sentinel2.org in auth Advanced settings; production redirect wildcard is already present. No DNS changes.
 - [x] Phase 0/1 close-out: shared exact document footer, reports/dossiers/CSV/ZIP exports and documentation updated; live attribution guidance corrected by 0013. No current output rows or stored exports found. No legacy visible product name or hard-coded hosting URL in active source/docs. 22 unit tests passed; public auth/portal footer checked; build OK. Applied migration history and immutable originals preserved.
-- [ ] Phase 2: Library data/rules — waits for "Go Phase 2"
+- [x] Phase 2: Library data/rules (0014) — documents + append-only document log, output/brief sync, share/withdraw/void, re-hashed downloads, private library storage, staff Library screen. SQL exit checks saved in tests/sql/portal_library_test.sql; not executed (no privileged test connection).
 - [ ] Phase 3: Client portal screens — waits for "Go Phase 3"
 - [ ] Phase 4: Research data/rules — waits for "Go Phase 4"
 - [ ] Phase 5: Research screens/worker API — waits for "Go Phase 5"

@@ -644,6 +644,167 @@ export type Database = {
           },
         ]
       }
+      document_events: {
+        Row: {
+          action: string
+          actor: string | null
+          actor_kind: string
+          at: string
+          client_id: string
+          detail: Json
+          document_id: string
+          id: string
+          reason: string | null
+        }
+        Insert: {
+          action: string
+          actor?: string | null
+          actor_kind?: string
+          at?: string
+          client_id: string
+          detail?: Json
+          document_id: string
+          id?: string
+          reason?: string | null
+        }
+        Update: {
+          action?: string
+          actor?: string | null
+          actor_kind?: string
+          at?: string
+          client_id?: string
+          detail?: Json
+          document_id?: string
+          id?: string
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_events_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      documents: {
+        Row: {
+          brief_id: string | null
+          client_id: string
+          code: string
+          created_at: string
+          created_by: string | null
+          created_by_name: string | null
+          engagement_id: string | null
+          file_name: string | null
+          id: string
+          kind: string
+          manifest_only: boolean
+          output_id: string | null
+          output_status: string | null
+          sha256: string | null
+          size_bytes: number | null
+          source: string
+          storage_bucket: string | null
+          storage_path: string | null
+          title: string
+          updated_at: string
+          version: number
+          visibility: string
+          voided: boolean
+          voided_note: string | null
+        }
+        Insert: {
+          brief_id?: string | null
+          client_id: string
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          created_by_name?: string | null
+          engagement_id?: string | null
+          file_name?: string | null
+          id?: string
+          kind: string
+          manifest_only?: boolean
+          output_id?: string | null
+          output_status?: string | null
+          sha256?: string | null
+          size_bytes?: number | null
+          source: string
+          storage_bucket?: string | null
+          storage_path?: string | null
+          title: string
+          updated_at?: string
+          version?: number
+          visibility?: string
+          voided?: boolean
+          voided_note?: string | null
+        }
+        Update: {
+          brief_id?: string | null
+          client_id?: string
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          created_by_name?: string | null
+          engagement_id?: string | null
+          file_name?: string | null
+          id?: string
+          kind?: string
+          manifest_only?: boolean
+          output_id?: string | null
+          output_status?: string | null
+          sha256?: string | null
+          size_bytes?: number | null
+          source?: string
+          storage_bucket?: string | null
+          storage_path?: string | null
+          title?: string
+          updated_at?: string
+          version?: number
+          visibility?: string
+          voided?: boolean
+          voided_note?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_brief_id_fkey"
+            columns: ["brief_id"]
+            isOneToOne: true
+            referencedRelation: "project_briefs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_brief_id_fkey"
+            columns: ["brief_id"]
+            isOneToOne: true
+            referencedRelation: "project_current_briefs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_engagement_id_fkey"
+            columns: ["engagement_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_output_id_fkey"
+            columns: ["output_id"]
+            isOneToOne: true
+            referencedRelation: "project_outputs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       evidence_refs: {
         Row: {
           case_id: string
@@ -3210,6 +3371,27 @@ export type Database = {
         Returns: boolean
       }
       is_investigator: { Args: { _user_id: string }; Returns: boolean }
+      library_actor_kind: { Args: { u: string }; Returns: string }
+      library_can_read: {
+        Args: { d: Database["public"]["Tables"]["documents"]["Row"]; u: string }
+        Returns: boolean
+      }
+      library_file_for: { Args: { doc: string }; Returns: Json }
+      library_log: {
+        Args: { a: string; d: string; det?: Json; r?: string }
+        Returns: undefined
+      }
+      library_record_download: {
+        Args: { doc: string; got_sha256: string }
+        Returns: boolean
+      }
+      library_require_staff_writer: { Args: never; Returns: undefined }
+      library_share: { Args: { doc: string }; Returns: undefined }
+      library_void: { Args: { doc: string; note: string }; Returns: undefined }
+      library_withdraw: {
+        Args: { doc: string; reason: string }
+        Returns: undefined
+      }
       portal_access_list: { Args: { c: string }; Returns: Json }
       portal_activate_invitation: {
         Args: { rid: string; uid: string }
