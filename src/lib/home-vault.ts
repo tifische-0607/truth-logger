@@ -1,6 +1,7 @@
 import { zipSync, strToU8 } from 'fflate';
 import { supabase } from '@/integrations/supabase/client';
 import { safeName, sha256, validHash, type Source, type EvidenceRef } from './hub';
+import { DOCUMENT_FOOTER } from './document-footer';
 
 export type VaultFile = { file_id: string; filename: string; kind: string; size_bytes?: number; sha256: string; element_crop?: boolean; crop_label?: string; path_status?: string; baselines?: { post_manifest?: string; case_manifest?: string; case_manifest_path?: string; timestamped?: boolean }; integrity?: string };
 export type VaultRecord = { id: string; record_id?: string; record_code?: string; title?: string; text?: string; text_original?: string; author_name?: string; platform?: string; item_type?: string; published_at?: string; collection?: string; element_crop?: boolean; crop_label?: string; files: VaultFile[] };
@@ -81,7 +82,7 @@ export async function homeBundle(refs: EvidenceRef[], sources: Source[]) {
   if (problems.length) throw new Error(`Export blocked:\n${problems.join('\n')}`);
   entries['manifest.sha256'] = strToU8(manifest.join('\n'));
   entries['references.json'] = strToU8(JSON.stringify(refs, null, 2));
-  entries['README.txt'] = strToU8('FA Portal — FridayAnalytics\nProduced by FridayAnalytics.org for the Ansarian Collective.\nHome-vault files: verified against hashes retained at linking. This bundle stays on the device.\nELEMENT CROP – not proof by itself\nRENDER – from API data, not a platform screenshot');
+  entries['README.txt'] = strToU8(`FA Portal — FridayAnalytics\nHome-vault files: verified against hashes retained at linking. This bundle stays on the device.\nELEMENT CROP – not proof by itself\nRENDER – from API data, not a platform screenshot\n\n${DOCUMENT_FOOTER}`);
   const bytes = zipSync(entries);
   for (const ref of refs) await logHome(ref, 'exported', undefined, 'Verified device-only home-vault ZIP');
   return bytes;

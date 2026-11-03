@@ -1,6 +1,6 @@
 # FA Portal — App Documentation
 
-## Stage 1: staff and client access
+## Phases 0 and 1: baseline, staff and client access
 
 - One `/auth` page handles staff and client administrators. Staff open `/dashboard`; Curators open `/inbox`; FA Management opens `/management`; active client administrators open `/portal`.
 - Client administrators cannot hold a staff role or engagement membership. Staff pages and their underlying data remain inaccessible to client identities.
@@ -8,13 +8,14 @@
 - At most two pending-or-active administrators are permitted, including reactivation. The database refuses a third with `A client can have at most 2 administrators.`
 - Enabling the portal requires at least one pending or active administrator. Disabling it blocks client data and administration while preserving staff preview.
 - Invitations are recorded, not emailed. The inviter copies a single-use setup link; only its SHA-256 is stored. Resend invalidates the previous token; cancellation, deactivation, reactivation, acceptance and portal switches are logged.
-- FA Management reads all staff data but cannot write operational records or sign gates. SOP editing belongs to Stage 5.
+- FA Management reads all staff data but cannot write operational records or sign gates. SOP editing belongs to Phase 7.
 - Full links use the server `SITE_URL` setting, defaulting to `https://spyglass2.sentinel2.org`. Development sign-in returns to its current preview origin. DNS is managed by the owner.
 - Auth Site URL must be `https://spyglass2.sentinel2.org`; allow `https://spyglass2.sentinel2.org/**` for `/auth` and `/reset-password`, retaining preview redirects.
-- Stage 1 provides the client dashboard and administrator access only. Engagement/document views follow in Stage 2.
+- Confirmed on 3 Nov 2026: the auth Site URL is still the old hosting address. The production redirect wildcard is present; the owner will update Site URL in the editor. No auth setting or DNS changes were made during Phase 0 close-out.
+- Phase 1 provides the client dashboard and administrator access only. Library rules follow in Phase 2; full client screens follow in Phase 3. Wait for "Go Phase N" before each phase.
 - SQL regression checks are in `tests/sql/portal_foundation_test.sql` because integration-owned `drizzle/tests` is protected. They need a privileged test connection; do not widen production privileges to run them.
 
-Evidence Hub is an evidence-capture system for preserving Facebook content (posts, comments, and live streams) as legal evidence for escalation in Malaysia: police reports, MCMC complaints under the Communications and Multimedia Act 1998 (s.233), and civil action.
+FA Portal is an evidence-capture system for preserving Facebook content (posts, comments, and live streams) as legal evidence for escalation in Malaysia: police reports, MCMC complaints under the Communications and Multimedia Act 1998 (s.233), and civil action.
 
 The system has two halves:
 
@@ -186,7 +187,7 @@ Each evidence item can generate an AI-assisted draft summary: factual summary, n
 
 ## 6. iPad and offline use
 
-- **Install:** Safari → sign in → Share → Add to Home Screen. The app runs full-screen as "Evidence Hub". Chrome on iPad cannot install web apps. Long-press the icon for a "New capture" shortcut.
+- **Install:** Safari → sign in → Share → Add to Home Screen. The app runs full-screen as "FA Portal". Chrome on iPad cannot install web apps. Long-press the icon for a "New capture" shortcut.
 - **Offline mode:** cases can be downloaded to the device (records + files, each file re-hashed on download — mismatches are rejected). Viewing offline works from local copies; custody "accessed" events queue up and sync back when you're online again. A banner shows when you're offline; the Offline page has the sync button. Files over 40 MB are skipped on download.
 - **If the worker isn't checking in**, a red banner appears across the top of every signed-in screen with the exact fix command.
 
@@ -243,7 +244,7 @@ FridayAnalytics works for several clients, each with several engagements (shown 
 
 **Evidence.** Tiers API_RAW_ONLY, BROWSER_DOM_ONLY, ELEMENT_CROP (none are proof) and FA_STD_001_V2 (proof; needs a complete capture record and a two-person check).
 
-**Outputs.** Executive brief, findings tables, network map, limits statement, evidence bundle, dashboard snapshot, dataset, release pack. Each answers the brief in force. An executive brief cannot pass QA until it reports every research question, every success measure and every scenario; QA is passed by someone other than the author; once HELD its file and hash are fixed. Released only through G5. Bundles with home-vault files stay on the building device; the hub keeps only their hash. Every document carries "Produced by FridayAnalytics.org for the Ansarian Collective."
+**Outputs.** Executive brief, findings tables, network map, limits statement, evidence bundle, dashboard snapshot, dataset, release pack. Each answers the brief in force. An executive brief cannot pass QA until it reports every research question, every success measure and every scenario; QA is passed by someone other than the author; once HELD its file and hash are fixed. Released only through G5. Bundles with home-vault files stay on the building device; the hub keeps only their hash. Every generated document carries exactly "Produced by FridayAnalytics.org". Already-fixed evidence originals are never overwritten; corrections require a newly generated output with its own hash and QA/release checks. Applied migration history is retained unchanged; migration 0013 updates the live attribution guidance.
 
 **Close-out.** Freeze the design, archive manifest hash, retention (five years unless the contract says otherwise), lessons learned.
 
