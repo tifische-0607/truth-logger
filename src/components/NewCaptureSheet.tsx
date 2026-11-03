@@ -265,11 +265,11 @@ export function NewCaptureSheet({
         onOpenAutoFocus={(e) => {
           // Keep the iPad keyboard closed, but move focus into the sheet for keyboard users.
           e.preventDefault();
-          (e.currentTarget as HTMLElement | null)?.focus();
+          window.setTimeout(() => document.querySelector<HTMLElement>('[role="dialog"]')?.focus(), 0);
         }}
         onCloseAutoFocus={(e) => {
           const trigger = document.querySelector<HTMLElement>('[aria-label="New capture"]');
-          if (trigger) { e.preventDefault(); trigger.focus(); }
+          if (trigger) { e.preventDefault(); window.setTimeout(() => trigger.focus(), 0); }
         }}
       >
         <SheetHeader className="px-5 pt-5">
