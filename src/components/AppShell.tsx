@@ -6,6 +6,7 @@ import {
   CloudDownload,
   FolderClosed,
   Gauge,
+  Library,
   Images,
   LayoutTemplate,
   ListPlus,
