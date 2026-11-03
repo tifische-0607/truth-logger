@@ -2,8 +2,6 @@ import { TAGLINE } from '@/lib/brand';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { z } from 'zod';
-import { fallback, zodValidator } from '@tanstack/zod-adapter';
 import { supabase } from '@/integrations/supabase/client';
 import { hubHead } from '@/lib/hub';
 import { errorMessage } from '@/lib/portal-access';
@@ -19,17 +17,14 @@ import { AdministrationTab, DashboardTab, DocumentsTab, EngagementsTab, PageTitl
 
 type Home = { preview: boolean; access_disabled?: boolean; clients?: { id: string; name: string }[]; client_id?: string; portal_enabled?: boolean };
 const TABS = ['Dashboard', 'Engagements', 'Documents', 'Administration'] as const;
-const search = z.object({
-  preview: fallback(z.string(), '').default(''),
-  tab: fallback(z.string(), 'Dashboard').default('Dashboard'),
-  e: fallback(z.string(), '').default(''),
-  pill: fallback(z.string(), 'Team').default('Team'),
-});
-export const Route = createFileRoute('/portal')({ validateSearch: zodValidator(search), head: () => hubHead('Client portal', 'Private client access to FA Portal.'), component: Portal });
+const str = (v: unknown) => (typeof v === 'string' && v ? v : undefined);
+const search = (r: Record<string, unknown>): { preview?: string | undefined; tab?: string | undefined; e?: string | undefined; pill?: string | undefined } => ({ preview: str(r['preview']), tab: str(r['tab']), e: str(r['e']), pill: str(r['pill']) });
+export const Route = createFileRoute('/portal')({ validateSearch: search, head: () => hubHead('Client portal', 'Private client access to FA Portal.'), component: Portal });
 
 function Portal() {
   const navigate = useNavigate({ from: '/portal' }); const qc = useQueryClient();
-  const s = Route.useSearch();
+  const raw = Route.useSearch();
+  const s = { preview: raw.preview ?? '', tab: raw.tab ?? 'Dashboard', e: raw.e ?? '', pill: raw.pill ?? 'Team' };
   const [clientId, setClientId] = useState('');
   const set = (p: Partial<typeof s>) => void navigate({ search: prev => ({ ...prev, ...p }) });
   const home = useQuery({ queryKey: ['portal-home', clientId], queryFn: async () => { const u = await supabase.auth.getUser(); if (!u.data.user) return null; const { data, error } = await supabase.rpc('portal_home', clientId ? { c: clientId } : {}); if (error) throw error; return data as unknown as Home; } });

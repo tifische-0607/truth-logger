@@ -90,7 +90,7 @@ function useDownload(sample: boolean) {
   return { run, state };
 }
 
-export function DocCard({ d, engagement, dl }: { d: PortalDoc; engagement?: string; dl: ReturnType<typeof useDownload> }) {
+export function DocCard({ d, engagement, dl }: { d: PortalDoc; engagement?: string | undefined; dl: ReturnType<typeof useDownload> }) {
   const can = !!d.storage_path && !d.manifest_only;
   return (
     <article className="panel space-y-3 p-4">
@@ -175,7 +175,7 @@ function EngagementCard({ e, onOpen }: { e: PortalEngagement; onOpen: () => void
 }
 
 /* ---------------------------------------------------------------- engagements */
-export function EngagementsTab({ ctx, openId, onBack }: { ctx: PortalCtx; openId?: string; onBack: () => void }) {
+export function EngagementsTab({ ctx, openId, onBack }: { ctx: PortalCtx; openId?: string | undefined; onBack: () => void }) {
   const e = ctx.engagements.find(x => x.id === openId);
   if (!e) return (
     <div className="space-y-4">
@@ -331,6 +331,8 @@ function TeamPill({ ctx }: { ctx: PortalCtx }) {
   const admins = useQuery({ queryKey: ['client-admins', cid, ctx.sample], queryFn: () => (ctx.sample ? Promise.resolve(sampleAdmins) : clientAdmins(cid)) });
   const [open, setOpen] = useState(false); const [name, setName] = useState(''); const [email, setEmail] = useState(''); const [link, setLink] = useState('');
   const [sampleNote, setSampleNote] = useState('');
+  const inviteBtn = useRef<HTMLButtonElement>(null);
+  const [sampleCancelled, setSampleCancelled] = useState<string[]>([]);
   const refresh = () => { void qc.invalidateQueries({ queryKey: ['client-admins', cid] }); ctx.refresh(); };
   const invite = useMutation({
     mutationFn: async (existing?: ClientAdmin) => {
@@ -340,10 +342,10 @@ function TeamPill({ ctx }: { ctx: PortalCtx }) {
     onSuccess: r => { if (ctx.sample) { setSampleNote('Sample mode: no invitation was recorded.'); return; } setLink(r.link); setOpen(true); refresh(); },
   });
   const cancel = useMutation({
-    mutationFn: async (id: string) => { if (ctx.sample) return; const { error } = await supabase.rpc('portal_admin_action', { rid: id, a: 'cancel' }); if (error) throw error; },
-    onSuccess: () => { if (ctx.sample) setSampleNote('Sample mode: nothing was cancelled.'); else refresh(); },
+    mutationFn: async (id: string) => { if (ctx.sample) { setSampleCancelled(c => [...c, id]); return; } const { error } = await supabase.rpc('portal_admin_action', { rid: id, a: 'cancel' }); if (error) throw error; },
+    onSuccess: () => { if (ctx.sample) setSampleNote('Sample mode: the invitation is hidden on this screen only; nothing was saved.'); else refresh(); },
   });
-  const used = (admins.data ?? []).filter(a => a.status !== 'inactive');
+  const used = (admins.data ?? []).filter(a => a.status !== 'inactive' && !sampleCancelled.includes(a.id));
   const full = used.length >= 2; const busy = invite.isPending || cancel.isPending;
   const actionable = ctx.canAct || ctx.sample;
   return (
@@ -367,11 +369,11 @@ function TeamPill({ ctx }: { ctx: PortalCtx }) {
       </ul>
       <p className="text-muted-foreground text-sm">Only FridayAnalytics can remove an active administrator. Contact curator@fridayanalytics.org.</p>
       <div className="space-y-2">
-        <Button className="min-h-11" disabled={full || busy || !actionable} onClick={() => { setName(''); setEmail(''); setLink(''); invite.reset(); setOpen(true); }}><Plus className="size-4" />Invite administrator</Button>
+        <Button ref={inviteBtn} className="min-h-11" disabled={full || busy || !actionable} onClick={() => { setName(''); setEmail(''); setLink(''); invite.reset(); setOpen(true); }}><Plus className="size-4" />Invite administrator</Button>
         {full ? <p className="text-sm" role="note">{CAP_MESSAGE}</p> : null}
       </div>
       <Dialog open={open} onOpenChange={v => { setOpen(v); if (!v) setLink(''); }}>
-        <DialogContent>
+        <DialogContent onCloseAutoFocus={e => { e.preventDefault(); inviteBtn.current?.focus(); }}>
           <DialogHeader><DialogTitle>{link ? 'Invitation recorded' : 'Invite administrator'}</DialogTitle>
             <DialogDescription>{link ? 'Copy this single-use link and send it to the person you invited. It expires in 7 days.' : 'The invitation takes the free administrator slot. No email is sent.'}</DialogDescription></DialogHeader>
           {link ? <div className="space-y-3"><Input aria-label="Invitation link" type="password" readOnly value={link} className="min-h-11" /><Button className="min-h-11" onClick={() => void navigator.clipboard.writeText(link)}><Copy className="size-4" />Copy invitation link</Button></div> : (
