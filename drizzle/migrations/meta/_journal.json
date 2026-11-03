@@ -183,6 +183,13 @@
       "when": 1793709330761,
       "tag": "0025_fa_portal_sop_clocks_trigger_fix",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1793709366895,
+      "tag": "0026_fa_portal_sop_clocks_phase_fix",
+      "breakpoints": true
     }
   ]
 }
