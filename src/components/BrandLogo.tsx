@@ -66,17 +66,29 @@ export function BrandLogo({
   );
 }
 
-/** Product lockup for app chrome: Lens mark, divider, "FA Portal". */
+/**
+ * Header lockup: full FridayAnalytics horizontal logo (light-bg version in
+ * Light/High contrast, reverse in Dark), divider, "FA Portal".
+ * Compact (collapsed sidebar) shows only the Lens product mark.
+ */
 export function ProductLockup({ compact = false }: { compact?: boolean }) {
+  if (compact) {
+    return (
+      <span role="img" aria-label="FA Portal" className="inline-flex">
+        <img src={LENS_ICON} alt="" width={32} height={32} draggable={false} className="shrink-0" />
+      </span>
+    );
+  }
+  const h = 28;
+  const w = Math.round(h * LOCKUP_RATIO);
   return (
     <span className="inline-flex items-center gap-2.5 whitespace-nowrap">
-      <span role="img" aria-label="FA Portal" className="inline-flex">
-        <img src={LENS_ICON} alt="" width={24} height={24} draggable={false} className="shrink-0" />
+      <span role="img" aria-label="FridayAnalytics" className="inline-flex">
+        <img src={COMPANY_LOGO.horizontal} alt="" width={w} height={h} draggable={false} className="shrink-0 dark:hidden" style={{ width: w, height: h }} />
+        <img src={COMPANY_LOGO.reverse} alt="" width={w} height={h} draggable={false} className="hidden shrink-0 dark:inline" style={{ width: w, height: h }} />
       </span>
       <span aria-hidden="true" className="bg-input h-6 w-px" />
-      {!compact && (
-        <span className="font-display text-muted-foreground text-base font-medium">FA Portal</span>
-      )}
+      <span className="font-display text-muted-foreground text-base font-medium">FA Portal</span>
     </span>
   );
 }
