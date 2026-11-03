@@ -31,6 +31,7 @@ export const Route = createFileRoute("/_authenticated/management")({
 });
 
 type Sop = { id: string; phase: number; version: number; owner_role: string; target_working_days: number; warn_pct: number; escalation_chain: string[]; steps: unknown; is_sample: boolean };
+const role = (r: string) => (r === "management" ? "Management" : roleLabel(r));
 const errText = (e: unknown) => (e && typeof e === "object" && "message" in e ? String((e as { message: unknown }).message) : String(e));
 
 function StatusChip({ s }: { s: ClockStatus }) {
@@ -167,7 +168,7 @@ function Overview({ p, sample }: { p: Portfolio; sample: boolean }) {
               <li key={k.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2"><span className="font-semibold">{e?.code} · {e?.name}</span><StatusChip s={k.status} /></div>
-                  <p className="text-muted-foreground text-sm">Phase {k.phase} · {k.used} of {k.target} working days · Owner {roleLabel(k.owner_role)} · Escalates to {k.escalation_chain.map(roleLabel).join(", ") || "—"}</p>
+                  <p className="text-muted-foreground text-sm">Phase {k.phase} · {k.used} of {k.target} working days · Owner {role(k.owner_role)} · Escalates to {k.escalation_chain.map(role).join(", ") || "—"}</p>
                 </div>
                 {e ? <EngLink id={e.id} sample={sample}>Open</EngLink> : null}
               </li>
@@ -280,8 +281,8 @@ function SopCard({ sop }: { sop: Sop }) {
         <h3 className="font-display font-medium">Phase {sop.phase} · {PHASE_NAMES[sop.phase]} <span className="text-muted-foreground text-sm">v{sop.version}</span></h3>
         <div className="flex items-center gap-2">{sop.is_sample ? <Chip>Sample</Chip> : null}<EditSop sop={sop} /></div>
       </div>
-      <p className="text-sm">Target {sop.target_working_days} working days · warn at {sop.warn_pct}% · Owner {roleLabel(sop.owner_role)}</p>
-      <p className="text-muted-foreground text-sm">Escalates to {sop.escalation_chain.map(roleLabel).join(", ") || "—"}</p>
+      <p className="text-sm">Target {sop.target_working_days} working days · warn at {sop.warn_pct}% · Owner {role(sop.owner_role)}</p>
+      <p className="text-muted-foreground text-sm">Escalates to {sop.escalation_chain.map(role).join(", ") || "—"}</p>
       {steps.length ? <ol className="list-decimal pl-5 text-sm">{steps.map((s) => <li key={s}>{s}</li>)}</ol> : null}
     </article>
   );
@@ -350,7 +351,7 @@ function SopsKpis({ p, sops }: { p: Portfolio; sops: Map<number, Sop> | undefine
         <div className="mb-4 grid gap-3 sm:grid-cols-4">
           <label className="text-sm">Client<select className={cn(sel, "mt-1 w-full")} value={client} onChange={(e) => setClient(e.target.value)}><option value="">All</option>{p.clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
           <label className="text-sm">Phase<select className={cn(sel, "mt-1 w-full")} value={phase} onChange={(e) => setPhase(e.target.value)}><option value="">All</option>{PHASES.map((n) => <option key={n} value={n}>{n} · {PHASE_NAMES[n]}</option>)}</select></label>
-          <label className="text-sm">Owner role<select className={cn(sel, "mt-1 w-full")} value={owner} onChange={(e) => setOwner(e.target.value)}><option value="">All</option>{owners.map((o) => <option key={o} value={o}>{roleLabel(o)}</option>)}</select></label>
+          <label className="text-sm">Owner role<select className={cn(sel, "mt-1 w-full")} value={owner} onChange={(e) => setOwner(e.target.value)}><option value="">All</option>{owners.map((o) => <option key={o} value={o}>{role(o)}</option>)}</select></label>
           <label className="text-sm">Period<select className={cn(sel, "mt-1 w-full")} value={days} onChange={(e) => setDays(e.target.value)}><option value="">All time</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option><option value="365">Last 12 months</option></select></label>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
