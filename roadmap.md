@@ -4,7 +4,7 @@
 - [x] Stage 1 implementation: 0009/0010 plus 0011 identity/invite boundaries and 0012 staff-policy helper; single sign-in, client types, management read access, recorded invites, client portal shell and themes. Authenticated browser checks passed for acceptance, used-token refusal, staff-route isolation, enable guard, second invite/cap, deactivate/reactivate/cancel/resend; 18 unit tests pass and preview build is clean.
 - [ ] Stage 1 SQL suite execution: tests/sql/portal_foundation_test.sql saved; blocked by absence of a privileged test connection (managed shell cannot execute functions or update rows). No database privileges widened.
 - [ ] Production auth Site URL confirmation: user must set https://spyglass2.sentinel2.org in auth Advanced settings; production redirect wildcard is already present. No DNS changes.
-- [ ] Phase 0/1 close-out: exact document footer, FA Portal identity and canonical host checks
+- [x] Phase 0/1 close-out: shared exact document footer, reports/dossiers/CSV/ZIP exports and documentation updated; live attribution guidance corrected by 0013. No current output rows or stored exports found. No legacy visible product name or hard-coded hosting URL in active source/docs. 22 unit tests passed; public auth/portal footer checked; build OK. Applied migration history and immutable originals preserved.
 - [ ] Phase 2: Library data/rules — waits for "Go Phase 2"
 - [ ] Phase 3: Client portal screens — waits for "Go Phase 3"
 - [ ] Phase 4: Research data/rules — waits for "Go Phase 4"

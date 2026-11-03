@@ -11,6 +11,7 @@
 - FA Management reads all staff data but cannot write operational records or sign gates. SOP editing belongs to Phase 7.
 - Full links use the server `SITE_URL` setting, defaulting to `https://spyglass2.sentinel2.org`. Development sign-in returns to its current preview origin. DNS is managed by the owner.
 - Auth Site URL must be `https://spyglass2.sentinel2.org`; allow `https://spyglass2.sentinel2.org/**` for `/auth` and `/reset-password`, retaining preview redirects.
+- Confirmed on 3 Nov 2026: the auth Site URL is still the old hosting address. The production redirect wildcard is present; the owner will update Site URL in the editor. No auth setting or DNS changes were made during Phase 0 close-out.
 - Phase 1 provides the client dashboard and administrator access only. Library rules follow in Phase 2; full client screens follow in Phase 3. Wait for "Go Phase N" before each phase.
 - SQL regression checks are in `tests/sql/portal_foundation_test.sql` because integration-owned `drizzle/tests` is protected. They need a privileged test connection; do not widen production privileges to run them.
 
