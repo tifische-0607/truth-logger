@@ -2710,6 +2710,539 @@ export type Database = {
           },
         ]
       }
+      research_captures: {
+        Row: {
+          captured_at: string
+          captured_by: string | null
+          custody_event_id: string | null
+          evidence_ref_id: string | null
+          fstd001_version: string
+          id: string
+          item_ref: string
+          matched_terms: string[]
+          original_context: Json
+          pipeline_state: string
+          project_id: string
+          run_id: string
+          second_check_at: string | null
+          second_check_by: string | null
+          sha256_at_capture: string
+          sha256_on_write: string | null
+          source: string
+          standard_fields: Json
+          target_key: string | null
+          tier: string | null
+          vault_write_verified: boolean
+        }
+        Insert: {
+          captured_at?: string
+          captured_by?: string | null
+          custody_event_id?: string | null
+          evidence_ref_id?: string | null
+          fstd001_version: string
+          id?: string
+          item_ref: string
+          matched_terms?: string[]
+          original_context?: Json
+          pipeline_state?: string
+          project_id: string
+          run_id: string
+          second_check_at?: string | null
+          second_check_by?: string | null
+          sha256_at_capture: string
+          sha256_on_write?: string | null
+          source: string
+          standard_fields?: Json
+          target_key?: string | null
+          tier?: string | null
+          vault_write_verified?: boolean
+        }
+        Update: {
+          captured_at?: string
+          captured_by?: string | null
+          custody_event_id?: string | null
+          evidence_ref_id?: string | null
+          fstd001_version?: string
+          id?: string
+          item_ref?: string
+          matched_terms?: string[]
+          original_context?: Json
+          pipeline_state?: string
+          project_id?: string
+          run_id?: string
+          second_check_at?: string | null
+          second_check_by?: string | null
+          sha256_at_capture?: string
+          sha256_on_write?: string | null
+          source?: string
+          standard_fields?: Json
+          target_key?: string | null
+          tier?: string | null
+          vault_write_verified?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_captures_custody_event_id_fkey"
+            columns: ["custody_event_id"]
+            isOneToOne: false
+            referencedRelation: "custody_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_captures_evidence_ref_id_fkey"
+            columns: ["evidence_ref_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_refs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_captures_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_captures_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "research_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      research_events: {
+        Row: {
+          actor: string | null
+          actor_kind: string
+          at: string
+          capture_id: string | null
+          details: Json
+          event: string
+          id: string
+          plan_id: string | null
+          project_id: string
+          reason: string | null
+          run_id: string | null
+        }
+        Insert: {
+          actor?: string | null
+          actor_kind?: string
+          at?: string
+          capture_id?: string | null
+          details?: Json
+          event: string
+          id?: string
+          plan_id?: string | null
+          project_id: string
+          reason?: string | null
+          run_id?: string | null
+        }
+        Update: {
+          actor?: string | null
+          actor_kind?: string
+          at?: string
+          capture_id?: string | null
+          details?: Json
+          event?: string
+          id?: string
+          plan_id?: string | null
+          project_id?: string
+          reason?: string | null
+          run_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_events_capture_id_fkey"
+            columns: ["capture_id"]
+            isOneToOne: false
+            referencedRelation: "research_captures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_events_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "research_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_events_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_events_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "research_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      research_jobs: {
+        Row: {
+          claimed_at: string | null
+          created_at: string
+          id: string
+          idempotency_key: string
+          job_type: string
+          plan_id: string
+          project_id: string
+          source: string
+          status: string
+          target_key: string | null
+          terms: string[]
+        }
+        Insert: {
+          claimed_at?: string | null
+          created_at?: string
+          id?: string
+          idempotency_key: string
+          job_type: string
+          plan_id: string
+          project_id: string
+          source: string
+          status?: string
+          target_key?: string | null
+          terms?: string[]
+        }
+        Update: {
+          claimed_at?: string | null
+          created_at?: string
+          id?: string
+          idempotency_key?: string
+          job_type?: string
+          plan_id?: string
+          project_id?: string
+          source?: string
+          status?: string
+          target_key?: string | null
+          terms?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_jobs_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "research_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_jobs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      research_loads: {
+        Row: {
+          candidates_created: number
+          captured: number
+          cycle: number
+          id: string
+          in_vault: number
+          loaded: number
+          manifest_sha256: string
+          plan_id: string
+          project_id: string
+          reconciled: boolean
+          recorded_at: string
+          recorded_by: string | null
+        }
+        Insert: {
+          candidates_created?: number
+          captured: number
+          cycle: number
+          id?: string
+          in_vault: number
+          loaded: number
+          manifest_sha256: string
+          plan_id: string
+          project_id: string
+          reconciled?: boolean
+          recorded_at?: string
+          recorded_by?: string | null
+        }
+        Update: {
+          candidates_created?: number
+          captured?: number
+          cycle?: number
+          id?: string
+          in_vault?: number
+          loaded?: number
+          manifest_sha256?: string
+          plan_id?: string
+          project_id?: string
+          reconciled?: boolean
+          recorded_at?: string
+          recorded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_loads_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: true
+            referencedRelation: "research_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_loads_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      research_plans: {
+        Row: {
+          approved_sources: string[]
+          brief_version: number
+          cadence: string
+          cloud_mirror: boolean
+          created_at: string
+          created_by: string | null
+          cycle: number
+          design_version: number
+          engagement_id: string
+          id: string
+          job_types: string[]
+          lexicon_version: string
+          locked_at: string | null
+          locked_by: string | null
+          plan_sha256: string | null
+          project_id: string | null
+          status: string
+          status_reason: string | null
+          updated_at: string
+          vault_primary: string
+          window_from: string
+          window_to: string
+        }
+        Insert: {
+          approved_sources: string[]
+          brief_version: number
+          cadence: string
+          cloud_mirror?: boolean
+          created_at?: string
+          created_by?: string | null
+          cycle: number
+          design_version: number
+          engagement_id: string
+          id?: string
+          job_types: string[]
+          lexicon_version: string
+          locked_at?: string | null
+          locked_by?: string | null
+          plan_sha256?: string | null
+          project_id?: string | null
+          status?: string
+          status_reason?: string | null
+          updated_at?: string
+          vault_primary?: string
+          window_from: string
+          window_to: string
+        }
+        Update: {
+          approved_sources?: string[]
+          brief_version?: number
+          cadence?: string
+          cloud_mirror?: boolean
+          created_at?: string
+          created_by?: string | null
+          cycle?: number
+          design_version?: number
+          engagement_id?: string
+          id?: string
+          job_types?: string[]
+          lexicon_version?: string
+          locked_at?: string | null
+          locked_by?: string | null
+          plan_sha256?: string | null
+          project_id?: string | null
+          status?: string
+          status_reason?: string | null
+          updated_at?: string
+          vault_primary?: string
+          window_from?: string
+          window_to?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_plans_engagement_id_cycle_fkey"
+            columns: ["engagement_id", "cycle"]
+            isOneToOne: false
+            referencedRelation: "project_cycles"
+            referencedColumns: ["project_id", "cycle_no"]
+          },
+          {
+            foreignKeyName: "research_plans_engagement_id_fkey"
+            columns: ["engagement_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      research_refusals: {
+        Row: {
+          id: string
+          kind: string
+          plan_id: string
+          project_id: string
+          reason: string
+          refused_at: string
+          request: Json
+          run_id: string | null
+        }
+        Insert: {
+          id?: string
+          kind: string
+          plan_id: string
+          project_id: string
+          reason: string
+          refused_at?: string
+          request: Json
+          run_id?: string | null
+        }
+        Update: {
+          id?: string
+          kind?: string
+          plan_id?: string
+          project_id?: string
+          reason?: string
+          refused_at?: string
+          request?: Json
+          run_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_refusals_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "research_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_refusals_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_refusals_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "research_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      research_runs: {
+        Row: {
+          captured: number
+          expected: number
+          finished_at: string | null
+          id: string
+          in_vault: number
+          job_id: string | null
+          plan_id: string
+          project_id: string
+          started_at: string
+          status: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          captured?: number
+          expected?: number
+          finished_at?: string | null
+          id?: string
+          in_vault?: number
+          job_id?: string | null
+          plan_id: string
+          project_id: string
+          started_at?: string
+          status?: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          captured?: number
+          expected?: number
+          finished_at?: string | null
+          id?: string
+          in_vault?: number
+          job_id?: string | null
+          plan_id?: string
+          project_id?: string
+          started_at?: string
+          status?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_runs_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "research_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_runs_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "research_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_runs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      research_vault_reports: {
+        Row: {
+          id: string
+          note: string | null
+          online: boolean
+          reported_at: string
+          source_id: string
+        }
+        Insert: {
+          id?: string
+          note?: string | null
+          online: boolean
+          reported_at?: string
+          source_id: string
+        }
+        Update: {
+          id?: string
+          note?: string | null
+          online?: boolean
+          reported_at?: string
+          source_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_vault_reports_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sources: {
         Row: {
           created_at: string
@@ -3458,6 +3991,77 @@ export type Database = {
         Returns: string
       }
       report_incomplete: { Args: { _output: string }; Returns: string[] }
+      research_block_reason: {
+        Args: { _cycle: number; _plan?: string; _project: string }
+        Returns: string
+      }
+      research_capture_pipeline: {
+        Args: { c: Database["public"]["Tables"]["research_captures"]["Row"] }
+        Returns: string
+      }
+      research_cycle_open_for_reading: {
+        Args: { _cycle: number; _project: string }
+        Returns: boolean
+      }
+      research_home_vault_online: { Args: never; Returns: boolean }
+      research_pending_amendment: {
+        Args: { _project: string }
+        Returns: boolean
+      }
+      research_plan_facts: {
+        Args: { p: Database["public"]["Tables"]["research_plans"]["Row"] }
+        Returns: Json
+      }
+      research_record_load: {
+        Args: { _loaded: number; _manifest_sha256: string; _plan: string }
+        Returns: Json
+      }
+      research_scope_refusal: {
+        Args: {
+          _job_type: string
+          _plan: string
+          _source: string
+          _target: string
+          _terms: string[]
+        }
+        Returns: string
+      }
+      research_second_check: { Args: { _capture: string }; Returns: undefined }
+      research_set_status: {
+        Args: { _plan: string; _reason?: string; _status: string }
+        Returns: undefined
+      }
+      research_set_tier: {
+        Args: { _capture: string; _tier: string }
+        Returns: undefined
+      }
+      research_start_plan: { Args: { _plan: string }; Returns: string }
+      research_submit_capture: {
+        Args: {
+          _captured_by?: string
+          _context?: Json
+          _evidence_ref?: string
+          _fstd001_version: string
+          _item_ref: string
+          _run: string
+          _sha256: string
+          _source: string
+          _target: string
+          _terms: string[]
+        }
+        Returns: Json
+      }
+      research_submit_job: {
+        Args: {
+          _job_type: string
+          _key: string
+          _plan: string
+          _source: string
+          _target: string
+          _terms: string[]
+        }
+        Returns: Json
+      }
       scenario_options_ok: { Args: { _o: Json }; Returns: boolean }
       signup_open: { Args: never; Returns: boolean }
       statements_ok: { Args: { _s: Json }; Returns: boolean }
