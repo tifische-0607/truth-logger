@@ -191,7 +191,7 @@ function ReviewDeck() {
               <>
                 <div className="flex items-start gap-4 px-6 py-4">
                   <div className="min-w-0">
-                    <h1 className="text-xl font-semibold">{item["item_code"] as string}</h1>
+                    <p className="kicker mb-2">04 · Cases · Review</p><h1 className="font-display text-xl font-medium">{item["item_code"] as string}</h1>
                     <p className="text-muted-foreground truncate text-sm">
                       {(item["author_name"] as string) ?? "Unknown author"} ·{" "}
                       {formatDateTime(item["published_at"] as string | null)}

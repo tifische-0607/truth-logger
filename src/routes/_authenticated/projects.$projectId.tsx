@@ -129,7 +129,7 @@ function ProjectPage() {
               </span>
             ) : null}
           </div>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight md:text-3xl">{p.name}</h1>
+          <h1 className="font-display mt-1 text-2xl font-medium tracking-tight md:text-3xl">{p.name}</h1>
           {p.summary ? <p className="text-muted-foreground mt-1 text-sm">{p.summary}</p> : null}
         </div>
         <div className="flex items-center gap-3">
