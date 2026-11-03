@@ -415,6 +415,107 @@ export type Database = {
         }
         Relationships: []
       }
+      client_access_events: {
+        Row: {
+          action: string
+          actor: string | null
+          client_id: string
+          client_user_id: string | null
+          created_at: string
+          detail: Json
+          id: string
+        }
+        Insert: {
+          action: string
+          actor?: string | null
+          client_id: string
+          client_user_id?: string | null
+          created_at?: string
+          detail?: Json
+          id?: string
+        }
+        Update: {
+          action?: string
+          actor?: string | null
+          client_id?: string
+          client_user_id?: string | null
+          created_at?: string
+          detail?: Json
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_access_events_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_access_events_client_user_id_fkey"
+            columns: ["client_user_id"]
+            isOneToOne: false
+            referencedRelation: "client_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_users: {
+        Row: {
+          client_id: string
+          created_at: string
+          email: string
+          id: string
+          invite_expires_at: string | null
+          invite_token_hash: string | null
+          invite_used_at: string | null
+          invited_by: string | null
+          last_sign_in: string | null
+          name: string
+          role: string
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          email: string
+          id?: string
+          invite_expires_at?: string | null
+          invite_token_hash?: string | null
+          invite_used_at?: string | null
+          invited_by?: string | null
+          last_sign_in?: string | null
+          name: string
+          role?: string
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          email?: string
+          id?: string
+          invite_expires_at?: string | null
+          invite_token_hash?: string | null
+          invite_used_at?: string | null
+          invited_by?: string | null
+          last_sign_in?: string | null
+          name?: string
+          role?: string
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_users_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clients: {
         Row: {
           code: string
@@ -422,7 +523,9 @@ export type Database = {
           contact_name: string | null
           created_at: string
           created_by: string | null
+          display_name: string | null
           id: string
+          kind: string
           legal_name: string | null
           name: string
           notes: string | null
@@ -437,7 +540,9 @@ export type Database = {
           contact_name?: string | null
           created_at?: string
           created_by?: string | null
+          display_name?: string | null
           id?: string
+          kind?: string
           legal_name?: string | null
           name: string
           notes?: string | null
@@ -452,7 +557,9 @@ export type Database = {
           contact_name?: string | null
           created_at?: string
           created_by?: string | null
+          display_name?: string | null
           id?: string
+          kind?: string
           legal_name?: string | null
           name?: string
           notes?: string | null
@@ -3103,6 +3210,33 @@ export type Database = {
         Returns: boolean
       }
       is_investigator: { Args: { _user_id: string }; Returns: boolean }
+      portal_access_list: { Args: { c: string }; Returns: Json }
+      portal_activate_invitation: {
+        Args: { rid: string; uid: string }
+        Returns: undefined
+      }
+      portal_admin_action: {
+        Args: { a: string; rid: string }
+        Returns: undefined
+      }
+      portal_claim_invitation: { Args: { h: string }; Returns: Json }
+      portal_home: { Args: { c?: string }; Returns: Json }
+      portal_identity: { Args: never; Returns: Json }
+      portal_invitation_info: { Args: { h: string }; Returns: Json }
+      portal_invite: {
+        Args: {
+          c: string
+          e: string
+          existing?: string
+          expires: string
+          h: string
+          n: string
+        }
+        Returns: string
+      }
+      portal_is_admin: { Args: { c: string; u: string }; Returns: boolean }
+      portal_is_staff: { Args: { u: string }; Returns: boolean }
+      portal_record_sign_in: { Args: never; Returns: undefined }
       project_current_brief_id: { Args: { _project: string }; Returns: string }
       project_item_case: {
         Args: { _evidence_ref_id: string; _item_id: string; _kind: string }
