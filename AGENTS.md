@@ -20,3 +20,4 @@
 - Client administrator identities are isolated from staff roles and engagement membership by database guards; staff routing and public client surfaces use the database identity function.
 - Record invitation hashes and consume them atomically before privileged account creation; raw single-use links are returned only to the authorized inviter and are never persisted or logged.
 - Keep SQL regression tests under tests/sql when integration-owned drizzle paths are write-protected; run authenticated live checks through the application without widening database test privileges.
+- Cloud Vault (Phase 6): an external PostgreSQL 10.23 database; FA Portal code must target only its own `fa_portal` schema there, never run automatic DDL against it (schema setup ships as a reviewable SQL file), use only PostgreSQL 10-compatible SQL, and read connection details from server-side VAULT_CLOUD_* secrets with an honest "Not configured" / Test-connection result.
