@@ -169,6 +169,13 @@
       "when": 1793707430565,
       "tag": "0023_fa_portal_vault_no_file_copies",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1793709194328,
+      "tag": "0024_fa_portal_sop_clocks",
+      "breakpoints": true
     }
   ]
 }
