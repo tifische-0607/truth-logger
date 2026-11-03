@@ -90,8 +90,6 @@ function ClientPage() {
         disabled={!isOwner}
         onChange={(e) => setForm({ ...form, [key]: e.target.value })}
       />
-      <div className="mb-5"><Chip>{client.kind === 'individual' ? 'Individual' : 'Organization'}</Chip></div>
-      {update.error && <p role="alert" className="mb-4 bg-failed text-failed-foreground p-3 rounded-md text-sm">{errorMessage(update.error)}</p>}
     </div>
   );
 
@@ -112,6 +110,8 @@ function ClientPage() {
           </Button>
         }
       />
+      <div className="mb-5"><Chip>{client.kind === 'individual' ? 'Individual' : 'Organization'}</Chip></div>
+      {update.error && <p role="alert" className="mb-4 bg-failed text-failed-foreground p-3 rounded-md text-sm">{errorMessage(update.error)}</p>}
       <div className="grid gap-6 lg:grid-cols-3">
         <section className="panel overflow-hidden lg:col-span-2" aria-labelledby="cp-h">
           <h2 id="cp-h" className="border-b px-5 py-4 font-semibold">
