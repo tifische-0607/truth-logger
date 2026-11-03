@@ -21,7 +21,7 @@
 1. [ ] Phase 7 SOP and clock engine — waits for Go
 2. [ ] Phase 8 Management screens — waits for Go
 3. [ ] U8 Framework library and universal standard (before U6 and U7) — waits for Go
-4. [ ] U3 Storage split (needs Phase 4): no report or evidence file in the cloud; DarkNight holds all reports and evidence, cloud holds portal data only; downloads fetch live from DarkNight and re-check SHA-256, else "Temporarily unavailable, please try again later" — waits for Go
+4. [ ] U3 Storage split (needs Phase 4): no report or evidence file in the cloud; DarkNight holds all reports and evidence, cloud holds portal data only — decided 3 Nov 2026: the Namecheap PostgreSQL schema `fa_portal` is that portal-data home (clients, users, tiers, engagements, billing, activity); downloads fetch live from DarkNight and re-check SHA-256, else "Temporarily unavailable, please try again later" — waits for Go
 5. [ ] U4 remainder (needs U3) — partly built: connector contract, worker API; still to do: requirements register fed by the signed brief, further connectors — waits for Go
 6. [ ] U5 remainder (needs U4) — partly built: quality controls, quarantine, provenance, auto-suspend; still to do: rejection-rate dashboard over time — waits for Go
 7. [ ] U6 Methodology checkpoints (needs U4, U5, U8) — waits for Go
@@ -38,7 +38,7 @@
 18. [ ] Final hardening pass — waits for Go
 
 ## Open decisions
-- Namecheap database role under U3: replacement, mirror or backup for the portal database, or only some tables
+- [RESOLVED 3 Nov 2026] Namecheap database role under U3: the Namecheap PostgreSQL (database `fridzdmo_DarkVault`, role `fridzdmo_FAVault`, schema `fa_portal`) holds PORTAL DATA — clients, users, tiers, engagements, billing, activity. Reports and evidence stay on DarkNight only (U3). Every other decision below stays parked until the user raises it.
 - Secure route from the portal to DarkNight
 - Cloud Vault access route (direct or HTTPS relay) and its secrets
 - Prices, currency and billing period
