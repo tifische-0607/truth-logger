@@ -409,10 +409,10 @@ export function CaptureViewer({ itemId }: { itemId: string }) {
 
       {zoomed ? (
         <div
-          className="fixed inset-0 z-50 flex flex-col bg-black/90"
+          className="fixed inset-0 z-50 flex flex-col bg-scrim"
           onClick={() => setZoomed(null)}
         >
-          <div className="flex items-center justify-between gap-4 p-4 text-white">
+          <div className="flex items-center justify-between gap-4 p-4 text-on-scrim">
             <div className="hash truncate">{zoomed.filename}</div>
             <button onClick={() => setZoomed(null)} className="p-2" aria-label="Close">
               <X className="size-6" />
@@ -422,7 +422,7 @@ export function CaptureViewer({ itemId }: { itemId: string }) {
             {zoomUrl.data ? (
               <img src={zoomUrl.data} alt={zoomed.filename} className="mx-auto max-w-none" />
             ) : (
-              <p className="flex h-full items-center justify-center gap-2 text-center text-white/70">
+              <p className="flex h-full items-center justify-center gap-2 text-center text-on-scrim">
                 {zoomUrl.isError ? (
                   <>
                     <ImageOff className="size-5" /> Not available offline

@@ -134,8 +134,8 @@ function DossierPage() {
       </div>
 
       <header className="panel p-6">
-        <p className="text-muted-foreground text-xs tracking-widest uppercase">Evidence dossier</p>
-        <h1 className="mt-1 text-2xl font-bold">CASE-{caseId}</h1>
+        <p className="kicker">Evidence dossier</p>
+        <h1 className="font-display mt-1 text-2xl font-medium">CASE-{caseId}</h1>
         <p className="text-muted-foreground mt-1 text-sm">Generated {formatDateTime(new Date().toISOString())} (Asia/Kuala_Lumpur)</p>
         <nav className="no-print mt-4 flex flex-wrap gap-3 text-sm">
           {["summary", "timeline", "transcripts", "comments", "declaration"].map((s) => (

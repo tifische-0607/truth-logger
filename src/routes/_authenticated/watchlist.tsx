@@ -109,7 +109,7 @@ function WatchlistPage() {
   return (
     <div className="mx-auto max-w-4xl space-y-6 p-4 md:p-8">
       <header className="space-y-1">
-        <h1 className="text-2xl font-semibold">Watched pages</h1>
+        <p className="kicker mb-2">05 · Collect</p><h1 className="font-display text-2xl font-medium">Watched pages</h1>
         <p className="text-sm text-muted-foreground">
           The Mac mini opens each page on schedule with your logged-in browser. Any post it hasn't seen
           before is captured automatically, filed in the chosen case under a new incident.

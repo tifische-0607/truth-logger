@@ -177,7 +177,7 @@ function CaseReport() {
     <div className="mx-auto max-w-4xl space-y-6">
       <div className="no-print flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold">Case report</h1>
+          <p className="kicker mb-2">04 · Cases · Report</p><h1 className="font-display text-2xl font-medium">Case report</h1>
           <p className="text-muted-foreground text-sm">
             Printable summary for investigators, police reports and court bundles.
           </p>

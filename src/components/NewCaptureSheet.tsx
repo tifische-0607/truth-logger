@@ -262,7 +262,15 @@ export function NewCaptureSheet({
       <SheetContent
         side="right"
         className="w-full overflow-y-auto sm:max-w-xl"
-        onOpenAutoFocus={(e) => e.preventDefault()}
+        onOpenAutoFocus={(e) => {
+          // Keep the iPad keyboard closed, but move focus into the sheet for keyboard users.
+          e.preventDefault();
+          window.setTimeout(() => document.querySelector<HTMLElement>('[role="dialog"]')?.focus(), 0);
+        }}
+        onCloseAutoFocus={(e) => {
+          const trigger = document.querySelector<HTMLElement>('[aria-label="New capture"]');
+          if (trigger) { e.preventDefault(); window.setTimeout(() => trigger.focus(), 0); }
+        }}
       >
         <SheetHeader className="px-5 pt-5">
           <SheetTitle className="text-xl">New capture</SheetTitle>

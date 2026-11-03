@@ -6,6 +6,8 @@
 - [ ] Production auth Site URL confirmation: user must set https://spyglass2.sentinel2.org in auth Advanced settings; production redirect wildcard is already present. No DNS changes.
 - [x] Phase 0/1 close-out: shared exact document footer, reports/dossiers/CSV/ZIP exports and documentation updated; live attribution guidance corrected by 0013. No current output rows or stored exports found. No legacy visible product name or hard-coded hosting URL in active source/docs. 22 unit tests passed; public auth/portal footer checked; build OK. Applied migration history and immutable originals preserved.
 - [x] Phase 2: Library data/rules (0014) — documents + append-only document log, output/brief sync, share/withdraw/void, re-hashed downloads, private library storage, staff Library screen. SQL exit checks saved in tests/sql/portal_library_test.sql; not executed (no privileged test connection).
+- [x] Phase B: Brand v2.0 pass — tokens (3 themes), self-hosted fonts, BrandLogo (placeholder, TODO official SVGs), favicon set, shell/strip/footer, gradient sign-in/invite/landing/portal hero, kickers, status chips with dots.
+- [ ] Brand assets: replace placeholder logo, icons and elements with FA-Portal-Brand-Assets.zip (blocked: file not received).
 - [ ] Phase 3: Client portal screens — waits for "Go Phase 3"
 - [ ] Phase 4: Research data/rules — waits for "Go Phase 4"
 - [ ] Phase 5: Research screens/worker API — waits for "Go Phase 5"

@@ -34,7 +34,10 @@ import { HomeReferences } from '@/components/HomeReferences';
 import { Button } from '@/components/ui/button';
 import { ThemeControl } from '@/components/ThemeControl';
 import { useMe } from '@/lib/projects';
+import { BaseStrip, Kicker, ProductLockup, COMPANY } from '@/components/BrandLogo';
+import { DOCUMENT_FOOTER } from '@/lib/document-footer';
 
+const ACTIVE = "relative bg-sidebar-accent text-sidebar-accent-foreground font-semibold before:absolute before:inset-y-2 before:left-0 before:w-[3px] before:rounded-full before:bg-primary";
 const nav = [
   { to: "/dashboard", label: "Home", icon: Gauge },
   { to: "/projects", label: "Projects", icon: Briefcase },
@@ -95,7 +98,7 @@ export function WorkerPill({ compact = false }: { compact?: boolean }) {
       <span
         className={cn(
           "size-2.5 rounded-full",
-          online ? "bg-done-foreground animate-pulse" : "bg-failed-foreground",
+          online ? "bg-positive animate-pulse" : "bg-negative",
         )}
       />
       <span className="font-medium">{online ? "Worker online" : "Worker offline"}</span>
@@ -152,24 +155,24 @@ export function WorkerStatusCard() {
   const hostname = (data as { hostname?: string } | null)?.hostname;
 
   return (
-    <div className="bg-sidebar-accent/40 border-sidebar-border space-y-2.5 rounded-xl border p-3">
+    <div className="bg-background space-y-2.5 rounded-xl p-3">
       <div className="flex items-center gap-2">
         <span
           className={cn(
             "size-2.5 shrink-0 rounded-full",
-            online ? "bg-done-foreground animate-pulse" : "bg-failed-foreground",
+            online ? "bg-positive animate-pulse" : "bg-negative",
           )}
         />
         <span className="text-xs font-semibold">
            {online ? "Friday Analytics FB  online" : "Friday Analytics offline"}
         </span>
-        <Radio className="text-sidebar-foreground/50 ml-auto size-3.5" />
+        <Radio className="text-muted-foreground ml-auto size-3.5" />
       </div>
-      <div className="text-sidebar-foreground/60 space-y-0.5 text-[11px] leading-snug">
+      <div className="text-muted-foreground space-y-0.5 text-xs leading-snug">
         <div>FridayA · seen {timeAgo(lastSeen)}</div>
         {hostname ? <div className="truncate">{hostname}</div> : null}
       </div>
-      <div className="text-sidebar-foreground/70 space-y-1 text-[11px]">
+      <div className="text-foreground space-y-1 text-xs">
         {running.map((j) => (
           <Link
             key={j.id}
@@ -177,7 +180,7 @@ export function WorkerStatusCard() {
             params={{ jobId: j.id }}
             className="hover:bg-sidebar-accent flex items-center gap-1.5 rounded-md px-1.5 py-1"
           >
-            <Loader2 className="text-running-foreground size-3 animate-spin" />
+            <Loader2 className="text-caution size-3 animate-spin" />
             <span className="truncate">Capturing… {shortUrl(j.url)}</span>
           </Link>
         ))}
@@ -187,7 +190,7 @@ export function WorkerStatusCard() {
           </div>
         ) : null}
         {running.length === 0 && queued.length === 0 ? (
-          <div className="text-sidebar-foreground/50 px-1.5 py-0.5">No active captures</div>
+          <div className="text-muted-foreground px-1.5 py-0.5">No active captures</div>
         ) : null}
       </div>
     </div>
@@ -264,13 +267,9 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="bg-background flex min-h-screen">
-      <aside className="bg-sidebar text-sidebar-foreground safe-top safe-bottom sticky top-0 hidden h-screen w-64 shrink-0 flex-col overflow-y-auto p-5 md:flex">
-        <Link to="/dashboard" className="flex items-center gap-3">
-          <img src="/favicon.png" alt="" width={36} height={36} className="rounded-lg" />
-          <div className="leading-tight">
-            <div className="text-sm font-bold tracking-tight">FA Portal</div>
-            <div className="text-sidebar-foreground/60 text-xs">FridayAnalytics</div>
-          </div>
+      <aside className="bg-sidebar text-sidebar-foreground safe-top safe-bottom sticky top-0 hidden h-[calc(100vh-4px)] w-72 shrink-0 flex-col overflow-y-auto p-5 md:flex">
+        <Link to="/dashboard" className="flex items-center" aria-label="FA Portal home">
+          <ProductLockup />
         </Link>
 
         <nav className="mt-8 flex flex-1 flex-col gap-1">
@@ -278,20 +277,18 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Link
               key={entry.to}
               to={entry.to}
-              className={cn("hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground/80 flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors", activeWorkspace===entry.to && 'bg-sidebar-accent text-sidebar-accent-foreground')}
-              activeProps={{
-                className: "bg-sidebar-accent text-sidebar-accent-foreground",
-              }}
+              className={cn("hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors", activeWorkspace===entry.to && ACTIVE)}
+              
             >
               <entry.icon className="size-5" />
               {entry.label}
             </Link>
           ))}
-          <Link to="/library" className={cn("hover:bg-sidebar-accent text-sidebar-foreground/80 flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/library') && 'bg-sidebar-accent text-sidebar-accent-foreground')}><Library className="size-5"/>Library</Link>
-          <p className="mt-5 px-3 text-xs text-sidebar-foreground/60">System</p>
-          {me.data?.isCurator && <Link to="/inbox" className="flex min-h-12 items-center gap-3 px-3 text-sm"><ScrollText className="size-5"/>Curator inbox</Link>}
-          {(me.data?.isOwner || me.data?.isManagement) && <Link to="/management" className="flex min-h-12 items-center gap-3 px-3 text-sm"><Gauge className="size-5"/>Management</Link>}
-          <Link to="/portal" className="flex min-h-12 items-center gap-3 px-3 text-sm"><Users className="size-5"/>Client preview</Link>
+          <Link to="/library" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/library') && ACTIVE)}><Library className="size-5"/>Library</Link>
+          <p className="kicker mt-5 px-3">System</p>
+          {me.data?.isCurator && <Link to="/inbox" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><ScrollText className="size-5"/>Curator inbox</Link>}
+          {(me.data?.isOwner || me.data?.isManagement) && <Link to="/management" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><Gauge className="size-5"/>Management</Link>}
+          <Link to="/portal" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><Users className="size-5"/>Client preview</Link>
           <Link to="/sources" className="flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm hover:bg-sidebar-accent"><Server className="size-5"/>Sources</Link>
           <Link to="/team" className="flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm hover:bg-sidebar-accent"><Users className="size-5"/>Admin</Link>
         </nav>
@@ -302,7 +299,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <WorkerStatusCard />
           <Button variant="ghost"
             onClick={signOut}
-            className="text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-sm transition-colors"
+            className="text-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-sm transition-colors"
           >
             <LogOut className="size-4" /> Sign out
           </Button>
@@ -310,10 +307,9 @@ export function AppShell({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="bg-sidebar text-sidebar-foreground safe-top flex items-center justify-between px-4 py-3 md:hidden">
-          <Link to="/dashboard" className="flex items-center gap-2 text-sm font-bold">
-            <img src="/favicon.png" alt="" width={28} height={28} className="rounded-md" />
-            FA Portal
+        <header className="bg-background border-b text-foreground safe-top flex items-center justify-between px-4 py-3 md:hidden">
+          <Link to="/dashboard" className="flex items-center" aria-label="FA Portal home">
+            <ProductLockup compact />
           </Link>
           <WorkerPill compact />
         </header>
@@ -323,12 +319,16 @@ export function AppShell({ children }: { children: ReactNode }) {
 
 
         <main className="min-w-0 flex-1 px-4 pt-6 pb-28 md:px-8 md:pt-8 md:pb-12">
-          <div className="md:hidden no-print mb-4 flex gap-3 text-sm"><Link to="/library" className="inline-flex min-h-11 items-center border rounded px-3">Library</Link><Link to="/sources" className="inline-flex min-h-11 items-center border rounded px-3">Sources</Link><Link to="/team" className="inline-flex min-h-11 items-center border rounded px-3">Admin</Link></div>
-          {workspaceTabs.length>0 && <nav aria-label="Workspace pages" className="no-print mb-6 relative flex overflow-x-auto border-b">{workspaceTabs.map(([to,label])=><Link key={to} to={to} className={cn('shrink-0 min-h-12 px-4 py-3 border-b-2 text-sm',pathname===to?'border-primary text-primary font-semibold':'border-transparent text-muted-foreground')}>{label}</Link>)}</nav>}
+          <div className="md:hidden no-print mb-4 flex gap-3 text-sm"><Link to="/library" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Library</Link><Link to="/sources" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Sources</Link><Link to="/team" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Admin</Link></div>
+          {workspaceTabs.length>0 && <nav aria-label="Workspace pages" className="no-print mb-6 relative flex overflow-x-auto border-b">{workspaceTabs.map(([to,label])=><Link key={to} to={to} className={cn('shrink-0 min-h-12 px-4 py-3 border-b-2 text-sm',pathname===to?'border-primary text-foreground font-semibold':'border-transparent text-muted-foreground')}>{label}</Link>)}</nav>}
           {caseId && <CaseWorkspace caseId={caseId} path={pathname}/>}
           {children}
           {caseId && pathname.startsWith('/trail/') && <HomeReferences caseId={caseId}/>}
         </main>
+        <footer className="no-print text-muted-foreground border-t px-4 pt-4 pb-24 text-xs md:px-8 md:pb-6">
+          <p>{DOCUMENT_FOOTER} · {COMPANY.name} · {COMPANY.web}</p>
+        </footer>
+        <BaseStrip className="no-print sticky bottom-0 z-30 hidden md:block" />
 
         {canCollect && <Button
           type="button"
@@ -349,37 +349,54 @@ export function AppShell({ children }: { children: ReactNode }) {
           initialUrl={captureUrl}
         />}
 
-        <nav className="bg-sidebar text-sidebar-foreground safe-bottom fixed inset-x-0 bottom-0 z-40 flex justify-around border-t border-sidebar-border md:hidden">
+        <nav className="bg-background text-foreground safe-bottom fixed inset-x-0 bottom-0 z-40 flex flex-col border-t md:hidden"><div className="flex justify-around">
           {nav.map((entry) => (
             <Link
               key={entry.to}
               to={entry.to}
-              className={cn("text-sidebar-foreground/70 flex min-h-16 min-w-0 flex-1 flex-col items-center justify-center gap-1 text-[10px] font-medium",activeWorkspace===entry.to && 'text-sidebar-primary')}
-              activeProps={{ className: "text-sidebar-primary" }}
+              className={cn("text-muted-foreground flex min-h-16 min-w-0 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-medium",activeWorkspace===entry.to && 'text-foreground font-semibold underline decoration-primary decoration-2 underline-offset-4')}
             >
               <entry.icon className="size-5" />
               {entry.label}
             </Link>
           ))}
+          </div>
+          <BaseStrip />
         </nav>
       </div>
     </div>
   );
 }
 
+const SECTIONS: [RegExp, string][] = [
+  [/^\/dashboard/, "01 · Home"], [/^\/(projects|clients)/, "02 · Projects"], [/^\/search/, "03 · Search"],
+  [/^\/(cases|case-database|trail|timeline|profiles|comments|transcripts|custody|report|dossier|summary|items|incidents)/, "04 · Cases"],
+  [/^\/(collect|queue|watchlist|results|capture-log|worker|capture-settings|jobs)/, "05 · Collect"],
+  [/^\/(integrity|verify|export|offline)/, "06 · Integrity"], [/^\/library/, "07 · Library"],
+  [/^\/sources/, "08 · Sources"], [/^\/(team|templates|settings)/, "09 · Admin"],
+  [/^\/inbox/, "Curator"], [/^\/management/, "Management"],
+];
+export function sectionKicker(pathname: string) {
+  return SECTIONS.find(([re]) => re.test(pathname))?.[1] ?? "FA Portal";
+}
+
 export function PageHeader({
   title,
   subtitle,
   actions,
+  kicker,
 }: {
+  kicker?: string | undefined;
   title: string;
   subtitle?: string | undefined;
   actions?: ReactNode | undefined;
 }) {
+  const { pathname } = useLocation();
   return (
     <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{title}</h1>
+        <Kicker>{kicker ?? sectionKicker(pathname)}</Kicker>
+        <h1 className="font-display text-2xl font-medium tracking-tight md:text-3xl">{title}</h1>
         {subtitle ? <p className="text-muted-foreground mt-1 text-sm">{subtitle}</p> : null}
       </div>
       {actions}

@@ -181,7 +181,7 @@ export function Chip({ children, tone }: { children: ReactNode; tone?: string | 
   return (
     <span
       className={cn(
-        "rounded-full px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap",
+        "chip inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap",
         tone ?? "bg-secondary text-secondary-foreground",
       )}
     >

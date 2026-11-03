@@ -20,15 +20,15 @@ function NotFoundComponent() {
   return (
     <div className="bg-background flex min-h-screen items-center justify-center px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-foreground text-7xl font-bold">404</h1>
-        <h2 className="text-foreground mt-4 text-xl font-semibold">Page not found</h2>
-        <p className="text-muted-foreground mt-2 text-sm">
-          The page you're looking for doesn't exist or has been moved.
+        <p className="kicker mb-2">404 · Not found</p>
+        <h1 className="font-display text-foreground text-3xl font-medium">Page not found</h1>
+        <p className="text-muted-foreground mt-2">
+          This address does not match a page in FA Portal. It may have moved.
         </p>
         <div className="mt-6">
           <Link
             to="/"
-            className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex min-h-11 items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors"
           >
             Go home
           </Link>
@@ -58,7 +58,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
               router.invalidate();
               reset();
             }}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex min-h-11 items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors"
           >
             Try again
           </button>
@@ -91,17 +91,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-title", content: "FA Portal" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-      { name: "theme-color", content: "#121F34" },
+      { name: "theme-color", content: "#4F63EF" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap",
-      },
-      { rel: "icon", type: "image/png", href: "/favicon.png" },
+      { rel: "icon", href: "/favicon.ico", sizes: "any" },
+      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+      { rel: "icon", type: "image/png", sizes: "32x32", href: "/fa-icon-32.png" },
       { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
       { rel: "manifest", href: "/manifest.webmanifest" },
     ],

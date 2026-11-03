@@ -449,10 +449,10 @@ function ItemPage() {
 
       {viewer ? (
         <div
-          className="fixed inset-0 z-50 flex flex-col bg-black/90"
+          className="fixed inset-0 z-50 flex flex-col bg-scrim"
           onClick={() => setViewer(null)}
         >
-          <div className="flex items-center justify-between p-4 text-white">
+          <div className="flex items-center justify-between p-4 text-on-scrim">
             <div className="hash">{viewer.filename}</div>
             <button onClick={() => setViewer(null)} className="p-2">
               <X className="size-6" />
@@ -462,7 +462,7 @@ function ItemPage() {
             {viewerUrl.data ? (
               <img src={viewerUrl.data} alt={viewer.filename} className="mx-auto max-w-none" />
             ) : (
-              <p className="text-center text-white/70">Loading…</p>
+              <p className="text-center text-on-scrim">Loading…</p>
             )}
           </div>
         </div>
