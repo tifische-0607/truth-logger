@@ -331,6 +331,7 @@ function TeamPill({ ctx }: { ctx: PortalCtx }) {
   const admins = useQuery({ queryKey: ['client-admins', cid, ctx.sample], queryFn: () => (ctx.sample ? Promise.resolve(sampleAdmins) : clientAdmins(cid)) });
   const [open, setOpen] = useState(false); const [name, setName] = useState(''); const [email, setEmail] = useState(''); const [link, setLink] = useState('');
   const [sampleNote, setSampleNote] = useState('');
+  const [sampleCancelled, setSampleCancelled] = useState<string[]>([]);
   const refresh = () => { void qc.invalidateQueries({ queryKey: ['client-admins', cid] }); ctx.refresh(); };
   const invite = useMutation({
     mutationFn: async (existing?: ClientAdmin) => {
@@ -340,10 +341,10 @@ function TeamPill({ ctx }: { ctx: PortalCtx }) {
     onSuccess: r => { if (ctx.sample) { setSampleNote('Sample mode: no invitation was recorded.'); return; } setLink(r.link); setOpen(true); refresh(); },
   });
   const cancel = useMutation({
-    mutationFn: async (id: string) => { if (ctx.sample) return; const { error } = await supabase.rpc('portal_admin_action', { rid: id, a: 'cancel' }); if (error) throw error; },
-    onSuccess: () => { if (ctx.sample) setSampleNote('Sample mode: nothing was cancelled.'); else refresh(); },
+    mutationFn: async (id: string) => { if (ctx.sample) { setSampleCancelled(c => [...c, id]); return; } const { error } = await supabase.rpc('portal_admin_action', { rid: id, a: 'cancel' }); if (error) throw error; },
+    onSuccess: () => { if (ctx.sample) setSampleNote('Sample mode: the invitation is hidden on this screen only; nothing was saved.'); else refresh(); },
   });
-  const used = (admins.data ?? []).filter(a => a.status !== 'inactive');
+  const used = (admins.data ?? []).filter(a => a.status !== 'inactive' && !sampleCancelled.includes(a.id));
   const full = used.length >= 2; const busy = invite.isPending || cancel.isPending;
   const actionable = ctx.canAct || ctx.sample;
   return (
