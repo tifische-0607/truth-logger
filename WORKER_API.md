@@ -7,7 +7,7 @@ Endpoints the Mac mini worker calls. They are plain HTTP routes on the app itsel
 
 | Environment | Base URL |
 | --- | --- |
-| Production (published) | Canonical server `SITE_URL`, default `https://spyglass2.sentinel2.org` |
+| Production (published) | Canonical server `SITE_URL`, default `https://portal.fridayanalytics.org` |
 | Preview (latest build) | Current preview origin, supplied at runtime; never hard-code a preview host |
 
 All paths below are relative to the base URL.
