@@ -1,6 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useServerFn } from '@tanstack/react-start';
 import { useMemo, useState } from 'react';
 import { Download, Info, Loader2 } from 'lucide-react';
 
@@ -17,9 +16,8 @@ import {
   AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { getLibraryFileLink } from '@/lib/library.functions';
+import { downloadLibraryDocument } from '@/lib/library-download';
 import { audienceOf, AUDIENCE_LABEL, LIBRARY_KINDS, type LibraryDoc } from '@/lib/library';
-import { sha256Hex } from '@/lib/engagement-outputs';
 import { formatDateTime as formatDate } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
@@ -43,6 +41,7 @@ function dbMessage(e: unknown) {
 }
 
 function AudienceChip({ d }: { d: LibraryDoc }) {
+  const [loc, setLoc] = useState('');
   const a = audienceOf(d);
   return (
     <span className={cn('inline-flex min-h-7 items-center rounded-full border px-2.5 text-xs font-medium',
@@ -159,7 +158,6 @@ function LibraryPage() {
 
 function DocumentDetail({ d, clientName }: { d: LibraryDoc; clientName: string }) {
   const qc = useQueryClient();
-  const getLink = useServerFn(getLibraryFileLink);
   const [err, setErr] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -188,16 +186,14 @@ function DocumentDetail({ d, clientName }: { d: LibraryDoc; clientName: string }
   async function download() {
     setBusy(true); setErr(null); setNote(null);
     try {
-      const link = await getLink({ data: { documentId: d.id } });
-      const buf = await (await fetch(link.url)).arrayBuffer();
-      const got = await sha256Hex(buf);
-      const { data: ok, error } = await supabase.rpc('library_record_download', { doc: d.id, got_sha256: got });
-      if (error) throw error;
-      if (!ok) { setErr(`Download blocked: the file's hash (${got}) does not match the recorded hash. The mismatch has been logged.`); return; }
-      const url = URL.createObjectURL(new Blob([buf]));
-      const el = document.createElement('a'); el.href = url; el.download = link.fileName; el.click(); URL.revokeObjectURL(url);
-      setNote('Hash re-checked and matched. Download recorded.');
+      const r = await downloadLibraryDocument(d.id);
+      if (r.ok) setNote(r.message); else setErr(r.message);
     } catch (e) { setErr(dbMessage(e)); } finally { setBusy(false); refresh(); }
+  }
+
+  async function recordLocation() {
+    if (!loc.trim()) { setErr('Enter the file\'s path on DarkNight.'); return; }
+    if (await run(() => supabase.rpc('library_set_home_location', { doc: d.id, p_source: 'darknight', p_path: loc.trim() }))) { setLoc(''); setNote('DarkNight location recorded.'); }
   }
 
   return (
@@ -210,12 +206,20 @@ function DocumentDetail({ d, clientName }: { d: LibraryDoc; clientName: string }
           {a === 'shared' ? `FA staff and the administrators of ${clientName}.` : a === 'void' ? `Void: ${d.voided_note}. Staff only.` : a === 'held' ? 'FA staff only. It reaches the client only when released at gate G5.' : 'FA staff only.'}</p></dd>
         <dt className="text-muted-foreground">From</dt><dd>{d.source === 'client' ? 'Uploaded by the client' : 'FA'}</dd>
         <dt className="text-muted-foreground">SHA-256</dt><dd className="font-mono text-xs break-all">{d.sha256 ?? '—'}</dd>
+        <dt className="text-muted-foreground">File on DarkNight</dt><dd className="font-mono text-xs break-all">{d.home_path ?? 'Not recorded yet'}</dd>
       </dl>
+      {!d.home_path && !d.manifest_only && d.sha256 ? (
+        <div className="space-y-2">
+          <Label htmlFor="home-loc">Record DarkNight location</Label>
+          <p className="text-muted-foreground text-xs">Place the file on DarkNight first. The location is recorded once and cannot change.</p>
+          <div className="flex gap-2"><Input id="home-loc" className="min-h-11 font-mono" value={loc} onChange={(e) => setLoc(e.target.value)} placeholder="CASE-1/reports/report.pdf" />
+          <Button className="min-h-11" variant="outline" disabled={busy} onClick={recordLocation}>Record</Button></div>
+        </div>) : null}
       {d.manifest_only ? <Alert><AlertDescription>This bundle holds home-vault files. Only its manifest and hash are listed here; there is no download.</AlertDescription></Alert> : null}
       {err ? <Alert variant="destructive" role="alert"><AlertDescription>{err}</AlertDescription></Alert> : null}
       {note ? <Alert role="status"><AlertDescription>{note}</AlertDescription></Alert> : null}
       <div className="flex flex-wrap gap-2">
-        {d.storage_path && !d.manifest_only ? <Button className="min-h-11" onClick={download} disabled={busy}><Download className="size-4" />Download</Button> : null}
+        {d.home_path && !d.manifest_only ? <Button className="min-h-11" onClick={download} disabled={busy}><Download className="size-4" />Download</Button> : null}
         {!d.voided && d.visibility === 'staff_only' ? <Button variant="outline" className="min-h-11" disabled={busy} onClick={() => setConfirm('share')}>Share with client</Button> : null}
         {d.visibility === 'client' ? <Button variant="outline" className="min-h-11" disabled={busy} onClick={() => { setReason(''); setConfirm('withdraw'); }}>Withdraw</Button> : null}
       </div>
