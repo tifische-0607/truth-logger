@@ -176,6 +176,13 @@
       "when": 1793709194328,
       "tag": "0024_fa_portal_sop_clocks",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1793709330761,
+      "tag": "0025_fa_portal_sop_clocks_trigger_fix",
+      "breakpoints": true
     }
   ]
 }
