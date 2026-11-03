@@ -126,7 +126,7 @@ function VaultCard({ cfg, word, checks, owner, extra }: { cfg: Config; word: str
       {extra}
       <div><p className="kicker mb-1">Checks</p><Checks checks={checks} /></div>
       {cfg.note && cfg.vault === 'cloud' && (
-        <p className="bg-tint rounded-lg px-4 py-3 text-sm"><span className="font-semibold">cPanel note: </span>{cfg.note} This app's server does not have a fixed address to allowlist.</p>
+        <p className="bg-secondary rounded-lg px-4 py-3 text-sm"><span className="font-semibold">cPanel note: </span>{cfg.note} This app's server does not have a fixed address to allowlist.</p>
       )}
       {msg && <p role="status" className={msg.bad ? 'border-l-4 border-destructive pl-3 text-sm' : 'border-l-4 border-positive pl-3 text-sm'}>{msg.text}</p>}
       <div className="flex flex-wrap gap-3">
