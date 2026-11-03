@@ -204,9 +204,9 @@ function VaultsPage() {
       <section className="panel p-5" aria-labelledby="where">
         <h2 id="where" className="font-display mb-3 text-lg font-medium">Where data goes</h2>
         <div className="overflow-x-auto">
-          <table className="fa-table w-full text-sm">
-            <thead><tr><th className="text-left">Data</th><th className="text-left">Home Vault</th><th className="text-left">Cloud Vault</th></tr></thead>
-            <tbody>{WHERE_DATA_GOES.map((r) => <tr key={r.data}><td>{r.data}</td><td>{r.home}</td><td>{r.cloud}</td></tr>)}</tbody>
+          <table className="w-full text-sm">
+            <thead className="bg-brand-mid text-primary-foreground"><tr><th className="px-3 py-2 text-left">Data</th><th className="px-3 py-2 text-left">Home Vault</th><th className="px-3 py-2 text-left">Cloud Vault</th></tr></thead>
+            <tbody>{WHERE_DATA_GOES.map((r) => <tr key={r.data} className="border-b even:bg-muted/40"><td className="px-3 py-2 font-semibold">{r.data}</td><td className="px-3 py-2">{r.home}</td><td className="px-3 py-2">{r.cloud}</td></tr>)}</tbody>
           </table>
         </div>
       </section>

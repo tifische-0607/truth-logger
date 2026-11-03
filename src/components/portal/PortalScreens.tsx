@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 import { Bell, Copy, Download, FileText, Plus, Upload, UserRound } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { downloadVerified, notConfiguredVault } from '@/lib/vault-download';
 import { getLibraryFileLink } from '@/lib/library.functions';
 import { createClientInvite, getSiteConfig } from '@/lib/portal.functions';
 import { clientAdmins, errorMessage, type ClientAdmin } from '@/lib/portal-access';
@@ -76,9 +77,16 @@ function useDownload(sample: boolean) {
     if (sample) { setState({ id: d.id, msg: 'Sample document: there is no file to download.', bad: false }); return; }
     setState({ id: d.id, msg: 'Checking the file…', bad: false });
     try {
-      const link = await getLink({ data: { documentId: d.id } });
-      const buf = await (await fetch(link.url)).arrayBuffer();
-      const got = await sha256Hex(buf);
+      const copy = await supabase.rpc('vault_cloud_copy_for', { doc: d.id });
+      let fileName = 'document';
+      const res = await downloadVerified({
+        documentId: d.id, expectedSha256: d.sha256 ?? '', cloudCopy: (copy.data as { sha256: string } | null) ?? null,
+        vault: notConfiguredVault,
+        fromLibrary: async () => { const link = await getLink({ data: { documentId: d.id } }); fileName = link.fileName; return (await fetch(link.url)).arrayBuffer(); },
+      });
+      const buf = res.ok ? res.bytes : new ArrayBuffer(0);
+      const got = res.ok ? res.sha256 : (res.got ?? '');
+      const link = { fileName };
       const { data: ok, error } = await supabase.rpc('library_record_download', { doc: d.id, got_sha256: got });
       if (error) throw error;
       if (!ok) { setState({ id: d.id, msg: 'Download blocked: the file does not match its recorded SHA-256. FridayAnalytics has been notified in the log.', bad: true }); return; }
