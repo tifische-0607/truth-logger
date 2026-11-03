@@ -1,9 +1,9 @@
 export type ClockStatus = "on_track" | "at_risk" | "breached" | "paused" | "closed";
 
 export const CLOCK_STATUS: Record<ClockStatus, { label: string; tone: string; dot: string; bar: string }> = {
-  on_track: { label: "On track", tone: "bg-secondary text-secondary-foreground", dot: "bg-success", bar: "bg-success" },
-  at_risk: { label: "At risk", tone: "bg-warn text-warn-foreground", dot: "bg-warn-foreground", bar: "bg-warn" },
-  breached: { label: "Breached", tone: "bg-failed text-failed-foreground", dot: "bg-failed-foreground", bar: "bg-failed" },
+  on_track: { label: "On track", tone: "bg-secondary text-secondary-foreground", dot: "bg-positive", bar: "bg-positive" },
+  at_risk: { label: "At risk", tone: "bg-warn text-warn-foreground", dot: "bg-caution", bar: "bg-caution" },
+  breached: { label: "Breached", tone: "bg-failed text-failed-foreground", dot: "bg-negative", bar: "bg-negative" },
   paused: { label: "Paused", tone: "bg-muted text-foreground", dot: "bg-muted-foreground", bar: "bg-muted-foreground" },
   closed: { label: "Closed", tone: "bg-muted text-foreground", dot: "bg-muted-foreground", bar: "bg-muted-foreground" },
 };
