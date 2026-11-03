@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import type { Client } from "@/lib/projects";
+import { errorMessage } from '@/lib/portal-access';
 
 const toCode = (s: string) =>
   s
@@ -47,6 +48,7 @@ export function NewClientDialog({
   const [sector, setSector] = useState("");
   const [contact, setContact] = useState("");
   const [email, setEmail] = useState("");
+  const [kind, setKind] = useState('organization');
 
   useEffect(() => {
     if (open) {
@@ -56,6 +58,7 @@ export function NewClientDialog({
       setSector("");
       setContact("");
       setEmail("");
+      setKind('organization');
     }
   }, [open]);
 
@@ -66,6 +69,8 @@ export function NewClientDialog({
         .from("clients")
         .insert({
           name: name.trim(),
+          display_name: name.trim(),
+          kind,
           code: code.trim(),
           sector: sector.trim() || null,
           contact_name: contact.trim() || null,
@@ -104,8 +109,9 @@ export function NewClientDialog({
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4">
+          <div className="grid gap-1.5"><Label>Client type</Label><Select value={kind} onValueChange={setKind}><SelectTrigger aria-label="Client type" className="min-h-11"><SelectValue/></SelectTrigger><SelectContent><SelectItem value="organization">Organization</SelectItem><SelectItem value="individual">Individual</SelectItem></SelectContent></Select></div>
           <div className="grid gap-1.5">
-            <Label htmlFor="c-name">Name</Label>
+            <Label htmlFor="c-name">{kind === 'individual' ? 'Your name' : 'Name'}</Label>
             <Input
               id="c-name"
               value={name}
@@ -151,6 +157,7 @@ export function NewClientDialog({
             </div>
           </div>
         </div>
+        {save.error && <p role="alert" className="bg-failed text-failed-foreground p-3 rounded-md text-sm">{errorMessage(save.error)}</p>}
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
@@ -199,7 +206,7 @@ export function NewProjectDialog({
 
   useEffect(() => {
     if (open) {
-      const cid = defaultClientId ?? (clients.length === 1 ? clients[0]!.id : "");
+      const cid = defaultClientId ?? (clients.length === 1 ? clients[0]?.id ?? '' : "");
       setClientId(cid);
       setCode(suggest(cid));
       setName("");

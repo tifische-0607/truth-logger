@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, FileCheck2, Fingerprint, ScanSearch } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { getSiteConfig } from '@/lib/portal.functions';
+import { siteLink } from '@/lib/site-config';
 
 const capabilities = [
   {
@@ -28,7 +30,8 @@ const capabilities = [
 ] as const;
 
 export const Route = createFileRoute("/")({
-  head: () => ({
+  loader: () => getSiteConfig(),
+  head: ({loaderData}) => ({
     meta: [
       { title: "FA Portal — FridayAnalytics" },
       {
@@ -43,10 +46,10 @@ export const Route = createFileRoute("/")({
           "Collect Facebook evidence, preserve its context and verify every file through a complete chain of custody.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://spyglass2.sentinel2.org/" },
+      ...(loaderData ? [{ property: "og:url", content: siteLink(loaderData.siteUrl, '/') }] : []),
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://spyglass2.sentinel2.org/" }],
+    links: loaderData ? [{ rel: "canonical", href: siteLink(loaderData.siteUrl, '/') }] : [],
   }),
   component: LandingPage,
 });
