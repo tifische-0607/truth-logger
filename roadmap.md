@@ -9,7 +9,8 @@
 - [x] Phase B: Brand v2.0 pass — tokens (3 themes), self-hosted fonts, BrandLogo (placeholder, TODO official SVGs), favicon set, shell/strip/footer, gradient sign-in/invite/landing/portal hero, kickers, status chips with dots.
 - [ ] Brand assets: replace placeholder logo, icons and elements with FA-Portal-Brand-Assets.zip (blocked: file not received).
 - [ ] Phase 3: Client portal screens — waits for "Go Phase 3"
-- [ ] Phase 4: Research data/rules — waits for "Go Phase 4"
+- [x] Phase 4: Research data/rules (0016, 0017); full SQL checks saved, need signed-gate fixtures
+- [ ] Phase 3 SQL checks 1–3 — outstanding (need authenticated role switch)
 - [ ] Phase 5: Research screens/worker API — waits for "Go Phase 5"
 - [ ] Phase 6: Vaults — waits for "Go Phase 6"
 - [ ] Phase 7: SOP/clock engine — waits for "Go Phase 7"
