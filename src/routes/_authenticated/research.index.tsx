@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { PlanChip, PlanControls, Refusal, VaultPanel } from "@/components/research/ResearchBits";
+import { Chip } from "@/components/engagement/ui";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
@@ -63,12 +64,12 @@ function ResearchPage() {
         </p>
       </header>
       {q.error ? <Refusal text={errText(q.error)} /> : null}
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
         <Tile k="Active plans" v={active.length} />
         <Tile k="Runs" v={d?.runs.length ?? 0} />
         <Tile k="Captures" v={total} />
         <Tile k="Refused" v={d?.refusals.length ?? 0} />
-        <VaultPanel />
+        <div className="col-span-2 lg:col-span-1"><VaultPanel /></div>
       </div>
 
       <section className="panel p-5" aria-labelledby="fstd">
@@ -80,7 +81,7 @@ function ResearchPage() {
       <section className="panel overflow-hidden" aria-labelledby="runs">
         <h2 id="runs" className="border-b px-5 py-4 font-semibold">All runs</h2>
         {d && d.runs.length === 0 ? <p className="text-muted-foreground p-5 text-sm">No runs yet.</p> : null}
-        <div className="overflow-x-auto">
+        {d && d.runs.length > 0 ? <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-muted text-left text-xs"><tr><th className="px-4 py-2">Engagement</th><th className="px-4 py-2">Run</th><th className="px-4 py-2">Counts</th><th className="px-4 py-2">Status</th></tr></thead>
             <tbody className="divide-y">
@@ -94,7 +95,7 @@ function ResearchPage() {
               ))}
             </tbody>
           </table>
-        </div>
+        </div> : null}
       </section>
 
       {active.length ? (
@@ -126,8 +127,7 @@ function ResearchPage() {
               <li key={c.key} className="rounded-lg border p-4 text-sm">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-semibold">{c.name}</span><span className="text-muted-foreground">v{c.version}</span>
-                  <PlanChip status={c.status === "active" ? "running" : "stopped"} />
-                  <span>{c.status === "active" ? "Active" : "Suspended"}</span>
+                  <Chip tone={c.status === "active" ? "bg-done text-done-foreground" : "bg-failed text-failed-foreground"}><span aria-hidden className="size-1.5 rounded-full bg-current" />{c.status === "active" ? "Active" : "Suspended"}</Chip>
                 </div>
                 <p className="text-muted-foreground mt-1">Platforms: {c.platforms.join(", ")} · Rejected in last {c.reject_window_minutes} min: {rejected} of {c.reject_limit} allowed</p>
                 {c.status_reason ? <p className="mt-1">Reason: {c.status_reason}</p> : null}
