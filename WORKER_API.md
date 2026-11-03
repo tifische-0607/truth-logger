@@ -1,4 +1,4 @@
-# FB Evidence Monitor — Worker API
+# FA Portal — Worker API
 
 Endpoints the Mac mini worker calls. They are plain HTTP routes on the app itself
 (not user-session endpoints), authenticated with a bearer token.
@@ -7,8 +7,8 @@ Endpoints the Mac mini worker calls. They are plain HTTP routes on the app itsel
 
 | Environment | Base URL |
 | --- | --- |
-| Preview (latest build) | `https://project--a91d8941-73a8-4bf1-b81c-478687c7171c-dev.lovable.app` |
-| Production (published) | `https://project--a91d8941-73a8-4bf1-b81c-478687c7171c.lovable.app` |
+| Production (published) | Canonical server `SITE_URL`, default `https://spyglass2.sentinel2.org` |
+| Preview (latest build) | Current preview origin, supplied at runtime; never hard-code a preview host |
 
 All paths below are relative to the base URL.
 

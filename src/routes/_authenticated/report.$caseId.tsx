@@ -5,6 +5,7 @@ import { Printer } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { formatBytes, formatDateTime } from "@/lib/format";
+import { DOCUMENT_FOOTER } from '@/lib/document-footer';
 
 export const Route = createFileRoute("/_authenticated/report/$caseId")({
   head: () => ({
@@ -415,6 +416,7 @@ function CaseReport() {
         screenshot”. Translations are separate from the original text and carry a translator
         statement.
       </p>
+      <footer className="border-t py-4 text-xs text-muted-foreground">{DOCUMENT_FOOTER}</footer>
     </div>
   );
 }

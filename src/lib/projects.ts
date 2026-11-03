@@ -314,7 +314,7 @@ export const OUTPUT_STATUS_STYLE: Record<string, string> = {
   withdrawn: "bg-failed text-failed-foreground",
 };
 
-export const ATTRIBUTION = "Produced by FridayAnalytics.org for the Ansarian Collective.";
+export { DOCUMENT_FOOTER as ATTRIBUTION } from './document-footer';
 
 export const PROJECT_STATUS = [
   { id: "scoping", label: "Scoping" },

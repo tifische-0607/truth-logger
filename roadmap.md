@@ -4,15 +4,19 @@
 - [x] Stage 1 implementation: 0009/0010 plus 0011 identity/invite boundaries and 0012 staff-policy helper; single sign-in, client types, management read access, recorded invites, client portal shell and themes. Authenticated browser checks passed for acceptance, used-token refusal, staff-route isolation, enable guard, second invite/cap, deactivate/reactivate/cancel/resend; 18 unit tests pass and preview build is clean.
 - [ ] Stage 1 SQL suite execution: tests/sql/portal_foundation_test.sql saved; blocked by absence of a privileged test connection (managed shell cannot execute functions or update rows). No database privileges widened.
 - [ ] Production auth Site URL confirmation: user must set https://spyglass2.sentinel2.org in auth Advanced settings; production redirect wildcard is already present. No DNS changes.
-- [ ] Stage 2: Library and full client portal — not requested in this turn
-- [ ] Stage 3: Research metadata and worker API — not requested in this turn
-- [ ] Stage 4: Vault metadata/plumbing — not requested in this turn
-- [ ] Stage 5: Management/SOP clocks — not requested in this turn
-- [ ] Stage 6: Cross-stage documentation and checks — follows remaining stages
+- [ ] Phase 0/1 close-out: exact document footer, FA Portal identity and canonical host checks
+- [ ] Phase 2: Library data/rules — waits for "Go Phase 2"
+- [ ] Phase 3: Client portal screens — waits for "Go Phase 3"
+- [ ] Phase 4: Research data/rules — waits for "Go Phase 4"
+- [ ] Phase 5: Research screens/worker API — waits for "Go Phase 5"
+- [ ] Phase 6: Vaults — waits for "Go Phase 6"
+- [ ] Phase 7: SOP/clock engine — waits for "Go Phase 7"
+- [ ] Phase 8: Management screens — waits for "Go Phase 8"
+- [ ] Phase 9: Hardening/docs/full test run — waits for "Go Phase 9"
 
 - [x] Rechecked approved implementation in order; tightened output provenance/storage/log guards and added real hash-mismatch tests
 
-- [x] Evidence Hub identity and six-workspace navigation; existing routes retained
+- [x] FA Portal identity and six-workspace navigation; existing routes retained
 - [x] Sources, home references and custody extensions with restrictive policies
 - [x] DarkNight integration UI, gateway calls, browser hashing and device-only exports
 - [x] Clients/projects, guarded memberships, versioned briefs/criteria, shared evidence, assessments, outputs and log

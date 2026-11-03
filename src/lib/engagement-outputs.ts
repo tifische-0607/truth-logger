@@ -47,7 +47,7 @@ const csvCell = (v: unknown) => {
   const t = v == null ? "" : String(v);
   return /[",\n\r]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t;
 };
-const csv = (rows: unknown[][]) => rows.map((r) => r.map(csvCell).join(",")).join("\r\n") + "\r\n";
+const csv = (rows: unknown[][]) => [...rows, [ATTRIBUTION]].map((r) => r.map(csvCell).join(",")).join("\r\n") + "\r\n";
 const stamp = (ws: Workspace, kind: string, ext: string, at: string) =>
   `${safeName(ws.project.code)}_${kind}_${at.slice(0, 10)}.${ext}`;
 const reportAs = (cat: string | null) => CATEGORIES.find((c) => c.id === cat)?.reportAs ?? "—";
@@ -429,7 +429,7 @@ export async function buildBundle(
     }
   }
   if (problems.length) throw new BuildBlocked(problems);
-  const mtext = ["SHA-256  path  origin", ...manifest, ""].join("\n");
+  const mtext = ["SHA-256  path  origin", ...manifest, "", `# ${ATTRIBUTION}`, ""].join("\n");
   files[`${root}/manifest.sha256`] = strToU8(mtext);
   files[`${root}/decisions.csv`] = strToU8(csv(datasetRows(ws, cycles)));
   files[`${root}/README.md`] = strToU8(
@@ -498,7 +498,7 @@ export async function buildReleasePack(ws: Workspace): Promise<Built> {
   if (!held.length)
     problems.push({ code: "pack", filename: null, reason: "no output has passed QA (HELD) yet" });
   if (problems.length) throw new BuildBlocked(problems);
-  files[`${root}/release-log.txt`] = strToU8(["SHA-256  file  title", ...log, ""].join("\n"));
+  files[`${root}/release-log.txt`] = strToU8(["SHA-256  file  title", ...log, "", ATTRIBUTION, ""].join("\n"));
   files[`${root}/README.md`] = strToU8(
     [
       `# Release pack — ${ws.project.name}`,
