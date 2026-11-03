@@ -57,7 +57,7 @@ export function VaultPanel() {
     <div className="panel p-4" aria-live="polite">
       <p className="kicker">Home vault</p>
       <p className="mt-1 flex items-center gap-2 font-semibold">
-        <span aria-hidden className={online ? "bg-positive size-2.5 rounded-full" : "bg-failed size-2.5 rounded-full"} />
+        <span aria-hidden className={online ? "bg-positive size-2.5 rounded-full" : "bg-destructive size-2.5 rounded-full"} />
         {v.isLoading ? "Checking…" : online ? "Online" : "Offline"}
       </p>
       <p className="text-muted-foreground mt-1 text-xs">
