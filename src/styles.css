@@ -511,7 +511,8 @@
   body { margin: 0; }
   aside, nav, .no-print { display: none !important; }
   body:has(.fa-doc) main { padding: 0 !important; margin: 0 !important; }
-  .fa-doc-sheet { max-width: none; box-shadow: none; }
+  /* clip + clip-margin: the cover bleeds into the side margins without widening the layout. */
+  .fa-doc-sheet { max-width: none; box-shadow: none; overflow: clip; overflow-clip-margin: 18mm; }
   .fa-doc-cover { page: fa-cover; aspect-ratio: auto; width: 210mm; height: 297mm; margin: 0 -18mm; break-after: page; }
   .print-break { break-before: page; }
   .fa-doc a { color: var(--fa-body) !important; text-decoration: none !important; }
