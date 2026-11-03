@@ -84,7 +84,7 @@ function Frameworks() {
       {open ? <EntryDetail e={open} L={L} isEditor={isEditor} isCurator={isCurator} onBack={() => void navigate({ search: {} })} /> : (
         <div className="space-y-6">
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {L.entries.map((e) => {
+            {[...L.entries].sort((a, b) => Number(b.kind === "universal_standard") - Number(a.kind === "universal_standard")).map((e) => {
               const vs = L.versions.filter((v) => v.entry_id === e.id);
               const act = vs.find((v) => v.status === "active");
               const pend = vs.filter((v) => v.status === "pending").length;
