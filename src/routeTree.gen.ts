@@ -21,6 +21,7 @@ import { Route as AuthenticatedCaseDatabaseRouteImport } from './routes/_authent
 import { Route as AuthenticatedCollectRouteImport } from './routes/_authenticated/collect'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedExportRouteImport } from './routes/_authenticated/export'
+import { Route as AuthenticatedFrameworksRouteImport } from './routes/_authenticated/frameworks'
 import { Route as AuthenticatedInboxRouteImport } from './routes/_authenticated/inbox'
 import { Route as AuthenticatedIntegrityRouteImport } from './routes/_authenticated/integrity'
 import { Route as AuthenticatedLibraryRouteImport } from './routes/_authenticated/library'
@@ -133,6 +134,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 const AuthenticatedExportRoute = AuthenticatedExportRouteImport.update({
   id: '/export',
   path: '/export',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedFrameworksRoute = AuthenticatedFrameworksRouteImport.update({
+  id: '/frameworks',
+  path: '/frameworks',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedInboxRoute = AuthenticatedInboxRouteImport.update({
@@ -434,6 +440,7 @@ export interface FileRoutesByFullPath {
   '/collect': typeof AuthenticatedCollectRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/export': typeof AuthenticatedExportRoute
+  '/frameworks': typeof AuthenticatedFrameworksRoute
   '/inbox': typeof AuthenticatedInboxRoute
   '/integrity': typeof AuthenticatedIntegrityRoute
   '/library': typeof AuthenticatedLibraryRoute
@@ -499,6 +506,7 @@ export interface FileRoutesByTo {
   '/collect': typeof AuthenticatedCollectRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/export': typeof AuthenticatedExportRoute
+  '/frameworks': typeof AuthenticatedFrameworksRoute
   '/inbox': typeof AuthenticatedInboxRoute
   '/integrity': typeof AuthenticatedIntegrityRoute
   '/library': typeof AuthenticatedLibraryRoute
@@ -566,6 +574,7 @@ export interface FileRoutesById {
   '/_authenticated/collect': typeof AuthenticatedCollectRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/export': typeof AuthenticatedExportRoute
+  '/_authenticated/frameworks': typeof AuthenticatedFrameworksRoute
   '/_authenticated/inbox': typeof AuthenticatedInboxRoute
   '/_authenticated/integrity': typeof AuthenticatedIntegrityRoute
   '/_authenticated/library': typeof AuthenticatedLibraryRoute
@@ -633,6 +642,7 @@ export interface FileRouteTypes {
     | '/collect'
     | '/dashboard'
     | '/export'
+    | '/frameworks'
     | '/inbox'
     | '/integrity'
     | '/library'
@@ -698,6 +708,7 @@ export interface FileRouteTypes {
     | '/collect'
     | '/dashboard'
     | '/export'
+    | '/frameworks'
     | '/inbox'
     | '/integrity'
     | '/library'
@@ -764,6 +775,7 @@ export interface FileRouteTypes {
     | '/_authenticated/collect'
     | '/_authenticated/dashboard'
     | '/_authenticated/export'
+    | '/_authenticated/frameworks'
     | '/_authenticated/inbox'
     | '/_authenticated/integrity'
     | '/_authenticated/library'
@@ -925,6 +937,13 @@ declare module '@tanstack/react-router' {
       path: '/export'
       fullPath: '/export'
       preLoaderRoute: typeof AuthenticatedExportRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/frameworks': {
+      id: '/_authenticated/frameworks'
+      path: '/frameworks'
+      fullPath: '/frameworks'
+      preLoaderRoute: typeof AuthenticatedFrameworksRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/inbox': {
@@ -1301,6 +1320,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCollectRoute: typeof AuthenticatedCollectRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedExportRoute: typeof AuthenticatedExportRoute
+  AuthenticatedFrameworksRoute: typeof AuthenticatedFrameworksRoute
   AuthenticatedInboxRoute: typeof AuthenticatedInboxRoute
   AuthenticatedIntegrityRoute: typeof AuthenticatedIntegrityRoute
   AuthenticatedLibraryRoute: typeof AuthenticatedLibraryRoute
@@ -1348,6 +1368,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCollectRoute: AuthenticatedCollectRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedExportRoute: AuthenticatedExportRoute,
+  AuthenticatedFrameworksRoute: AuthenticatedFrameworksRoute,
   AuthenticatedInboxRoute: AuthenticatedInboxRoute,
   AuthenticatedIntegrityRoute: AuthenticatedIntegrityRoute,
   AuthenticatedLibraryRoute: AuthenticatedLibraryRoute,
