@@ -1,4 +1,4 @@
-import { hubHead } from '@/lib/hub';
+import { hubDate, hubHead } from '@/lib/hub';
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Printer } from "lucide-react";
@@ -6,7 +6,7 @@ import { ArrowLeft, Printer } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { formatDateTime } from "@/lib/format";
-import { DOCUMENT_FOOTER } from '@/lib/document-footer';
+import { PrintDocument } from '@/components/print/PrintDocument';
 
 export const Route = createFileRoute("/_authenticated/dossier/$caseId")({
   head: () => hubHead('Case dossier'),
@@ -133,16 +133,27 @@ function DossierPage() {
         </Button>
       </div>
 
-      <header className="panel p-6">
-        <p className="kicker">Evidence dossier</p>
-        <h1 className="font-display mt-1 text-2xl font-medium">CASE-{caseId}</h1>
-        <p className="text-muted-foreground mt-1 text-sm">Generated {formatDateTime(new Date().toISOString())} (Asia/Kuala_Lumpur)</p>
-        <nav className="no-print mt-4 flex flex-wrap gap-3 text-sm">
-          {["summary", "timeline", "transcripts", "comments", "declaration"].map((s) => (
-            <a key={s} href={`#${s}`} className="text-primary underline capitalize">{s}</a>
-          ))}
-        </nav>
-      </header>
+      <PrintDocument
+        label="Dossier"
+        kicker="02 · Evidence dossier"
+        title={`CASE-${caseId}`}
+        subtitle={caseRow?.target_of_complaint ?? "Evidence dossier"}
+        cover={{
+          tagline: true,
+          details: [
+            ["Client", caseRow?.target_of_complaint ?? "—"],
+            ["Reference", `CASE-${caseId}`],
+            ["Date", hubDate(new Date().toISOString())],
+            ["Prepared by", caseRow?.lead_handler ?? "—"],
+            ["Version", `Generated ${formatDateTime(new Date().toISOString())} (Asia/Kuala_Lumpur)`],
+          ],
+        }}
+      >
+      <nav className="no-print flex flex-wrap gap-3 text-sm">
+        {["summary", "timeline", "transcripts", "comments", "declaration"].map((s) => (
+          <a key={s} href={`#${s}`} className="text-primary underline capitalize">{s}</a>
+        ))}
+      </nav>
 
       <section id="summary" className="panel p-6">
         <h2 className="mb-4 text-lg font-semibold">1. Case summary</h2>
@@ -271,7 +282,7 @@ function DossierPage() {
           <div><div className="border-foreground border-t pt-1">Date</div></div>
         </div>
       </section>
-      <footer className="border-t py-4 text-xs text-muted-foreground">{DOCUMENT_FOOTER}</footer>
+      </PrintDocument>
     </div>
   );
 }

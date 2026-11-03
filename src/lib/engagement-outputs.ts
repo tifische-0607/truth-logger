@@ -7,6 +7,7 @@ import { strToU8, zipSync, type Zippable } from "fflate";
 
 import { supabase } from "@/integrations/supabase/client";
 import { verifiedHomeFile } from "@/lib/home-vault";
+import { DOCUMENT_FOOTER_TEXT } from "@/lib/document-footer";
 import type { Source } from "@/lib/hub";
 import {
   ATTRIBUTION,
@@ -236,7 +237,7 @@ export function limitsMd(ws: Workspace, cycles?: number[]) {
     "- Private-group content and anything outside the mandate was not collected.",
     "",
     "---",
-    ATTRIBUTION,
+    DOCUMENT_FOOTER_TEXT,
     "",
   ].join("\n");
 }
@@ -309,7 +310,7 @@ export function briefMd(ws: Workspace, cycles?: number[]) {
     "See the limits statement.",
     "",
     "---",
-    ATTRIBUTION,
+    DOCUMENT_FOOTER_TEXT,
     "",
   ].join("\n");
 }
@@ -443,7 +444,7 @@ export async function buildBundle(
       "",
       "Home-vault files were streamed from DarkNight to this device; the hub keeps only this bundle's hash.",
       "",
-      ATTRIBUTION,
+      DOCUMENT_FOOTER_TEXT,
       "",
     ].join("\n"),
   );
@@ -498,14 +499,14 @@ export async function buildReleasePack(ws: Workspace): Promise<Built> {
   if (!held.length)
     problems.push({ code: "pack", filename: null, reason: "no output has passed QA (HELD) yet" });
   if (problems.length) throw new BuildBlocked(problems);
-  files[`${root}/release-log.txt`] = strToU8(["SHA-256  file  title", ...log, "", ATTRIBUTION, ""].join("\n"));
+  files[`${root}/release-log.txt`] = strToU8(["SHA-256  file  title", ...log, "", DOCUMENT_FOOTER_TEXT, ""].join("\n"));
   files[`${root}/README.md`] = strToU8(
     [
       `# Release pack — ${ws.project.name}`,
       "",
       `Assembled ${at} (UTC) from outputs that passed QA. Held until the Curator approves release in writing (G5).`,
       "",
-      ATTRIBUTION,
+      DOCUMENT_FOOTER_TEXT,
       "",
     ].join("\n"),
   );
