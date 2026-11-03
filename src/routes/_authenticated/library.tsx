@@ -1,6 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useServerFn } from '@tanstack/react-start';
 import { useMemo, useState } from 'react';
 import { Download, Info, Loader2 } from 'lucide-react';
 
@@ -17,9 +16,8 @@ import {
   AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { getLibraryFileLink } from '@/lib/library.functions';
+import { downloadLibraryDocument } from '@/lib/library-download';
 import { audienceOf, AUDIENCE_LABEL, LIBRARY_KINDS, type LibraryDoc } from '@/lib/library';
-import { sha256Hex } from '@/lib/engagement-outputs';
 import { formatDateTime as formatDate } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
@@ -60,6 +58,7 @@ function LibraryPage() {
   const [engagement, setEngagement] = useState('all');
   const [audience, setAudience] = useState('all');
   const [openId, setOpenId] = useState<string | null>(null);
+  const [addOpen, setAddOpen] = useState(false);
 
   const docs = useQuery({
     queryKey: ['library'],
@@ -100,6 +99,9 @@ function LibraryPage() {
   return (
     <div>
       <PageHeader title="Library" subtitle="Every document FA holds for its clients, with who can see it." />
+      <div className="mb-4 flex flex-wrap items-center gap-3"><Button className="min-h-11" onClick={() => setAddOpen(true)}>Add a DarkNight file</Button>
+        <p className="text-muted-foreground text-sm">Files are never stored in the cloud. Place the file on DarkNight, then record its location and SHA-256 here.</p></div>
+      <AddHomeFile open={addOpen} onOpenChange={setAddOpen} clients={clients.data ?? []} />
       <Alert className="mb-5"><Info className="size-4" /><AlertDescription>Staff see every document. Clients see only documents for their own client that you have shared with them.</AlertDescription></Alert>
 
       <div className="mb-5 grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -157,14 +159,52 @@ function LibraryPage() {
   );
 }
 
+function AddHomeFile({ open, onOpenChange, clients }: { open: boolean; onOpenChange: (o: boolean) => void; clients: { id: string; name: string; display_name: string | null }[] }) {
+  const qc = useQueryClient();
+  const [f, setF] = useState({ client: '', title: '', kind: 'report', path: '', fileName: '', sha: '' });
+  const [err, setErr] = useState(''); const [busy, setBusy] = useState(false);
+  const set = (k: keyof typeof f) => (e: { target: { value: string } }) => setF({ ...f, [k]: e.target.value });
+  async function save() {
+    setErr(''); setBusy(true);
+    const { error } = await supabase.rpc('library_register_home_file', { p_client: f.client, p_engagement: null as unknown as string, p_title: f.title, p_kind: f.kind,
+      p_source: 'darknight', p_path: f.path.trim(), p_file_name: f.fileName, p_size: null as unknown as number, p_sha256: f.sha.trim() });
+    setBusy(false);
+    if (error) { setErr(dbMessage(error)); return; }
+    void qc.invalidateQueries({ queryKey: ['library'] });
+    setF({ client: '', title: '', kind: 'report', path: '', fileName: '', sha: '' }); onOpenChange(false);
+  }
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent className="w-full overflow-y-auto sm:max-w-lg">
+        <SheetHeader><SheetTitle>Add a DarkNight file</SheetTitle></SheetHeader>
+        <div className="mt-4 space-y-3">
+          <div className="space-y-1"><Label htmlFor="ah-client">Client</Label>
+            <Select value={f.client} onValueChange={(v) => setF({ ...f, client: v })}><SelectTrigger id="ah-client" className="min-h-11"><SelectValue placeholder="Choose a client" /></SelectTrigger>
+              <SelectContent>{clients.map((c) => <SelectItem key={c.id} value={c.id}>{c.display_name || c.name}</SelectItem>)}</SelectContent></Select></div>
+          <div className="space-y-1"><Label htmlFor="ah-kind">Kind</Label>
+            <Select value={f.kind} onValueChange={(v) => setF({ ...f, kind: v })}><SelectTrigger id="ah-kind" className="min-h-11"><SelectValue /></SelectTrigger>
+              <SelectContent>{LIBRARY_KINDS.filter(([k]) => k !== 'evidence_bundle_manifest').map(([k, l]) => <SelectItem key={k} value={k}>{l}</SelectItem>)}</SelectContent></Select></div>
+          <div className="space-y-1"><Label htmlFor="ah-title">Title</Label><Input id="ah-title" className="min-h-11" value={f.title} onChange={set('title')} /></div>
+          <div className="space-y-1"><Label htmlFor="ah-path">Path on DarkNight</Label><Input id="ah-path" className="min-h-11 font-mono" value={f.path} onChange={set('path')} placeholder="CASE-1/reports/report.pdf" /></div>
+          <div className="space-y-1"><Label htmlFor="ah-name">File name for download</Label><Input id="ah-name" className="min-h-11" value={f.fileName} onChange={set('fileName')} /></div>
+          <div className="space-y-1"><Label htmlFor="ah-sha">SHA-256</Label><Input id="ah-sha" className="min-h-11 font-mono" value={f.sha} onChange={set('sha')} /></div>
+          {err ? <Alert variant="destructive" role="alert"><AlertDescription>{err}</AlertDescription></Alert> : null}
+          <p className="text-muted-foreground text-xs">The document starts as Staff only. Share it from its detail panel.</p>
+          <Button className="min-h-11" disabled={busy || !f.client} onClick={save}>{busy ? 'Saving…' : 'Record file'}</Button>
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
 function DocumentDetail({ d, clientName }: { d: LibraryDoc; clientName: string }) {
   const qc = useQueryClient();
-  const getLink = useServerFn(getLibraryFileLink);
   const [err, setErr] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [confirm, setConfirm] = useState<'share' | 'withdraw' | null>(null);
   const [reason, setReason] = useState('');
+  const [loc, setLoc] = useState('');
   const a = audienceOf(d);
 
   const log = useQuery({
@@ -188,16 +228,14 @@ function DocumentDetail({ d, clientName }: { d: LibraryDoc; clientName: string }
   async function download() {
     setBusy(true); setErr(null); setNote(null);
     try {
-      const link = await getLink({ data: { documentId: d.id } });
-      const buf = await (await fetch(link.url)).arrayBuffer();
-      const got = await sha256Hex(buf);
-      const { data: ok, error } = await supabase.rpc('library_record_download', { doc: d.id, got_sha256: got });
-      if (error) throw error;
-      if (!ok) { setErr(`Download blocked: the file's hash (${got}) does not match the recorded hash. The mismatch has been logged.`); return; }
-      const url = URL.createObjectURL(new Blob([buf]));
-      const el = document.createElement('a'); el.href = url; el.download = link.fileName; el.click(); URL.revokeObjectURL(url);
-      setNote('Hash re-checked and matched. Download recorded.');
+      const r = await downloadLibraryDocument(d.id);
+      if (r.ok) setNote(r.message); else setErr(r.message);
     } catch (e) { setErr(dbMessage(e)); } finally { setBusy(false); refresh(); }
+  }
+
+  async function recordLocation() {
+    if (!loc.trim()) { setErr('Enter the file\'s path on DarkNight.'); return; }
+    if (await run(() => supabase.rpc('library_set_home_location', { doc: d.id, p_source: 'darknight', p_path: loc.trim() }))) { setLoc(''); setNote('DarkNight location recorded.'); }
   }
 
   return (
@@ -210,12 +248,20 @@ function DocumentDetail({ d, clientName }: { d: LibraryDoc; clientName: string }
           {a === 'shared' ? `FA staff and the administrators of ${clientName}.` : a === 'void' ? `Void: ${d.voided_note}. Staff only.` : a === 'held' ? 'FA staff only. It reaches the client only when released at gate G5.' : 'FA staff only.'}</p></dd>
         <dt className="text-muted-foreground">From</dt><dd>{d.source === 'client' ? 'Uploaded by the client' : 'FA'}</dd>
         <dt className="text-muted-foreground">SHA-256</dt><dd className="font-mono text-xs break-all">{d.sha256 ?? '—'}</dd>
+        <dt className="text-muted-foreground">File on DarkNight</dt><dd className="font-mono text-xs break-all">{d.home_path ?? 'Not recorded yet'}</dd>
       </dl>
+      {!d.home_path && !d.manifest_only && d.sha256 ? (
+        <div className="space-y-2">
+          <Label htmlFor="home-loc">Record DarkNight location</Label>
+          <p className="text-muted-foreground text-xs">Place the file on DarkNight first. The location is recorded once and cannot change.</p>
+          <div className="flex gap-2"><Input id="home-loc" className="min-h-11 font-mono" value={loc} onChange={(e) => setLoc(e.target.value)} placeholder="CASE-1/reports/report.pdf" />
+          <Button className="min-h-11" variant="outline" disabled={busy} onClick={recordLocation}>Record</Button></div>
+        </div>) : null}
       {d.manifest_only ? <Alert><AlertDescription>This bundle holds home-vault files. Only its manifest and hash are listed here; there is no download.</AlertDescription></Alert> : null}
       {err ? <Alert variant="destructive" role="alert"><AlertDescription>{err}</AlertDescription></Alert> : null}
       {note ? <Alert role="status"><AlertDescription>{note}</AlertDescription></Alert> : null}
       <div className="flex flex-wrap gap-2">
-        {d.storage_path && !d.manifest_only ? <Button className="min-h-11" onClick={download} disabled={busy}><Download className="size-4" />Download</Button> : null}
+        {d.home_path && !d.manifest_only ? <Button className="min-h-11" onClick={download} disabled={busy}><Download className="size-4" />Download</Button> : null}
         {!d.voided && d.visibility === 'staff_only' ? <Button variant="outline" className="min-h-11" disabled={busy} onClick={() => setConfirm('share')}>Share with client</Button> : null}
         {d.visibility === 'client' ? <Button variant="outline" className="min-h-11" disabled={busy} onClick={() => { setReason(''); setConfirm('withdraw'); }}>Withdraw</Button> : null}
       </div>

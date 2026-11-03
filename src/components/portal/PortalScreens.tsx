@@ -3,11 +3,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 import { Bell, Copy, Download, FileText, Plus, Upload, UserRound } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { downloadVerified, notConfiguredVault } from '@/lib/vault-download';
-import { getLibraryFileLink } from '@/lib/library.functions';
+import { downloadLibraryDocument } from '@/lib/library-download';
 import { createClientInvite, getSiteConfig } from '@/lib/portal.functions';
 import { clientAdmins, errorMessage, type ClientAdmin } from '@/lib/portal-access';
-import { sha256Hex } from '@/lib/engagement-outputs';
 import { formatBytes } from '@/lib/format';
 import { hubDate } from '@/lib/hub';
 import { authReturnUrl } from '@/lib/site-config';
@@ -71,35 +69,20 @@ export function StageBar({ stage }: { stage: number }) {
 
 /* ---------------------------------------------------------------- downloads */
 function useDownload(sample: boolean) {
-  const getLink = useServerFn(getLibraryFileLink);
   const [state, setState] = useState<{ id: string; msg: string; bad: boolean } | null>(null);
   async function run(d: PortalDoc) {
     if (sample) { setState({ id: d.id, msg: 'Sample document: there is no file to download.', bad: false }); return; }
-    setState({ id: d.id, msg: 'Checking the file…', bad: false });
+    setState({ id: d.id, msg: 'Fetching from DarkNight and checking the file…', bad: false });
     try {
-      const copy = await supabase.rpc('vault_cloud_copy_for', { doc: d.id });
-      let fileName = 'document';
-      const res = await downloadVerified({
-        documentId: d.id, expectedSha256: d.sha256 ?? '', cloudCopy: (copy.data as { sha256: string } | null) ?? null,
-        vault: notConfiguredVault,
-        fromLibrary: async () => { const link = await getLink({ data: { documentId: d.id } }); fileName = link.fileName; return (await fetch(link.url)).arrayBuffer(); },
-      });
-      const buf = res.ok ? res.bytes : new ArrayBuffer(0);
-      const got = res.ok ? res.sha256 : (res.got ?? '');
-      const link = { fileName };
-      const { data: ok, error } = await supabase.rpc('library_record_download', { doc: d.id, got_sha256: got });
-      if (error) throw error;
-      if (!ok) { setState({ id: d.id, msg: 'Download blocked: the file does not match its recorded SHA-256. FridayAnalytics has been notified in the log.', bad: true }); return; }
-      const url = URL.createObjectURL(new Blob([buf]));
-      const a = document.createElement('a'); a.href = url; a.download = link.fileName; a.click(); URL.revokeObjectURL(url);
-      setState({ id: d.id, msg: 'SHA-256 re-checked and matched. Downloaded.', bad: false });
+      const r = await downloadLibraryDocument(d.id);
+      setState({ id: d.id, msg: r.message, bad: !r.ok });
     } catch (e) { setState({ id: d.id, msg: errorMessage(e), bad: true }); }
   }
   return { run, state };
 }
 
 export function DocCard({ d, engagement, dl }: { d: PortalDoc; engagement?: string | undefined; dl: ReturnType<typeof useDownload> }) {
-  const can = !!d.storage_path && !d.manifest_only;
+  const can = (!!d.home_path || !!d.storage_path) && !d.manifest_only;
   return (
     <article className="panel space-y-3 p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -264,7 +247,7 @@ export function DocumentsTab({ ctx }: { ctx: PortalCtx }) {
         {([['all', 'All'], ['fa', 'From FridayAnalytics'], ['client', 'From you']] as const).map(([k, l]) => (
           <Button key={k} className="min-h-11" variant={from === k ? 'default' : 'outline'} aria-pressed={from === k} onClick={() => setFrom(k)}>{l} ({ctx.docs.filter(d => k === 'all' || d.source === k).length})</Button>
         ))}
-        <Button className="min-h-11 ml-auto" onClick={() => setUploadOpen(true)} disabled={!ctx.canAct && !ctx.sample}><Upload className="size-4" />Upload a document</Button>
+        <Button className="min-h-11 ml-auto" onClick={() => setUploadOpen(true)} disabled={!ctx.canAct && !ctx.sample}><Upload className="size-4" />Send a document</Button>
       </div>
       <div className="grid gap-3 sm:grid-cols-[1fr_16rem]">
         <div className="space-y-1"><Label htmlFor="doc-search">Search title, code or SHA-256</Label><Input id="doc-search" className="min-h-11" value={q} onChange={e => setQ(e.target.value)} /></div>
@@ -280,38 +263,13 @@ export function DocumentsTab({ ctx }: { ctx: PortalCtx }) {
   );
 }
 
-function UploadDialog({ ctx, open, onOpenChange }: { ctx: PortalCtx; open: boolean; onOpenChange: (o: boolean) => void }) {
-  const [title, setTitle] = useState(''); const [file, setFile] = useState<File | null>(null);
-  const [err, setErr] = useState(''); const [busy, setBusy] = useState(false); const [done, setDone] = useState('');
-  const input = useRef<HTMLInputElement>(null);
-  async function submit(e: React.FormEvent) {
-    e.preventDefault(); setErr(''); setDone('');
-    if (ctx.sample) { setDone('Sample mode: the upload was not saved.'); return; }
-    if (!file) { setErr('Choose a file.'); return; }
-    setBusy(true);
-    try {
-      const buf = await file.arrayBuffer();
-      const sha = await sha256Hex(buf);
-      const path = `clients/${ctx.dash.client_id}/uploads/${sha.slice(0, 16)}-${crypto.randomUUID()}-${file.name.replace(/[^\w.\-]+/g, '_')}`;
-      const up = await supabase.storage.from('library').upload(path, file, { upsert: false, contentType: file.type || 'application/octet-stream' });
-      if (up.error) throw up.error;
-      const { error } = await supabase.from('documents').insert({ title: title.trim() || file.name, kind: 'client_upload', source: 'client', client_id: ctx.dash.client_id, storage_bucket: 'library', storage_path: path, file_name: file.name, size_bytes: file.size, sha256: sha });
-      if (error) throw error;
-      setDone(`Uploaded. SHA-256 ${sha}`); setTitle(''); setFile(null); if (input.current) input.current.value = '';
-      ctx.refresh();
-    } catch (e) { setErr(errorMessage(e)); } finally { setBusy(false); }
-  }
+function UploadDialog({ open, onOpenChange }: { ctx: PortalCtx; open: boolean; onOpenChange: (o: boolean) => void }) {
   return (
-    <Dialog open={open} onOpenChange={o => { onOpenChange(o); if (!o) { setErr(''); setDone(''); } }}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
-        <DialogHeader><DialogTitle>Upload a document</DialogTitle><DialogDescription>The file is stored privately for FridayAnalytics and your administrators. Its SHA-256 is recorded when it is uploaded.</DialogDescription></DialogHeader>
-        <form className="space-y-4" onSubmit={submit}>
-          <div className="space-y-1"><Label htmlFor="up-title">Title</Label><Input id="up-title" className="min-h-11" value={title} onChange={e => setTitle(e.target.value)} placeholder="Defaults to the file name" /></div>
-          <div className="space-y-1"><Label htmlFor="up-file">File</Label><Input id="up-file" ref={input} className="min-h-11" type="file" onChange={e => setFile(e.target.files?.[0] ?? null)} /></div>
-          {err ? <p role="alert" className="bg-failed text-failed-foreground rounded-md p-3 text-sm">{err}</p> : null}
-          {done ? <p role="status" className="bg-muted rounded-md p-3 text-sm break-all">{done}</p> : null}
-          <Button type="submit" className="min-h-11" disabled={busy}>{busy ? 'Uploading…' : 'Upload'}</Button>
-        </form>
+        <DialogHeader><DialogTitle>Send a document</DialogTitle><DialogDescription>Documents are kept only on FridayAnalytics' own secure server, never in the cloud, so they cannot be uploaded here.</DialogDescription></DialogHeader>
+        <p className="text-sm">Email the document to <a className="font-medium underline" href="mailto:curator@fridayanalytics.org">curator@fridayanalytics.org</a>. FridayAnalytics will add it, record its SHA-256, and it will then appear under "From you".</p>
+        <Button className="min-h-11" variant="outline" onClick={() => onOpenChange(false)}>Close</Button>
       </DialogContent>
     </Dialog>
   );

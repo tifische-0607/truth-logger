@@ -748,6 +748,8 @@ export type Database = {
           created_by_name: string | null
           engagement_id: string | null
           file_name: string | null
+          home_path: string | null
+          home_source_id: string | null
           id: string
           kind: string
           manifest_only: boolean
@@ -774,6 +776,8 @@ export type Database = {
           created_by_name?: string | null
           engagement_id?: string | null
           file_name?: string | null
+          home_path?: string | null
+          home_source_id?: string | null
           id?: string
           kind: string
           manifest_only?: boolean
@@ -800,6 +804,8 @@ export type Database = {
           created_by_name?: string | null
           engagement_id?: string | null
           file_name?: string | null
+          home_path?: string | null
+          home_source_id?: string | null
           id?: string
           kind?: string
           manifest_only?: boolean
@@ -844,6 +850,13 @@ export type Database = {
             columns: ["engagement_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_home_source_id_fkey"
+            columns: ["home_source_id"]
+            isOneToOne: false
+            referencedRelation: "sources"
             referencedColumns: ["id"]
           },
           {
@@ -4740,6 +4753,7 @@ export type Database = {
         Returns: boolean
       }
       library_file_for: { Args: { doc: string }; Returns: Json }
+      library_home_file_for: { Args: { doc: string }; Returns: Json }
       library_log: {
         Args: { a: string; d: string; det?: Json; r?: string }
         Returns: undefined
@@ -4748,7 +4762,25 @@ export type Database = {
         Args: { doc: string; got_sha256: string }
         Returns: boolean
       }
+      library_register_home_file: {
+        Args: {
+          p_client: string
+          p_engagement: string
+          p_file_name: string
+          p_kind: string
+          p_path: string
+          p_sha256: string
+          p_size: number
+          p_source: string
+          p_title: string
+        }
+        Returns: string
+      }
       library_require_staff_writer: { Args: never; Returns: undefined }
+      library_set_home_location: {
+        Args: { doc: string; p_path: string; p_source: string }
+        Returns: undefined
+      }
       library_share: { Args: { doc: string }; Returns: undefined }
       library_void: { Args: { doc: string; note: string }; Returns: undefined }
       library_withdraw: {

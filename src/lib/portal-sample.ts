@@ -22,10 +22,10 @@ export const sampleBriefs: PortalBrief[] = [
   { version: 2, kind: 'amendment', amendment_no: 1, situation: 'Sample situation: the client wants to understand how a narrative spread online.', objectives: ['Sample objective one', 'Sample objective two'], platforms: ['Facebook'], languages: ['Malay', 'English'], window_from: '2026-08-01', window_to: '2026-10-31', in_scope: 'Public posts and comments on named pages (Sample).', out_of_scope: 'Private groups and messages (Sample).', change_summary: 'Sample: window extended by one month.', authored_at: day(12) },
 ];
 export const sampleDocs: PortalDoc[] = [
-  { id: 's-d1', code: 'DOC-S0004', title: 'Sample: interim findings report', kind: 'report', source: 'fa', engagement_id: 's-e1', sha256: h(171), file_name: 'interim.pdf', size_bytes: 482113, manifest_only: false, storage_path: 'sample', created_at: day(28), version: 1 },
-  { id: 's-d2', code: 'DOC-S0003', title: 'Sample: brief amendment A1', kind: 'brief', source: 'fa', engagement_id: 's-e1', sha256: h(43), file_name: null, size_bytes: null, manifest_only: false, storage_path: null, created_at: day(12), version: 2 },
-  { id: 's-d3', code: 'DOC-S0002', title: 'Sample: our background notes', kind: 'client_upload', source: 'client', engagement_id: null, sha256: h(205), file_name: 'notes.docx', size_bytes: 38211, manifest_only: false, storage_path: 'sample', created_at: day(9), version: 1 },
-  { id: 's-d4', code: 'DOC-S0001', title: 'Sample: signed brief', kind: 'brief', source: 'fa', engagement_id: 's-e1', sha256: h(18), file_name: null, size_bytes: null, manifest_only: false, storage_path: null, created_at: day(2), version: 1 },
+  { id: 's-d1', code: 'DOC-S0004', title: 'Sample: interim findings report', kind: 'report', source: 'fa', engagement_id: 's-e1', sha256: h(171), file_name: 'interim.pdf', size_bytes: 482113, manifest_only: false, storage_path: null, home_path: 'sample', created_at: day(28), version: 1 },
+  { id: 's-d2', code: 'DOC-S0003', title: 'Sample: brief amendment A1', kind: 'brief', source: 'fa', engagement_id: 's-e1', sha256: h(43), file_name: null, size_bytes: null, manifest_only: false, storage_path: null, home_path: null, created_at: day(12), version: 2 },
+  { id: 's-d3', code: 'DOC-S0002', title: 'Sample: our background notes', kind: 'client_upload', source: 'client', engagement_id: null, sha256: h(205), file_name: 'notes.docx', size_bytes: 38211, manifest_only: false, storage_path: null, home_path: 'sample', created_at: day(9), version: 1 },
+  { id: 's-d4', code: 'DOC-S0001', title: 'Sample: signed brief', kind: 'brief', source: 'fa', engagement_id: 's-e1', sha256: h(18), file_name: null, size_bytes: null, manifest_only: false, storage_path: null, home_path: null, created_at: day(2), version: 1 },
 ];
 export const sampleEvents: PortalEvent[] = [
   { id: 's-a1', at: day(30), type: 'access', action: 'signed_in', subject: 'Sample Administrator', code: null, person: 'Sample Administrator' },

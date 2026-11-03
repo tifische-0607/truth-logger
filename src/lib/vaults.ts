@@ -24,7 +24,7 @@ export function useVaultOverview() { return useQuery(vaultStatusQuery); }
 export const WHERE_DATA_GOES: { data: string; home: string; cloud: string }[] = [
   { data: 'Evidence originals and captures', home: 'DarkNight only', cloud: 'Not held' },
   { data: 'Reports and released outputs', home: 'DarkNight only', cloud: 'Not held' },
-  { data: 'Documents shared with a client', home: 'DarkNight only (after the storage split)', cloud: 'Not held' },
+  { data: 'Documents shared with a client', home: 'DarkNight only, fetched live and re-hashed', cloud: 'Title, hash, location and log only' },
   { data: 'Custody records', home: 'Queued, append-only', cloud: 'Queued, append-only' },
   { data: 'Document and research events', home: 'Queued, append-only', cloud: 'Queued, append-only' },
   { data: 'Portal data (clients, engagements, settings)', home: 'Not sent', cloud: 'Portal data only' },
