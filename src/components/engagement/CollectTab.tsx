@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { Section, TextIn, csvList } from "@/components/engagement/ui";
 import { Check, PlanChip, PlanControls, Refusal, VaultPanel } from "@/components/research/ResearchBits";
+import { FrameworkLink } from "@/components/research/FrameworkLink";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -194,8 +195,10 @@ export function CollectTab({ ws }: { ws: Workspace }) {
       ) : null}
 
       <Section id="collect-start" title="Ready to start">
+        {plan ? <FrameworkLink planId={plan.id} linked={(plan as { framework_version_id?: string | null }).framework_version_id ?? null} locked={plan.status !== "draft"} canEdit={canStart} /> : null}
         <ul className="mb-3">
           <Check ok={!!plan}>A research plan is drafted</Check>
+          <Check ok={!!(plan as { framework_version_id?: string | null } | undefined)?.framework_version_id}>A framework version is linked</Check>
           <Check ok={!!rd && !rd.block_reason}>Every readiness check passes</Check>
           <Check ok={canStart}>You can start research on this engagement</Check>
         </ul>
