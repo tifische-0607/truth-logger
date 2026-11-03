@@ -78,6 +78,20 @@
       "when": 1793682356041,
       "tag": "0010_fa_portal_client_access",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1793683084188,
+      "tag": "0011_fa_portal_identity_and_invite_boundaries",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1793683098125,
+      "tag": "0012_fa_portal_staff_policy_helper",
+      "breakpoints": true
     }
   ]
 }

@@ -188,6 +188,8 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  input, textarea, select { color: var(--foreground); }
+
   /* Respect iPad/iPhone safe areas in standalone mode */
   .safe-top {
     padding-top: env(safe-area-inset-top);

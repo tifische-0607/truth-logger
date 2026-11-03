@@ -18,3 +18,4 @@
 - Resolve full site links through site-config and the server-provided SITE_URL configuration; preview auth callbacks stay same-origin so broker sign-in works during development.
 - Client administrator identities are isolated from staff roles and engagement membership by database guards; staff routing and public client surfaces use the database identity function.
 - Record invitation hashes and consume them atomically before privileged account creation; raw single-use links are returned only to the authorized inviter and are never persisted or logged.
+- Keep SQL regression tests under tests/sql when integration-owned drizzle paths are write-protected; run authenticated live checks through the application without widening database test privileges.
