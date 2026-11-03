@@ -127,6 +127,13 @@
       "when": 1793701243130,
       "tag": "0017_fa_portal_research_privileges",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1793702468063,
+      "tag": "0018_fa_portal_research_worker_api",
+      "breakpoints": true
     }
   ]
 }
