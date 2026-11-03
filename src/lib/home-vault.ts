@@ -81,7 +81,7 @@ export async function homeBundle(refs: EvidenceRef[], sources: Source[]) {
   if (problems.length) throw new Error(`Export blocked:\n${problems.join('\n')}`);
   entries['manifest.sha256'] = strToU8(manifest.join('\n'));
   entries['references.json'] = strToU8(JSON.stringify(refs, null, 2));
-  entries['README.txt'] = strToU8('FA Portal — FridayAnalytics\nHome-vault files: verified against hashes retained at linking. This bundle stays on the device.\nELEMENT CROP – not proof by itself\nRENDER – from API data, not a platform screenshot');
+  entries['README.txt'] = strToU8('FA Portal — FridayAnalytics\nProduced by FridayAnalytics.org for the Ansarian Collective.\nHome-vault files: verified against hashes retained at linking. This bundle stays on the device.\nELEMENT CROP – not proof by itself\nRENDER – from API data, not a platform screenshot');
   const bytes = zipSync(entries);
   for (const ref of refs) await logHome(ref, 'exported', undefined, 'Verified device-only home-vault ZIP');
   return bytes;

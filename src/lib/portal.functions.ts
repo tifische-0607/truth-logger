@@ -12,7 +12,7 @@ export const createClientInvite = createServerFn({ method: 'POST' })
     const bytes = crypto.getRandomValues(new Uint8Array(32));
     const token = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
     const hash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(token))), b => b.toString(16).padStart(2, '0')).join('');
-    const { error } = await context.supabase.rpc('portal_invite', { c: data.clientId, n: data.name, e: data.email.toLowerCase(), h: hash, expires: new Date(Date.now() + 7 * 86400000).toISOString(), existing: data.existingId });
+    const { error } = await context.supabase.rpc('portal_invite', { c: data.clientId, n: data.name, e: data.email.toLowerCase(), h: hash, expires: new Date(Date.now() + 7 * 86400000).toISOString(), ...(data.existingId ? {existing: data.existingId} : {}) });
     if (error) throw new Error(error.message);
     return { link: siteLink(canonicalSiteUrl(process.env['SITE_URL']), `/invite?token=${token}`) };
   });
