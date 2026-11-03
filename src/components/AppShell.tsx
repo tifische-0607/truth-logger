@@ -34,7 +34,7 @@ import { HomeReferences } from '@/components/HomeReferences';
 import { Button } from '@/components/ui/button';
 import { ThemeControl } from '@/components/ThemeControl';
 import { useMe } from '@/lib/projects';
-import { BaseStrip, BrandLogo, Kicker, ProductLockup, COMPANY } from '@/components/BrandLogo';
+import { BaseStrip, Kicker, ProductLockup, COMPANY } from '@/components/BrandLogo';
 import { DOCUMENT_FOOTER } from '@/lib/document-footer';
 
 const ACTIVE = "relative bg-sidebar-accent text-sidebar-accent-foreground font-semibold before:absolute before:inset-y-2 before:left-0 before:w-[3px] before:rounded-full before:bg-primary";
