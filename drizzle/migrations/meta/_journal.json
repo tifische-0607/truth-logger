@@ -197,6 +197,13 @@
       "when": 1793709583238,
       "tag": "0027_fa_portal_management_screens",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1793710711530,
+      "tag": "0028_fa_portal_framework_library",
+      "breakpoints": true
     }
   ]
 }
