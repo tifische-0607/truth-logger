@@ -12,7 +12,7 @@ import { Chip } from '@/components/engagement/ui';
 import { Refusal } from '@/components/research/ResearchBits';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { getCloudVaultConfig, testVaultConnection } from '@/lib/vaults.functions';
 import { cloudChecks, cloudWord, homeChecks, ROUTE_LABEL, type CloudRoute, type VaultCheck } from '@/lib/vault-config';
 import { useVaultOverview, WHERE_DATA_GOES } from '@/lib/vaults';
@@ -70,7 +70,7 @@ function RotateDialog({ vault, name }: { vault: 'home' | 'cloud'; name: string }
   });
   return (
     <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setErr(null); }}>
-      <Button variant="outline" className="min-h-11" onClick={() => setOpen(true)}>Rotate credentials</Button>
+      <DialogTrigger asChild><Button variant="outline" className="min-h-11">Rotate credentials</Button></DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Rotate credentials: {name}</DialogTitle>
