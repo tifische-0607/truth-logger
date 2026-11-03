@@ -472,6 +472,7 @@ export type Database = {
           invited_by: string | null
           last_sign_in: string | null
           name: string
+          notify: Json
           role: string
           status: string
           user_id: string | null
@@ -487,6 +488,7 @@ export type Database = {
           invited_by?: string | null
           last_sign_in?: string | null
           name: string
+          notify?: Json
           role?: string
           status?: string
           user_id?: string | null
@@ -502,6 +504,7 @@ export type Database = {
           invited_by?: string | null
           last_sign_in?: string | null
           name?: string
+          notify?: Json
           role?: string
           status?: string
           user_id?: string | null
@@ -529,9 +532,11 @@ export type Database = {
           legal_name: string | null
           name: string
           notes: string | null
+          phone: string | null
           portal_enabled: boolean
           sector: string | null
           status: string
+          time_zone: string
           updated_at: string
         }
         Insert: {
@@ -546,9 +551,11 @@ export type Database = {
           legal_name?: string | null
           name: string
           notes?: string | null
+          phone?: string | null
           portal_enabled?: boolean
           sector?: string | null
           status?: string
+          time_zone?: string
           updated_at?: string
         }
         Update: {
@@ -563,9 +570,11 @@ export type Database = {
           legal_name?: string | null
           name?: string
           notes?: string | null
+          phone?: string | null
           portal_enabled?: boolean
           sector?: string | null
           status?: string
+          time_zone?: string
           updated_at?: string
         }
         Relationships: []
@@ -3397,11 +3406,16 @@ export type Database = {
         Args: { rid: string; uid: string }
         Returns: undefined
       }
+      portal_activity: { Args: { c?: string }; Returns: Json }
       portal_admin_action: {
         Args: { a: string; rid: string }
         Returns: undefined
       }
       portal_claim_invitation: { Args: { h: string }; Returns: Json }
+      portal_dashboard: { Args: { c?: string }; Returns: Json }
+      portal_engagement_briefs: { Args: { p: string }; Returns: Json }
+      portal_engagement_stage: { Args: { p: string }; Returns: number }
+      portal_engagements: { Args: { c?: string }; Returns: Json }
       portal_has_client_identity: { Args: { u: string }; Returns: boolean }
       portal_home: { Args: { c?: string }; Returns: Json }
       portal_identity: { Args: never; Returns: Json }
@@ -3420,6 +3434,19 @@ export type Database = {
       portal_is_admin: { Args: { c: string; u: string }; Returns: boolean }
       portal_is_staff: { Args: { u: string }; Returns: boolean }
       portal_record_sign_in: { Args: never; Returns: undefined }
+      portal_resolve_client: { Args: { c: string }; Returns: string }
+      portal_set_notifications: { Args: { prefs: Json }; Returns: undefined }
+      portal_update_organisation: {
+        Args: {
+          c: string
+          contact: string
+          contact_mail: string
+          display: string
+          tel: string
+          tz: string
+        }
+        Returns: undefined
+      }
       project_current_brief_id: { Args: { _project: string }; Returns: string }
       project_item_case: {
         Args: { _evidence_ref_id: string; _item_id: string; _kind: string }

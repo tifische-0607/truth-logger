@@ -106,6 +106,13 @@
       "when": 1793685022769,
       "tag": "0014_fa_portal_library",
       "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1793689452516,
+      "tag": "0015_fa_portal_client_screens",
+      "breakpoints": true
     }
   ]
 }
