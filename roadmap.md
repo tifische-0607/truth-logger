@@ -33,7 +33,7 @@
 8. [ ] Phase 9 Hardening and full test run — waits for Go
 9. [ ] U1 Membership tiers and seats (needs Phase 4) — waits for Go
 10. [ ] U2 Pricing, upgrade requests and billing (needs U1) — waits for Go
-11. [ ] U7 Early warning platform (needs U4, U5, U8) — waits for Go
+11. [ ] U7 Early warning platform (needs U4, U5, U8) — waits for Go. Requested 3 Nov 2026 for after U6: analyst confirmation, email and Telegram alerts, briefing document on DarkNight, "Not configured" until channels are set.
 12. [ ] U9 Link analysis (needs U4, U5, U8) — waits for Go
 13. [ ] U11 Narrative and coordination detection (needs U7, U8, U9) — waits for Go
 14. [ ] U12 Unified evidence search (needs U4, U5, U11) — waits for Go
