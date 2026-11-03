@@ -47,7 +47,7 @@ Start with the database schema, auth, worker functions and the Dashboard, New ca
 
 This project was built with [Lovable](https://lovable.dev).
 
-**Live app**: https://spyglass2.sentinel2.org
+**Live app**: https://portal.fridayanalytics.org
 
 ## Build with Lovable
 
