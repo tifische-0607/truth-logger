@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { errorMessage } from '@/lib/portal-access';
 
 export const Route = createFileRoute("/_authenticated/team")({
   head: () => ({
@@ -113,6 +114,16 @@ function TeamPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const managementRole = useMutation({
+    mutationFn: async ({userId,remove}:{userId:string;remove:boolean}) => {
+      const result = remove
+        ? await supabase.from('user_roles').delete().eq('user_id',userId).eq('role','management')
+        : await supabase.from('user_roles').insert({user_id:userId,role:'management'});
+      if(result.error) throw result.error;
+    },
+    onSuccess: refresh,
+  });
+
   const assign = useMutation({
     mutationFn: async ({ caseId, userId }: { caseId: string; userId: string }) => {
       const { error } = await supabase
@@ -151,6 +162,7 @@ function TeamPage() {
         title="Team & case assignment"
         subtitle="Only the owner and investigators assigned to a case can open, verify or export it."
       />
+      {[grantRole.error,managementRole.error,assign.error,unassign.error].filter(Boolean).map((e,i)=><p key={i} role="alert" className="bg-failed text-failed-foreground rounded-md p-3 text-sm">{errorMessage(e)}</p>)}
 
       {!isOwner && (
         <div className="panel text-muted-foreground p-4 text-sm">
@@ -182,10 +194,10 @@ function TeamPage() {
                         ? "Owner"
                         : isAnalyst
                           ? "Investigator"
-                          : "No access to case data"}
+                          : m.roles.includes('management') ? 'FA Management · Read only' : m.roles.includes('curator') ? 'Curator' : "No access to case data"}
                     </p>
                   </div>
-                  {isOwner && !isOwnerRow && (
+                  {isOwner && !isOwnerRow && !m.roles.includes('management') && (
                     <Button
                       variant={isAnalyst ? "outline" : "default"}
                       size="lg"
@@ -203,6 +215,7 @@ function TeamPage() {
                       )}
                     </Button>
                   )}
+                  {isOwner && !isOwnerRow && (m.roles.length===0 || m.roles.includes('management')) && <Button variant="outline" disabled={managementRole.isPending} onClick={()=>managementRole.mutate({userId:m.id,remove:m.roles.includes('management')})}>{m.roles.includes('management')?'Remove Management access':'Make FA Management'}</Button>}
                 </li>
               );
             })}
