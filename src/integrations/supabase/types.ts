@@ -3119,7 +3119,7 @@ export type Database = {
       statements_ok: { Args: { _s: Json }; Returns: boolean }
     }
     Enums: {
-      app_role: "owner" | "analyst" | "curator"
+      app_role: "owner" | "analyst" | "curator" | "management"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -3247,7 +3247,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["owner", "analyst", "curator"],
+      app_role: ["owner", "analyst", "curator", "management"],
     },
   },
 } as const
