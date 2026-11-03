@@ -11,7 +11,14 @@
 - [x] Phase 3: Client portal screens
 - [x] Phase 4: Research data/rules (0016, 0017); full SQL checks saved, need signed-gate fixtures
 - [ ] Phase 3 SQL checks 1–3 — outstanding (need authenticated role switch)
-- [ ] Phase 5: Research screens/worker API — waits for "Go Phase 5"
+- [x] Phase 5: Research screens/worker API (0018 empty by mistake, 0019, 0020); includes U4 connector contract and U5 quality controls inside the worker API
+- [ ] Phase 4 gate-based SQL checks and Phase 5 full worker simulation (tests/sql/research_worker_test.sql) — outstanding: need a signed-G1/G2 engagement and a service-role test connection
+- [ ] U1 Membership tiers and seats — future phase
+- [ ] U2 Pricing page, upgrade requests and staff billing — future phase
+- [ ] U3 Storage split (Cloud Vault portal data only; DarkNight holds all reports/evidence, live fetch with re-hash) — future phase
+- [ ] U4 remainder: central data collection requirements register fed by the signed brief; further connectors — future phase
+- [ ] U5 remainder: per-connector rejection-rate dashboard over time — future phase
+- [ ] U6 Methodology enforcement checkpoints (V1, V2, Q1, Q2, second analyst review, Curator release statement) — future phase
 - [ ] Phase 6: Vaults — waits for "Go Phase 6"
 - [ ] Phase 7: SOP/clock engine — waits for "Go Phase 7"
 - [ ] Phase 8: Management screens — waits for "Go Phase 8"

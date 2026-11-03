@@ -510,3 +510,15 @@ Disable with job option `timestamps: false`.
 `POST /api/public/worker-watch-report` — body `{"target_id":"uuid","post_urls":["https://www.facebook.com/page/posts/pfbid..."],"error":"optional one-line failure"}`. Returns `{"ok":true,"baseline":bool,"new":n,"queued":n}`. The first scan of a target only records a baseline. Later scans queue each unseen link as a capture_job in the target's case, all under one new auto-numbered incident, with `options.auto_watch=true` and `options.watch_target_id`.
 
 The worker checks for due targets at most once a minute, using a free capture slot.
+
+## Research worker API (Phase 5)
+
+All routes are `POST`, JSON, `Authorization: Bearer <WORKER_TOKEN>`. Every rule runs in the database; a refusal returns HTTP 409 `{"status":"refused","reason":"..."}` with the database's own wording. Calls are safe to repeat.
+
+| Route | Body | Notes |
+|---|---|---|
+| `/api/public/research-claim` | `{plan_sha256?, cycle?}` | Returns `{job}` (job_id, run_id, plan facts) or `{job:null, reason}`. Re-claiming hands back the same job and run. Blocked while the home vault is not reported online. |
+| `/api/public/research-jobs` | `{plan_id, job_type, source, target?, terms?, key}` | Queues a job inside a started plan; outside the plan is refused and logged. Idempotent on `key`. |
+| `/api/public/research-captures` | `{run_id, items:[...]}` (max 200) | Standard item shape for every connector: `connector, connector_version, item_ref, platform (facebook/google/threads/x/instagram/tiktok), item_type (post/comment/reply/profile/page/video/search_result), language (ms/en/zh/ta/ar/id/und), sha256, fstd001_version, requirement_ref, collector, captured_at_utc (UTC, ending Z), source, target?, matched_terms?, evidence_ref_id?, captured_by?, original_context?`. Invalid or out-of-plan items are quarantined (logged, never stored). Repeated rejections within the connector's window suspend it. Idempotent on `item_ref` per run. |
+| `/api/public/research-vault-write` | `{capture_id, sha256_on_write, custody_event_id?}` | Verified only when the hash on write equals the hash at capture; a mismatch is refused and logged. |
+| `/api/public/research-status` | `{run_id, status: running/delivered/failed, expected?}` and/or `{vault:{source_id, online, note?}}` | Delivery is refused until captured equals in vault. When every run is delivered the plan becomes delivered. |
