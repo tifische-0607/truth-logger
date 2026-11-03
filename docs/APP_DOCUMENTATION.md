@@ -1,4 +1,18 @@
-# Evidence Hub — App Documentation
+# FA Portal — App Documentation
+
+## Stage 1: staff and client access
+
+- One `/auth` page handles staff and client administrators. Staff open `/dashboard`; Curators open `/inbox`; FA Management opens `/management`; active client administrators open `/portal`.
+- Client administrators cannot hold a staff role or engagement membership. Staff pages and their underlying data remain inaccessible to client identities.
+- Each client is an individual or organization. The owner manages its display/legal names and its Client access card.
+- At most two pending-or-active administrators are permitted, including reactivation. The database refuses a third with `A client can have at most 2 administrators.`
+- Enabling the portal requires at least one pending or active administrator. Disabling it blocks client data and administration while preserving staff preview.
+- Invitations are recorded, not emailed. The inviter copies a single-use setup link; only its SHA-256 is stored. Resend invalidates the previous token; cancellation, deactivation, reactivation, acceptance and portal switches are logged.
+- FA Management reads all staff data but cannot write operational records or sign gates. SOP editing belongs to Stage 5.
+- Full links use the server `SITE_URL` setting, defaulting to `https://spyglass2.sentinel2.org`. Development sign-in returns to its current preview origin. DNS is managed by the owner.
+- Auth Site URL must be `https://spyglass2.sentinel2.org`; allow `https://spyglass2.sentinel2.org/**` for `/auth` and `/reset-password`, retaining preview redirects.
+- Stage 1 provides the client dashboard and administrator access only. Engagement/document views follow in Stage 2.
+- SQL regression checks are in `tests/sql/portal_foundation_test.sql` because integration-owned `drizzle/tests` is protected. They need a privileged test connection; do not widen production privileges to run them.
 
 Evidence Hub is an evidence-capture system for preserving Facebook content (posts, comments, and live streams) as legal evidence for escalation in Malaysia: police reports, MCMC complaints under the Communications and Multimedia Act 1998 (s.233), and civil action.
 
