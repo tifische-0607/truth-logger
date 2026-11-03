@@ -1,4 +1,5 @@
 -- Phase 7 SOP and clock engine checks. Runs in a transaction and rolls back.
+-- Run 3 Nov 2026 on the sandbox test connection: C4a PASSED (clock started at phase 0 on a new engagement). All other blocks need table/function rights this connection lacks.
 BEGIN;
 
 -- C1: SOP definitions are append-only (an edit must be a new version)
