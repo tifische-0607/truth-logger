@@ -90,7 +90,7 @@ function useDownload(sample: boolean) {
   return { run, state };
 }
 
-export function DocCard({ d, engagement, dl }: { d: PortalDoc; engagement?: string; dl: ReturnType<typeof useDownload> }) {
+export function DocCard({ d, engagement, dl }: { d: PortalDoc; engagement?: string | undefined; dl: ReturnType<typeof useDownload> }) {
   const can = !!d.storage_path && !d.manifest_only;
   return (
     <article className="panel space-y-3 p-4">

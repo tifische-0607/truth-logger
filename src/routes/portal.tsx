@@ -2,8 +2,6 @@ import { TAGLINE } from '@/lib/brand';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { z } from 'zod';
-import { fallback, zodValidator } from '@tanstack/zod-adapter';
 import { supabase } from '@/integrations/supabase/client';
 import { hubHead } from '@/lib/hub';
 import { errorMessage } from '@/lib/portal-access';
@@ -19,13 +17,9 @@ import { AdministrationTab, DashboardTab, DocumentsTab, EngagementsTab, PageTitl
 
 type Home = { preview: boolean; access_disabled?: boolean; clients?: { id: string; name: string }[]; client_id?: string; portal_enabled?: boolean };
 const TABS = ['Dashboard', 'Engagements', 'Documents', 'Administration'] as const;
-const search = z.object({
-  preview: fallback(z.string(), '').default(''),
-  tab: fallback(z.string(), 'Dashboard').default('Dashboard'),
-  e: fallback(z.string(), '').default(''),
-  pill: fallback(z.string(), 'Team').default('Team'),
-});
-export const Route = createFileRoute('/portal')({ validateSearch: zodValidator(search), head: () => hubHead('Client portal', 'Private client access to FA Portal.'), component: Portal });
+const str = (v: unknown, d: string) => (typeof v === 'string' ? v : d);
+const search = (r: Record<string, unknown>) => ({ preview: str(r.preview, ''), tab: str(r.tab, 'Dashboard'), e: str(r.e, ''), pill: str(r.pill, 'Team') });
+export const Route = createFileRoute('/portal')({ validateSearch: search, head: () => hubHead('Client portal', 'Private client access to FA Portal.'), component: Portal });
 
 function Portal() {
   const navigate = useNavigate({ from: '/portal' }); const qc = useQueryClient();

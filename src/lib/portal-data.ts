@@ -58,7 +58,8 @@ export const WHATS_NEW = new Set(['shared', 'uploaded', 'accepted', 'organisatio
 export function amendedBy(briefs: PortalBrief[], field: keyof PortalBrief): string | null {
   let marker: string | null = null;
   for (let i = 1; i < briefs.length; i++) {
-    if (JSON.stringify(briefs[i][field]) !== JSON.stringify(briefs[i - 1][field]) && briefs[i].amendment_no != null) marker = `A${briefs[i].amendment_no}`;
+    const cur = briefs[i], prev = briefs[i - 1];
+    if (cur && prev && JSON.stringify(cur[field]) !== JSON.stringify(prev[field]) && cur.amendment_no != null) marker = `A${cur.amendment_no}`;
   }
   return marker;
 }
