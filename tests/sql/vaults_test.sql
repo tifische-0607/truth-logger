@@ -38,7 +38,7 @@ DO $$ DECLARE c uuid; BEGIN
 EXCEPTION WHEN check_violation OR foreign_key_violation THEN RAISE NOTICE 'SKIP V4 custody fixture refused by an older guard: %', SQLERRM;
 END $$;
 
--- V5 shared documents and released outputs are queued with their SHA-256
+-- V5 RETIRED by U3 (0023): documents, outputs and captures are no longer queued; expect 0 such outbox rows
 --   Needs a client document fixture: insert a documents row with visibility 'client' and a sha256, then
 --   SELECT count(*) FROM vault_outbox WHERE kind='document' AND ref_id=<id> AND sha256=<sha>  -- expect 1
 --   Release an output with a sha256 through G5, then the same check with kind='output'           -- expect 1
