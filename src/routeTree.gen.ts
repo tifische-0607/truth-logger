@@ -50,11 +50,17 @@ import { Route as AuthenticatedProfilesCaseIdRouteImport } from './routes/_authe
 import { Route as AuthenticatedProjectsIndexRouteImport } from './routes/_authenticated/projects.index'
 import { Route as AuthenticatedProjectsProjectIdRouteImport } from './routes/_authenticated/projects.$projectId'
 import { Route as AuthenticatedReportCaseIdRouteImport } from './routes/_authenticated/report.$caseId'
+import { Route as AuthenticatedResearchIndexRouteImport } from './routes/_authenticated/research.index'
 import { Route as AuthenticatedReviewCaseIdRouteImport } from './routes/_authenticated/review.$caseId'
 import { Route as AuthenticatedSummaryCaseIdRouteImport } from './routes/_authenticated/summary.$caseId'
 import { Route as AuthenticatedTimelineCaseIdRouteImport } from './routes/_authenticated/timeline.$caseId'
 import { Route as AuthenticatedTrailCaseIdRouteImport } from './routes/_authenticated/trail.$caseId'
 import { Route as AuthenticatedTranscriptsCaseIdRouteImport } from './routes/_authenticated/transcripts.$caseId'
+import { Route as ApiPublicResearchCapturesRouteImport } from './routes/api/public/research-captures'
+import { Route as ApiPublicResearchClaimRouteImport } from './routes/api/public/research-claim'
+import { Route as ApiPublicResearchJobsRouteImport } from './routes/api/public/research-jobs'
+import { Route as ApiPublicResearchStatusRouteImport } from './routes/api/public/research-status'
+import { Route as ApiPublicResearchVaultWriteRouteImport } from './routes/api/public/research-vault-write'
 import { Route as ApiPublicWorkerClaimRouteImport } from './routes/api/public/worker-claim'
 import { Route as ApiPublicWorkerCompleteRouteImport } from './routes/api/public/worker-complete'
 import { Route as ApiPublicWorkerHeartbeatRouteImport } from './routes/api/public/worker-heartbeat'
@@ -64,6 +70,7 @@ import { Route as ApiPublicWorkerTranscribeRouteImport } from './routes/api/publ
 import { Route as ApiPublicWorkerUploadUrlRouteImport } from './routes/api/public/worker-upload-url'
 import { Route as ApiPublicWorkerWatchDueRouteImport } from './routes/api/public/worker-watch-due'
 import { Route as ApiPublicWorkerWatchReportRouteImport } from './routes/api/public/worker-watch-report'
+import { Route as AuthenticatedResearchRunsRunIdRouteImport } from './routes/_authenticated/research.runs.$runId'
 import { Route as AuthenticatedVaultSourceIdRecordIdRouteImport } from './routes/_authenticated/vault.$sourceId.$recordId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -284,6 +291,12 @@ const AuthenticatedReportCaseIdRoute =
     path: '/report/$caseId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedResearchIndexRoute =
+  AuthenticatedResearchIndexRouteImport.update({
+    id: '/research/',
+    path: '/research/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedReviewCaseIdRoute =
   AuthenticatedReviewCaseIdRouteImport.update({
     id: '/review/$caseId',
@@ -313,6 +326,33 @@ const AuthenticatedTranscriptsCaseIdRoute =
     id: '/transcripts/$caseId',
     path: '/transcripts/$caseId',
     getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const ApiPublicResearchCapturesRoute =
+  ApiPublicResearchCapturesRouteImport.update({
+    id: '/api/public/research-captures',
+    path: '/api/public/research-captures',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicResearchClaimRoute = ApiPublicResearchClaimRouteImport.update({
+  id: '/api/public/research-claim',
+  path: '/api/public/research-claim',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicResearchJobsRoute = ApiPublicResearchJobsRouteImport.update({
+  id: '/api/public/research-jobs',
+  path: '/api/public/research-jobs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicResearchStatusRoute = ApiPublicResearchStatusRouteImport.update({
+  id: '/api/public/research-status',
+  path: '/api/public/research-status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicResearchVaultWriteRoute =
+  ApiPublicResearchVaultWriteRouteImport.update({
+    id: '/api/public/research-vault-write',
+    path: '/api/public/research-vault-write',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicWorkerClaimRoute = ApiPublicWorkerClaimRouteImport.update({
   id: '/api/public/worker-claim',
@@ -362,6 +402,12 @@ const ApiPublicWorkerWatchReportRoute =
     id: '/api/public/worker-watch-report',
     path: '/api/public/worker-watch-report',
     getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedResearchRunsRunIdRoute =
+  AuthenticatedResearchRunsRunIdRouteImport.update({
+    id: '/research/runs/$runId',
+    path: '/research/runs/$runId',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedVaultSourceIdRecordIdRoute =
   AuthenticatedVaultSourceIdRecordIdRouteImport.update({
@@ -413,6 +459,11 @@ export interface FileRoutesByFullPath {
   '/timeline/$caseId': typeof AuthenticatedTimelineCaseIdRoute
   '/trail/$caseId': typeof AuthenticatedTrailCaseIdRoute
   '/transcripts/$caseId': typeof AuthenticatedTranscriptsCaseIdRoute
+  '/api/public/research-captures': typeof ApiPublicResearchCapturesRoute
+  '/api/public/research-claim': typeof ApiPublicResearchClaimRoute
+  '/api/public/research-jobs': typeof ApiPublicResearchJobsRoute
+  '/api/public/research-status': typeof ApiPublicResearchStatusRoute
+  '/api/public/research-vault-write': typeof ApiPublicResearchVaultWriteRoute
   '/api/public/worker-claim': typeof ApiPublicWorkerClaimRoute
   '/api/public/worker-complete': typeof ApiPublicWorkerCompleteRoute
   '/api/public/worker-heartbeat': typeof ApiPublicWorkerHeartbeatRoute
@@ -425,6 +476,8 @@ export interface FileRoutesByFullPath {
   '/cases/': typeof AuthenticatedCasesIndexRoute
   '/document-samples/': typeof AuthenticatedDocumentSamplesIndexRoute
   '/projects/': typeof AuthenticatedProjectsIndexRoute
+  '/research/': typeof AuthenticatedResearchIndexRoute
+  '/research/runs/$runId': typeof AuthenticatedResearchRunsRunIdRoute
   '/vault/$sourceId/$recordId': typeof AuthenticatedVaultSourceIdRecordIdRoute
 }
 export interface FileRoutesByTo {
@@ -470,6 +523,11 @@ export interface FileRoutesByTo {
   '/timeline/$caseId': typeof AuthenticatedTimelineCaseIdRoute
   '/trail/$caseId': typeof AuthenticatedTrailCaseIdRoute
   '/transcripts/$caseId': typeof AuthenticatedTranscriptsCaseIdRoute
+  '/api/public/research-captures': typeof ApiPublicResearchCapturesRoute
+  '/api/public/research-claim': typeof ApiPublicResearchClaimRoute
+  '/api/public/research-jobs': typeof ApiPublicResearchJobsRoute
+  '/api/public/research-status': typeof ApiPublicResearchStatusRoute
+  '/api/public/research-vault-write': typeof ApiPublicResearchVaultWriteRoute
   '/api/public/worker-claim': typeof ApiPublicWorkerClaimRoute
   '/api/public/worker-complete': typeof ApiPublicWorkerCompleteRoute
   '/api/public/worker-heartbeat': typeof ApiPublicWorkerHeartbeatRoute
@@ -482,6 +540,8 @@ export interface FileRoutesByTo {
   '/cases': typeof AuthenticatedCasesIndexRoute
   '/document-samples': typeof AuthenticatedDocumentSamplesIndexRoute
   '/projects': typeof AuthenticatedProjectsIndexRoute
+  '/research': typeof AuthenticatedResearchIndexRoute
+  '/research/runs/$runId': typeof AuthenticatedResearchRunsRunIdRoute
   '/vault/$sourceId/$recordId': typeof AuthenticatedVaultSourceIdRecordIdRoute
 }
 export interface FileRoutesById {
@@ -529,6 +589,11 @@ export interface FileRoutesById {
   '/_authenticated/timeline/$caseId': typeof AuthenticatedTimelineCaseIdRoute
   '/_authenticated/trail/$caseId': typeof AuthenticatedTrailCaseIdRoute
   '/_authenticated/transcripts/$caseId': typeof AuthenticatedTranscriptsCaseIdRoute
+  '/api/public/research-captures': typeof ApiPublicResearchCapturesRoute
+  '/api/public/research-claim': typeof ApiPublicResearchClaimRoute
+  '/api/public/research-jobs': typeof ApiPublicResearchJobsRoute
+  '/api/public/research-status': typeof ApiPublicResearchStatusRoute
+  '/api/public/research-vault-write': typeof ApiPublicResearchVaultWriteRoute
   '/api/public/worker-claim': typeof ApiPublicWorkerClaimRoute
   '/api/public/worker-complete': typeof ApiPublicWorkerCompleteRoute
   '/api/public/worker-heartbeat': typeof ApiPublicWorkerHeartbeatRoute
@@ -541,6 +606,8 @@ export interface FileRoutesById {
   '/_authenticated/cases/': typeof AuthenticatedCasesIndexRoute
   '/_authenticated/document-samples/': typeof AuthenticatedDocumentSamplesIndexRoute
   '/_authenticated/projects/': typeof AuthenticatedProjectsIndexRoute
+  '/_authenticated/research/': typeof AuthenticatedResearchIndexRoute
+  '/_authenticated/research/runs/$runId': typeof AuthenticatedResearchRunsRunIdRoute
   '/_authenticated/vault/$sourceId/$recordId': typeof AuthenticatedVaultSourceIdRecordIdRoute
 }
 export interface FileRouteTypes {
@@ -588,6 +655,11 @@ export interface FileRouteTypes {
     | '/timeline/$caseId'
     | '/trail/$caseId'
     | '/transcripts/$caseId'
+    | '/api/public/research-captures'
+    | '/api/public/research-claim'
+    | '/api/public/research-jobs'
+    | '/api/public/research-status'
+    | '/api/public/research-vault-write'
     | '/api/public/worker-claim'
     | '/api/public/worker-complete'
     | '/api/public/worker-heartbeat'
@@ -600,6 +672,8 @@ export interface FileRouteTypes {
     | '/cases/'
     | '/document-samples/'
     | '/projects/'
+    | '/research/'
+    | '/research/runs/$runId'
     | '/vault/$sourceId/$recordId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -645,6 +719,11 @@ export interface FileRouteTypes {
     | '/timeline/$caseId'
     | '/trail/$caseId'
     | '/transcripts/$caseId'
+    | '/api/public/research-captures'
+    | '/api/public/research-claim'
+    | '/api/public/research-jobs'
+    | '/api/public/research-status'
+    | '/api/public/research-vault-write'
     | '/api/public/worker-claim'
     | '/api/public/worker-complete'
     | '/api/public/worker-heartbeat'
@@ -657,6 +736,8 @@ export interface FileRouteTypes {
     | '/cases'
     | '/document-samples'
     | '/projects'
+    | '/research'
+    | '/research/runs/$runId'
     | '/vault/$sourceId/$recordId'
   id:
     | '__root__'
@@ -703,6 +784,11 @@ export interface FileRouteTypes {
     | '/_authenticated/timeline/$caseId'
     | '/_authenticated/trail/$caseId'
     | '/_authenticated/transcripts/$caseId'
+    | '/api/public/research-captures'
+    | '/api/public/research-claim'
+    | '/api/public/research-jobs'
+    | '/api/public/research-status'
+    | '/api/public/research-vault-write'
     | '/api/public/worker-claim'
     | '/api/public/worker-complete'
     | '/api/public/worker-heartbeat'
@@ -715,6 +801,8 @@ export interface FileRouteTypes {
     | '/_authenticated/cases/'
     | '/_authenticated/document-samples/'
     | '/_authenticated/projects/'
+    | '/_authenticated/research/'
+    | '/_authenticated/research/runs/$runId'
     | '/_authenticated/vault/$sourceId/$recordId'
   fileRoutesById: FileRoutesById
 }
@@ -725,6 +813,11 @@ export interface RootRouteChildren {
   InviteRoute: typeof InviteRoute
   PortalRoute: typeof PortalRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  ApiPublicResearchCapturesRoute: typeof ApiPublicResearchCapturesRoute
+  ApiPublicResearchClaimRoute: typeof ApiPublicResearchClaimRoute
+  ApiPublicResearchJobsRoute: typeof ApiPublicResearchJobsRoute
+  ApiPublicResearchStatusRoute: typeof ApiPublicResearchStatusRoute
+  ApiPublicResearchVaultWriteRoute: typeof ApiPublicResearchVaultWriteRoute
   ApiPublicWorkerClaimRoute: typeof ApiPublicWorkerClaimRoute
   ApiPublicWorkerCompleteRoute: typeof ApiPublicWorkerCompleteRoute
   ApiPublicWorkerHeartbeatRoute: typeof ApiPublicWorkerHeartbeatRoute
@@ -1025,6 +1118,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReportCaseIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/research/': {
+      id: '/_authenticated/research/'
+      path: '/research'
+      fullPath: '/research/'
+      preLoaderRoute: typeof AuthenticatedResearchIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/review/$caseId': {
       id: '/_authenticated/review/$caseId'
       path: '/review/$caseId'
@@ -1059,6 +1159,41 @@ declare module '@tanstack/react-router' {
       fullPath: '/transcripts/$caseId'
       preLoaderRoute: typeof AuthenticatedTranscriptsCaseIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/public/research-captures': {
+      id: '/api/public/research-captures'
+      path: '/api/public/research-captures'
+      fullPath: '/api/public/research-captures'
+      preLoaderRoute: typeof ApiPublicResearchCapturesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/research-claim': {
+      id: '/api/public/research-claim'
+      path: '/api/public/research-claim'
+      fullPath: '/api/public/research-claim'
+      preLoaderRoute: typeof ApiPublicResearchClaimRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/research-jobs': {
+      id: '/api/public/research-jobs'
+      path: '/api/public/research-jobs'
+      fullPath: '/api/public/research-jobs'
+      preLoaderRoute: typeof ApiPublicResearchJobsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/research-status': {
+      id: '/api/public/research-status'
+      path: '/api/public/research-status'
+      fullPath: '/api/public/research-status'
+      preLoaderRoute: typeof ApiPublicResearchStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/research-vault-write': {
+      id: '/api/public/research-vault-write'
+      path: '/api/public/research-vault-write'
+      fullPath: '/api/public/research-vault-write'
+      preLoaderRoute: typeof ApiPublicResearchVaultWriteRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/worker-claim': {
       id: '/api/public/worker-claim'
@@ -1123,6 +1258,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWorkerWatchReportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/research/runs/$runId': {
+      id: '/_authenticated/research/runs/$runId'
+      path: '/research/runs/$runId'
+      fullPath: '/research/runs/$runId'
+      preLoaderRoute: typeof AuthenticatedResearchRunsRunIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/vault/$sourceId/$recordId': {
       id: '/_authenticated/vault/$sourceId/$recordId'
       path: '/vault/$sourceId/$recordId'
@@ -1174,6 +1316,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCasesIndexRoute: typeof AuthenticatedCasesIndexRoute
   AuthenticatedDocumentSamplesIndexRoute: typeof AuthenticatedDocumentSamplesIndexRoute
   AuthenticatedProjectsIndexRoute: typeof AuthenticatedProjectsIndexRoute
+  AuthenticatedResearchIndexRoute: typeof AuthenticatedResearchIndexRoute
+  AuthenticatedResearchRunsRunIdRoute: typeof AuthenticatedResearchRunsRunIdRoute
   AuthenticatedVaultSourceIdRecordIdRoute: typeof AuthenticatedVaultSourceIdRecordIdRoute
 }
 
@@ -1219,6 +1363,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDocumentSamplesIndexRoute:
     AuthenticatedDocumentSamplesIndexRoute,
   AuthenticatedProjectsIndexRoute: AuthenticatedProjectsIndexRoute,
+  AuthenticatedResearchIndexRoute: AuthenticatedResearchIndexRoute,
+  AuthenticatedResearchRunsRunIdRoute: AuthenticatedResearchRunsRunIdRoute,
   AuthenticatedVaultSourceIdRecordIdRoute:
     AuthenticatedVaultSourceIdRecordIdRoute,
 }
@@ -1233,6 +1379,11 @@ const rootRouteChildren: RootRouteChildren = {
   InviteRoute: InviteRoute,
   PortalRoute: PortalRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  ApiPublicResearchCapturesRoute: ApiPublicResearchCapturesRoute,
+  ApiPublicResearchClaimRoute: ApiPublicResearchClaimRoute,
+  ApiPublicResearchJobsRoute: ApiPublicResearchJobsRoute,
+  ApiPublicResearchStatusRoute: ApiPublicResearchStatusRoute,
+  ApiPublicResearchVaultWriteRoute: ApiPublicResearchVaultWriteRoute,
   ApiPublicWorkerClaimRoute: ApiPublicWorkerClaimRoute,
   ApiPublicWorkerCompleteRoute: ApiPublicWorkerCompleteRoute,
   ApiPublicWorkerHeartbeatRoute: ApiPublicWorkerHeartbeatRoute,
