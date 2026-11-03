@@ -11,6 +11,14 @@ export function formatBytes(bytes?: number | null): string {
   return `${value.toFixed(value < 10 ? 1 : 0)} ${units[i]}`;
 }
 
+/** Calendar date only, e.g. "15 Dec 2026". */
+export function formatDate(value?: string | null): string {
+  if (!value) return "—";
+  const d = new Date(/^\d{4}-\d{2}-\d{2}$/.test(value) ? `${value}T00:00:00Z` : value);
+  if (Number.isNaN(d.getTime())) return String(value);
+  return d.toLocaleDateString("en-GB", { timeZone: "UTC", day: "numeric", month: "short", year: "numeric" });
+}
+
 export function formatDateTime(value?: string | null): string {
   if (!value) return "—";
   const d = new Date(value);
