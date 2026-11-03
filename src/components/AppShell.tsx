@@ -339,7 +339,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             setCaptureOpen(true);
           }}
           aria-label="New capture"
-          className="bg-primary text-primary-foreground safe-bottom fixed right-5 bottom-24 z-50 flex min-h-14 items-center gap-2 rounded-full px-5 text-base font-semibold shadow-lg transition-transform active:scale-95 md:bottom-8"
+          className="no-print bg-primary text-primary-foreground safe-bottom fixed right-5 bottom-24 z-50 flex min-h-14 items-center gap-2 rounded-full px-5 text-base font-semibold shadow-lg transition-transform active:scale-95 md:bottom-8"
         >
           <ListPlus className="size-5" />
           New capture
