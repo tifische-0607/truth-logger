@@ -17,6 +17,11 @@
 - [ ] Phase 6 SQL checks V2, V3 (need function execute rights), V6–V7 (need signed-G1/G2 plan fixtures; V5 retired by U3) — outstanding
 - [ ] Cloud Vault access route decision (direct vs HTTPS relay) and secrets — waits on user
 
+## Reference documents (docs only; nothing built from them until each "Go")
+- Master build plan v2: docs/planning/FA-Portal-Master-Build-Plan-v2.md
+- Instructions for Phase 7 to U14: docs/planning/FA-Portal-Lovable-Instructions-Phase7-to-U14.md
+- U6 methodology checkpoints checklist: docs/planning/U6-Methodology-Checkpoints-Build-Checklist.md
+
 ## Order after Phase 6 (every item waits for "Go")
 1. [ ] Phase 7 SOP and clock engine — waits for Go
 2. [ ] Phase 8 Management screens — waits for Go
