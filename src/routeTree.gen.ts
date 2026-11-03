@@ -41,6 +41,8 @@ import { Route as AuthenticatedCasesCaseIdRouteImport } from './routes/_authenti
 import { Route as AuthenticatedClientsClientIdRouteImport } from './routes/_authenticated/clients.$clientId'
 import { Route as AuthenticatedCommentsCaseIdRouteImport } from './routes/_authenticated/comments.$caseId'
 import { Route as AuthenticatedCustodyCaseIdRouteImport } from './routes/_authenticated/custody.$caseId'
+import { Route as AuthenticatedDocumentSamplesIndexRouteImport } from './routes/_authenticated/document-samples.index'
+import { Route as AuthenticatedDocumentSamplesKindRouteImport } from './routes/_authenticated/document-samples.$kind'
 import { Route as AuthenticatedDossierCaseIdRouteImport } from './routes/_authenticated/dossier.$caseId'
 import { Route as AuthenticatedItemsItemIdRouteImport } from './routes/_authenticated/items.$itemId'
 import { Route as AuthenticatedJobsJobIdRouteImport } from './routes/_authenticated/jobs.$jobId'
@@ -229,6 +231,18 @@ const AuthenticatedCustodyCaseIdRoute =
     path: '/custody/$caseId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedDocumentSamplesIndexRoute =
+  AuthenticatedDocumentSamplesIndexRouteImport.update({
+    id: '/document-samples/',
+    path: '/document-samples/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedDocumentSamplesKindRoute =
+  AuthenticatedDocumentSamplesKindRouteImport.update({
+    id: '/document-samples/$kind',
+    path: '/document-samples/$kind',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDossierCaseIdRoute =
   AuthenticatedDossierCaseIdRouteImport.update({
     id: '/dossier/$caseId',
@@ -387,6 +401,7 @@ export interface FileRoutesByFullPath {
   '/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
   '/comments/$caseId': typeof AuthenticatedCommentsCaseIdRoute
   '/custody/$caseId': typeof AuthenticatedCustodyCaseIdRoute
+  '/document-samples/$kind': typeof AuthenticatedDocumentSamplesKindRoute
   '/dossier/$caseId': typeof AuthenticatedDossierCaseIdRoute
   '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
@@ -408,6 +423,7 @@ export interface FileRoutesByFullPath {
   '/api/public/worker-watch-due': typeof ApiPublicWorkerWatchDueRoute
   '/api/public/worker-watch-report': typeof ApiPublicWorkerWatchReportRoute
   '/cases/': typeof AuthenticatedCasesIndexRoute
+  '/document-samples/': typeof AuthenticatedDocumentSamplesIndexRoute
   '/projects/': typeof AuthenticatedProjectsIndexRoute
   '/vault/$sourceId/$recordId': typeof AuthenticatedVaultSourceIdRecordIdRoute
 }
@@ -442,6 +458,7 @@ export interface FileRoutesByTo {
   '/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
   '/comments/$caseId': typeof AuthenticatedCommentsCaseIdRoute
   '/custody/$caseId': typeof AuthenticatedCustodyCaseIdRoute
+  '/document-samples/$kind': typeof AuthenticatedDocumentSamplesKindRoute
   '/dossier/$caseId': typeof AuthenticatedDossierCaseIdRoute
   '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
@@ -463,6 +480,7 @@ export interface FileRoutesByTo {
   '/api/public/worker-watch-due': typeof ApiPublicWorkerWatchDueRoute
   '/api/public/worker-watch-report': typeof ApiPublicWorkerWatchReportRoute
   '/cases': typeof AuthenticatedCasesIndexRoute
+  '/document-samples': typeof AuthenticatedDocumentSamplesIndexRoute
   '/projects': typeof AuthenticatedProjectsIndexRoute
   '/vault/$sourceId/$recordId': typeof AuthenticatedVaultSourceIdRecordIdRoute
 }
@@ -499,6 +517,7 @@ export interface FileRoutesById {
   '/_authenticated/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
   '/_authenticated/comments/$caseId': typeof AuthenticatedCommentsCaseIdRoute
   '/_authenticated/custody/$caseId': typeof AuthenticatedCustodyCaseIdRoute
+  '/_authenticated/document-samples/$kind': typeof AuthenticatedDocumentSamplesKindRoute
   '/_authenticated/dossier/$caseId': typeof AuthenticatedDossierCaseIdRoute
   '/_authenticated/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/_authenticated/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
@@ -520,6 +539,7 @@ export interface FileRoutesById {
   '/api/public/worker-watch-due': typeof ApiPublicWorkerWatchDueRoute
   '/api/public/worker-watch-report': typeof ApiPublicWorkerWatchReportRoute
   '/_authenticated/cases/': typeof AuthenticatedCasesIndexRoute
+  '/_authenticated/document-samples/': typeof AuthenticatedDocumentSamplesIndexRoute
   '/_authenticated/projects/': typeof AuthenticatedProjectsIndexRoute
   '/_authenticated/vault/$sourceId/$recordId': typeof AuthenticatedVaultSourceIdRecordIdRoute
 }
@@ -556,6 +576,7 @@ export interface FileRouteTypes {
     | '/clients/$clientId'
     | '/comments/$caseId'
     | '/custody/$caseId'
+    | '/document-samples/$kind'
     | '/dossier/$caseId'
     | '/items/$itemId'
     | '/jobs/$jobId'
@@ -577,6 +598,7 @@ export interface FileRouteTypes {
     | '/api/public/worker-watch-due'
     | '/api/public/worker-watch-report'
     | '/cases/'
+    | '/document-samples/'
     | '/projects/'
     | '/vault/$sourceId/$recordId'
   fileRoutesByTo: FileRoutesByTo
@@ -611,6 +633,7 @@ export interface FileRouteTypes {
     | '/clients/$clientId'
     | '/comments/$caseId'
     | '/custody/$caseId'
+    | '/document-samples/$kind'
     | '/dossier/$caseId'
     | '/items/$itemId'
     | '/jobs/$jobId'
@@ -632,6 +655,7 @@ export interface FileRouteTypes {
     | '/api/public/worker-watch-due'
     | '/api/public/worker-watch-report'
     | '/cases'
+    | '/document-samples'
     | '/projects'
     | '/vault/$sourceId/$recordId'
   id:
@@ -667,6 +691,7 @@ export interface FileRouteTypes {
     | '/_authenticated/clients/$clientId'
     | '/_authenticated/comments/$caseId'
     | '/_authenticated/custody/$caseId'
+    | '/_authenticated/document-samples/$kind'
     | '/_authenticated/dossier/$caseId'
     | '/_authenticated/items/$itemId'
     | '/_authenticated/jobs/$jobId'
@@ -688,6 +713,7 @@ export interface FileRouteTypes {
     | '/api/public/worker-watch-due'
     | '/api/public/worker-watch-report'
     | '/_authenticated/cases/'
+    | '/_authenticated/document-samples/'
     | '/_authenticated/projects/'
     | '/_authenticated/vault/$sourceId/$recordId'
   fileRoutesById: FileRoutesById
@@ -936,6 +962,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCustodyCaseIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/document-samples/': {
+      id: '/_authenticated/document-samples/'
+      path: '/document-samples'
+      fullPath: '/document-samples/'
+      preLoaderRoute: typeof AuthenticatedDocumentSamplesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/document-samples/$kind': {
+      id: '/_authenticated/document-samples/$kind'
+      path: '/document-samples/$kind'
+      fullPath: '/document-samples/$kind'
+      preLoaderRoute: typeof AuthenticatedDocumentSamplesKindRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dossier/$caseId': {
       id: '/_authenticated/dossier/$caseId'
       path: '/dossier/$caseId'
@@ -1119,6 +1159,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedClientsClientIdRoute: typeof AuthenticatedClientsClientIdRoute
   AuthenticatedCommentsCaseIdRoute: typeof AuthenticatedCommentsCaseIdRoute
   AuthenticatedCustodyCaseIdRoute: typeof AuthenticatedCustodyCaseIdRoute
+  AuthenticatedDocumentSamplesKindRoute: typeof AuthenticatedDocumentSamplesKindRoute
   AuthenticatedDossierCaseIdRoute: typeof AuthenticatedDossierCaseIdRoute
   AuthenticatedItemsItemIdRoute: typeof AuthenticatedItemsItemIdRoute
   AuthenticatedJobsJobIdRoute: typeof AuthenticatedJobsJobIdRoute
@@ -1131,6 +1172,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedTrailCaseIdRoute: typeof AuthenticatedTrailCaseIdRoute
   AuthenticatedTranscriptsCaseIdRoute: typeof AuthenticatedTranscriptsCaseIdRoute
   AuthenticatedCasesIndexRoute: typeof AuthenticatedCasesIndexRoute
+  AuthenticatedDocumentSamplesIndexRoute: typeof AuthenticatedDocumentSamplesIndexRoute
   AuthenticatedProjectsIndexRoute: typeof AuthenticatedProjectsIndexRoute
   AuthenticatedVaultSourceIdRecordIdRoute: typeof AuthenticatedVaultSourceIdRecordIdRoute
 }
@@ -1161,6 +1203,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedClientsClientIdRoute: AuthenticatedClientsClientIdRoute,
   AuthenticatedCommentsCaseIdRoute: AuthenticatedCommentsCaseIdRoute,
   AuthenticatedCustodyCaseIdRoute: AuthenticatedCustodyCaseIdRoute,
+  AuthenticatedDocumentSamplesKindRoute: AuthenticatedDocumentSamplesKindRoute,
   AuthenticatedDossierCaseIdRoute: AuthenticatedDossierCaseIdRoute,
   AuthenticatedItemsItemIdRoute: AuthenticatedItemsItemIdRoute,
   AuthenticatedJobsJobIdRoute: AuthenticatedJobsJobIdRoute,
@@ -1173,6 +1216,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedTrailCaseIdRoute: AuthenticatedTrailCaseIdRoute,
   AuthenticatedTranscriptsCaseIdRoute: AuthenticatedTranscriptsCaseIdRoute,
   AuthenticatedCasesIndexRoute: AuthenticatedCasesIndexRoute,
+  AuthenticatedDocumentSamplesIndexRoute:
+    AuthenticatedDocumentSamplesIndexRoute,
   AuthenticatedProjectsIndexRoute: AuthenticatedProjectsIndexRoute,
   AuthenticatedVaultSourceIdRecordIdRoute:
     AuthenticatedVaultSourceIdRecordIdRoute,
