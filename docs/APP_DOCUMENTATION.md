@@ -9,8 +9,8 @@
 - Enabling the portal requires at least one pending or active administrator. Disabling it blocks client data and administration while preserving staff preview.
 - Invitations are recorded, not emailed. The inviter copies a single-use setup link; only its SHA-256 is stored. Resend invalidates the previous token; cancellation, deactivation, reactivation, acceptance and portal switches are logged.
 - FA Management reads all staff data but cannot write operational records or sign gates. SOP editing belongs to Phase 7.
-- Full links use the server `SITE_URL` setting, defaulting to `https://spyglass2.sentinel2.org`. Development sign-in returns to its current preview origin. DNS is managed by the owner.
-- Auth Site URL must be `https://spyglass2.sentinel2.org`; allow `https://spyglass2.sentinel2.org/**` for `/auth` and `/reset-password`, retaining preview redirects.
+- Full links use the server `SITE_URL` setting, defaulting to `https://portal.fridayanalytics.org`. Development sign-in returns to its current preview origin. DNS is managed by the owner.
+- Auth Site URL must be `https://portal.fridayanalytics.org`; allow `https://portal.fridayanalytics.org/**` for `/auth` and `/reset-password`, retaining preview redirects.
 - Confirmed on 3 Nov 2026: the auth Site URL is still the old hosting address. The production redirect wildcard is present; the owner will update Site URL in the editor. No auth setting or DNS changes were made during Phase 0 close-out.
 - Phase 1 provides the client dashboard and administrator access only. Library rules follow in Phase 2; full client screens follow in Phase 3. Wait for "Go Phase N" before each phase.
 - SQL regression checks are in `tests/sql/portal_foundation_test.sql` because integration-owned `drizzle/tests` is protected. They need a privileged test connection; do not widen production privileges to run them.
@@ -114,7 +114,7 @@ playwright install chromium
 brew install ffmpeg yt-dlp        # only needed for live-stream recording
 
 cp worker/.env.example worker/.env
-# edit worker/.env: keep WORKER_BASE_URL=https://spyglass2.sentinel2.org
+# edit worker/.env: keep WORKER_BASE_URL=https://portal.fridayanalytics.org
 # and set WORKER_TOKEN to the token configured for the app
 
 python -m worker.login            # sign in to Facebook once in the window that opens

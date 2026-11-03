@@ -1,4 +1,4 @@
-export const DEFAULT_SITE_URL = 'https://spyglass2.sentinel2.org';
+export const DEFAULT_SITE_URL = 'https://portal.fridayanalytics.org';
 
 export function canonicalSiteUrl(value?: string) {
   const url = new URL(value || DEFAULT_SITE_URL);
