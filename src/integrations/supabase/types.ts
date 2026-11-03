@@ -579,6 +579,47 @@ export type Database = {
         }
         Relationships: []
       }
+      clock_pauses: {
+        Row: {
+          clock_id: string
+          id: string
+          note: string | null
+          paused_at: string
+          paused_by: string
+          reason: string
+          resumed_at: string | null
+          resumed_by: string | null
+        }
+        Insert: {
+          clock_id: string
+          id?: string
+          note?: string | null
+          paused_at?: string
+          paused_by: string
+          reason: string
+          resumed_at?: string | null
+          resumed_by?: string | null
+        }
+        Update: {
+          clock_id?: string
+          id?: string
+          note?: string | null
+          paused_at?: string
+          paused_by?: string
+          reason?: string
+          resumed_at?: string | null
+          resumed_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clock_pauses_clock_id_fkey"
+            columns: ["clock_id"]
+            isOneToOne: false
+            referencedRelation: "phase_clocks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       custody_events: {
         Row: {
           action: string
@@ -1008,6 +1049,57 @@ export type Database = {
             columns: ["parent_item_id"]
             isOneToOne: false
             referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      phase_clocks: {
+        Row: {
+          at_risk_alerted: boolean
+          breach_alerted: boolean
+          completed_at: string | null
+          cycle_no: number | null
+          id: string
+          phase: number
+          project_id: string
+          sop_id: string
+          started_at: string
+        }
+        Insert: {
+          at_risk_alerted?: boolean
+          breach_alerted?: boolean
+          completed_at?: string | null
+          cycle_no?: number | null
+          id?: string
+          phase: number
+          project_id: string
+          sop_id: string
+          started_at?: string
+        }
+        Update: {
+          at_risk_alerted?: boolean
+          breach_alerted?: boolean
+          completed_at?: string | null
+          cycle_no?: number | null
+          id?: string
+          phase?: number
+          project_id?: string
+          sop_id?: string
+          started_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "phase_clocks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "phase_clocks_sop_id_fkey"
+            columns: ["sop_id"]
+            isOneToOne: false
+            referencedRelation: "sop_definitions"
             referencedColumns: ["id"]
           },
         ]
@@ -3337,6 +3429,147 @@ export type Database = {
           },
         ]
       }
+      sla_events: {
+        Row: {
+          actor: string | null
+          at: string
+          clock_id: string | null
+          detail: Json
+          id: string
+          kind: string
+          project_id: string | null
+          to_roles: string[]
+        }
+        Insert: {
+          actor?: string | null
+          at?: string
+          clock_id?: string | null
+          detail?: Json
+          id?: string
+          kind: string
+          project_id?: string | null
+          to_roles?: string[]
+        }
+        Update: {
+          actor?: string | null
+          at?: string
+          clock_id?: string | null
+          detail?: Json
+          id?: string
+          kind?: string
+          project_id?: string | null
+          to_roles?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sla_events_clock_id_fkey"
+            columns: ["clock_id"]
+            isOneToOne: false
+            referencedRelation: "phase_clocks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sla_events_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sla_holidays: {
+        Row: {
+          added_at: string
+          added_by: string | null
+          day: string
+          name: string
+        }
+        Insert: {
+          added_at?: string
+          added_by?: string | null
+          day: string
+          name: string
+        }
+        Update: {
+          added_at?: string
+          added_by?: string | null
+          day?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      sla_settings: {
+        Row: {
+          holidays_set: boolean
+          id: boolean
+          time_zone: string
+          updated_at: string
+          updated_by: string | null
+          weekend_dows: number[]
+        }
+        Insert: {
+          holidays_set?: boolean
+          id?: boolean
+          time_zone?: string
+          updated_at?: string
+          updated_by?: string | null
+          weekend_dows?: number[]
+        }
+        Update: {
+          holidays_set?: boolean
+          id?: boolean
+          time_zone?: string
+          updated_at?: string
+          updated_by?: string | null
+          weekend_dows?: number[]
+        }
+        Relationships: []
+      }
+      sop_definitions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          effective_from: string
+          escalation_chain: string[]
+          id: string
+          is_sample: boolean
+          owner_role: string
+          phase: number
+          steps: Json
+          target_working_days: number
+          version: number
+          warn_pct: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          effective_from?: string
+          escalation_chain?: string[]
+          id?: string
+          is_sample?: boolean
+          owner_role: string
+          phase: number
+          steps?: Json
+          target_working_days: number
+          version: number
+          warn_pct?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          effective_from?: string
+          escalation_chain?: string[]
+          id?: string
+          is_sample?: boolean
+          owner_role?: string
+          phase?: number
+          steps?: Json
+          target_working_days?: number
+          version?: number
+          warn_pct?: number
+        }
+        Relationships: []
+      }
       sources: {
         Row: {
           created_at: string
@@ -4346,6 +4579,37 @@ export type Database = {
       research_vault_window_minutes: { Args: never; Returns: number }
       scenario_options_ok: { Args: { _o: Json }; Returns: boolean }
       signup_open: { Args: never; Returns: boolean }
+      sla_check_alerts: { Args: { _clock: string }; Returns: undefined }
+      sla_clock_status: { Args: { _clock: string }; Returns: Json }
+      sla_kpis: { Args: { _phase?: number }; Returns: Json }
+      sla_pause: {
+        Args: { _clock: string; _note: string; _reason: string }
+        Returns: undefined
+      }
+      sla_paused_days: { Args: { _clock: string }; Returns: number }
+      sla_project_phase: {
+        Args: { _project: string }
+        Returns: Record<string, unknown>
+      }
+      sla_refresh: { Args: { _project: string }; Returns: undefined }
+      sla_resume: { Args: { _clock: string }; Returns: undefined }
+      sla_set_holiday: {
+        Args: { _day: string; _name: string; _remove: boolean }
+        Returns: undefined
+      }
+      sla_sync: { Args: { _project: string }; Returns: undefined }
+      sla_working_days: { Args: { _a: string; _b: string }; Returns: number }
+      sop_save: {
+        Args: {
+          _chain: string[]
+          _owner: string
+          _phase: number
+          _steps: Json
+          _target: number
+          _warn: number
+        }
+        Returns: string
+      }
       statements_ok: { Args: { _s: Json }; Returns: boolean }
       vault_apply_offline: { Args: never; Returns: number }
       vault_cloud_copy_for: { Args: { doc: string }; Returns: Json }

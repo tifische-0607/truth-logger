@@ -34,6 +34,7 @@ import {
   type Workspace,
 } from "@/lib/projects";
 import { cn } from "@/lib/utils";
+import { TurnaroundCard } from "@/components/engagement/TurnaroundCard";
 
 type TabId = "brief" | "discovery" | "intake" | "plan" | "success" | "gates" | "release" | "design" | "reading" | "evidence" | "reports";
 
@@ -420,6 +421,7 @@ export function OverviewTab({ ws }: { ws: Workspace }) {
   return (
     <div className="space-y-6">
       <PhaseStrip ws={ws} />
+      <TurnaroundCard ws={ws} />
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
           <section className="panel space-y-2 p-5" aria-labelledby="q-h">
