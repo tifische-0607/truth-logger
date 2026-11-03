@@ -7,9 +7,10 @@
 - [x] Phase 0/1 close-out: shared exact document footer, reports/dossiers/CSV/ZIP exports and documentation updated; live attribution guidance corrected by 0013. No current output rows or stored exports found. No legacy visible product name or hard-coded hosting URL in active source/docs. 22 unit tests passed; public auth/portal footer checked; build OK. Applied migration history and immutable originals preserved.
 - [x] Phase 2: Library data/rules (0014) — documents + append-only document log, output/brief sync, share/withdraw/void, re-hashed downloads, private library storage, staff Library screen. SQL exit checks saved in tests/sql/portal_library_test.sql; not executed (no privileged test connection).
 - [x] Phase B: Brand v2.0 pass — tokens (3 themes), self-hosted fonts, BrandLogo (placeholder, TODO official SVGs), favicon set, shell/strip/footer, gradient sign-in/invite/landing/portal hero, kickers, status chips with dots.
-- [ ] Brand assets: replace placeholder logo, icons and elements with FA-Portal-Brand-Assets.zip (blocked: file not received).
-- [ ] Phase 3: Client portal screens — waits for "Go Phase 3"
-- [ ] Phase 4: Research data/rules — waits for "Go Phase 4"
+- [x] Brand assets swapped (official logos and Lens icons)
+- [x] Phase 3: Client portal screens
+- [x] Phase 4: Research data/rules (0016, 0017); full SQL checks saved, need signed-gate fixtures
+- [ ] Phase 3 SQL checks 1–3 — outstanding (need authenticated role switch)
 - [ ] Phase 5: Research screens/worker API — waits for "Go Phase 5"
 - [ ] Phase 6: Vaults — waits for "Go Phase 6"
 - [ ] Phase 7: SOP/clock engine — waits for "Go Phase 7"
