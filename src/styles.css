@@ -425,6 +425,7 @@
 .fa-doc-sheet { max-width: 210mm; margin: 0 auto; }
 .fa-doc-frame { width: 100%; border-collapse: collapse; }
 .fa-doc-frame > thead > tr > td, .fa-doc-frame > tbody > tr > td { padding: 0; }
+.fa-doc tr { border: 0; }
 .fa-doc-header { display: flex; align-items: center; justify-content: space-between; gap: 6mm; padding-bottom: 3mm; margin-bottom: 7mm; border-bottom: 0.5pt solid var(--fa-line); }
 .fa-doc-header img { width: 34mm; min-width: 30mm; height: auto; }
 .fa-doc-label { font-size: 8.5pt; font-weight: 500; color: var(--fa-sub); }
