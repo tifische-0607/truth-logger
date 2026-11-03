@@ -14,7 +14,7 @@ export type PortalDashboard = {
 };
 export type PortalDoc = {
   id: string; code: string; title: string; kind: string; source: string; engagement_id: string | null; sha256: string | null; file_name: string | null;
-  size_bytes: number | null; manifest_only: boolean; storage_path: string | null; created_at: string; version: number;
+  size_bytes: number | null; manifest_only: boolean; storage_path: string | null; home_path: string | null; created_at: string; version: number;
 };
 export type PortalEvent = { id: string; at: string; type: 'document' | 'access'; action: string; subject: string | null; code: string | null; person: string };
 
@@ -84,7 +84,7 @@ export const portalApi = {
   /** Read through the documents RLS policy; the filters also keep a staff preview to what the client sees. */
   documents: async (clientId: string) => {
     const { data, error } = await supabase.from('documents')
-      .select('id,code,title,kind,source,engagement_id,sha256,file_name,size_bytes,manifest_only,storage_path,created_at,version')
+      .select('id,code,title,kind,source,engagement_id,sha256,file_name,size_bytes,manifest_only,storage_path,home_path,created_at,version')
       .eq('client_id', clientId).eq('visibility', 'client').eq('voided', false).order('created_at', { ascending: false });
     if (error) throw error;
     return (data ?? []) as PortalDoc[];
