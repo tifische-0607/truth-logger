@@ -1,5 +1,5 @@
 import { zipSync, strToU8 } from "fflate";
-import { DOCUMENT_FOOTER } from './document-footer';
+import { DOCUMENT_FOOTER_TEXT } from './document-footer';
 
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
@@ -280,7 +280,7 @@ export async function buildBundle(
       "",
       item.translator_statement ?? "—",
       "",
-      DOCUMENT_FOOTER,
+      DOCUMENT_FOOTER_TEXT,
     ];
     files[`${folder}/${safe(item.item_code)}.md`] = strToU8(lines.join("\n"));
   }
@@ -311,7 +311,7 @@ export async function buildBundle(
       )} |`,
     );
   }
-  files["custody-log.md"] = strToU8([...custody, "", DOCUMENT_FOOTER].join("\n"));
+  files["custody-log.md"] = strToU8([...custody, "", DOCUMENT_FOOTER_TEXT].join("\n"));
 
   const verifyLines = [
     `# Verification report — case ${scopeData.caseId}`,
@@ -327,10 +327,10 @@ export async function buildBundle(
     "",
     "Images labelled RENDER are built from API data and are NOT platform screenshots.",
     "",
-    DOCUMENT_FOOTER,
+    DOCUMENT_FOOTER_TEXT,
   ];
   files["verification-report.md"] = strToU8(verifyLines.join("\n"));
-  files["manifest.txt"] = strToU8([...manifest, "", DOCUMENT_FOOTER].join("\n"));
+  files["manifest.txt"] = strToU8([...manifest, "", DOCUMENT_FOOTER_TEXT].join("\n"));
 
   const zip = zipSync(files, { level: 6 });
   return { zip, fileCount: Object.keys(files).length };
