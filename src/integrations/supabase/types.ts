@@ -3442,6 +3442,146 @@ export type Database = {
         }
         Relationships: []
       }
+      vault_config: {
+        Row: {
+          database_name: string | null
+          database_roles: string[]
+          engine: string
+          holds: string
+          location: string
+          name: string
+          note: string | null
+          route: string
+          schema_name: string | null
+          updated_at: string
+          updated_by: string | null
+          vault: string
+        }
+        Insert: {
+          database_name?: string | null
+          database_roles?: string[]
+          engine: string
+          holds: string
+          location: string
+          name: string
+          note?: string | null
+          route: string
+          schema_name?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          vault: string
+        }
+        Update: {
+          database_name?: string | null
+          database_roles?: string[]
+          engine?: string
+          holds?: string
+          location?: string
+          name?: string
+          note?: string | null
+          route?: string
+          schema_name?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          vault?: string
+        }
+        Relationships: []
+      }
+      vault_events: {
+        Row: {
+          actor: string | null
+          at: string
+          detail: Json
+          event: string
+          id: string
+          outcome: string
+          vault: string
+        }
+        Insert: {
+          actor?: string | null
+          at?: string
+          detail?: Json
+          event: string
+          id?: string
+          outcome: string
+          vault: string
+        }
+        Update: {
+          actor?: string | null
+          at?: string
+          detail?: Json
+          event?: string
+          id?: string
+          outcome?: string
+          vault?: string
+        }
+        Relationships: []
+      }
+      vault_outbox: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          project_id: string | null
+          ref_id: string
+          sha256: string
+          target: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          project_id?: string | null
+          ref_id: string
+          sha256: string
+          target: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          project_id?: string | null
+          ref_id?: string
+          sha256?: string
+          target?: string
+        }
+        Relationships: []
+      }
+      vault_outbox_results: {
+        Row: {
+          at: string
+          id: string
+          outbox_id: string
+          outcome: string
+          reason: string | null
+          sha256_on_write: string | null
+        }
+        Insert: {
+          at?: string
+          id?: string
+          outbox_id: string
+          outcome: string
+          reason?: string | null
+          sha256_on_write?: string | null
+        }
+        Update: {
+          at?: string
+          id?: string
+          outbox_id?: string
+          outcome?: string
+          reason?: string | null
+          sha256_on_write?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vault_outbox_results_outbox_id_fkey"
+            columns: ["outbox_id"]
+            isOneToOne: false
+            referencedRelation: "vault_outbox"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       watch_seen: {
         Row: {
           baseline: boolean
@@ -4207,6 +4347,40 @@ export type Database = {
       scenario_options_ok: { Args: { _o: Json }; Returns: boolean }
       signup_open: { Args: never; Returns: boolean }
       statements_ok: { Args: { _s: Json }; Returns: boolean }
+      vault_apply_offline: { Args: never; Returns: number }
+      vault_cloud_copy_for: { Args: { doc: string }; Returns: Json }
+      vault_cloud_online: { Args: never; Returns: boolean }
+      vault_enqueue: {
+        Args: {
+          _kind: string
+          _project: string
+          _ref: string
+          _sha: string
+          _target: string
+        }
+        Returns: undefined
+      }
+      vault_outbox_pending: { Args: { _id: string }; Returns: boolean }
+      vault_outbox_record: {
+        Args: { _id: string; _reason?: string; _sha256_on_write: string }
+        Returns: Json
+      }
+      vault_record_check: {
+        Args: {
+          _actor: string
+          _detail: Json
+          _outcome: string
+          _vault: string
+        }
+        Returns: undefined
+      }
+      vault_record_rotation: {
+        Args: { _note: string; _vault: string }
+        Returns: string
+      }
+      vault_row_sha: { Args: { j: Json }; Returns: string }
+      vault_set_cloud_route: { Args: { _route: string }; Returns: undefined }
+      vault_status: { Args: never; Returns: Json }
     }
     Enums: {
       app_role: "owner" | "analyst" | "curator" | "management"
