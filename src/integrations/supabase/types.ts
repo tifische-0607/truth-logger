@@ -4401,6 +4401,8 @@ export type Database = {
         Args: { doc: string; reason: string }
         Returns: undefined
       }
+      mgmt_can_open: { Args: { u: string }; Returns: boolean }
+      mgmt_portfolio: { Args: never; Returns: Json }
       portal_access_list: { Args: { c: string }; Returns: Json }
       portal_activate_invitation: {
         Args: { rid: string; uid: string }
