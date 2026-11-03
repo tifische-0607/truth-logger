@@ -1,33 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, FileCheck2, Fingerprint, ScanSearch } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { BaseStrip, BrandLogo, COMPANY, GradientHero } from "@/components/BrandLogo";
+import { DOCUMENT_FOOTER } from "@/lib/document-footer";
 import { getSiteConfig } from '@/lib/portal.functions';
 import { siteLink } from '@/lib/site-config';
-
-const capabilities = [
-  {
-    number: "01",
-    title: "Capture the full context",
-    description:
-      "Preserve Facebook posts, comments, replies and source files as one connected evidence record.",
-    icon: ScanSearch,
-  },
-  {
-    number: "02",
-    title: "Prove file integrity",
-    description:
-      "Every artefact receives its own SHA-256 fingerprint and an append-only custody history.",
-    icon: Fingerprint,
-  },
-  {
-    number: "03",
-    title: "Prepare a case record",
-    description:
-      "Organise captures by case and incident, verify every file, then export a review-ready package.",
-    icon: FileCheck2,
-  },
-] as const;
 
 export const Route = createFileRoute("/")({
   loader: () => getSiteConfig(),
@@ -37,13 +15,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Private workspace for collecting Facebook posts and comments as legal evidence with a verifiable chain of custody.",
+          "FridayAnalytics client and staff portal for engagements, documents and verified records.",
       },
       { property: "og:title", content: "FA Portal — FridayAnalytics" },
       {
         property: "og:description",
         content:
-          "Collect Facebook evidence, preserve its context and verify every file through a complete chain of custody.",
+          "Secure sign-in for FridayAnalytics clients and staff.",
       },
       { property: "og:type", content: "website" },
       ...(loaderData ? [{ property: "og:url", content: siteLink(loaderData.siteUrl, '/') }] : []),
@@ -57,70 +35,37 @@ export const Route = createFileRoute("/")({
 function LandingPage() {
   return (
     <div className="bg-background text-foreground flex min-h-screen flex-col">
-      <header className="border-border border-b">
-        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5 sm:px-8">
-          <Link to="/" className="flex items-center gap-3" aria-label="FA Portal home">
-            <img src="/favicon.png" alt="" width={32} height={32} className="rounded-md" />
-            <span className="font-bold">FA PORTAL</span>
-          </Link>
-
-          <Button asChild size="sm">
-            <Link to="/auth">Sign in</Link>
-          </Button>
-        </div>
-      </header>
-
-      <main className="flex flex-1 items-center">
-        <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8 sm:py-24 lg:py-28">
-          <div className="max-w-4xl">
-            <p className="text-muted-foreground mb-6 font-mono text-xs font-medium uppercase tracking-widest">
-              FridayAnalytics
-            </p>
-            <h1 className="max-w-4xl text-4xl font-bold leading-[1.08] text-balance sm:text-5xl lg:text-6xl">
-              FA Portal
-            </h1>
-            <p className="text-muted-foreground mt-6 max-w-2xl text-base leading-relaxed text-pretty sm:text-lg">
-              FA Portal captures Facebook content from a dedicated Mac mini, keeps the original
-              context intact and records every transfer, access and verification in a defensible
-              custody trail.
+      <GradientHero className="flex-1">
+        <div className="mx-auto flex w-full max-w-6xl flex-col px-5 pt-8 pb-40 sm:px-8">
+          <div className="flex items-center justify-between gap-4">
+            <BrandLogo variant="reverse" size={36} />
+            <Button asChild variant="secondary">
+              <Link to="/auth">Sign in</Link>
+            </Button>
+          </div>
+          <div className="mt-20 max-w-3xl sm:mt-28">
+            <h1 className="text-on-gradient font-display text-4xl font-medium leading-tight sm:text-6xl">FA Portal</h1>
+            <p className="text-on-gradient mt-6 max-w-2xl text-xl leading-relaxed">
+              The private portal for FridayAnalytics clients and staff. Access is by invitation only.
             </p>
             <div className="mt-9">
-              <Button asChild size="lg" className="min-h-12 px-6 text-base">
+              <Button asChild size="lg" variant="secondary" className="min-h-12 px-6 text-base">
                 <Link to="/auth">
-                  Enter the evidence room
+                  Sign in
                   <ArrowRight aria-hidden="true" />
                 </Link>
               </Button>
             </div>
           </div>
-
-          <div className="mt-16 grid gap-4 md:mt-24 md:grid-cols-3 md:gap-6">
-            {capabilities.map((capability) => (
-              <article key={capability.number} className="panel flex min-h-56 flex-col p-6">
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground font-mono text-xs">
-                    {capability.number}
-                  </span>
-                  <capability.icon className="text-primary size-5" aria-hidden="true" />
-                </div>
-                <div className="mt-auto pt-10">
-                  <h2 className="font-semibold">{capability.title}</h2>
-                  <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
-                    {capability.description}
-                  </p>
-                </div>
-              </article>
-            ))}
-          </div>
         </div>
-      </main>
-
-      <footer className="border-border border-t">
-        <div className="text-muted-foreground mx-auto flex w-full max-w-6xl flex-col gap-2 px-5 py-6 text-xs sm:flex-row sm:items-center sm:justify-between sm:px-8">
-          <span>Private investigator workspace</span>
-          <span className="font-mono">SHA-256 · APPEND-ONLY CUSTODY</span>
+      </GradientHero>
+      <footer className="border-t">
+        <div className="text-muted-foreground mx-auto flex w-full max-w-6xl flex-col gap-1 px-5 py-5 text-xs sm:px-8">
+          <span>{DOCUMENT_FOOTER}</span>
+          <span>{COMPANY.name} · {COMPANY.reg} · {COMPANY.email} · {COMPANY.web}</span>
         </div>
       </footer>
+      <BaseStrip />
     </div>
   );
 }
