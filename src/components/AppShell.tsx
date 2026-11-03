@@ -22,6 +22,7 @@ import {
   Users,
   Search,
   Microscope,
+  BookOpen,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -287,6 +288,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           ))}
           <Link to="/library" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/library') && ACTIVE)}><Library className="size-5"/>Library</Link>
           <Link to="/research" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/research') && ACTIVE)}><Microscope className="size-5"/>Research</Link>
+          <Link to="/frameworks" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/frameworks') && ACTIVE)}><BookOpen className="size-5"/>Frameworks</Link>
           <p className="kicker mt-5 px-3">System</p>
           {me.data?.isCurator && <Link to="/inbox" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><ScrollText className="size-5"/>Curator inbox</Link>}
           {(me.data?.isOwner || me.data?.isManagement) && <Link to="/management" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><Gauge className="size-5"/>Management</Link>}
@@ -379,7 +381,7 @@ const SECTIONS: [RegExp, string][] = [
   [/^\/(collect|queue|watchlist|results|capture-log|worker|capture-settings|jobs)/, "05 · Collect"],
   [/^\/(integrity|verify|export|offline)/, "06 · Integrity"], [/^\/library/, "07 · Library"],
   [/^\/sources/, "08 · Sources"], [/^\/(team|templates|settings|vaults)/, "09 · Admin"],
-  [/^\/inbox/, "Curator"], [/^\/management/, "Management"],
+  [/^\/inbox/, "Curator"], [/^\/management/, "Management"], [/^\/frameworks/, "Frameworks"],
 ];
 export function sectionKicker(pathname: string) {
   return SECTIONS.find(([re]) => re.test(pathname))?.[1] ?? "FA Portal";

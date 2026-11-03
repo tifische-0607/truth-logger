@@ -25,7 +25,7 @@
 ## Order after Phase 6 (every item waits for "Go")
 1. [x] Phase 7 SOP and clock engine (0024–0026) — clocks, SOP versions, pauses, alerts, Turnaround card. Outstanding: SQL checks C1–C2, C4b–C4d, C5–C6 in tests/sql/sop_clocks_test.sql need a privileged test connection; real SOP targets, holidays, escalation chains wait on user
 2. [x] Phase 8 Management screens — built (0027); SQL checks saved in tests/sql/management_screens_test.sql, unrun
-3. [ ] U8 Framework library and universal standard (before U6 and U7) — waits for Go
+3. [x] U8 Framework library and universal standard (before U6 and U7) — built (0028); SQL checks saved in tests/sql/framework_library_test.sql, unrun
 4. [ ] U3 Storage split (needs Phase 4): no report or evidence file in the cloud; DarkNight holds all reports and evidence, cloud holds portal data only — decided 3 Nov 2026: the Namecheap PostgreSQL schema `fa_portal` is that portal-data home (clients, users, tiers, engagements, billing, activity); downloads fetch live from DarkNight and re-check SHA-256, else "Temporarily unavailable, please try again later" — waits for Go
 5. [ ] U4 remainder (needs U3) — partly built: connector contract, worker API; still to do: requirements register fed by the signed brief, further connectors — waits for Go
 6. [ ] U5 remainder (needs U4) — partly built: quality controls, quarantine, provenance, auto-suspend; still to do: rejection-rate dashboard over time — waits for Go

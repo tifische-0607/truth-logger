@@ -928,6 +928,295 @@ export type Database = {
           },
         ]
       }
+      framework_approvals: {
+        Row: {
+          decided_at: string
+          decided_by: string
+          decision: string
+          id: string
+          note: string | null
+          version_id: string
+        }
+        Insert: {
+          decided_at?: string
+          decided_by: string
+          decision: string
+          id?: string
+          note?: string | null
+          version_id: string
+        }
+        Update: {
+          decided_at?: string
+          decided_by?: string
+          decision?: string
+          id?: string
+          note?: string | null
+          version_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "framework_approvals_version_id_fkey"
+            columns: ["version_id"]
+            isOneToOne: true
+            referencedRelation: "framework_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      framework_entries: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string | null
+          id: string
+          kind: string
+          name: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind: string
+          name: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      framework_events: {
+        Row: {
+          action: string
+          actor: string | null
+          at: string
+          detail: Json
+          entry_id: string | null
+          id: string
+        }
+        Insert: {
+          action: string
+          actor?: string | null
+          at?: string
+          detail?: Json
+          entry_id?: string | null
+          id?: string
+        }
+        Update: {
+          action?: string
+          actor?: string | null
+          at?: string
+          detail?: Json
+          entry_id?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "framework_events_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "framework_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      framework_learning_decisions: {
+        Row: {
+          decided_at: string
+          decided_by: string
+          decision: string
+          final_text: string | null
+          id: string
+          learning_id: string
+          merged_version_id: string | null
+          note: string | null
+        }
+        Insert: {
+          decided_at?: string
+          decided_by: string
+          decision: string
+          final_text?: string | null
+          id?: string
+          learning_id: string
+          merged_version_id?: string | null
+          note?: string | null
+        }
+        Update: {
+          decided_at?: string
+          decided_by?: string
+          decision?: string
+          final_text?: string | null
+          id?: string
+          learning_id?: string
+          merged_version_id?: string | null
+          note?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "framework_learning_decisions_learning_id_fkey"
+            columns: ["learning_id"]
+            isOneToOne: true
+            referencedRelation: "framework_learnings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "framework_learning_decisions_merged_version_id_fkey"
+            columns: ["merged_version_id"]
+            isOneToOne: false
+            referencedRelation: "framework_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      framework_learnings: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string
+          id: string
+          method: string
+          overlap_note: string | null
+          page: string
+          passage: string
+          proposal: string
+          source_id: string
+          text: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          created_by: string
+          id?: string
+          method: string
+          overlap_note?: string | null
+          page: string
+          passage: string
+          proposal: string
+          source_id: string
+          text: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          method?: string
+          overlap_note?: string | null
+          page?: string
+          passage?: string
+          proposal?: string
+          source_id?: string
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "framework_learnings_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "framework_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      framework_sources: {
+        Row: {
+          entry_id: string | null
+          file_name: string
+          id: string
+          sha256: string
+          size_bytes: number
+          storage_path: string
+          title: string
+          uploaded_at: string
+          uploaded_by: string
+          version: number
+        }
+        Insert: {
+          entry_id?: string | null
+          file_name: string
+          id?: string
+          sha256: string
+          size_bytes: number
+          storage_path: string
+          title: string
+          uploaded_at?: string
+          uploaded_by: string
+          version?: number
+        }
+        Update: {
+          entry_id?: string | null
+          file_name?: string
+          id?: string
+          sha256?: string
+          size_bytes?: number
+          storage_path?: string
+          title?: string
+          uploaded_at?: string
+          uploaded_by?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "framework_sources_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "framework_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      framework_versions: {
+        Row: {
+          author: string
+          body: string
+          change_note: string
+          created_at: string
+          effective_from: string
+          entry_id: string
+          id: string
+          items: Json
+          summary: string
+          version: number
+        }
+        Insert: {
+          author: string
+          body?: string
+          change_note: string
+          created_at?: string
+          effective_from: string
+          entry_id: string
+          id?: string
+          items?: Json
+          summary: string
+          version: number
+        }
+        Update: {
+          author?: string
+          body?: string
+          change_note?: string
+          created_at?: string
+          effective_from?: string
+          entry_id?: string
+          id?: string
+          items?: Json
+          summary?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "framework_versions_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "framework_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       incidents: {
         Row: {
           case_id: string
@@ -3172,6 +3461,7 @@ export type Database = {
           cycle: number
           design_version: number
           engagement_id: string
+          framework_version_id: string | null
           id: string
           job_types: string[]
           lexicon_version: string
@@ -3196,6 +3486,7 @@ export type Database = {
           cycle: number
           design_version: number
           engagement_id: string
+          framework_version_id?: string | null
           id?: string
           job_types: string[]
           lexicon_version: string
@@ -3220,6 +3511,7 @@ export type Database = {
           cycle?: number
           design_version?: number
           engagement_id?: string
+          framework_version_id?: string | null
           id?: string
           job_types?: string[]
           lexicon_version?: string
@@ -3247,6 +3539,13 @@ export type Database = {
             columns: ["engagement_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_plans_framework_version_id_fkey"
+            columns: ["framework_version_id"]
+            isOneToOne: false
+            referencedRelation: "framework_versions"
             referencedColumns: ["id"]
           },
         ]
@@ -4355,6 +4654,61 @@ export type Database = {
         }
       }
       design_ready: { Args: { _project: string }; Returns: boolean }
+      fw_active_version: { Args: { _entry: string }; Returns: string }
+      fw_add_entry: {
+        Args: { _code: string; _kind: string; _name: string }
+        Returns: string
+      }
+      fw_add_learning: {
+        Args: {
+          _category: string
+          _method: string
+          _page: string
+          _passage: string
+          _proposal: string
+          _source: string
+          _text: string
+        }
+        Returns: string
+      }
+      fw_decide_learning: {
+        Args: {
+          _approve: boolean
+          _final: string
+          _learning: string
+          _note: string
+        }
+        Returns: string
+      }
+      fw_decide_version: {
+        Args: { _approve: boolean; _note: string; _version: string }
+        Returns: undefined
+      }
+      fw_is_editor: { Args: { u: string }; Returns: boolean }
+      fw_is_reader: { Args: { u: string }; Returns: boolean }
+      fw_propose_version: {
+        Args: {
+          _body: string
+          _effective: string
+          _entry: string
+          _items: Json
+          _note: string
+          _summary: string
+        }
+        Returns: string
+      }
+      fw_record_source: {
+        Args: {
+          _entry: string
+          _file: string
+          _path: string
+          _sha: string
+          _size: number
+          _title: string
+        }
+        Returns: string
+      }
+      fw_version_status: { Args: { _v: string }; Returns: string }
       gate_signed: {
         Args: {
           _cycle?: number
@@ -4477,6 +4831,10 @@ export type Database = {
         Returns: boolean
       }
       research_home_vault_online: { Args: never; Returns: boolean }
+      research_link_framework: {
+        Args: { _plan: string; _version: string }
+        Returns: undefined
+      }
       research_pending_amendment: {
         Args: { _project: string }
         Returns: boolean
