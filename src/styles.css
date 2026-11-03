@@ -516,6 +516,8 @@
   .fa-doc a { color: var(--fa-body) !important; text-decoration: none !important; }
   .fa-doc-screen-footer { display: none; }
   .fa-doc .overflow-x-auto { overflow: visible !important; }
+  .fa-doc table { min-width: 0 !important; }
+  .fa-doc-page { padding: 0; }
 }
 
 button, [role="button"] { min-height: 44px; }
