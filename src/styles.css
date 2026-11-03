@@ -509,7 +509,8 @@
   html, body { background: var(--fa-white) !important; color: var(--fa-body) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   body { margin: 0; }
   aside, nav, .no-print { display: none !important; }
-  body:has(.fa-doc) main { padding: 0 !important; margin: 0 !important; }
+  /* Ancestors of a document become plain blocks so named pages (cover) apply. */
+  body:has(.fa-doc) :is(div, main, section):has(.fa-doc) { display: block !important; padding: 0 !important; margin: 0 !important; max-width: none !important; min-height: 0 !important; }
   .fa-doc-sheet { max-width: none; box-shadow: none; }
   .fa-doc-cover { page: fa-cover; aspect-ratio: auto; width: 210mm; height: 297mm; break-after: page; }
   .print-break { break-before: page; }
