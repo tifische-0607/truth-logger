@@ -74,9 +74,9 @@ export function ProductLockup({ compact = false }: { compact?: boolean }) {
         <img src={LENS_ICON} alt="" width={24} height={24} draggable={false} className="shrink-0" />
       </span>
       <span aria-hidden="true" className="bg-input h-6 w-px" />
-      <span className="font-display text-muted-foreground text-base font-medium">
-        {compact ? "FA Portal" : "FA Portal"}
-      </span>
+      {!compact && (
+        <span className="font-display text-muted-foreground text-base font-medium">FA Portal</span>
+      )}
     </span>
   );
 }
