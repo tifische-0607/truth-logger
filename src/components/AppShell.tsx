@@ -307,15 +307,17 @@ export function AppShell({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="bg-background border-b text-foreground safe-top flex items-center justify-between px-4 py-3 md:hidden">
+        <header className="no-print bg-background border-b text-foreground safe-top flex items-center justify-between px-4 py-3 md:hidden">
           <Link to="/dashboard" className="flex items-center" aria-label="FA Portal home">
             <ProductLockup compact />
           </Link>
           <WorkerPill compact />
         </header>
 
-        <OfflineBanner />
-        <WorkerOfflineBanner />
+        <div className="no-print">
+          <OfflineBanner />
+          <WorkerOfflineBanner />
+        </div>
 
 
         <main className="min-w-0 flex-1 px-4 pt-6 pb-28 md:px-8 md:pt-8 md:pb-12">
@@ -326,7 +328,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           {caseId && pathname.startsWith('/trail/') && <HomeReferences caseId={caseId}/>}
         </main>
         <footer className="no-print text-muted-foreground border-t px-4 pt-4 pb-24 text-xs md:px-8 md:pb-6">
-          <p>{DOCUMENT_FOOTER} · {COMPANY.name} · {COMPANY.web}</p>
+          <p>{DOCUMENT_FOOTER} · {COMPANY.name} · {COMPANY.reg} · {COMPANY.email} · {COMPANY.web}</p>
         </footer>
         <BaseStrip className="no-print sticky bottom-0 z-30 hidden md:block" />
 
