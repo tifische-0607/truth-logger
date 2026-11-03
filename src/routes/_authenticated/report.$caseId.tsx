@@ -5,7 +5,8 @@ import { Printer } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { formatBytes, formatDateTime } from "@/lib/format";
-import { DOCUMENT_FOOTER } from '@/lib/document-footer';
+import { PrintDocument } from '@/components/print/PrintDocument';
+import { hubDate } from '@/lib/hub';
 
 export const Route = createFileRoute("/_authenticated/report/$caseId")({
   head: () => ({
@@ -187,6 +188,21 @@ function CaseReport() {
         </Button>
       </div>
 
+      <PrintDocument
+        label="Case report"
+        kicker="01 · Case report"
+        title={`CASE-${caseId}`}
+        subtitle={c.target_of_complaint ?? "Printable summary for investigators, police reports and court bundles"}
+        cover={{
+          details: [
+            ["Client", c.target_of_complaint ?? "—"],
+            ["Reference", `CASE-${caseId}`],
+            ["Date", hubDate(new Date().toISOString())],
+            ["Prepared by", c.lead_handler ?? "—"],
+            ["Version", "Generated report"],
+          ],
+        }}
+      >
       <section className="panel space-y-3 p-6">
         <h2 className="text-xl font-bold">CASE-{caseId}</h2>
         <p className="text-muted-foreground text-xs">
@@ -416,7 +432,7 @@ function CaseReport() {
         screenshot”. Translations are separate from the original text and carry a translator
         statement.
       </p>
-      <footer className="border-t py-4 text-xs text-muted-foreground">{DOCUMENT_FOOTER}</footer>
+      </PrintDocument>
     </div>
   );
 }

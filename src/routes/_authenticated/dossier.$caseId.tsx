@@ -6,7 +6,8 @@ import { ArrowLeft, Printer } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { formatDateTime } from "@/lib/format";
-import { DOCUMENT_FOOTER } from '@/lib/document-footer';
+import { PrintDocument } from '@/components/print/PrintDocument';
+import { hubDate } from '@/lib/hub';
 
 export const Route = createFileRoute("/_authenticated/dossier/$caseId")({
   head: () => hubHead('Case dossier'),
@@ -271,7 +272,7 @@ function DossierPage() {
           <div><div className="border-foreground border-t pt-1">Date</div></div>
         </div>
       </section>
-      <footer className="border-t py-4 text-xs text-muted-foreground">{DOCUMENT_FOOTER}</footer>
+      </PrintDocument>
     </div>
   );
 }
