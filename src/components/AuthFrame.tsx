@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { BaseStrip, BrandLogo, COMPANY, GradientHero, Kicker } from "@/components/BrandLogo";
 import { DOCUMENT_FOOTER } from "@/lib/document-footer";
+import { TAGLINE } from "@/lib/brand";
 
 /** Sign-in and invitation set-up: a gradient "moment" beside a white reading panel. */
 export function AuthFrame({ kicker, title, children }: { kicker: string; title: string; children: ReactNode }) {
@@ -11,7 +12,7 @@ export function AuthFrame({ kicker, title, children }: { kicker: string; title: 
           <BrandLogo variant="reverse" size={36} />
           <div className="max-w-md">
             <p className="text-on-gradient font-display text-2xl leading-snug font-medium lg:text-3xl">
-              Turning data into decisions that hold up.
+              {TAGLINE}
             </p>
           </div>
         </GradientHero>
