@@ -247,7 +247,7 @@ export function DocumentsTab({ ctx }: { ctx: PortalCtx }) {
         {([['all', 'All'], ['fa', 'From FridayAnalytics'], ['client', 'From you']] as const).map(([k, l]) => (
           <Button key={k} className="min-h-11" variant={from === k ? 'default' : 'outline'} aria-pressed={from === k} onClick={() => setFrom(k)}>{l} ({ctx.docs.filter(d => k === 'all' || d.source === k).length})</Button>
         ))}
-        <Button className="min-h-11 ml-auto" onClick={() => setUploadOpen(true)} disabled={!ctx.canAct && !ctx.sample}><Upload className="size-4" />Upload a document</Button>
+        <Button className="min-h-11 ml-auto" onClick={() => setUploadOpen(true)} disabled={!ctx.canAct && !ctx.sample}><Upload className="size-4" />Send a document</Button>
       </div>
       <div className="grid gap-3 sm:grid-cols-[1fr_16rem]">
         <div className="space-y-1"><Label htmlFor="doc-search">Search title, code or SHA-256</Label><Input id="doc-search" className="min-h-11" value={q} onChange={e => setQ(e.target.value)} /></div>
@@ -263,26 +263,13 @@ export function DocumentsTab({ ctx }: { ctx: PortalCtx }) {
   );
 }
 
-function UploadDialog({ ctx, open, onOpenChange }: { ctx: PortalCtx; open: boolean; onOpenChange: (o: boolean) => void }) {
-  const [title, setTitle] = useState(''); const [file, setFile] = useState<File | null>(null);
-  const [err, setErr] = useState(''); const [busy, setBusy] = useState(false); const [done, setDone] = useState('');
-  const input = useRef<HTMLInputElement>(null);
-  async function submit(e: React.FormEvent) {
-    e.preventDefault(); setErr(''); setDone('');
-    if (ctx.sample) { setDone('Sample mode: nothing was sent.'); return; }
-    setErr('Uploading here is switched off. Files are kept only on FridayAnalytics\' own secure server, so please email the document to curator@fridayanalytics.org and FridayAnalytics will add it for you.');
-  }
+function UploadDialog({ open, onOpenChange }: { ctx: PortalCtx; open: boolean; onOpenChange: (o: boolean) => void }) {
   return (
-    <Dialog open={open} onOpenChange={o => { onOpenChange(o); if (!o) { setErr(''); setDone(''); } }}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
-        <DialogHeader><DialogTitle>Upload a document</DialogTitle><DialogDescription>Documents are kept only on FridayAnalytics' own secure server, never in the cloud. To send one, email it to curator@fridayanalytics.org and FridayAnalytics will add it with its SHA-256.</DialogDescription></DialogHeader>
-        <form className="space-y-4" onSubmit={submit}>
-          <div className="space-y-1"><Label htmlFor="up-title">Title</Label><Input id="up-title" className="min-h-11" value={title} onChange={e => setTitle(e.target.value)} placeholder="Defaults to the file name" /></div>
-          <div className="space-y-1"><Label htmlFor="up-file">File</Label><Input id="up-file" ref={input} className="min-h-11" type="file" onChange={e => setFile(e.target.files?.[0] ?? null)} /></div>
-          {err ? <p role="alert" className="bg-failed text-failed-foreground rounded-md p-3 text-sm">{err}</p> : null}
-          {done ? <p role="status" className="bg-muted rounded-md p-3 text-sm break-all">{done}</p> : null}
-          <Button type="submit" className="min-h-11" disabled={busy}>{busy ? 'Uploading…' : 'Upload'}</Button>
-        </form>
+        <DialogHeader><DialogTitle>Send a document</DialogTitle><DialogDescription>Documents are kept only on FridayAnalytics' own secure server, never in the cloud, so they cannot be uploaded here.</DialogDescription></DialogHeader>
+        <p className="text-sm">Email the document to <a className="font-medium underline" href="mailto:curator@fridayanalytics.org">curator@fridayanalytics.org</a>. FridayAnalytics will add it, record its SHA-256, and it will then appear under "From you".</p>
+        <Button className="min-h-11" variant="outline" onClick={() => onOpenChange(false)}>Close</Button>
       </DialogContent>
     </Dialog>
   );
