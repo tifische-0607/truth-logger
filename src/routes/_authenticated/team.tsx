@@ -19,13 +19,13 @@ import {
 export const Route = createFileRoute("/_authenticated/team")({
   head: () => ({
     meta: [
-      { title: "Team & case assignment — Evidence Hub" },
+      { title: "Team & case assignment — FA Portal" },
       {
         name: "description",
         content:
           "Grant investigator access and assign cases so only assigned investigators can verify and export them.",
       },
-      { property: "og:title", content: "Team & case assignment — Evidence Hub" },
+      { property: "og:title", content: "Team & case assignment — FA Portal" },
       {
         property: "og:description",
         content: "Manage investigators and which cases each of them can work on.",

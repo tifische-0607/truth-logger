@@ -11,7 +11,7 @@ import { useClientsAndProjects, useMe } from "@/lib/projects";
 export const Route = createFileRoute("/_authenticated/projects/")({
   head: () => ({
     meta: [
-      { title: "Projects — Evidence Hub" },
+      { title: "Projects — FA Portal" },
       { name: "description", content: "Clients, their projects, briefs and outputs." },
     ],
   }),

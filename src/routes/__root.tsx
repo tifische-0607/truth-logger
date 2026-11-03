@@ -82,14 +82,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "viewport",
         content: "width=device-width, initial-scale=1, viewport-fit=cover",
       },
-      { title: "Evidence Hub" },
+      { title: "FA Portal" },
       {
         name: "description",
         content:
           "FridayAnalytics shared evidence hub with clients, projects, private vaults and verifiable custody.",
       },
       { name: "apple-mobile-web-app-capable", content: "yes" },
-      { name: "apple-mobile-web-app-title", content: "Evidence Hub" },
+      { name: "apple-mobile-web-app-title", content: "FA Portal" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { name: "theme-color", content: "#121F34" },
       { property: "og:type", content: "website" },

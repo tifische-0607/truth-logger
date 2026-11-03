@@ -263,7 +263,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <Link to="/dashboard" className="flex items-center gap-3">
           <img src="/favicon.png" alt="" width={36} height={36} className="rounded-lg" />
           <div className="leading-tight">
-            <div className="text-sm font-bold tracking-tight">Evidence Hub</div>
+            <div className="text-sm font-bold tracking-tight">FA Portal</div>
             <div className="text-sidebar-foreground/60 text-xs">FridayAnalytics</div>
           </div>
         </Link>
@@ -303,7 +303,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <header className="bg-sidebar text-sidebar-foreground safe-top flex items-center justify-between px-4 py-3 md:hidden">
           <Link to="/dashboard" className="flex items-center gap-2 text-sm font-bold">
             <img src="/favicon.png" alt="" width={28} height={28} className="rounded-md" />
-            Evidence Hub
+            FA Portal
           </Link>
           <WorkerPill compact />
         </header>

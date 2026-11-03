@@ -42,7 +42,7 @@ export const Route = createFileRoute("/_authenticated/projects/$projectId")({
   validateSearch: (search: Record<string, unknown>): { tab: TabId } => ({
     tab: TABS.some((t) => t.id === search["tab"]) ? (search["tab"] as TabId) : "overview",
   }),
-  head: () => ({ meta: [{ title: "Engagement — Evidence Hub" }] }),
+  head: () => ({ meta: [{ title: "Engagement — FA Portal" }] }),
   component: ProjectPage,
 });
 

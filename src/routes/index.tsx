@@ -30,13 +30,13 @@ const capabilities = [
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Evidence Hub — FridayAnalytics" },
+      { title: "FA Portal — FridayAnalytics" },
       {
         name: "description",
         content:
           "Private workspace for collecting Facebook posts and comments as legal evidence with a verifiable chain of custody.",
       },
-      { property: "og:title", content: "Evidence Hub — FridayAnalytics" },
+      { property: "og:title", content: "FA Portal — FridayAnalytics" },
       {
         property: "og:description",
         content:
@@ -56,9 +56,9 @@ function LandingPage() {
     <div className="bg-background text-foreground flex min-h-screen flex-col">
       <header className="border-border border-b">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5 sm:px-8">
-          <Link to="/" className="flex items-center gap-3" aria-label="Evidence Hub home">
+          <Link to="/" className="flex items-center gap-3" aria-label="FA Portal home">
             <img src="/favicon.png" alt="" width={32} height={32} className="rounded-md" />
-            <span className="font-bold">EVIDENCE HUB</span>
+            <span className="font-bold">FA PORTAL</span>
           </Link>
 
           <Button asChild size="sm">
@@ -74,10 +74,10 @@ function LandingPage() {
               FridayAnalytics
             </p>
             <h1 className="max-w-4xl text-4xl font-bold leading-[1.08] text-balance sm:text-5xl lg:text-6xl">
-              Evidence Hub
+              FA Portal
             </h1>
             <p className="text-muted-foreground mt-6 max-w-2xl text-base leading-relaxed text-pretty sm:text-lg">
-              Evidence Hub captures Facebook content from a dedicated Mac mini, keeps the original
+              FA Portal captures Facebook content from a dedicated Mac mini, keeps the original
               context intact and records every transfer, access and verification in a defensible
               custody trail.
             </p>

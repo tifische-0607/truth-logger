@@ -25,13 +25,13 @@ import { HomeIntegrity } from '@/components/HomeIntegrity';
 export const Route = createFileRoute("/_authenticated/verify")({
   head: () => ({
     meta: [
-      { title: "Re-hash & verify — Evidence Hub" },
+      { title: "Re-hash & verify — FA Portal" },
       {
         name: "description",
         content:
           "Re-hash every stored artefact in a case and compare against the recorded SHA-256 values.",
       },
-      { property: "og:title", content: "Re-hash & verify — Evidence Hub" },
+      { property: "og:title", content: "Re-hash & verify — FA Portal" },
       {
         property: "og:description",
         content: "Integrity check for captured Facebook evidence artefacts.",

@@ -112,7 +112,7 @@ export function TeamTab({ ws }: { ws: Workspace }) {
           <Section
             id="ta-h"
             title="Add someone"
-            hint="People need an Evidence Hub account first. FA staff take an FA role; people at the client are client viewers (visible only when the client portal is switched on)."
+            hint="People need an FA Portal account first. FA staff take an FA role; people at the client are client viewers (visible only when the client portal is switched on)."
           >
             <div className="flex flex-wrap items-end gap-3">
               <div className="grid gap-1.5">

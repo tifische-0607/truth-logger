@@ -17,7 +17,7 @@ import { useClientsAndProjects, useMe } from "@/lib/projects";
 import { ProjectRow } from "@/components/projects/ProjectRow";
 
 export const Route = createFileRoute("/_authenticated/clients/$clientId")({
-  head: () => ({ meta: [{ title: "Client — Evidence Hub" }] }),
+  head: () => ({ meta: [{ title: "Client — FA Portal" }] }),
   component: ClientPage,
 });
 

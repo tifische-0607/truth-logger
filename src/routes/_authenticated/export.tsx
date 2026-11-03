@@ -26,13 +26,13 @@ import { HomeIntegrity } from '@/components/HomeIntegrity';
 export const Route = createFileRoute("/_authenticated/export")({
   head: () => ({
     meta: [
-      { title: "Export bundle — Evidence Hub" },
+      { title: "Export bundle — FA Portal" },
       {
         name: "description",
         content:
           "Verify every artefact, then build a ZIP evidence bundle with manifest and chain-of-custody log.",
       },
-      { property: "og:title", content: "Export bundle — Evidence Hub" },
+      { property: "og:title", content: "Export bundle — FA Portal" },
       {
         property: "og:description",
         content: "Court-ready ZIP bundle of captured Facebook evidence with SHA-256 manifest.",
