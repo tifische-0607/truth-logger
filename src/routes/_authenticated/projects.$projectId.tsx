@@ -109,6 +109,7 @@ function ProjectPage() {
       </div>
       <header className="mb-5 flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
+          <p className="kicker mb-2">02 · Engagement</p>
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-mono text-sm font-bold">{p.code}</span>
             <ProjectStatusChip status={p.status} />
