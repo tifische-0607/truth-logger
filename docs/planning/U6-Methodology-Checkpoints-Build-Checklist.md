@@ -1,4 +1,4 @@
-# U6 Methodology checkpoints: build checklist
+# U6 Methodology checkpoints: build checklist for Lovable
 
 Source: FridayAnalytics Research Methodology draft v0.1 (Berkeley Protocol, GIJN practice, SPJ Code of Ethics) and Upgrade U6. Depends on U4, U5 and U8 (framework library). Where this touches storage or naming, FA-STD-001 governs. Every rule below is enforced in the database; screens only show the database's refusal. Use the COMMON BLOCK from the instructions pack.
 
