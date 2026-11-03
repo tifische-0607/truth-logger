@@ -1,7 +1,7 @@
 # Roadmap
 
 - [x] Scope reduced to identity/navigation and home vault; hide project navigation and case Projects button without deleting existing work
-- [ ] Stage 1 partially implemented: migrations 0009/0010 applied; identity, canonical config, sign-in/invite/client-access screens and portal shell added. BLOCKED: drizzle/tests refuses writes, so required SQL tests cannot be added; authenticated browser check remained loading, so invite acceptance and client/staff isolation are not end-to-end verified. Latest preview build is clean; 18 unit tests pass.
+- [ ] Stage 1: finish existing 0009/0010 implementation, audit access guards, add checks in a writable test directory, verify invitation acceptance and client/staff separation end to end; report before Stage 2. Automatic saving replaces manual commits.
 - [ ] Stage 2: Library and full client portal — not requested in this turn
 - [ ] Stage 3: Research metadata and worker API — not requested in this turn
 - [ ] Stage 4: Vault metadata/plumbing — not requested in this turn
