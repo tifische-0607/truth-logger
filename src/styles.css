@@ -474,52 +474,50 @@
   .fa-doc-screen-footer { border-top: 0.5pt solid var(--fa-line); margin-top: 8mm; padding-top: 3mm; color: var(--fa-slate); font-size: 8pt; }
 }
 
+/* Side margins live on .fa-doc-page (18 mm padding) so every page, including the
+ * full-bleed cover, shares one 210 mm layout width. */
 @page {
   size: A4;
-  margin: 18mm 18mm 24mm;
-  @bottom-left-corner { content: "\00a0"; background: var(--fa-gradient-strip) 0 100% / 210mm 3mm no-repeat; }
+  margin: 18mm 0 24mm;
   @bottom-left {
     content: var(--fa-doc-footer, "");
     white-space: pre;
-    width: 140mm;
+    width: 158mm;
     vertical-align: top;
-    padding-top: 3mm;
+    padding: 3mm 0 0 18mm;
     font-family: "Inter", sans-serif;
     font-size: 7.5pt;
     line-height: 1.45;
     color: var(--fa-slate);
-    background: var(--fa-gradient-strip) -18mm 100% / 210mm 3mm no-repeat;
+    background: var(--fa-gradient-strip) 0 100% / 210mm 3mm no-repeat;
   }
   @bottom-right {
     content: "Page " counter(page) " of " counter(pages);
-    width: 34mm;
+    width: 52mm;
     text-align: right;
     vertical-align: top;
-    padding-top: 3mm;
+    padding: 3mm 18mm 0 0;
     font-family: "Inter", sans-serif;
     font-size: 7.5pt;
     color: var(--fa-slate);
     background: var(--fa-gradient-strip) -158mm 100% / 210mm 3mm no-repeat;
   }
-  @bottom-right-corner { content: "\00a0"; background: var(--fa-gradient-strip) -192mm 100% / 210mm 3mm no-repeat; }
 }
-/* Same side margins as body pages so the layout width matches; the cover bleeds into them. */
-@page fa-cover { margin: 0 18mm; }
+@page fa-cover { margin: 0; }
 
 @media print {
   html, body { background: var(--fa-white) !important; color: var(--fa-body) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   body { margin: 0; }
   aside, nav, .no-print { display: none !important; }
   body:has(.fa-doc) main { padding: 0 !important; margin: 0 !important; }
-  /* clip + clip-margin: the cover bleeds into the side margins without widening the layout. */
-  .fa-doc-sheet { max-width: none; box-shadow: none; overflow: clip; overflow-clip-margin: 18mm; }
-  .fa-doc-cover { page: fa-cover; aspect-ratio: auto; width: 210mm; height: 297mm; margin: 0 -18mm; break-after: page; }
+  .fa-doc-sheet { max-width: none; box-shadow: none; }
+  .fa-doc-cover { page: fa-cover; aspect-ratio: auto; width: 210mm; height: 297mm; break-after: page; }
   .print-break { break-before: page; }
   .fa-doc a { color: var(--fa-body) !important; text-decoration: none !important; }
   .fa-doc-screen-footer { display: none; }
   .fa-doc .overflow-x-auto { overflow: visible !important; }
   .fa-doc table { min-width: 0 !important; }
-  .fa-doc-page { padding: 0; }
+  .fa-doc-page { padding: 0 18mm; }
 }
 
 button, [role="button"] { min-height: 44px; }
