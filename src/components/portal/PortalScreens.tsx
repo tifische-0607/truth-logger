@@ -175,7 +175,7 @@ function EngagementCard({ e, onOpen }: { e: PortalEngagement; onOpen: () => void
 }
 
 /* ---------------------------------------------------------------- engagements */
-export function EngagementsTab({ ctx, openId, onBack }: { ctx: PortalCtx; openId?: string; onBack: () => void }) {
+export function EngagementsTab({ ctx, openId, onBack }: { ctx: PortalCtx; openId?: string | undefined; onBack: () => void }) {
   const e = ctx.engagements.find(x => x.id === openId);
   if (!e) return (
     <div className="space-y-4">
