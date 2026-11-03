@@ -1,36 +1,36 @@
-import { useId } from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * FridayAnalytics logo.
- * TODO(brand-assets): PLACEHOLDER lockup until the official SVGs from
- * FA-Portal-Brand-Assets.zip are placed in public/brand/logos/. Swap the
- * implementation here only; every screen uses this component.
+ * Official FridayAnalytics + FA Portal artwork from FA-Portal-Brand-Assets.zip
+ * and FA-Portal-Lens-Logo-and-Icons.zip, served from public/brand/.
+ * Every screen renders logos through this component only.
+ *
+ * Company logo (FridayAnalytics) stays in headers; the Lens product mark is
+ * for the app icon, favicon and next to the "FA Portal" product name.
  */
 export type BrandLogoVariant = "horizontal" | "reverse" | "icon" | "mono-white" | "mono-black";
 
-function Icon({ size, variant }: { size: number; variant: BrandLogoVariant }) {
-  const gid = `fa-logo-${useId().replace(/:/g, "")}`;
-  const mono = variant === "mono-white" ? "fill-on-gradient" : variant === "mono-black" ? "fill-foreground" : undefined;
-  return (
-    <svg viewBox="0 0 256 256" width={size} height={size} aria-hidden="true" className="shrink-0">
-      <defs>
-        <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" style={{ stopColor: "var(--fa-signal-blue)" }} />
-          <stop offset="1" style={{ stopColor: "var(--fa-violet)" }} />
-        </linearGradient>
-      </defs>
-      {mono ? null : <rect width="256" height="256" rx="72" fill={`url(#${gid})`} />}
-      <g className={mono ?? "fill-brand-indigo"}>
-        <rect x="76" y="74" width="17" height="118" rx="3" />
-        <rect x="76" y="175" width="112" height="17" rx="3" />
-        <rect x="104" y="132" width="17" height="37" rx="3" />
-        <rect x="134" y="86" width="17" height="83" rx="3" />
-        <rect x="164" y="110" width="17" height="59" rx="3" />
-      </g>
-    </svg>
-  );
-}
+const COMPANY_LOGO: Record<BrandLogoVariant, string> = {
+  horizontal: "/brand/logos/fa-logo-horizontal-for-light-bg.svg",
+  reverse: "/brand/logos/fa-logo-horizontal-reverse.svg",
+  icon: "/brand/logos/fa-icon.svg",
+  "mono-white": "/brand/logos/fa-logo-horizontal-mono-white.svg",
+  "mono-black": "/brand/logos/fa-logo-horizontal-mono-black.svg",
+};
+
+const COMPANY_ICON: Record<BrandLogoVariant, string> = {
+  horizontal: "/brand/logos/fa-icon.svg",
+  reverse: "/brand/logos/fa-icon-reverse.svg",
+  icon: "/brand/logos/fa-icon.svg",
+  "mono-white": "/brand/logos/fa-icon-mono-white.svg",
+  "mono-black": "/brand/logos/fa-icon-mono-black.svg",
+};
+
+/** Lens product mark (magnifier around rising bars on the gradient tile). */
+const LENS_ICON = "/brand/lens/fa-portal-icon.svg";
+
+/** Company horizontal lockups are 1029x256 (~4:1); icons are square. */
+const LOCKUP_RATIO = 1029 / 256;
 
 export function BrandLogo({
   variant = "horizontal",
@@ -38,39 +38,45 @@ export function BrandLogo({
   className,
 }: {
   variant?: BrandLogoVariant;
+  /** Height in px. Lockups render ~4x wider than tall. */
   size?: number;
   className?: string;
 }) {
   const label = "FridayAnalytics";
+  const height = Math.max(16, size);
   if (variant === "icon") {
     return (
       <span role="img" aria-label={label} className={cn("inline-flex", className)}>
-        <Icon size={Math.max(16, size)} variant={variant} />
+        <img src={COMPANY_ICON.icon} alt="" width={height} height={height} draggable={false} className="shrink-0" />
       </span>
     );
   }
-  const text =
-    variant === "reverse" || variant === "mono-white" ? "text-on-gradient" : "text-foreground";
   return (
-    <span
-      role="img"
-      aria-label={label}
-      className={cn("inline-flex min-w-[120px] items-center gap-2", className)}
-      data-placeholder-logo="true"
-    >
-      <Icon size={size} variant={variant === "reverse" ? "horizontal" : variant} />
-      <span className={cn("font-display leading-none font-medium whitespace-nowrap", size >= 32 ? "text-lg" : "text-base", text)}>{label}</span>
+    <span role="img" aria-label={label} className={cn("inline-flex items-center", className)}>
+      <img
+        src={COMPANY_LOGO[variant]}
+        alt=""
+        height={height}
+        width={Math.round(height * LOCKUP_RATIO)}
+        draggable={false}
+        className="min-w-[120px] shrink-0"
+        style={{ height, width: height * LOCKUP_RATIO }}
+      />
     </span>
   );
 }
 
-/** Product lockup for app chrome: logo, divider, "FA Portal". */
+/** Product lockup for app chrome: Lens mark, divider, "FA Portal". */
 export function ProductLockup({ compact = false }: { compact?: boolean }) {
   return (
     <span className="inline-flex items-center gap-2.5 whitespace-nowrap">
-      <BrandLogo variant={compact ? "icon" : "horizontal"} size={24} />
+      <span role="img" aria-label="FA Portal" className="inline-flex">
+        <img src={LENS_ICON} alt="" width={24} height={24} draggable={false} className="shrink-0" />
+      </span>
       <span aria-hidden="true" className="bg-input h-6 w-px" />
-      <span className="font-display text-muted-foreground text-base font-medium">FA Portal</span>
+      {!compact && (
+        <span className="font-display text-muted-foreground text-base font-medium">FA Portal</span>
+      )}
     </span>
   );
 }
