@@ -3220,6 +3220,7 @@ export type Database = {
         Returns: undefined
       }
       portal_claim_invitation: { Args: { h: string }; Returns: Json }
+      portal_has_client_identity: { Args: { u: string }; Returns: boolean }
       portal_home: { Args: { c?: string }; Returns: Json }
       portal_identity: { Args: never; Returns: Json }
       portal_invitation_info: { Args: { h: string }; Returns: Json }
