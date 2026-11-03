@@ -22,11 +22,10 @@ export function useVaultOverview() { return useQuery(vaultStatusQuery); }
 
 /** Where each kind of record lives. Presentation only; the outbox triggers enforce the queueing. */
 export const WHERE_DATA_GOES: { data: string; home: string; cloud: string }[] = [
-  { data: 'Evidence originals and captures', home: 'Held (original)', cloud: 'Not held; home-vault files list manifest and hash only' },
-  { data: 'Released outputs (after G5)', home: 'Held', cloud: 'Copy queued with its SHA-256' },
-  { data: 'Documents shared with a client', home: 'Held', cloud: 'Copy queued with its SHA-256' },
-  { data: 'Captures from plans that mirror to the Cloud Vault', home: 'Held (original)', cloud: 'Copy queued with its SHA-256' },
+  { data: 'Evidence originals and captures', home: 'DarkNight only', cloud: 'Not held' },
+  { data: 'Reports and released outputs', home: 'DarkNight only', cloud: 'Not held' },
+  { data: 'Documents shared with a client', home: 'DarkNight only (after the storage split)', cloud: 'Not held' },
   { data: 'Custody records', home: 'Queued, append-only', cloud: 'Queued, append-only' },
   { data: 'Document and research events', home: 'Queued, append-only', cloud: 'Queued, append-only' },
-  { data: 'Drafts, staff-only documents, sign-in data', home: 'Not sent', cloud: 'Not sent' },
+  { data: 'Portal data (clients, engagements, settings)', home: 'Not sent', cloud: 'Portal data only' },
 ];

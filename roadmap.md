@@ -13,18 +13,43 @@
 - [ ] Phase 3 SQL checks 1–3 — outstanding (need authenticated role switch)
 - [x] Phase 5: Research screens/worker API (0018 empty by mistake, 0019, 0020); includes U4 connector contract and U5 quality controls inside the worker API
 - [ ] Phase 4 gate-based SQL checks and Phase 5 full worker simulation (tests/sql/research_worker_test.sql) — outstanding: need a signed-G1/G2 engagement and a service-role test connection
-- [ ] U1 Membership tiers and seats — future phase
-- [ ] U2 Pricing page, upgrade requests and staff billing — future phase
-- [ ] U3 Storage split (Cloud Vault portal data only; DarkNight holds all reports/evidence, live fetch with re-hash) — future phase
-- [ ] U4 remainder: central data collection requirements register fed by the signed brief; further connectors — future phase
-- [ ] U5 remainder: per-connector rejection-rate dashboard over time — future phase
-- [ ] U6 Methodology enforcement checkpoints (V1, V2, Q1, Q2, second analyst review, Curator release statement) — future phase
-- [x] Phase 6: Vaults (0021, 0022) — vault config/events/outbox, offline rules, Vaults page, sidebar panel, Cloud Vault setup SQL at docs/vault/cloud-vault-fa_portal-setup.sql (manual run)
-- [ ] Phase 6 SQL checks V2, V3 (need function execute rights), V5–V7 (need client document, G5 release and signed-G1/G2 plan fixtures) — outstanding
+- [x] Phase 6: Vaults (0021, 0022) — vault config/events/outbox, offline rules, Vaults page, sidebar panel, U3 correction 0023 makes document/output/capture copies inert; Cloud Vault setup SQL at docs/vault/cloud-vault-fa_portal-setup.sql (manual run)
+- [ ] Phase 6 SQL checks V2, V3 (need function execute rights), V6–V7 (need signed-G1/G2 plan fixtures; V5 retired by U3) — outstanding
 - [ ] Cloud Vault access route decision (direct vs HTTPS relay) and secrets — waits on user
-- [ ] Phase 7: SOP/clock engine — waits for "Go Phase 7"
-- [ ] Phase 8: Management screens — waits for "Go Phase 8"
-- [ ] Phase 9: Hardening/docs/full test run — waits for "Go Phase 9"
+
+## Order after Phase 6 (every item waits for "Go")
+1. [ ] Phase 7 SOP and clock engine — waits for Go
+2. [ ] Phase 8 Management screens — waits for Go
+3. [ ] U8 Framework library and universal standard (before U6 and U7) — waits for Go
+4. [ ] U3 Storage split (needs Phase 4): no report or evidence file in the cloud; DarkNight holds all reports and evidence, cloud holds portal data only; downloads fetch live from DarkNight and re-check SHA-256, else "Temporarily unavailable, please try again later" — waits for Go
+5. [ ] U4 remainder (needs U3) — partly built: connector contract, worker API; still to do: requirements register fed by the signed brief, further connectors — waits for Go
+6. [ ] U5 remainder (needs U4) — partly built: quality controls, quarantine, provenance, auto-suspend; still to do: rejection-rate dashboard over time — waits for Go
+7. [ ] U6 Methodology checkpoints (needs U4, U5, U8) — waits for Go
+8. [ ] Phase 9 Hardening and full test run — waits for Go
+9. [ ] U1 Membership tiers and seats (needs Phase 4) — waits for Go
+10. [ ] U2 Pricing, upgrade requests and billing (needs U1) — waits for Go
+11. [ ] U7 Early warning platform (needs U4, U5, U8) — waits for Go
+12. [ ] U9 Link analysis (needs U4, U5, U8) — waits for Go
+13. [ ] U11 Narrative and coordination detection (needs U7, U8, U9) — waits for Go
+14. [ ] U12 Unified evidence search (needs U4, U5, U11) — waits for Go
+15. [ ] U13 Wider source coverage, Telegram public channels/groups and WhatsApp channels first (needs U4, U5) — waits for Go
+16. [ ] U10 Analyst browser capture (optional) — waits for Go
+17. [ ] U14 Executive agent gateway (needs U8) — waits for Go
+18. [ ] Final hardening pass — waits for Go
+
+## Open decisions
+- Namecheap database role under U3: replacement, mirror or backup for the portal database, or only some tables
+- Secure route from the portal to DarkNight
+- Cloud Vault access route (direct or HTTPS relay) and its secrets
+- Prices, currency and billing period
+- Which reports belong to each tier
+- FA-STD-001 naming
+- Retention periods
+- Early warning thresholds, Telegram recipients, briefing template
+- First framework library entries
+- Phase 5 defaults: auto-suspend after 5 rejected items in 60 minutes, language list, item types
+- Real SOP targets and holiday calendar
+- Unrun SQL checks (Phase 3 checks 1–3; Phase 4 gate checks; Phase 5 worker simulation; Phase 6 V2, V3, V5–V7): need a test connection with the service role and a test engagement with G1 and G2 signed
 
 - [x] Rechecked approved implementation in order; tightened output provenance/storage/log guards and added real hash-mismatch tests
 

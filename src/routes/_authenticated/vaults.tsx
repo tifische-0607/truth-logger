@@ -200,7 +200,7 @@ function VaultsPage() {
           word={cloudState ? cloudWord(cloudState.configured, !!s?.cloud_online) : 'Not configured'}
           checks={cloudState ? cloudChecks(cloudState) : []}
           extra={<div className="space-y-3"><RouteSetting route={cloudCfg.route as CloudRoute} owner={owner} />
-            <p className="text-muted-foreground text-sm">While offline, only plans that mirror to the Cloud Vault are paused; queued copies wait in the outbox ({s?.outbox_pending.cloud ?? 0} waiting).</p></div>} />}
+            <p className="text-muted-foreground text-sm">While offline, only plans that mirror to the Cloud Vault are paused; queued custody and event records wait in the outbox ({s?.outbox_pending.cloud ?? 0} waiting).</p></div>} />}
       </div>
 
       <section className="panel p-5" aria-labelledby="where">
