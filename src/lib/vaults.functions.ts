@@ -43,5 +43,5 @@ export const testVaultConnection = createServerFn({ method: 'POST' })
     const rec = await supabaseAdmin.rpc('vault_record_check', { _vault: data.vault, _outcome: outcome, _detail: detail as never, _actor: context.userId });
     if (rec.error) throw new Error(rec.error.message);
     await context.supabase.rpc('vault_apply_offline');
-    return { outcome, detail };
+    return { outcome, detail: JSON.parse(JSON.stringify(detail)) as { missing?: string[] } };
   });

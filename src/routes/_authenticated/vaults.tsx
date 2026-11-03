@@ -99,8 +99,9 @@ function VaultCard({ cfg, word, checks, owner, extra }: { cfg: Config; word: str
   const [msg, setMsg] = useState<{ text: string; bad: boolean } | null>(null);
   const m = useMutation({
     mutationFn: () => test({ data: { vault: cfg.vault } }),
-    onSuccess: async (r) => {
-      const text = r.outcome === 'not_configured' ? `Not configured. Missing: ${((r.detail.missing as string[]) ?? []).join(', ')}.`
+    onSuccess: async (raw) => {
+      const r = raw as { outcome: string; detail: { missing?: string[] } };
+      const text = r.outcome === 'not_configured' ? `Not configured. Missing: ${(r.detail.missing ?? []).join(', ')}.`
         : r.outcome === 'not_attempted' ? 'Configured, but no connection was attempted: outside connections are not permitted in this phase.'
         : r.outcome === 'ok' ? 'Reachable: the Home Vault reported online within the window.' : 'Not reachable: no online report within the window.';
       setMsg({ text, bad: r.outcome !== 'ok' });
