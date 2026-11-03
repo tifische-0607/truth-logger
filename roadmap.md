@@ -19,7 +19,9 @@
 - [ ] U4 remainder: central data collection requirements register fed by the signed brief; further connectors — future phase
 - [ ] U5 remainder: per-connector rejection-rate dashboard over time — future phase
 - [ ] U6 Methodology enforcement checkpoints (V1, V2, Q1, Q2, second analyst review, Curator release statement) — future phase
-- [ ] Phase 6: Vaults — waits for "Go Phase 6"
+- [x] Phase 6: Vaults (0021, 0022) — vault config/events/outbox, offline rules, Vaults page, sidebar panel, Cloud Vault setup SQL at docs/vault/cloud-vault-fa_portal-setup.sql (manual run)
+- [ ] Phase 6 SQL checks V2, V3 (need function execute rights), V5–V7 (need client document, G5 release and signed-G1/G2 plan fixtures) — outstanding
+- [ ] Cloud Vault access route decision (direct vs HTTPS relay) and secrets — waits on user
 - [ ] Phase 7: SOP/clock engine — waits for "Go Phase 7"
 - [ ] Phase 8: Management screens — waits for "Go Phase 8"
 - [ ] Phase 9: Hardening/docs/full test run — waits for "Go Phase 9"

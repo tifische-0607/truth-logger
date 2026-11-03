@@ -26,3 +26,5 @@
 - Research collection writes (jobs, runs, captures, vault reports) go only through service-role worker functions; people act through research_* SECURITY DEFINER functions so the database owns every research rule.
 - Research collectors plug in through the research_connectors registry and the one standard capture shape validated by research_submit_capture_std; new connectors are registry rows, not code changes, so every connector obeys the same quality rules.
 - Research worker routes (src/routes/api/public/research-*) are thin wrappers over service-role-only database functions; never grant those functions to authenticated, so capture and status events can only come from the collection device.
+
+- Vault copies and custody/event records reach the Cloud and Home vaults only through the append-only vault_outbox (fed by triggers) and service-role write results; success states are refused while a required write is pending, so no screen can claim a copy that was not verified by SHA-256.
