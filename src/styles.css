@@ -503,7 +503,8 @@
   }
   @bottom-right-corner { content: "\00a0"; background: var(--fa-gradient-strip) -192mm 100% / 210mm 3mm no-repeat; }
 }
-@page fa-cover { margin: 0; }
+/* Same side margins as body pages so the layout width matches; the cover bleeds into them. */
+@page fa-cover { margin: 0 18mm; }
 
 @media print {
   html, body { background: var(--fa-white) !important; color: var(--fa-body) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -511,7 +512,7 @@
   aside, nav, .no-print { display: none !important; }
   body:has(.fa-doc) main { padding: 0 !important; margin: 0 !important; }
   .fa-doc-sheet { max-width: none; box-shadow: none; }
-  .fa-doc-cover { page: fa-cover; aspect-ratio: auto; width: 210mm; height: 297mm; break-after: page; }
+  .fa-doc-cover { page: fa-cover; aspect-ratio: auto; width: 210mm; height: 297mm; margin: 0 -18mm; break-after: page; }
   .print-break { break-before: page; }
   .fa-doc a { color: var(--fa-body) !important; text-decoration: none !important; }
   .fa-doc-screen-footer { display: none; }
