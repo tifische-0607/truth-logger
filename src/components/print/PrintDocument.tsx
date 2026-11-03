@@ -66,6 +66,7 @@ export function PrintDocument({
           </div>
         </section>
       ) : null}
+      <div className="fa-doc-page">
       <table className="fa-doc-frame">
         <thead>
           <tr>
@@ -101,6 +102,7 @@ export function PrintDocument({
           </tr>
         </tbody>
       </table>
+      </div>
     </div>
   );
 }
