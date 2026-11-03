@@ -31,7 +31,7 @@ const sel = "border-input bg-background min-h-11 w-full rounded-md border px-3 t
 const Refuse = ({ t }: { t: string | null }) => (t ? <p role="alert" className="bg-failed text-failed-foreground rounded-md px-3 py-2 text-sm">{t}</p> : null);
 
 type Entry = { id: string; code: string; name: string; kind: string };
-type Version = { id: string; entry_id: string; version: number; effective_from: string; summary: string; body: string; items: unknown; change_note: string; author: string; created_at: string; status: VersionStatus; decided_by?: string | null; decision_note?: string | null };
+type Version = { id: string; entry_id: string; version: number; effective_from: string; summary: string; body: string; items: unknown; change_note: string; author: string; created_at: string; status: VersionStatus; decided_by?: string | null | undefined; decision_note?: string | null | undefined };
 
 function useLibrary() {
   return useQuery({
@@ -112,7 +112,7 @@ function Frameworks() {
 
 type Lib = NonNullable<ReturnType<typeof useLibrary>["data"]>;
 
-function useRpc<V>(fn: (v: V) => Promise<{ error: unknown }>, done: string, after?: () => void) {
+function useRpc<V>(fn: (v: V) => PromiseLike<{ error: unknown }>, done: string, after?: () => void) {
   const qc = useQueryClient();
   const [err, setErr] = useState<string | null>(null);
   const m = useMutation({
@@ -250,9 +250,9 @@ function SourceBlock({ s, L, isEditor, isCurator }: { s: Lib["sources"][number];
   const ls = L.learnings.filter((l) => l.source_id === s.id);
   const download = async () => {
     const { data, error } = await supabase.storage.from("framework-sources").download(s.storage_path);
-    if (error || !data) return toast.error(error?.message ?? "Could not open the file.");
+    if (error || !data) { toast.error(error?.message ?? "Could not open the file."); return; }
     const sha = await sha256Hex(await data.arrayBuffer());
-    if (sha !== s.sha256) return toast.error("Blocked: this file's SHA-256 does not match the record.");
+    if (sha !== s.sha256) { toast.error("Blocked: this file's SHA-256 does not match the record."); return; }
     const url = URL.createObjectURL(data); const a = document.createElement("a"); a.href = url; a.download = s.file_name; a.click(); URL.revokeObjectURL(url);
   };
   return (
