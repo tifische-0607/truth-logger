@@ -45,7 +45,7 @@ function LandingPage() {
           </div>
           <div className="mt-20 max-w-3xl sm:mt-28">
             <h1 className="text-on-gradient font-display text-4xl font-medium leading-tight sm:text-6xl">FA Portal</h1>
-            <p className="text-on-gradient mt-6 max-w-2xl text-xl leading-relaxed">
+            <p className="text-on-gradient mt-6 max-w-2xl text-2xl leading-relaxed">
               The private portal for FridayAnalytics clients and staff. Access is by invitation only.
             </p>
             <div className="mt-9">

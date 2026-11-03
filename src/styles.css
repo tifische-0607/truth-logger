@@ -136,7 +136,7 @@
   --destructive: var(--fa-coral);
   --destructive-foreground: var(--fa-ink);
   --border: var(--fa-line);
-  --input: var(--fa-line);
+  --input: var(--fa-sub); /* control boundary must reach 3:1 */
   --ring: var(--fa-signal-blue);
   --kicker: var(--fa-violet);
   --link: var(--fa-mid);
@@ -194,7 +194,7 @@
   --destructive: var(--fa-coral);
   --destructive-foreground: var(--fa-ink);
   --border: oklch(0.30 0.03 270);
-  --input: oklch(0.30 0.03 270);
+  --input: var(--fa-slate);
   --ring: var(--fa-pale);
   --kicker: var(--fa-pale);
   --link: var(--fa-pale);
