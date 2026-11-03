@@ -41,7 +41,6 @@ function dbMessage(e: unknown) {
 }
 
 function AudienceChip({ d }: { d: LibraryDoc }) {
-  const [loc, setLoc] = useState('');
   const a = audienceOf(d);
   return (
     <span className={cn('inline-flex min-h-7 items-center rounded-full border px-2.5 text-xs font-medium',
@@ -163,6 +162,7 @@ function DocumentDetail({ d, clientName }: { d: LibraryDoc; clientName: string }
   const [busy, setBusy] = useState(false);
   const [confirm, setConfirm] = useState<'share' | 'withdraw' | null>(null);
   const [reason, setReason] = useState('');
+  const [loc, setLoc] = useState('');
   const a = audienceOf(d);
 
   const log = useQuery({
