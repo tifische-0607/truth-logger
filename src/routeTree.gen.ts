@@ -12,13 +12,18 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as InviteRouteImport } from './routes/invite'
+import { Route as PortalRouteImport } from './routes/portal'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedCaptureLogRouteImport } from './routes/_authenticated/capture-log'
 import { Route as AuthenticatedCaptureSettingsRouteImport } from './routes/_authenticated/capture-settings'
 import { Route as AuthenticatedCaseDatabaseRouteImport } from './routes/_authenticated/case-database'
 import { Route as AuthenticatedCollectRouteImport } from './routes/_authenticated/collect'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedExportRouteImport } from './routes/_authenticated/export'
+import { Route as AuthenticatedInboxRouteImport } from './routes/_authenticated/inbox'
 import { Route as AuthenticatedIntegrityRouteImport } from './routes/_authenticated/integrity'
+import { Route as AuthenticatedManagementRouteImport } from './routes/_authenticated/management'
 import { Route as AuthenticatedOfflineRouteImport } from './routes/_authenticated/offline'
 import { Route as AuthenticatedQueueRouteImport } from './routes/_authenticated/queue'
 import { Route as AuthenticatedResultsRouteImport } from './routes/_authenticated/results'
@@ -72,6 +77,21 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InviteRoute = InviteRouteImport.update({
+  id: '/invite',
+  path: '/invite',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalRoute = PortalRouteImport.update({
+  id: '/portal',
+  path: '/portal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedCaptureLogRoute = AuthenticatedCaptureLogRouteImport.update({
   id: '/capture-log',
   path: '/capture-log',
@@ -104,9 +124,19 @@ const AuthenticatedExportRoute = AuthenticatedExportRouteImport.update({
   path: '/export',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedInboxRoute = AuthenticatedInboxRouteImport.update({
+  id: '/inbox',
+  path: '/inbox',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedIntegrityRoute = AuthenticatedIntegrityRouteImport.update({
   id: '/integrity',
   path: '/integrity',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedManagementRoute = AuthenticatedManagementRouteImport.update({
+  id: '/management',
+  path: '/management',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedOfflineRoute = AuthenticatedOfflineRouteImport.update({
@@ -323,13 +353,18 @@ const AuthenticatedVaultSourceIdRecordIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/invite': typeof InviteRoute
+  '/portal': typeof PortalRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/capture-log': typeof AuthenticatedCaptureLogRoute
   '/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/case-database': typeof AuthenticatedCaseDatabaseRoute
   '/collect': typeof AuthenticatedCollectRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/export': typeof AuthenticatedExportRoute
+  '/inbox': typeof AuthenticatedInboxRoute
   '/integrity': typeof AuthenticatedIntegrityRoute
+  '/management': typeof AuthenticatedManagementRoute
   '/offline': typeof AuthenticatedOfflineRoute
   '/queue': typeof AuthenticatedQueueRoute
   '/results': typeof AuthenticatedResultsRoute
@@ -372,13 +407,18 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/invite': typeof InviteRoute
+  '/portal': typeof PortalRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/capture-log': typeof AuthenticatedCaptureLogRoute
   '/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/case-database': typeof AuthenticatedCaseDatabaseRoute
   '/collect': typeof AuthenticatedCollectRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/export': typeof AuthenticatedExportRoute
+  '/inbox': typeof AuthenticatedInboxRoute
   '/integrity': typeof AuthenticatedIntegrityRoute
+  '/management': typeof AuthenticatedManagementRoute
   '/offline': typeof AuthenticatedOfflineRoute
   '/queue': typeof AuthenticatedQueueRoute
   '/results': typeof AuthenticatedResultsRoute
@@ -423,13 +463,18 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/invite': typeof InviteRoute
+  '/portal': typeof PortalRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/capture-log': typeof AuthenticatedCaptureLogRoute
   '/_authenticated/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/_authenticated/case-database': typeof AuthenticatedCaseDatabaseRoute
   '/_authenticated/collect': typeof AuthenticatedCollectRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/export': typeof AuthenticatedExportRoute
+  '/_authenticated/inbox': typeof AuthenticatedInboxRoute
   '/_authenticated/integrity': typeof AuthenticatedIntegrityRoute
+  '/_authenticated/management': typeof AuthenticatedManagementRoute
   '/_authenticated/offline': typeof AuthenticatedOfflineRoute
   '/_authenticated/queue': typeof AuthenticatedQueueRoute
   '/_authenticated/results': typeof AuthenticatedResultsRoute
@@ -474,13 +519,18 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/invite'
+    | '/portal'
+    | '/reset-password'
     | '/capture-log'
     | '/capture-settings'
     | '/case-database'
     | '/collect'
     | '/dashboard'
     | '/export'
+    | '/inbox'
     | '/integrity'
+    | '/management'
     | '/offline'
     | '/queue'
     | '/results'
@@ -523,13 +573,18 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/invite'
+    | '/portal'
+    | '/reset-password'
     | '/capture-log'
     | '/capture-settings'
     | '/case-database'
     | '/collect'
     | '/dashboard'
     | '/export'
+    | '/inbox'
     | '/integrity'
+    | '/management'
     | '/offline'
     | '/queue'
     | '/results'
@@ -573,13 +628,18 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/invite'
+    | '/portal'
+    | '/reset-password'
     | '/_authenticated/capture-log'
     | '/_authenticated/capture-settings'
     | '/_authenticated/case-database'
     | '/_authenticated/collect'
     | '/_authenticated/dashboard'
     | '/_authenticated/export'
+    | '/_authenticated/inbox'
     | '/_authenticated/integrity'
+    | '/_authenticated/management'
     | '/_authenticated/offline'
     | '/_authenticated/queue'
     | '/_authenticated/results'
@@ -624,6 +684,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  InviteRoute: typeof InviteRoute
+  PortalRoute: typeof PortalRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   ApiPublicWorkerClaimRoute: typeof ApiPublicWorkerClaimRoute
   ApiPublicWorkerCompleteRoute: typeof ApiPublicWorkerCompleteRoute
   ApiPublicWorkerHeartbeatRoute: typeof ApiPublicWorkerHeartbeatRoute
@@ -656,6 +719,27 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/invite': {
+      id: '/invite'
+      path: '/invite'
+      fullPath: '/invite'
+      preLoaderRoute: typeof InviteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal': {
+      id: '/portal'
+      path: '/portal'
+      fullPath: '/portal'
+      preLoaderRoute: typeof PortalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/capture-log': {
@@ -700,11 +784,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedExportRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/inbox': {
+      id: '/_authenticated/inbox'
+      path: '/inbox'
+      fullPath: '/inbox'
+      preLoaderRoute: typeof AuthenticatedInboxRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/integrity': {
       id: '/_authenticated/integrity'
       path: '/integrity'
       fullPath: '/integrity'
       preLoaderRoute: typeof AuthenticatedIntegrityRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/management': {
+      id: '/_authenticated/management'
+      path: '/management'
+      fullPath: '/management'
+      preLoaderRoute: typeof AuthenticatedManagementRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/offline': {
@@ -983,7 +1081,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCollectRoute: typeof AuthenticatedCollectRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedExportRoute: typeof AuthenticatedExportRoute
+  AuthenticatedInboxRoute: typeof AuthenticatedInboxRoute
   AuthenticatedIntegrityRoute: typeof AuthenticatedIntegrityRoute
+  AuthenticatedManagementRoute: typeof AuthenticatedManagementRoute
   AuthenticatedOfflineRoute: typeof AuthenticatedOfflineRoute
   AuthenticatedQueueRoute: typeof AuthenticatedQueueRoute
   AuthenticatedResultsRoute: typeof AuthenticatedResultsRoute
@@ -1022,7 +1122,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCollectRoute: AuthenticatedCollectRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedExportRoute: AuthenticatedExportRoute,
+  AuthenticatedInboxRoute: AuthenticatedInboxRoute,
   AuthenticatedIntegrityRoute: AuthenticatedIntegrityRoute,
+  AuthenticatedManagementRoute: AuthenticatedManagementRoute,
   AuthenticatedOfflineRoute: AuthenticatedOfflineRoute,
   AuthenticatedQueueRoute: AuthenticatedQueueRoute,
   AuthenticatedResultsRoute: AuthenticatedResultsRoute,
@@ -1062,6 +1164,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  InviteRoute: InviteRoute,
+  PortalRoute: PortalRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   ApiPublicWorkerClaimRoute: ApiPublicWorkerClaimRoute,
   ApiPublicWorkerCompleteRoute: ApiPublicWorkerCompleteRoute,
   ApiPublicWorkerHeartbeatRoute: ApiPublicWorkerHeartbeatRoute,
