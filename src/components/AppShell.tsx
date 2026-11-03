@@ -286,6 +286,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               {entry.label}
             </Link>
           ))}
+          <Link to="/library" className={cn("hover:bg-sidebar-accent text-sidebar-foreground/80 flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/library') && 'bg-sidebar-accent text-sidebar-accent-foreground')}><Library className="size-5"/>Library</Link>
           <p className="mt-5 px-3 text-xs text-sidebar-foreground/60">System</p>
           {me.data?.isCurator && <Link to="/inbox" className="flex min-h-12 items-center gap-3 px-3 text-sm"><ScrollText className="size-5"/>Curator inbox</Link>}
           {(me.data?.isOwner || me.data?.isManagement) && <Link to="/management" className="flex min-h-12 items-center gap-3 px-3 text-sm"><Gauge className="size-5"/>Management</Link>}
@@ -321,7 +322,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
 
         <main className="min-w-0 flex-1 px-4 pt-6 pb-28 md:px-8 md:pt-8 md:pb-12">
-          <div className="md:hidden no-print mb-4 flex gap-3 text-sm"><Link to="/sources" className="inline-flex min-h-11 items-center border rounded px-3">Sources</Link><Link to="/team" className="inline-flex min-h-11 items-center border rounded px-3">Admin</Link></div>
+          <div className="md:hidden no-print mb-4 flex gap-3 text-sm"><Link to="/library" className="inline-flex min-h-11 items-center border rounded px-3">Library</Link><Link to="/sources" className="inline-flex min-h-11 items-center border rounded px-3">Sources</Link><Link to="/team" className="inline-flex min-h-11 items-center border rounded px-3">Admin</Link></div>
           {workspaceTabs.length>0 && <nav aria-label="Workspace pages" className="no-print mb-6 relative flex overflow-x-auto border-b">{workspaceTabs.map(([to,label])=><Link key={to} to={to} className={cn('shrink-0 min-h-12 px-4 py-3 border-b-2 text-sm',pathname===to?'border-primary text-primary font-semibold':'border-transparent text-muted-foreground')}>{label}</Link>)}</nav>}
           {caseId && <CaseWorkspace caseId={caseId} path={pathname}/>}
           {children}
