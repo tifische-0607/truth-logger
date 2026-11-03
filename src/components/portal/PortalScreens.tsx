@@ -331,6 +331,7 @@ function TeamPill({ ctx }: { ctx: PortalCtx }) {
   const admins = useQuery({ queryKey: ['client-admins', cid, ctx.sample], queryFn: () => (ctx.sample ? Promise.resolve(sampleAdmins) : clientAdmins(cid)) });
   const [open, setOpen] = useState(false); const [name, setName] = useState(''); const [email, setEmail] = useState(''); const [link, setLink] = useState('');
   const [sampleNote, setSampleNote] = useState('');
+  const inviteBtn = useRef<HTMLButtonElement>(null);
   const [sampleCancelled, setSampleCancelled] = useState<string[]>([]);
   const refresh = () => { void qc.invalidateQueries({ queryKey: ['client-admins', cid] }); ctx.refresh(); };
   const invite = useMutation({
@@ -368,11 +369,11 @@ function TeamPill({ ctx }: { ctx: PortalCtx }) {
       </ul>
       <p className="text-muted-foreground text-sm">Only FridayAnalytics can remove an active administrator. Contact curator@fridayanalytics.org.</p>
       <div className="space-y-2">
-        <Button className="min-h-11" disabled={full || busy || !actionable} onClick={() => { setName(''); setEmail(''); setLink(''); invite.reset(); setOpen(true); }}><Plus className="size-4" />Invite administrator</Button>
+        <Button ref={inviteBtn} className="min-h-11" disabled={full || busy || !actionable} onClick={() => { setName(''); setEmail(''); setLink(''); invite.reset(); setOpen(true); }}><Plus className="size-4" />Invite administrator</Button>
         {full ? <p className="text-sm" role="note">{CAP_MESSAGE}</p> : null}
       </div>
       <Dialog open={open} onOpenChange={v => { setOpen(v); if (!v) setLink(''); }}>
-        <DialogContent>
+        <DialogContent onCloseAutoFocus={e => { e.preventDefault(); inviteBtn.current?.focus(); }}>
           <DialogHeader><DialogTitle>{link ? 'Invitation recorded' : 'Invite administrator'}</DialogTitle>
             <DialogDescription>{link ? 'Copy this single-use link and send it to the person you invited. It expires in 7 days.' : 'The invitation takes the free administrator slot. No email is sent.'}</DialogDescription></DialogHeader>
           {link ? <div className="space-y-3"><Input aria-label="Invitation link" type="password" readOnly value={link} className="min-h-11" /><Button className="min-h-11" onClick={() => void navigator.clipboard.writeText(link)}><Copy className="size-4" />Copy invitation link</Button></div> : (
