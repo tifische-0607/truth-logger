@@ -58,7 +58,7 @@ export function needsAttention(p: Portfolio) {
     .sort((a, b) => RANK[b.status] - RANK[a.status] || b.pct - a.pct);
 }
 
-export type KpiFilter = { client?: string; phase?: number; owner?: string; days?: number };
+export type KpiFilter = { client?: string | undefined; phase?: number | undefined; owner?: string | undefined; days?: number | undefined };
 
 export function filterClocks(p: Portfolio, f: KpiFilter, nowMs = Date.now()) {
   const byId = new Map(p.engagements.map((e) => [e.id, e]));

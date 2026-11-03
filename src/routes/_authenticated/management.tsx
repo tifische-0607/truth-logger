@@ -25,7 +25,7 @@ const str = (v: unknown) => (typeof v === "string" && v ? v : undefined);
 
 export const Route = createFileRoute("/_authenticated/management")({
   validateSearch: (r: Record<string, unknown>): { pill?: string | undefined; phase?: string | undefined; client?: string | undefined; preview?: string | undefined } =>
-    ({ pill: str(r.pill), phase: str(r.phase), client: str(r.client), preview: str(r.preview) }),
+    ({ pill: str(r['pill']), phase: str(r['phase']), client: str(r['client']), preview: str(r['preview']) }),
   head: () => hubHead("Management", "FA Portal Management: portfolio turnaround, clients, phases and SOPs."),
   component: Management,
 });
