@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -9,16 +10,17 @@ import { cn } from "@/lib/utils";
 export type BrandLogoVariant = "horizontal" | "reverse" | "icon" | "mono-white" | "mono-black";
 
 function Icon({ size, variant }: { size: number; variant: BrandLogoVariant }) {
+  const gid = `fa-logo-${useId().replace(/:/g, "")}`;
   const mono = variant === "mono-white" ? "fill-on-gradient" : variant === "mono-black" ? "fill-foreground" : undefined;
   return (
     <svg viewBox="0 0 256 256" width={size} height={size} aria-hidden="true" className="shrink-0">
       <defs>
-        <linearGradient id="fa-logo-gi" x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" style={{ stopColor: "var(--fa-signal-blue)" }} />
           <stop offset="1" style={{ stopColor: "var(--fa-violet)" }} />
         </linearGradient>
       </defs>
-      {mono ? null : <rect width="256" height="256" rx="72" fill="url(#fa-logo-gi)" />}
+      {mono ? null : <rect width="256" height="256" rx="72" fill={`url(#${gid})`} />}
       <g className={mono ?? "fill-brand-indigo"}>
         <rect x="76" y="74" width="17" height="118" rx="3" />
         <rect x="76" y="175" width="112" height="17" rx="3" />
@@ -57,7 +59,7 @@ export function BrandLogo({
       data-placeholder-logo="true"
     >
       <Icon size={size} variant={variant === "reverse" ? "horizontal" : variant} />
-      <span className={cn("font-display text-lg leading-none font-medium", text)}>{label}</span>
+      <span className={cn("font-display leading-none font-medium whitespace-nowrap", size >= 32 ? "text-lg" : "text-base", text)}>{label}</span>
     </span>
   );
 }
@@ -65,9 +67,9 @@ export function BrandLogo({
 /** Product lockup for app chrome: logo, divider, "FA Portal". */
 export function ProductLockup({ compact = false }: { compact?: boolean }) {
   return (
-    <span className="inline-flex items-center gap-3">
-      <BrandLogo variant={compact ? "icon" : "horizontal"} size={compact ? 28 : 28} />
-      <span aria-hidden="true" className="bg-border h-6 w-px" />
+    <span className="inline-flex items-center gap-2.5 whitespace-nowrap">
+      <BrandLogo variant={compact ? "icon" : "horizontal"} size={24} />
+      <span aria-hidden="true" className="bg-input h-6 w-px" />
       <span className="font-display text-muted-foreground text-base font-medium">FA Portal</span>
     </span>
   );
