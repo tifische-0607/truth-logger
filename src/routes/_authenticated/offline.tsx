@@ -21,13 +21,13 @@ import {
 export const Route = createFileRoute("/_authenticated/offline")({
   head: () => ({
     meta: [
-      { title: "Offline library · Evidence Hub" },
+      { title: "Offline library · FA Portal" },
       {
         name: "description",
         content:
           "Download cases and their artefacts to this device so evidence can be reviewed without an internet connection.",
       },
-      { property: "og:title", content: "Offline library · Evidence Hub" },
+      { property: "og:title", content: "Offline library · FA Portal" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       {

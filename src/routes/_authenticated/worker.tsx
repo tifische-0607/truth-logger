@@ -17,13 +17,13 @@ import { flushOutbox, pendingOutboxCount, useOnline } from "@/lib/offline";
 export const Route = createFileRoute("/_authenticated/worker")({
   head: () => ({
     meta: [
-      { title: "Worker dashboard — Evidence Hub" },
+      { title: "Worker dashboard — FA Portal" },
       {
         name: "description",
         content:
           "Track the Mac mini capture worker: incoming capture requests, job status, run times and queued syncs.",
       },
-      { property: "og:title", content: "Worker dashboard — Evidence Hub" },
+      { property: "og:title", content: "Worker dashboard — FA Portal" },
       {
         property: "og:description",
         content: "Live view of capture requests handled by the Mac mini worker.",

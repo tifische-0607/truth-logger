@@ -9,9 +9,9 @@ export function hubHead(
 ) {
   return {
     meta: [
-      { title: `${title} — Evidence Hub` },
+      { title: `${title} — FA Portal` },
       { name: "description", content: description },
-      { property: "og:title", content: `${title} — Evidence Hub` },
+      { property: "og:title", content: `${title} — FA Portal` },
       { property: "og:description", content: description },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

@@ -12,13 +12,13 @@ import { formatDateTime } from "@/lib/format";
 export const Route = createFileRoute("/_authenticated/capture-log")({
   head: () => ({
     meta: [
-      { title: "Capture log — Evidence Hub" },
+      { title: "Capture log — FA Portal" },
       {
         name: "description",
         content:
           "Every Facebook capture run with its date, how long it took, whether it succeeded, and the case it belongs to.",
       },
-      { property: "og:title", content: "Capture log — Evidence Hub" },
+      { property: "og:title", content: "Capture log — FA Portal" },
       {
         property: "og:description",
         content: "Full history of Facebook capture runs with dates, durations and outcomes.",

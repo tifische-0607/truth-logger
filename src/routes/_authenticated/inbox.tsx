@@ -1,0 +1,8 @@
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { hubHead } from '@/lib/hub';
+import { PageHeader } from '@/components/AppShell';
+import { Chip } from '@/components/engagement/ui';
+export const Route=createFileRoute('/_authenticated/inbox')({head:()=>hubHead('Curator inbox','Pending amendments and held outputs for Curator review.'),component:Inbox});
+function Inbox(){const rows=useQuery({queryKey:['curator-inbox'],queryFn:async()=>{const [b,a,o]=await Promise.all([supabase.from('project_briefs').select('id,project_id,amendment_no,change_summary').eq('kind','amendment'),supabase.from('project_amendment_approvals').select('brief_id'),supabase.from('project_outputs').select('id,project_id,title').eq('status','held')]);for(const r of [b,a,o])if(r.error)throw r.error;return [...(b.data??[]).filter(x=>!a.data?.some(y=>y.brief_id===x.id)).map(x=>({id:x.id,projectId:x.project_id,title:`Amendment A${x.amendment_no}`,kind:'Awaiting decision'})),...(o.data??[]).map(x=>({id:x.id,projectId:x.project_id,title:x.title,kind:'HELD'}))];}});return <><PageHeader title="Curator inbox"/><div className="divide-y">{rows.data?.map(r=><Link key={r.id} to="/projects/$projectId" params={{projectId:r.projectId}} search={{tab:"overview"}} className="flex min-h-16 flex-wrap items-center justify-between gap-3 py-4"><span>{r.title}</span><Chip>{r.kind}</Chip></Link>)}{!rows.data?.length&&<p className="text-muted-foreground">{rows.isPending?'Loading…':'No pending amendments or held outputs.'}</p>}</div></>;}

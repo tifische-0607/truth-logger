@@ -64,6 +64,20 @@
       "when": 1793620006047,
       "tag": "0008_apply_pending_fa_cef",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1793682296490,
+      "tag": "0009_fa_portal_management_role",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1793682356041,
+      "tag": "0010_fa_portal_client_access",
+      "breakpoints": true
     }
   ]
 }

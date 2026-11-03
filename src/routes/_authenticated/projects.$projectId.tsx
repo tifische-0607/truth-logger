@@ -19,6 +19,7 @@ import { TeamTab } from "@/components/engagement/TeamTab";
 import { ProjectStatusChip } from "@/components/projects/ProjectRow";
 import { PROJECT_STATUS, currentPhase, roleLabel, useProjectWorkspace } from "@/lib/projects";
 import { cn } from "@/lib/utils";
+import { hubHead } from '@/lib/hub';
 
 const TABS = [
   { id: "overview", label: "Overview" },
@@ -42,7 +43,7 @@ export const Route = createFileRoute("/_authenticated/projects/$projectId")({
   validateSearch: (search: Record<string, unknown>): { tab: TabId } => ({
     tab: TABS.some((t) => t.id === search["tab"]) ? (search["tab"] as TabId) : "overview",
   }),
-  head: () => ({ meta: [{ title: "Engagement — Evidence Hub" }] }),
+  head: () => hubHead('Engagement','FA-CEF engagement phases, brief, registers and release controls.'),
   component: ProjectPage,
 });
 

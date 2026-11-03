@@ -17,13 +17,13 @@ import { formatDateTime } from "@/lib/format";
 export const Route = createFileRoute("/_authenticated/capture-settings")({
   head: () => ({
     meta: [
-      { title: "Capture settings — Evidence Hub" },
+      { title: "Capture settings — FA Portal" },
       {
         name: "description",
         content:
           "Set the Facebook account label, proxy address and capture timeout the Mac mini uses for every queued capture.",
       },
-      { property: "og:title", content: "Capture settings — Evidence Hub" },
+      { property: "og:title", content: "Capture settings — FA Portal" },
       {
         property: "og:description",
         content: "Account, proxy and timeout settings applied to every queued Facebook capture.",

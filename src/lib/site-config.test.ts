@@ -1,0 +1,8 @@
+import { describe, expect, it } from 'vitest';
+import { canonicalSiteUrl, DEFAULT_SITE_URL, siteLink } from './site-config';
+describe('FA Portal canonical address',()=>{
+  it('uses the required production address by default',()=>expect(canonicalSiteUrl()).toBe('https://spyglass2.sentinel2.org'));
+  it('allows one HTTPS server override',()=>expect(canonicalSiteUrl('https://portal.example.org/')).toBe('https://portal.example.org'));
+  it('builds setup links on the canonical site',()=>expect(siteLink(DEFAULT_SITE_URL,'/invite?token=test')).toBe('https://spyglass2.sentinel2.org/invite?token=test'));
+  it('rejects external redirect paths',()=>expect(()=>siteLink(DEFAULT_SITE_URL,'//other.example.org')).toThrow());
+});

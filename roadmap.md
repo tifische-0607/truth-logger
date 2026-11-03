@@ -1,7 +1,12 @@
 # Roadmap
 
 - [x] Scope reduced to identity/navigation and home vault; hide project navigation and case Projects button without deleting existing work
-- [ ] Clients/projects work paused — waiting for revised FA-CEF-V1.10 specification
+- [ ] Stage 1 partially implemented: migrations 0009/0010 applied; identity, canonical config, sign-in/invite/client-access screens and portal shell added. BLOCKED: drizzle/tests refuses writes, so required SQL tests cannot be added; authenticated browser check remained loading, so invite acceptance and client/staff isolation are not end-to-end verified. Latest preview build is clean; 18 unit tests pass.
+- [ ] Stage 2: Library and full client portal — not requested in this turn
+- [ ] Stage 3: Research metadata and worker API — not requested in this turn
+- [ ] Stage 4: Vault metadata/plumbing — not requested in this turn
+- [ ] Stage 5: Management/SOP clocks — not requested in this turn
+- [ ] Stage 6: Cross-stage documentation and checks — follows remaining stages
 
 - [x] Rechecked approved implementation in order; tightened output provenance/storage/log guards and added real hash-mismatch tests
 

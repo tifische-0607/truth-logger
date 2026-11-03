@@ -15,9 +15,14 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useClientsAndProjects, useMe } from "@/lib/projects";
 import { ProjectRow } from "@/components/projects/ProjectRow";
+import { ClientAccess } from '@/components/ClientAccess';
+import { hubHead } from '@/lib/hub';
+import { Chip } from '@/components/engagement/ui';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { errorMessage } from '@/lib/portal-access';
 
 export const Route = createFileRoute("/_authenticated/clients/$clientId")({
-  head: () => ({ meta: [{ title: "Client — Evidence Hub" }] }),
+  head: () => hubHead('Client','Client details and administrator access in FA Portal.'),
   component: ClientPage,
 });
 
@@ -37,6 +42,8 @@ function ClientPage() {
     contact_name: "",
     contact_email: "",
     notes: "",
+    display_name: "",
+    kind: "organization",
   });
 
   useEffect(() => {
@@ -48,6 +55,8 @@ function ClientPage() {
         contact_name: client.contact_name ?? "",
         contact_email: client.contact_email ?? "",
         notes: client.notes ?? "",
+        display_name: client.display_name ?? client.name,
+        kind: client.kind,
       });
   }, [client]);
 
@@ -81,6 +90,8 @@ function ClientPage() {
         disabled={!isOwner}
         onChange={(e) => setForm({ ...form, [key]: e.target.value })}
       />
+      <div className="mb-5"><Chip>{client.kind === 'individual' ? 'Individual' : 'Organization'}</Chip></div>
+      {update.error && <p role="alert" className="mb-4 bg-failed text-failed-foreground p-3 rounded-md text-sm">{errorMessage(update.error)}</p>}
     </div>
   );
 
@@ -121,6 +132,9 @@ function ClientPage() {
               Details
             </h2>
             {field("name", "Name")}
+            {field("display_name", client.kind === 'individual' ? 'Your name' : 'Display name')}
+            <Label>Client type</Label>
+            <Select value={form.kind} disabled={!isOwner} onValueChange={kind=>setForm({...form,kind})}><SelectTrigger aria-label="Client type" className="min-h-11"><SelectValue/></SelectTrigger><SelectContent><SelectItem value="organization">Organization</SelectItem><SelectItem value="individual">Individual</SelectItem></SelectContent></Select>
             {field("legal_name", "Legal name")}
             {field("sector", "Sector")}
             {field("contact_name", "Contact")}
@@ -148,6 +162,8 @@ function ClientPage() {
                       contact_name: form.contact_name.trim() || null,
                       contact_email: form.contact_email.trim() || null,
                       notes: form.notes.trim() || null,
+                      display_name: form.display_name.trim() || form.name.trim(),
+                      kind: form.kind,
                     })
                   }
                 >
@@ -168,25 +184,7 @@ function ClientPage() {
             )}
           </section>
 
-          <section className="panel space-y-3 p-5" aria-labelledby="portal-h">
-            <div className="flex items-center justify-between gap-3">
-              <h2 id="portal-h" className="font-semibold">
-                Client portal
-              </h2>
-              <Switch
-                aria-label="Client portal"
-                checked={client.portal_enabled}
-                disabled={!isOwner || update.isPending}
-                onCheckedChange={(v) => update.mutate({ portal_enabled: v })}
-              />
-            </div>
-            <p className="text-muted-foreground text-sm">
-              Not built yet. The access rules are in place: people added to a project as{" "}
-              <strong>client viewer</strong> would see the project, its brief and the outputs you
-              deliver and share — never cases, evidence or the project log. Leave this off until the
-              portal ships.
-            </p>
-          </section>
+          <ClientAccess clientId={clientId} portalEnabled={client.portal_enabled} owner={isOwner}/>
         </div>
       </div>
       <NewProjectDialog
