@@ -2713,16 +2713,24 @@ export type Database = {
       research_captures: {
         Row: {
           captured_at: string
+          captured_at_utc: string | null
           captured_by: string | null
+          collector: string | null
+          connector_key: string | null
+          connector_version: string | null
           custody_event_id: string | null
           evidence_ref_id: string | null
           fstd001_version: string
           id: string
           item_ref: string
+          item_type: string | null
+          language: string | null
           matched_terms: string[]
           original_context: Json
           pipeline_state: string
+          platform: string | null
           project_id: string
+          requirement_ref: string | null
           run_id: string
           second_check_at: string | null
           second_check_by: string | null
@@ -2736,16 +2744,24 @@ export type Database = {
         }
         Insert: {
           captured_at?: string
+          captured_at_utc?: string | null
           captured_by?: string | null
+          collector?: string | null
+          connector_key?: string | null
+          connector_version?: string | null
           custody_event_id?: string | null
           evidence_ref_id?: string | null
           fstd001_version: string
           id?: string
           item_ref: string
+          item_type?: string | null
+          language?: string | null
           matched_terms?: string[]
           original_context?: Json
           pipeline_state?: string
+          platform?: string | null
           project_id: string
+          requirement_ref?: string | null
           run_id: string
           second_check_at?: string | null
           second_check_by?: string | null
@@ -2759,16 +2775,24 @@ export type Database = {
         }
         Update: {
           captured_at?: string
+          captured_at_utc?: string | null
           captured_by?: string | null
+          collector?: string | null
+          connector_key?: string | null
+          connector_version?: string | null
           custody_event_id?: string | null
           evidence_ref_id?: string | null
           fstd001_version?: string
           id?: string
           item_ref?: string
+          item_type?: string | null
+          language?: string | null
           matched_terms?: string[]
           original_context?: Json
           pipeline_state?: string
+          platform?: string | null
           project_id?: string
+          requirement_ref?: string | null
           run_id?: string
           second_check_at?: string | null
           second_check_by?: string | null
@@ -2781,6 +2805,13 @@ export type Database = {
           vault_write_verified?: boolean
         }
         Relationships: [
+          {
+            foreignKeyName: "research_captures_connector_key_fkey"
+            columns: ["connector_key"]
+            isOneToOne: false
+            referencedRelation: "research_connectors"
+            referencedColumns: ["key"]
+          },
           {
             foreignKeyName: "research_captures_custody_event_id_fkey"
             columns: ["custody_event_id"]
@@ -2810,6 +2841,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      research_connectors: {
+        Row: {
+          key: string
+          name: string
+          platforms: string[]
+          reject_limit: number
+          reject_window_minutes: number
+          status: string
+          status_reason: string | null
+          updated_at: string
+          updated_by: string | null
+          version: string
+        }
+        Insert: {
+          key: string
+          name: string
+          platforms: string[]
+          reject_limit?: number
+          reject_window_minutes?: number
+          status?: string
+          status_reason?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          version: string
+        }
+        Update: {
+          key?: string
+          name?: string
+          platforms?: string[]
+          reject_limit?: number
+          reject_window_minutes?: number
+          status?: string
+          status_reason?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          version?: string
+        }
+        Relationships: []
       }
       research_events: {
         Row: {
@@ -3091,6 +3161,7 @@ export type Database = {
       }
       research_refusals: {
         Row: {
+          connector_key: string | null
           id: string
           kind: string
           plan_id: string
@@ -3101,6 +3172,7 @@ export type Database = {
           run_id: string | null
         }
         Insert: {
+          connector_key?: string | null
           id?: string
           kind: string
           plan_id: string
@@ -3111,6 +3183,7 @@ export type Database = {
           run_id?: string | null
         }
         Update: {
+          connector_key?: string | null
           id?: string
           kind?: string
           plan_id?: string
@@ -3210,6 +3283,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      research_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          updated_by: string | null
+          value: number
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          updated_by?: string | null
+          value: number
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: number
+        }
+        Relationships: []
       }
       research_vault_reports: {
         Row: {
@@ -3999,6 +4093,10 @@ export type Database = {
         Args: { c: Database["public"]["Tables"]["research_captures"]["Row"] }
         Returns: string
       }
+      research_claim_job: {
+        Args: { _cycle?: number; _plan_sha256?: string }
+        Returns: Json
+      }
       research_cycle_open_for_reading: {
         Args: { _cycle: number; _project: string }
         Returns: boolean
@@ -4012,8 +4110,39 @@ export type Database = {
         Args: { p: Database["public"]["Tables"]["research_plans"]["Row"] }
         Returns: Json
       }
+      research_quarantine: {
+        Args: {
+          _connector: string
+          _plan: string
+          _project: string
+          _request: Json
+          _run: string
+          _why: string
+        }
+        Returns: Json
+      }
+      research_readiness: {
+        Args: { _cycle: number; _project: string }
+        Returns: Json
+      }
       research_record_load: {
         Args: { _loaded: number; _manifest_sha256: string; _plan: string }
+        Returns: Json
+      }
+      research_report_run: {
+        Args: { _expected?: number; _run: string; _status: string }
+        Returns: Json
+      }
+      research_report_vault: {
+        Args: { _note?: string; _online: boolean; _source: string }
+        Returns: Json
+      }
+      research_report_vault_write: {
+        Args: {
+          _capture: string
+          _custody_event?: string
+          _sha256_on_write: string
+        }
         Returns: Json
       }
       research_scope_refusal: {
@@ -4027,12 +4156,20 @@ export type Database = {
         Returns: string
       }
       research_second_check: { Args: { _capture: string }; Returns: undefined }
+      research_set_connector: {
+        Args: { _key: string; _reason?: string; _status: string }
+        Returns: undefined
+      }
       research_set_status: {
         Args: { _plan: string; _reason?: string; _status: string }
         Returns: undefined
       }
       research_set_tier: {
         Args: { _capture: string; _tier: string }
+        Returns: undefined
+      }
+      research_set_vault_window: {
+        Args: { _minutes: number }
         Returns: undefined
       }
       research_start_plan: { Args: { _plan: string }; Returns: string }
@@ -4051,6 +4188,10 @@ export type Database = {
         }
         Returns: Json
       }
+      research_submit_capture_std: {
+        Args: { _item: Json; _run: string }
+        Returns: Json
+      }
       research_submit_job: {
         Args: {
           _job_type: string
@@ -4062,6 +4203,7 @@ export type Database = {
         }
         Returns: Json
       }
+      research_vault_window_minutes: { Args: never; Returns: number }
       scenario_options_ok: { Args: { _o: Json }; Returns: boolean }
       signup_open: { Args: never; Returns: boolean }
       statements_ok: { Args: { _s: Json }; Returns: boolean }

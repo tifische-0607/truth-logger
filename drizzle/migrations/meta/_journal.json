@@ -134,6 +134,13 @@
       "when": 1793702468063,
       "tag": "0018_fa_portal_research_worker_api",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1793702546944,
+      "tag": "0019_fa_portal_research_screens_api",
+      "breakpoints": true
     }
   ]
 }
