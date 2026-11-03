@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { CheckCircle2, Circle, CircleAlert, Cloud, House } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { hubHead } from '@/lib/hub';
@@ -59,6 +59,7 @@ function RotateDialog({ vault, name }: { vault: 'home' | 'cloud'; name: string }
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [note, setNote] = useState('');
+  const trigger = useRef<HTMLButtonElement>(null);
   const [err, setErr] = useState<string | null>(null);
   const m = useMutation({
     mutationFn: async () => {
@@ -70,8 +71,8 @@ function RotateDialog({ vault, name }: { vault: 'home' | 'cloud'; name: string }
   });
   return (
     <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setErr(null); }}>
-      <DialogTrigger asChild><Button variant="outline" className="min-h-11">Rotate credentials</Button></DialogTrigger>
-      <DialogContent>
+      <DialogTrigger asChild><Button ref={trigger} variant="outline" className="min-h-11">Rotate credentials</Button></DialogTrigger>
+      <DialogContent onCloseAutoFocus={(e) => { e.preventDefault(); trigger.current?.focus(); }}>
         <DialogHeader>
           <DialogTitle>Rotate credentials: {name}</DialogTitle>
           <DialogDescription>
