@@ -50,6 +50,7 @@ import { Route as AuthenticatedProfilesCaseIdRouteImport } from './routes/_authe
 import { Route as AuthenticatedProjectsIndexRouteImport } from './routes/_authenticated/projects.index'
 import { Route as AuthenticatedProjectsProjectIdRouteImport } from './routes/_authenticated/projects.$projectId'
 import { Route as AuthenticatedReportCaseIdRouteImport } from './routes/_authenticated/report.$caseId'
+import { Route as AuthenticatedResearchIndexRouteImport } from './routes/_authenticated/research.index'
 import { Route as AuthenticatedReviewCaseIdRouteImport } from './routes/_authenticated/review.$caseId'
 import { Route as AuthenticatedSummaryCaseIdRouteImport } from './routes/_authenticated/summary.$caseId'
 import { Route as AuthenticatedTimelineCaseIdRouteImport } from './routes/_authenticated/timeline.$caseId'
@@ -69,6 +70,7 @@ import { Route as ApiPublicWorkerTranscribeRouteImport } from './routes/api/publ
 import { Route as ApiPublicWorkerUploadUrlRouteImport } from './routes/api/public/worker-upload-url'
 import { Route as ApiPublicWorkerWatchDueRouteImport } from './routes/api/public/worker-watch-due'
 import { Route as ApiPublicWorkerWatchReportRouteImport } from './routes/api/public/worker-watch-report'
+import { Route as AuthenticatedResearchRunsRunIdRouteImport } from './routes/_authenticated/research.runs.$runId'
 import { Route as AuthenticatedVaultSourceIdRecordIdRouteImport } from './routes/_authenticated/vault.$sourceId.$recordId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -289,6 +291,12 @@ const AuthenticatedReportCaseIdRoute =
     path: '/report/$caseId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedResearchIndexRoute =
+  AuthenticatedResearchIndexRouteImport.update({
+    id: '/research/',
+    path: '/research/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedReviewCaseIdRoute =
   AuthenticatedReviewCaseIdRouteImport.update({
     id: '/review/$caseId',
@@ -395,6 +403,12 @@ const ApiPublicWorkerWatchReportRoute =
     path: '/api/public/worker-watch-report',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedResearchRunsRunIdRoute =
+  AuthenticatedResearchRunsRunIdRouteImport.update({
+    id: '/research/runs/$runId',
+    path: '/research/runs/$runId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedVaultSourceIdRecordIdRoute =
   AuthenticatedVaultSourceIdRecordIdRouteImport.update({
     id: '/vault/$sourceId/$recordId',
@@ -462,6 +476,8 @@ export interface FileRoutesByFullPath {
   '/cases/': typeof AuthenticatedCasesIndexRoute
   '/document-samples/': typeof AuthenticatedDocumentSamplesIndexRoute
   '/projects/': typeof AuthenticatedProjectsIndexRoute
+  '/research/': typeof AuthenticatedResearchIndexRoute
+  '/research/runs/$runId': typeof AuthenticatedResearchRunsRunIdRoute
   '/vault/$sourceId/$recordId': typeof AuthenticatedVaultSourceIdRecordIdRoute
 }
 export interface FileRoutesByTo {
@@ -524,6 +540,8 @@ export interface FileRoutesByTo {
   '/cases': typeof AuthenticatedCasesIndexRoute
   '/document-samples': typeof AuthenticatedDocumentSamplesIndexRoute
   '/projects': typeof AuthenticatedProjectsIndexRoute
+  '/research': typeof AuthenticatedResearchIndexRoute
+  '/research/runs/$runId': typeof AuthenticatedResearchRunsRunIdRoute
   '/vault/$sourceId/$recordId': typeof AuthenticatedVaultSourceIdRecordIdRoute
 }
 export interface FileRoutesById {
@@ -588,6 +606,8 @@ export interface FileRoutesById {
   '/_authenticated/cases/': typeof AuthenticatedCasesIndexRoute
   '/_authenticated/document-samples/': typeof AuthenticatedDocumentSamplesIndexRoute
   '/_authenticated/projects/': typeof AuthenticatedProjectsIndexRoute
+  '/_authenticated/research/': typeof AuthenticatedResearchIndexRoute
+  '/_authenticated/research/runs/$runId': typeof AuthenticatedResearchRunsRunIdRoute
   '/_authenticated/vault/$sourceId/$recordId': typeof AuthenticatedVaultSourceIdRecordIdRoute
 }
 export interface FileRouteTypes {
@@ -652,6 +672,8 @@ export interface FileRouteTypes {
     | '/cases/'
     | '/document-samples/'
     | '/projects/'
+    | '/research/'
+    | '/research/runs/$runId'
     | '/vault/$sourceId/$recordId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -714,6 +736,8 @@ export interface FileRouteTypes {
     | '/cases'
     | '/document-samples'
     | '/projects'
+    | '/research'
+    | '/research/runs/$runId'
     | '/vault/$sourceId/$recordId'
   id:
     | '__root__'
@@ -777,6 +801,8 @@ export interface FileRouteTypes {
     | '/_authenticated/cases/'
     | '/_authenticated/document-samples/'
     | '/_authenticated/projects/'
+    | '/_authenticated/research/'
+    | '/_authenticated/research/runs/$runId'
     | '/_authenticated/vault/$sourceId/$recordId'
   fileRoutesById: FileRoutesById
 }
@@ -1092,6 +1118,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReportCaseIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/research/': {
+      id: '/_authenticated/research/'
+      path: '/research'
+      fullPath: '/research/'
+      preLoaderRoute: typeof AuthenticatedResearchIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/review/$caseId': {
       id: '/_authenticated/review/$caseId'
       path: '/review/$caseId'
@@ -1225,6 +1258,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWorkerWatchReportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/research/runs/$runId': {
+      id: '/_authenticated/research/runs/$runId'
+      path: '/research/runs/$runId'
+      fullPath: '/research/runs/$runId'
+      preLoaderRoute: typeof AuthenticatedResearchRunsRunIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/vault/$sourceId/$recordId': {
       id: '/_authenticated/vault/$sourceId/$recordId'
       path: '/vault/$sourceId/$recordId'
@@ -1276,6 +1316,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCasesIndexRoute: typeof AuthenticatedCasesIndexRoute
   AuthenticatedDocumentSamplesIndexRoute: typeof AuthenticatedDocumentSamplesIndexRoute
   AuthenticatedProjectsIndexRoute: typeof AuthenticatedProjectsIndexRoute
+  AuthenticatedResearchIndexRoute: typeof AuthenticatedResearchIndexRoute
+  AuthenticatedResearchRunsRunIdRoute: typeof AuthenticatedResearchRunsRunIdRoute
   AuthenticatedVaultSourceIdRecordIdRoute: typeof AuthenticatedVaultSourceIdRecordIdRoute
 }
 
@@ -1321,6 +1363,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDocumentSamplesIndexRoute:
     AuthenticatedDocumentSamplesIndexRoute,
   AuthenticatedProjectsIndexRoute: AuthenticatedProjectsIndexRoute,
+  AuthenticatedResearchIndexRoute: AuthenticatedResearchIndexRoute,
+  AuthenticatedResearchRunsRunIdRoute: AuthenticatedResearchRunsRunIdRoute,
   AuthenticatedVaultSourceIdRecordIdRoute:
     AuthenticatedVaultSourceIdRecordIdRoute,
 }

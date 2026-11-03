@@ -13,6 +13,7 @@ import { EvidenceTab } from "@/components/engagement/EvidenceTab";
 import { LogTab } from "@/components/engagement/LogTab";
 import { OverviewTab } from "@/components/engagement/OverviewTab";
 import { ScenarioRegister, SuccessPlan } from "@/components/engagement/PlanTab";
+import { CollectTab } from "@/components/engagement/CollectTab";
 import { ReadingTab } from "@/components/engagement/ReadingTab";
 import { ReportsTab } from "@/components/engagement/ReportsTab";
 import { TeamTab } from "@/components/engagement/TeamTab";
@@ -30,7 +31,8 @@ const TABS = [
   { id: "success", label: "Success plan" },
   { id: "gates", label: "Gates" },
   { id: "design", label: "Mandate & design" },
-  { id: "reading", label: "Collect & read" },
+  { id: "collect", label: "Collect" },
+  { id: "reading", label: "Reading" },
   { id: "evidence", label: "Evidence & load" },
   { id: "reports", label: "Reports" },
   { id: "release", label: "Release (HELD)" },
@@ -189,6 +191,7 @@ function ProjectPage() {
       {tab === "gates" ? <GatesTab ws={w} /> : null}
       {tab === "release" ? <ReleaseTab ws={w} /> : null}
       {tab === "design" ? <DesignTab ws={w} /> : null}
+      {tab === "collect" ? <CollectTab ws={w} /> : null}
       {tab === "reading" ? <ReadingTab ws={w} /> : null}
       {tab === "evidence" ? <EvidenceTab ws={w} /> : null}
       {tab === "reports" ? <ReportsTab ws={w} /> : null}
