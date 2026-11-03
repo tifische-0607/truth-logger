@@ -1,0 +1,16 @@
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useQuery } from '@tanstack/react-query';
+import { useServerFn } from '@tanstack/react-start';
+import { useState } from 'react';
+import { getInviteInfo, acceptNewClientInvite, acceptExistingClientInvite } from '@/lib/portal.functions';
+import { errorMessage } from '@/lib/portal-access';
+import { hubHead } from '@/lib/hub';
+import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+export const Route=createFileRoute('/invite')({validateSearch:(s:Record<string,unknown>)=>({token:typeof s.token==='string'?s.token:''}),head:()=>hubHead('Set up client access','Accept a single-use FA Portal client invitation.'),component:InvitePage});
+function InvitePage(){const {token}=Route.useSearch();const navigate=useNavigate();const infoFn=useServerFn(getInviteInfo);const createFn=useServerFn(acceptNewClientInvite);const existingFn=useServerFn(acceptExistingClientInvite);const info=useQuery({queryKey:['invite',token],queryFn:()=>infoFn({data:{token}}),retry:false});const [password,setPassword]=useState('');const [busy,setBusy]=useState(false);const [error,setError]=useState('');
+ async function submit(e:React.FormEvent){e.preventDefault();setBusy(true);setError('');try{if(info.data?.existing_account){const result=await supabase.auth.signInWithPassword({email:info.data.email,password});if(result.error)throw new Error('Check your email and password');await existingFn({data:{token}});}else{const r=await createFn({data:{token,password}});const result=await supabase.auth.signInWithPassword({email:r.email,password});if(result.error)throw new Error('Check your email and password');}await supabase.rpc('portal_record_sign_in');await navigate({to:'/portal',replace:true});}catch(e){setError(errorMessage(e));}finally{setBusy(false);}}
+ return <main className="flex min-h-screen items-center justify-center bg-background px-4 py-10"><div className="w-full max-w-md space-y-6"><h1 className="text-2xl font-bold">FA Portal</h1><section className="panel p-6 space-y-4"><h2 className="text-xl font-semibold">{info.data?.client_name??'Client invitation'}</h2>{info.isPending?<p>Checking invitation…</p>:info.error?<p role="alert" className="text-failed-foreground">{errorMessage(info.error)}</p>:<form onSubmit={submit} className="space-y-4"><p className="text-sm">Welcome, {info.data?.name}.</p><p className="text-muted-foreground text-sm break-all">{info.data?.email}</p><div className="space-y-2"><Label htmlFor="setup-password">{info.data?.existing_account?'Current password':'Set password'}</Label><Input id="setup-password" type="password" required minLength={info.data?.existing_account?1:12} autoComplete={info.data?.existing_account?'current-password':'new-password'} value={password} onChange={e=>setPassword(e.target.value)}/>{!info.data?.existing_account&&<p className="text-xs text-muted-foreground">At least 12 characters.</p>}</div>{error&&<p role="alert" className="text-failed-foreground text-sm">{error}</p>}<Button disabled={busy} type="submit">{busy?'Setting up…':'Accept invitation'}</Button></form>}</section></div></main>;
+}
