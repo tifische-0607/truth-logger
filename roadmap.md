@@ -49,6 +49,7 @@
 - Prices, currency and billing period
 - Which reports belong to each tier
 - FA-STD-001 naming
+- Universal standard v1 is a Sample draft awaiting Curator edit/approval; wiring into the report builder waits for U6
 - Retention periods
 - Early warning thresholds, Telegram recipients, briefing template
 - First framework library entries
