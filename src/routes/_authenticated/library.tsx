@@ -20,7 +20,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { getLibraryFileLink } from '@/lib/library.functions';
 import { audienceOf, AUDIENCE_LABEL, LIBRARY_KINDS, type LibraryDoc } from '@/lib/library';
 import { sha256Hex } from '@/lib/engagement-outputs';
-import { formatDate } from '@/lib/format';
+import { formatDateTime as formatDate } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
 export const Route = createFileRoute('/_authenticated/library')({
@@ -47,7 +47,7 @@ function AudienceChip({ d }: { d: LibraryDoc }) {
   return (
     <span className={cn('inline-flex min-h-7 items-center rounded-full border px-2.5 text-xs font-medium',
       a === 'shared' && 'border-primary/40 bg-primary/10 text-primary',
-      a === 'held' && 'border-warning/50 bg-warning/10',
+      a === 'held' && 'border-foreground/40 bg-accent',
       a === 'void' && 'border-destructive/40 bg-destructive/10 text-destructive',
       a === 'staff' && 'bg-muted text-muted-foreground')}>{AUDIENCE_LABEL[a]}</span>
   );
