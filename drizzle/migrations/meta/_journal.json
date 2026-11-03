@@ -148,6 +148,20 @@
       "when": 1793702835522,
       "tag": "0020_fa_portal_research_worker_privileges",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1793706936903,
+      "tag": "0021_fa_portal_vaults",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1793707203325,
+      "tag": "0022_fa_portal_vault_privileges",
+      "breakpoints": true
     }
   ]
 }

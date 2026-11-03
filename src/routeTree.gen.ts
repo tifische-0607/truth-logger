@@ -33,6 +33,7 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedSourcesRouteImport } from './routes/_authenticated/sources'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as AuthenticatedTemplatesRouteImport } from './routes/_authenticated/templates'
+import { Route as AuthenticatedVaultsRouteImport } from './routes/_authenticated/vaults'
 import { Route as AuthenticatedVerifyRouteImport } from './routes/_authenticated/verify'
 import { Route as AuthenticatedWatchlistRouteImport } from './routes/_authenticated/watchlist'
 import { Route as AuthenticatedWorkerRouteImport } from './routes/_authenticated/worker'
@@ -192,6 +193,11 @@ const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
 const AuthenticatedTemplatesRoute = AuthenticatedTemplatesRouteImport.update({
   id: '/templates',
   path: '/templates',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedVaultsRoute = AuthenticatedVaultsRouteImport.update({
+  id: '/vaults',
+  path: '/vaults',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedVerifyRoute = AuthenticatedVerifyRouteImport.update({
@@ -440,6 +446,7 @@ export interface FileRoutesByFullPath {
   '/sources': typeof AuthenticatedSourcesRoute
   '/team': typeof AuthenticatedTeamRoute
   '/templates': typeof AuthenticatedTemplatesRoute
+  '/vaults': typeof AuthenticatedVaultsRoute
   '/verify': typeof AuthenticatedVerifyRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
   '/worker': typeof AuthenticatedWorkerRoute
@@ -504,6 +511,7 @@ export interface FileRoutesByTo {
   '/sources': typeof AuthenticatedSourcesRoute
   '/team': typeof AuthenticatedTeamRoute
   '/templates': typeof AuthenticatedTemplatesRoute
+  '/vaults': typeof AuthenticatedVaultsRoute
   '/verify': typeof AuthenticatedVerifyRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
   '/worker': typeof AuthenticatedWorkerRoute
@@ -570,6 +578,7 @@ export interface FileRoutesById {
   '/_authenticated/sources': typeof AuthenticatedSourcesRoute
   '/_authenticated/team': typeof AuthenticatedTeamRoute
   '/_authenticated/templates': typeof AuthenticatedTemplatesRoute
+  '/_authenticated/vaults': typeof AuthenticatedVaultsRoute
   '/_authenticated/verify': typeof AuthenticatedVerifyRoute
   '/_authenticated/watchlist': typeof AuthenticatedWatchlistRoute
   '/_authenticated/worker': typeof AuthenticatedWorkerRoute
@@ -636,6 +645,7 @@ export interface FileRouteTypes {
     | '/sources'
     | '/team'
     | '/templates'
+    | '/vaults'
     | '/verify'
     | '/watchlist'
     | '/worker'
@@ -700,6 +710,7 @@ export interface FileRouteTypes {
     | '/sources'
     | '/team'
     | '/templates'
+    | '/vaults'
     | '/verify'
     | '/watchlist'
     | '/worker'
@@ -765,6 +776,7 @@ export interface FileRouteTypes {
     | '/_authenticated/sources'
     | '/_authenticated/team'
     | '/_authenticated/templates'
+    | '/_authenticated/vaults'
     | '/_authenticated/verify'
     | '/_authenticated/watchlist'
     | '/_authenticated/worker'
@@ -997,6 +1009,13 @@ declare module '@tanstack/react-router' {
       path: '/templates'
       fullPath: '/templates'
       preLoaderRoute: typeof AuthenticatedTemplatesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/vaults': {
+      id: '/_authenticated/vaults'
+      path: '/vaults'
+      fullPath: '/vaults'
+      preLoaderRoute: typeof AuthenticatedVaultsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/verify': {
@@ -1294,6 +1313,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSourcesRoute: typeof AuthenticatedSourcesRoute
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRoute
   AuthenticatedTemplatesRoute: typeof AuthenticatedTemplatesRoute
+  AuthenticatedVaultsRoute: typeof AuthenticatedVaultsRoute
   AuthenticatedVerifyRoute: typeof AuthenticatedVerifyRoute
   AuthenticatedWatchlistRoute: typeof AuthenticatedWatchlistRoute
   AuthenticatedWorkerRoute: typeof AuthenticatedWorkerRoute
@@ -1340,6 +1360,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSourcesRoute: AuthenticatedSourcesRoute,
   AuthenticatedTeamRoute: AuthenticatedTeamRoute,
   AuthenticatedTemplatesRoute: AuthenticatedTemplatesRoute,
+  AuthenticatedVaultsRoute: AuthenticatedVaultsRoute,
   AuthenticatedVerifyRoute: AuthenticatedVerifyRoute,
   AuthenticatedWatchlistRoute: AuthenticatedWatchlistRoute,
   AuthenticatedWorkerRoute: AuthenticatedWorkerRoute,

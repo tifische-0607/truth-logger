@@ -29,7 +29,7 @@ import { cn } from "@/lib/utils";
 import { timeAgo } from "@/lib/format";
 import { OfflineBanner } from "@/components/OfflineBanner";
 import { NewCaptureSheet } from "@/components/NewCaptureSheet";
-import { SourceStatus } from '@/components/SourceStatus';
+import { SidebarVaults } from '@/components/SidebarVaults';
 import { CaseWorkspace, CASE_TABS } from '@/components/CaseWorkspace';
 import { HomeReferences } from '@/components/HomeReferences';
 import { Button } from '@/components/ui/button';
@@ -49,7 +49,7 @@ const nav = [
 ] as const;
 const collectTabs = [['/collect','Now'],['/queue','All jobs'],['/watchlist','Watched pages'],['/results','Results'],['/capture-log','Capture log'],['/worker','Worker'],['/capture-settings','Capture setup']] as const;
 const integrityTabs = [['/verify','Verify'],['/export','Export bundle'],['/offline','Offline library']] as const;
-const adminTabs = [['/team','Team'],['/templates','Case templates'],['/settings','Settings']] as const;
+const adminTabs = [['/team','Team'],['/templates','Case templates'],['/settings','Settings'],['/vaults','Vaults']] as const;
 
 export function useWorkerStatus() {
   const queryClient = useQueryClient();
@@ -292,12 +292,13 @@ export function AppShell({ children }: { children: ReactNode }) {
           {(me.data?.isOwner || me.data?.isManagement) && <Link to="/management" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><Gauge className="size-5"/>Management</Link>}
           <Link to="/portal" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><Users className="size-5"/>Client preview</Link>
           <Link to="/sources" className="flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm hover:bg-sidebar-accent"><Server className="size-5"/>Sources</Link>
+          <Link to="/vaults" className={cn("flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm hover:bg-sidebar-accent", pathname.startsWith('/vaults') && ACTIVE)}><Server className="size-5"/>Vaults</Link>
           <Link to="/team" className="flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm hover:bg-sidebar-accent"><Users className="size-5"/>Admin</Link>
         </nav>
 
         <div className="border-sidebar-border space-y-3 border-t pt-4">
           <ThemeControl/>
-          <SourceStatus />
+          <SidebarVaults />
           <WorkerStatusCard />
           <Button variant="ghost"
             onClick={signOut}
@@ -323,7 +324,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
 
         <main className="min-w-0 flex-1 px-4 pt-6 pb-28 md:px-8 md:pt-8 md:pb-12">
-          <div className="md:hidden no-print mb-4 flex flex-wrap gap-3 text-sm"><Link to="/library" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Library</Link><Link to="/research" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Research</Link><Link to="/sources" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Sources</Link><Link to="/team" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Admin</Link></div>
+          <div className="md:hidden no-print mb-4 flex flex-wrap gap-3 text-sm"><Link to="/library" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Library</Link><Link to="/research" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Research</Link><Link to="/sources" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Sources</Link><Link to="/vaults" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Vaults</Link><Link to="/team" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Admin</Link></div>
           {workspaceTabs.length>0 && <nav aria-label="Workspace pages" className="no-print mb-6 relative flex overflow-x-auto border-b">{workspaceTabs.map(([to,label])=><Link key={to} to={to} className={cn('shrink-0 min-h-12 px-4 py-3 border-b-2 text-sm',pathname===to?'border-primary text-foreground font-semibold':'border-transparent text-muted-foreground')}>{label}</Link>)}</nav>}
           {caseId && <CaseWorkspace caseId={caseId} path={pathname}/>}
           {children}
@@ -377,7 +378,7 @@ const SECTIONS: [RegExp, string][] = [
   [/^\/(cases|case-database|trail|timeline|profiles|comments|transcripts|custody|report|dossier|summary|items|incidents)/, "04 · Cases"],
   [/^\/(collect|queue|watchlist|results|capture-log|worker|capture-settings|jobs)/, "05 · Collect"],
   [/^\/(integrity|verify|export|offline)/, "06 · Integrity"], [/^\/library/, "07 · Library"],
-  [/^\/sources/, "08 · Sources"], [/^\/(team|templates|settings)/, "09 · Admin"],
+  [/^\/sources/, "08 · Sources"], [/^\/(team|templates|settings|vaults)/, "09 · Admin"],
   [/^\/inbox/, "Curator"], [/^\/management/, "Management"],
 ];
 export function sectionKicker(pathname: string) {
