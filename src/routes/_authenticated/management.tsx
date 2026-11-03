@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 
 const PILLS = ["Overview", "Clients", "Phases", "SOPs and KPIs"] as const;
 type Pill = (typeof PILLS)[number];
-const str = (v: unknown) => (typeof v === "string" && v ? v : undefined);
+const str = (v: unknown) => (typeof v === "number" ? String(v) : typeof v === "string" && v ? v : undefined);
 
 export const Route = createFileRoute("/_authenticated/management")({
   validateSearch: (r: Record<string, unknown>): { pill?: string | undefined; phase?: string | undefined; client?: string | undefined; preview?: string | undefined } =>
