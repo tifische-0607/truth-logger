@@ -15,3 +15,6 @@
 - Store project output files under immutable hash-qualified paths; home-containing ZIP outputs remain device-only.
 - Use shared hub/project modules for verdicts, hashing and metadata so all project surfaces apply the same rules.
 - Build each output against its recorded brief version, not the current brief, to keep deliverable provenance consistent.
+- Resolve full site links through site-config and the server-provided SITE_URL configuration; preview auth callbacks stay same-origin so broker sign-in works during development.
+- Client administrator identities are isolated from staff roles and engagement membership by database guards; staff routing and public client surfaces use the database identity function.
+- Record invitation hashes and consume them atomically before privileged account creation; raw single-use links are returned only to the authorized inviter and are never persisted or logged.

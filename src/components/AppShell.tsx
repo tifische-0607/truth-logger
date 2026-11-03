@@ -31,6 +31,8 @@ import { SourceStatus } from '@/components/SourceStatus';
 import { CaseWorkspace, CASE_TABS } from '@/components/CaseWorkspace';
 import { HomeReferences } from '@/components/HomeReferences';
 import { Button } from '@/components/ui/button';
+import { ThemeControl } from '@/components/ThemeControl';
+import { useMe } from '@/lib/projects';
 
 const nav = [
   { to: "/dashboard", label: "Home", icon: Gauge },
@@ -236,6 +238,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
   const [captureOpen, setCaptureOpen] = useState(false);
   const [captureUrl, setCaptureUrl] = useState("");
+  const me = useMe();
+  const canCollect = me.data?.isInvestigator ?? false;
 
   // Home Screen shortcut / shared link: /dashboard?capture=1&url=…
   useEffect(() => {
@@ -283,11 +287,15 @@ export function AppShell({ children }: { children: ReactNode }) {
             </Link>
           ))}
           <p className="mt-5 px-3 text-xs text-sidebar-foreground/60">System</p>
+          {me.data?.isCurator && <Link to="/inbox" className="flex min-h-12 items-center gap-3 px-3 text-sm"><ScrollText className="size-5"/>Curator inbox</Link>}
+          {(me.data?.isOwner || me.data?.isManagement) && <Link to="/management" className="flex min-h-12 items-center gap-3 px-3 text-sm"><Gauge className="size-5"/>Management</Link>}
+          <Link to="/portal" className="flex min-h-12 items-center gap-3 px-3 text-sm"><Users className="size-5"/>Client preview</Link>
           <Link to="/sources" className="flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm hover:bg-sidebar-accent"><Server className="size-5"/>Sources</Link>
           <Link to="/team" className="flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm hover:bg-sidebar-accent"><Users className="size-5"/>Admin</Link>
         </nav>
 
         <div className="border-sidebar-border space-y-3 border-t pt-4">
+          <ThemeControl/>
           <SourceStatus />
           <WorkerStatusCard />
           <Button variant="ghost"
@@ -320,7 +328,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           {caseId && pathname.startsWith('/trail/') && <HomeReferences caseId={caseId}/>}
         </main>
 
-        <Button
+        {canCollect && <Button
           type="button"
           onClick={() => {
             setCaptureUrl("");
@@ -331,13 +339,13 @@ export function AppShell({ children }: { children: ReactNode }) {
         >
           <ListPlus className="size-5" />
           New capture
-        </Button>
+        </Button>}
 
-        <NewCaptureSheet
+        {canCollect && <NewCaptureSheet
           open={captureOpen}
           onOpenChange={setCaptureOpen}
           initialUrl={captureUrl}
-        />
+        />}
 
         <nav className="bg-sidebar text-sidebar-foreground safe-bottom fixed inset-x-0 bottom-0 z-40 flex justify-around border-t border-sidebar-border md:hidden">
           {nav.map((entry) => (

@@ -374,6 +374,7 @@ export type Me = {
   uid: string | null;
   isOwner: boolean;
   isCurator: boolean;
+  isManagement?: boolean;
   isInvestigator: boolean;
   name: string;
 };
@@ -396,7 +397,8 @@ export function useMe() {
         uid,
         isOwner: rs.includes("owner"),
         isCurator: rs.includes("curator"),
-        isInvestigator: rs.length > 0,
+        isManagement: rs.includes("management"),
+        isInvestigator: rs.some(r=>r!=='management'),
         name: profile?.display_name || profile?.email || auth.user?.email || "",
       };
     },
@@ -787,7 +789,8 @@ export function useProjectWorkspace(projectId: string) {
         uid,
         isOwner: myRole === "owner",
         isCurator: myRole === "curator",
-        isInvestigator: !!myRole,
+        isManagement: myRole === "management",
+        isInvestigator: !!myRole && myRole !== 'management',
         name: names.get(uid) ?? "",
       };
       return {
@@ -984,7 +987,7 @@ export function useHomeVault() {
     enabled: !!source,
     refetchInterval: 30_000,
     retry: false,
-    queryFn: () => gatewayHealth(source!),
+    queryFn: () => source ? gatewayHealth(source) : Promise.resolve('offline' as const),
   });
   return {
     source,

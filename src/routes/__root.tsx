@@ -132,6 +132,8 @@ function RootComponent() {
 
   useEffect(() => {
     registerOfflineWorker();
+    const theme = localStorage.getItem('fa.theme');
+    if(theme === 'dark' || theme === 'high-contrast') document.documentElement.classList.add(theme);
   }, []);
 
   useEffect(() => {
