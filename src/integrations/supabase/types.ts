@@ -197,6 +197,156 @@ export type Database = {
           },
         ]
       }
+      billing_events: {
+        Row: {
+          actor: string
+          client_id: string
+          created_at: string
+          detail: Json
+          id: string
+          invoice_id: string | null
+          kind: string
+          request_id: string | null
+        }
+        Insert: {
+          actor?: string
+          client_id: string
+          created_at?: string
+          detail?: Json
+          id?: string
+          invoice_id?: string | null
+          kind: string
+          request_id?: string | null
+        }
+        Update: {
+          actor?: string
+          client_id?: string
+          created_at?: string
+          detail?: Json
+          id?: string
+          invoice_id?: string | null
+          kind?: string
+          request_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "billing_events_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "billing_events_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "billing_events_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "upgrade_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      billing_price_log: {
+        Row: {
+          actor: string
+          created_at: string
+          field: string
+          id: string
+          new_value: Json | null
+          old_value: Json | null
+          tier_id: string | null
+        }
+        Insert: {
+          actor?: string
+          created_at?: string
+          field: string
+          id?: string
+          new_value?: Json | null
+          old_value?: Json | null
+          tier_id?: string | null
+        }
+        Update: {
+          actor?: string
+          created_at?: string
+          field?: string
+          id?: string
+          new_value?: Json | null
+          old_value?: Json | null
+          tier_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "billing_price_log_tier_id_fkey"
+            columns: ["tier_id"]
+            isOneToOne: false
+            referencedRelation: "billing_tiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      billing_settings: {
+        Row: {
+          billing_period: string
+          currency: string
+          id: number
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          billing_period?: string
+          currency?: string
+          id?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          billing_period?: string
+          currency?: string
+          id?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      billing_tiers: {
+        Row: {
+          contents: string[]
+          id: string
+          name: string
+          price: number | null
+          rank: number
+          seat_limit: number | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          contents?: string[]
+          id?: string
+          name: string
+          price?: number | null
+          rank: number
+          seat_limit?: number | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          contents?: string[]
+          id?: string
+          name?: string
+          price?: number | null
+          rank?: number
+          seat_limit?: number | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       capture_jobs: {
         Row: {
           case_id: string | null
@@ -460,6 +610,71 @@ export type Database = {
           },
         ]
       }
+      client_tier_log: {
+        Row: {
+          actor: string
+          client_id: string
+          created_at: string
+          id: string
+          invoice_id: string | null
+          new_tier_id: string
+          note: string | null
+          old_tier_id: string | null
+          seats_used: number
+        }
+        Insert: {
+          actor?: string
+          client_id: string
+          created_at?: string
+          id?: string
+          invoice_id?: string | null
+          new_tier_id: string
+          note?: string | null
+          old_tier_id?: string | null
+          seats_used: number
+        }
+        Update: {
+          actor?: string
+          client_id?: string
+          created_at?: string
+          id?: string
+          invoice_id?: string | null
+          new_tier_id?: string
+          note?: string | null
+          old_tier_id?: string | null
+          seats_used?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_tier_log_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_tier_log_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_tier_log_new_tier_id_fkey"
+            columns: ["new_tier_id"]
+            isOneToOne: false
+            referencedRelation: "billing_tiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_tier_log_old_tier_id_fkey"
+            columns: ["old_tier_id"]
+            isOneToOne: false
+            referencedRelation: "billing_tiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_users: {
         Row: {
           client_id: string
@@ -536,6 +751,7 @@ export type Database = {
           portal_enabled: boolean
           sector: string | null
           status: string
+          tier_id: string | null
           time_zone: string
           updated_at: string
         }
@@ -555,6 +771,7 @@ export type Database = {
           portal_enabled?: boolean
           sector?: string | null
           status?: string
+          tier_id?: string | null
           time_zone?: string
           updated_at?: string
         }
@@ -574,10 +791,19 @@ export type Database = {
           portal_enabled?: boolean
           sector?: string | null
           status?: string
+          tier_id?: string | null
           time_zone?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "clients_tier_id_fkey"
+            columns: ["tier_id"]
+            isOneToOne: false
+            referencedRelation: "billing_tiers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       clock_pauses: {
         Row: {
@@ -1273,6 +1499,90 @@ export type Database = {
             columns: ["case_id"]
             isOneToOne: false
             referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          client_id: string
+          created_at: string
+          created_by: string
+          currency: string
+          due_date: string | null
+          for_tier_id: string | null
+          id: string
+          issued_at: string | null
+          lines: Json
+          notes: string | null
+          number: string | null
+          paid_at: string | null
+          payment_amount: number | null
+          payment_date: string | null
+          payment_method: string | null
+          payment_reference: string | null
+          status: string
+          total: number
+          void_reason: string | null
+          voided_at: string | null
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          created_by?: string
+          currency: string
+          due_date?: string | null
+          for_tier_id?: string | null
+          id?: string
+          issued_at?: string | null
+          lines?: Json
+          notes?: string | null
+          number?: string | null
+          paid_at?: string | null
+          payment_amount?: number | null
+          payment_date?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          status?: string
+          total: number
+          void_reason?: string | null
+          voided_at?: string | null
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          created_by?: string
+          currency?: string
+          due_date?: string | null
+          for_tier_id?: string | null
+          id?: string
+          issued_at?: string | null
+          lines?: Json
+          notes?: string | null
+          number?: string | null
+          paid_at?: string | null
+          payment_amount?: number | null
+          payment_date?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          status?: string
+          total?: number
+          void_reason?: string | null
+          voided_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_for_tier_id_fkey"
+            columns: ["for_tier_id"]
+            isOneToOne: false
+            referencedRelation: "billing_tiers"
             referencedColumns: ["id"]
           },
         ]
@@ -3966,6 +4276,73 @@ export type Database = {
           },
         ]
       }
+      upgrade_requests: {
+        Row: {
+          client_id: string
+          created_at: string
+          current_tier_id: string | null
+          decided_at: string | null
+          decided_by: string | null
+          decision_note: string | null
+          id: string
+          note: string | null
+          requested_by: string
+          requested_by_name: string | null
+          requested_tier_id: string
+          status: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          current_tier_id?: string | null
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_note?: string | null
+          id?: string
+          note?: string | null
+          requested_by?: string
+          requested_by_name?: string | null
+          requested_tier_id: string
+          status?: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          current_tier_id?: string | null
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_note?: string | null
+          id?: string
+          note?: string | null
+          requested_by?: string
+          requested_by_name?: string | null
+          requested_tier_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "upgrade_requests_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "upgrade_requests_current_tier_id_fkey"
+            columns: ["current_tier_id"]
+            isOneToOne: false
+            referencedRelation: "billing_tiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "upgrade_requests_requested_tier_id_fkey"
+            columns: ["requested_tier_id"]
+            isOneToOne: false
+            referencedRelation: "billing_tiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -4612,6 +4989,66 @@ export type Database = {
     Functions: {
       append_job_log: {
         Args: { p_job_id: string; p_lines: string[]; p_warnings: string[] }
+        Returns: undefined
+      }
+      billing_change_tier: {
+        Args: {
+          _client: string
+          _invoice: string
+          _note: string
+          _tier: string
+        }
+        Returns: undefined
+      }
+      billing_client_summary: { Args: { c?: string }; Returns: Json }
+      billing_create_invoice: {
+        Args: {
+          _client: string
+          _due: string
+          _lines: Json
+          _notes: string
+          _tier: string
+        }
+        Returns: string
+      }
+      billing_decide_request: {
+        Args: { _approve: boolean; _note: string; _request: string }
+        Returns: undefined
+      }
+      billing_is_finance: { Args: { u: string }; Returns: boolean }
+      billing_issue_invoice: { Args: { _invoice: string }; Returns: string }
+      billing_member_client: { Args: { u: string }; Returns: string }
+      billing_record_payment: {
+        Args: {
+          _amount: number
+          _date: string
+          _invoice: string
+          _method: string
+          _reference: string
+        }
+        Returns: undefined
+      }
+      billing_request_upgrade: {
+        Args: { _note: string; _tier: string }
+        Returns: string
+      }
+      billing_seats_used: { Args: { c: string }; Returns: number }
+      billing_update_settings: {
+        Args: { _currency: string; _period: string }
+        Returns: undefined
+      }
+      billing_update_tier: {
+        Args: {
+          _contents: string[]
+          _name: string
+          _price: number
+          _seat_limit: number
+          _tier: string
+        }
+        Returns: undefined
+      }
+      billing_void_invoice: {
+        Args: { _invoice: string; _reason: string }
         Returns: undefined
       }
       brief_facts_ok: { Args: { _facts: Json }; Returns: boolean }
