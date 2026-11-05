@@ -32,7 +32,7 @@
 7. [ ] U6 Methodology checkpoints (needs U4, U5, U8) — waits for Go
 8. [ ] Phase 9 Hardening and full test run — waits for Go
 9. [ ] U1 Membership tiers and seats (needs Phase 4) — waits for Go
-10. [ ] U2 Pricing, upgrade requests and billing (needs U1) — waits for Go
+10. [x] U2 Pricing, upgrade requests and billing — built 5 Nov 2026 (0030, 0031): client Pricing and Billing tabs, upgrade requests with staff Billing inbox badge, owner/Management pricing editor (placeholder Tier 1–3, "Price on request", RM/monthly), invoices Draft→Issued→Paid/Void with never-reused numbers, tier change after paid invoice refused below seats used, append-only logs, A4 invoice PDF. SQL checks saved in tests/sql/u2_billing_test.sql (unrun). Built ahead of U1: seats used = pending + active client users; U1 seat enforcement when adding users still open
 11. [ ] U7 Early warning platform (needs U4, U5, U8) — waits for Go. Requested 3 Nov 2026 for after U6: analyst confirmation, email and Telegram alerts, briefing document on DarkNight, "Not configured" until channels are set.
 12. [ ] U9 Link analysis (needs U4, U5, U8) — waits for Go
 13. [ ] U11 Narrative and coordination detection (needs U7, U8, U9) — waits for Go
