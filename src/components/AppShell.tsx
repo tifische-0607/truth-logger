@@ -23,6 +23,7 @@ import {
   Search,
   Microscope,
   BookOpen,
+  Receipt,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -382,7 +383,7 @@ const SECTIONS: [RegExp, string][] = [
   [/^\/(collect|queue|watchlist|results|capture-log|worker|capture-settings|jobs)/, "05 · Collect"],
   [/^\/(integrity|verify|export|offline)/, "06 · Integrity"], [/^\/library/, "07 · Library"],
   [/^\/sources/, "08 · Sources"], [/^\/(team|templates|settings|vaults)/, "09 · Admin"],
-  [/^\/inbox/, "Curator"], [/^\/management/, "Management"], [/^\/frameworks/, "Frameworks"],
+  [/^\/inbox/, "Curator"], [/^\/management/, "Management"], [/^\/billing/, "Billing"], [/^\/frameworks/, "Frameworks"],
 ];
 export function sectionKicker(pathname: string) {
   return SECTIONS.find(([re]) => re.test(pathname))?.[1] ?? "FA Portal";
