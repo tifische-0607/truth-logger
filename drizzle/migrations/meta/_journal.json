@@ -225,6 +225,27 @@
       "when": 1793839120086,
       "tag": "0031_fa_portal_u2_billing_clients",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1793852370649,
+      "tag": "0032_fa_portal_u4_requirements_register",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1793852474663,
+      "tag": "0033_fa_portal_u4_requirements_register_body",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1793852519412,
+      "tag": "0034_fa_portal_u4_register_privileges",
+      "breakpoints": true
     }
   ]
 }

@@ -3423,6 +3423,7 @@ export type Database = {
           connector_key: string | null
           connector_version: string | null
           custody_event_id: string | null
+          darknight_path: string | null
           evidence_ref_id: string | null
           fstd001_version: string
           id: string
@@ -3430,10 +3431,12 @@ export type Database = {
           item_type: string | null
           language: string | null
           matched_terms: string[]
+          naming_scheme: string | null
           original_context: Json
           pipeline_state: string
           platform: string | null
           project_id: string
+          requirement_id: string | null
           requirement_ref: string | null
           run_id: string
           second_check_at: string | null
@@ -3454,6 +3457,7 @@ export type Database = {
           connector_key?: string | null
           connector_version?: string | null
           custody_event_id?: string | null
+          darknight_path?: string | null
           evidence_ref_id?: string | null
           fstd001_version: string
           id?: string
@@ -3461,10 +3465,12 @@ export type Database = {
           item_type?: string | null
           language?: string | null
           matched_terms?: string[]
+          naming_scheme?: string | null
           original_context?: Json
           pipeline_state?: string
           platform?: string | null
           project_id: string
+          requirement_id?: string | null
           requirement_ref?: string | null
           run_id: string
           second_check_at?: string | null
@@ -3485,6 +3491,7 @@ export type Database = {
           connector_key?: string | null
           connector_version?: string | null
           custody_event_id?: string | null
+          darknight_path?: string | null
           evidence_ref_id?: string | null
           fstd001_version?: string
           id?: string
@@ -3492,10 +3499,12 @@ export type Database = {
           item_type?: string | null
           language?: string | null
           matched_terms?: string[]
+          naming_scheme?: string | null
           original_context?: Json
           pipeline_state?: string
           platform?: string | null
           project_id?: string
+          requirement_id?: string | null
           requirement_ref?: string | null
           run_id?: string
           second_check_at?: string | null
@@ -3535,6 +3544,13 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_captures_requirement_id_fkey"
+            columns: ["requirement_id"]
+            isOneToOne: false
+            referencedRelation: "research_requirements"
             referencedColumns: ["id"]
           },
           {
@@ -3927,6 +3943,146 @@ export type Database = {
             columns: ["run_id"]
             isOneToOne: false
             referencedRelation: "research_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      research_register_marks: {
+        Row: {
+          action: string
+          brief_id: string
+          id: string
+          marked_at: string
+          marked_by: string | null
+          note: string | null
+          project_id: string
+          register_sha256: string | null
+        }
+        Insert: {
+          action: string
+          brief_id: string
+          id?: string
+          marked_at?: string
+          marked_by?: string | null
+          note?: string | null
+          project_id: string
+          register_sha256?: string | null
+        }
+        Update: {
+          action?: string
+          brief_id?: string
+          id?: string
+          marked_at?: string
+          marked_by?: string | null
+          note?: string | null
+          project_id?: string
+          register_sha256?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_register_marks_brief_id_fkey"
+            columns: ["brief_id"]
+            isOneToOne: false
+            referencedRelation: "project_briefs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_register_marks_brief_id_fkey"
+            columns: ["brief_id"]
+            isOneToOne: false
+            referencedRelation: "project_current_briefs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_register_marks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      research_requirements: {
+        Row: {
+          accounts: string[]
+          brief_id: string
+          brief_version: number
+          change_reason: string | null
+          code: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          keywords: string[]
+          languages: string[]
+          legal_basis: string
+          platform: string
+          project_id: string
+          req_no: number
+          status: string
+          version: number
+          window_from: string
+          window_to: string
+        }
+        Insert: {
+          accounts?: string[]
+          brief_id: string
+          brief_version: number
+          change_reason?: string | null
+          code?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          keywords?: string[]
+          languages: string[]
+          legal_basis: string
+          platform: string
+          project_id: string
+          req_no: number
+          status?: string
+          version: number
+          window_from: string
+          window_to: string
+        }
+        Update: {
+          accounts?: string[]
+          brief_id?: string
+          brief_version?: number
+          change_reason?: string | null
+          code?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          keywords?: string[]
+          languages?: string[]
+          legal_basis?: string
+          platform?: string
+          project_id?: string
+          req_no?: number
+          status?: string
+          version?: number
+          window_from?: string
+          window_to?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_requirements_brief_id_fkey"
+            columns: ["brief_id"]
+            isOneToOne: false
+            referencedRelation: "project_briefs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_requirements_brief_id_fkey"
+            columns: ["brief_id"]
+            isOneToOne: false
+            referencedRelation: "project_current_briefs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_requirements_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
         ]
@@ -5284,6 +5440,21 @@ export type Database = {
         Returns: string
       }
       report_incomplete: { Args: { _output: string }; Returns: string[] }
+      research_add_requirement: {
+        Args: {
+          _accounts: string[]
+          _from: string
+          _keywords: string[]
+          _languages: string[]
+          _legal_basis: string
+          _platform: string
+          _project: string
+          _reason?: string
+          _req_no?: number
+          _to: string
+        }
+        Returns: string
+      }
       research_block_reason: {
         Args: { _cycle: number; _plan?: string; _project: string }
         Returns: string
@@ -5300,10 +5471,37 @@ export type Database = {
         Args: { _cycle: number; _project: string }
         Returns: boolean
       }
+      research_fa_std001_name_sample: {
+        Args: {
+          _captured: string
+          _item_ref: string
+          _item_type: string
+          _platform: string
+          _project_code: string
+          _req_code: string
+          _sha256: string
+        }
+        Returns: string
+      }
       research_home_vault_online: { Args: never; Returns: boolean }
       research_link_framework: {
         Args: { _plan: string; _version: string }
         Returns: undefined
+      }
+      research_mark_register: {
+        Args: { _complete: boolean; _note?: string; _project: string }
+        Returns: undefined
+      }
+      research_norm_language: { Args: { t: string }; Returns: string }
+      research_norm_platform: { Args: { t: string }; Returns: string }
+      research_off_register: {
+        Args: {
+          _language: string
+          _platform: string
+          _project: string
+          _ref: string
+        }
+        Returns: string
       }
       research_pending_amendment: {
         Args: { _project: string }
@@ -5332,6 +5530,20 @@ export type Database = {
         Args: { _loaded: number; _manifest_sha256: string; _plan: string }
         Returns: Json
       }
+      research_register_complete: {
+        Args: { _project: string }
+        Returns: boolean
+      }
+      research_register_editor: {
+        Args: { _project: string }
+        Returns: undefined
+      }
+      research_register_problems: {
+        Args: { _project: string }
+        Returns: string[]
+      }
+      research_register_sha256: { Args: { _project: string }; Returns: string }
+      research_register_status: { Args: { _project: string }; Returns: Json }
       research_report_run: {
         Args: { _expected?: number; _run: string; _status: string }
         Returns: Json
@@ -5347,6 +5559,45 @@ export type Database = {
           _sha256_on_write: string
         }
         Returns: Json
+      }
+      research_requirement_misfit: {
+        Args: {
+          _brief: string
+          _from: string
+          _languages: string[]
+          _platform: string
+          _to: string
+        }
+        Returns: string
+      }
+      research_requirements_in_force: {
+        Args: { _project: string }
+        Returns: {
+          accounts: string[]
+          brief_id: string
+          brief_version: number
+          change_reason: string | null
+          code: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          keywords: string[]
+          languages: string[]
+          legal_basis: string
+          platform: string
+          project_id: string
+          req_no: number
+          status: string
+          version: number
+          window_from: string
+          window_to: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "research_requirements"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       research_scope_refusal: {
         Args: {
@@ -5407,6 +5658,10 @@ export type Database = {
         Returns: Json
       }
       research_vault_window_minutes: { Args: never; Returns: number }
+      research_withdraw_requirement: {
+        Args: { _project: string; _reason: string; _req_no: number }
+        Returns: string
+      }
       scenario_options_ok: { Args: { _o: Json }; Returns: boolean }
       signup_open: { Args: never; Returns: boolean }
       sla_check_alerts: { Args: { _clock: string }; Returns: undefined }

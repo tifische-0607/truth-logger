@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Section, TextIn, csvList } from "@/components/engagement/ui";
 import { Check, PlanChip, PlanControls, Refusal, VaultPanel } from "@/components/research/ResearchBits";
 import { FrameworkLink } from "@/components/research/FrameworkLink";
+import { RequirementsRegister } from "@/components/research/RequirementsRegister";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -52,6 +53,7 @@ export function CollectTab({ ws }: { ws: Workspace }) {
         { ok: rd.no_pending_amendment, label: "No amendment awaiting the Curator" },
         { ok: rd.vault_online, label: `Home vault online (report within ${rd.vault_window_minutes} min)` },
         { ok: rd.cycle_free, label: `Cycle ${cycle} has no other active plan` },
+        { ok: !!rd.register_complete, label: "Requirements register marked complete" },
       ]
     : [];
   const done = checks.filter((c) => c.ok).length;
@@ -109,6 +111,12 @@ export function CollectTab({ ws }: { ws: Workspace }) {
           <VaultPanel />
         </div>
       </Section>
+
+      <RequirementsRegister
+        projectId={pid}
+        canEdit={ws.has("owner", "curator", "engagement_lead", "lead_analyst") && !isMgmt}
+        canMark={ws.has("owner", "curator", "engagement_lead") && !isMgmt}
+      />
 
       <Section
         id="collect-plan"

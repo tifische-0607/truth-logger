@@ -87,6 +87,7 @@ export type Readiness = {
   vault_online: boolean;
   vault_window_minutes: number;
   cycle_free: boolean;
+  register_complete?: boolean;
   block_reason: string | null;
 };
 

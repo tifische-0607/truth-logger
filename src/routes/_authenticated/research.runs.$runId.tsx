@@ -79,6 +79,12 @@ function RunPage() {
                     <p className="font-mono text-xs break-all">{c.item_ref}</p>
                     <p className="text-muted-foreground font-mono text-[11px] break-all">{c.sha256_at_capture}</p>
                     <p className="text-muted-foreground text-xs">{[c.platform, c.item_type, c.language, c.connector_key && `${c.connector_key} v${c.connector_version}`].filter(Boolean).join(" · ")}</p>
+                    {c.requirement_ref ? (
+                      <p className="text-xs"><span className="font-semibold">{c.requirement_ref}</span>{c.collector ? ` · ${c.collector}` : ""}{c.captured_at_utc ? ` · ${c.captured_at_utc.replace("+00:00", "Z")} UTC` : ""}</p>
+                    ) : null}
+                    {c.darknight_path ? (
+                      <p className="text-muted-foreground font-mono text-[11px] break-all" title="Sample naming: FA-STD-001 not final">DarkNight: {c.darknight_path}</p>
+                    ) : null}
                   </td>
                   {PIPELINE.map((s) => {
                     const ok = s.done(c);
