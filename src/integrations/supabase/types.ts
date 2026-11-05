@@ -565,6 +565,114 @@ export type Database = {
         }
         Relationships: []
       }
+      checkpoint_definitions: {
+        Row: {
+          applies_at: string
+          failure_target: string
+          id: string
+          name: string
+          pass_rule_ref: string
+          sort: number
+          standard_version: string | null
+        }
+        Insert: {
+          applies_at: string
+          failure_target: string
+          id: string
+          name: string
+          pass_rule_ref: string
+          sort: number
+          standard_version?: string | null
+        }
+        Update: {
+          applies_at?: string
+          failure_target?: string
+          id?: string
+          name?: string
+          pass_rule_ref?: string
+          sort?: number
+          standard_version?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checkpoint_definitions_standard_version_fkey"
+            columns: ["standard_version"]
+            isOneToOne: false
+            referencedRelation: "framework_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      checkpoint_results: {
+        Row: {
+          checked_at: string
+          checked_by: string | null
+          checked_by_kind: string
+          checkpoint: string
+          cycle_no: number
+          details: Json
+          id: string
+          project_id: string
+          reason: string | null
+          result: string
+          standard_version: string
+          subject_id: string
+          subject_kind: string
+        }
+        Insert: {
+          checked_at?: string
+          checked_by?: string | null
+          checked_by_kind?: string
+          checkpoint: string
+          cycle_no?: number
+          details?: Json
+          id?: string
+          project_id: string
+          reason?: string | null
+          result: string
+          standard_version: string
+          subject_id: string
+          subject_kind: string
+        }
+        Update: {
+          checked_at?: string
+          checked_by?: string | null
+          checked_by_kind?: string
+          checkpoint?: string
+          cycle_no?: number
+          details?: Json
+          id?: string
+          project_id?: string
+          reason?: string | null
+          result?: string
+          standard_version?: string
+          subject_id?: string
+          subject_kind?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checkpoint_results_checkpoint_fkey"
+            columns: ["checkpoint"]
+            isOneToOne: false
+            referencedRelation: "checkpoint_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checkpoint_results_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checkpoint_results_standard_version_fkey"
+            columns: ["standard_version"]
+            isOneToOne: false
+            referencedRelation: "framework_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_access_events: {
         Row: {
           action: string
@@ -842,6 +950,112 @@ export type Database = {
             columns: ["clock_id"]
             isOneToOne: false
             referencedRelation: "phase_clocks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      collection_measures: {
+        Row: {
+          id: string
+          platform_coverage: string
+          project_id: string
+          reach: number
+          recorded_at: string
+          recorded_by: string
+          requirement_id: string
+          standard_version: string
+          volume: number
+          window_from: string
+          window_to: string
+        }
+        Insert: {
+          id?: string
+          platform_coverage: string
+          project_id: string
+          reach: number
+          recorded_at?: string
+          recorded_by?: string
+          requirement_id: string
+          standard_version: string
+          volume: number
+          window_from: string
+          window_to: string
+        }
+        Update: {
+          id?: string
+          platform_coverage?: string
+          project_id?: string
+          reach?: number
+          recorded_at?: string
+          recorded_by?: string
+          requirement_id?: string
+          standard_version?: string
+          volume?: number
+          window_from?: string
+          window_to?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collection_measures_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "collection_measures_requirement_id_fkey"
+            columns: ["requirement_id"]
+            isOneToOne: false
+            referencedRelation: "research_requirements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "collection_measures_standard_version_fkey"
+            columns: ["standard_version"]
+            isOneToOne: false
+            referencedRelation: "framework_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conflict_declarations: {
+        Row: {
+          declaration: string
+          declared_at: string
+          declared_by: string
+          id: string
+          project_id: string
+          standard_version: string
+        }
+        Insert: {
+          declaration: string
+          declared_at?: string
+          declared_by?: string
+          id?: string
+          project_id: string
+          standard_version: string
+        }
+        Update: {
+          declaration?: string
+          declared_at?: string
+          declared_by?: string
+          id?: string
+          project_id?: string
+          standard_version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conflict_declarations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conflict_declarations_standard_version_fkey"
+            columns: ["standard_version"]
+            isOneToOne: false
+            referencedRelation: "framework_versions"
             referencedColumns: ["id"]
           },
         ]
@@ -1163,6 +1377,157 @@ export type Database = {
             columns: ["source_id"]
             isOneToOne: false
             referencedRelation: "sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      finding_items: {
+        Row: {
+          capture_id: string
+          confidence_at_link: string
+          finding_id: string
+          linked_at: string
+          linked_by: string
+          project_id: string
+          role: string
+        }
+        Insert: {
+          capture_id: string
+          confidence_at_link: string
+          finding_id: string
+          linked_at?: string
+          linked_by?: string
+          project_id: string
+          role: string
+        }
+        Update: {
+          capture_id?: string
+          confidence_at_link?: string
+          finding_id?: string
+          linked_at?: string
+          linked_by?: string
+          project_id?: string
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "finding_items_capture_id_fkey"
+            columns: ["capture_id"]
+            isOneToOne: false
+            referencedRelation: "research_captures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "finding_items_finding_id_fkey"
+            columns: ["finding_id"]
+            isOneToOne: false
+            referencedRelation: "findings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "finding_items_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      finding_reviews: {
+        Row: {
+          decided_at: string
+          decision: string
+          finding_id: string
+          id: string
+          note: string | null
+          project_id: string
+          reviewer: string
+        }
+        Insert: {
+          decided_at?: string
+          decision: string
+          finding_id: string
+          id?: string
+          note?: string | null
+          project_id: string
+          reviewer?: string
+        }
+        Update: {
+          decided_at?: string
+          decision?: string
+          finding_id?: string
+          id?: string
+          note?: string | null
+          project_id?: string
+          reviewer?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "finding_reviews_finding_id_fkey"
+            columns: ["finding_id"]
+            isOneToOne: false
+            referencedRelation: "findings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "finding_reviews_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      findings: {
+        Row: {
+          alternatives: string
+          author: string
+          created_at: string
+          cycle_no: number
+          id: string
+          names_person_or_org: boolean
+          project_id: string
+          standard_version: string
+          status: string
+          text: string
+        }
+        Insert: {
+          alternatives: string
+          author?: string
+          created_at?: string
+          cycle_no?: number
+          id?: string
+          names_person_or_org: boolean
+          project_id: string
+          standard_version: string
+          status?: string
+          text: string
+        }
+        Update: {
+          alternatives?: string
+          author?: string
+          created_at?: string
+          cycle_no?: number
+          id?: string
+          names_person_or_org?: boolean
+          project_id?: string
+          standard_version?: string
+          status?: string
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "findings_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "findings_standard_version_fkey"
+            columns: ["standard_version"]
+            isOneToOne: false
+            referencedRelation: "framework_versions"
             referencedColumns: ["id"]
           },
         ]
@@ -1661,6 +2026,61 @@ export type Database = {
             columns: ["parent_item_id"]
             isOneToOne: false
             referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      negative_results: {
+        Row: {
+          id: string
+          project_id: string
+          recorded_at: string
+          recorded_by: string
+          requirement_id: string
+          searched: string
+          searched_on: string
+          standard_version: string
+        }
+        Insert: {
+          id?: string
+          project_id: string
+          recorded_at?: string
+          recorded_by?: string
+          requirement_id: string
+          searched: string
+          searched_on: string
+          standard_version: string
+        }
+        Update: {
+          id?: string
+          project_id?: string
+          recorded_at?: string
+          recorded_by?: string
+          requirement_id?: string
+          searched?: string
+          searched_on?: string
+          standard_version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "negative_results_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "negative_results_requirement_id_fkey"
+            columns: ["requirement_id"]
+            isOneToOne: false
+            referencedRelation: "research_requirements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "negative_results_standard_version_fkey"
+            columns: ["standard_version"]
+            isOneToOne: false
+            referencedRelation: "framework_versions"
             referencedColumns: ["id"]
           },
         ]
@@ -3414,6 +3834,173 @@ export type Database = {
           },
         ]
       }
+      report_figures: {
+        Row: {
+          capture_ids: string[]
+          confidence: string
+          id: string
+          label: string
+          output_id: string
+          project_id: string
+          recorded_at: string
+          recorded_by: string
+          standard_version: string
+          value: number
+        }
+        Insert: {
+          capture_ids: string[]
+          confidence: string
+          id?: string
+          label: string
+          output_id: string
+          project_id: string
+          recorded_at?: string
+          recorded_by?: string
+          standard_version: string
+          value: number
+        }
+        Update: {
+          capture_ids?: string[]
+          confidence?: string
+          id?: string
+          label?: string
+          output_id?: string
+          project_id?: string
+          recorded_at?: string
+          recorded_by?: string
+          standard_version?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_figures_output_id_fkey"
+            columns: ["output_id"]
+            isOneToOne: false
+            referencedRelation: "project_outputs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_figures_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_figures_standard_version_fkey"
+            columns: ["standard_version"]
+            isOneToOne: false
+            referencedRelation: "framework_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_statement_approvals: {
+        Row: {
+          approved_at: string
+          curator: string
+          note: string | null
+          project_id: string
+          statement_id: string
+        }
+        Insert: {
+          approved_at?: string
+          curator?: string
+          note?: string | null
+          project_id: string
+          statement_id: string
+        }
+        Update: {
+          approved_at?: string
+          curator?: string
+          note?: string | null
+          project_id?: string
+          statement_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_statement_approvals_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_statement_approvals_statement_id_fkey"
+            columns: ["statement_id"]
+            isOneToOne: true
+            referencedRelation: "report_statements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_statements: {
+        Row: {
+          confidence_summary: string
+          id: string
+          limits: string
+          output_id: string
+          platforms: string[]
+          project_id: string
+          standard_version: string
+          statement: string
+          time_window: string
+          version: number
+          written_at: string
+          written_by: string
+        }
+        Insert: {
+          confidence_summary: string
+          id?: string
+          limits: string
+          output_id: string
+          platforms: string[]
+          project_id: string
+          standard_version: string
+          statement: string
+          time_window: string
+          version: number
+          written_at?: string
+          written_by?: string
+        }
+        Update: {
+          confidence_summary?: string
+          id?: string
+          limits?: string
+          output_id?: string
+          platforms?: string[]
+          project_id?: string
+          standard_version?: string
+          statement?: string
+          time_window?: string
+          version?: number
+          written_at?: string
+          written_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_statements_output_id_fkey"
+            columns: ["output_id"]
+            isOneToOne: false
+            referencedRelation: "project_outputs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_statements_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_statements_standard_version_fkey"
+            columns: ["standard_version"]
+            isOneToOne: false
+            referencedRelation: "framework_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       research_captures: {
         Row: {
           captured_at: string
@@ -4384,6 +4971,77 @@ export type Database = {
         }
         Relationships: []
       }
+      staff_exposure_log: {
+        Row: {
+          distressing: boolean
+          id: string
+          note: string | null
+          on_date: string
+          project_id: string | null
+          recorded_at: string
+          recorded_by: string
+          staff_id: string
+        }
+        Insert: {
+          distressing: boolean
+          id?: string
+          note?: string | null
+          on_date: string
+          project_id?: string | null
+          recorded_at?: string
+          recorded_by?: string
+          staff_id: string
+        }
+        Update: {
+          distressing?: boolean
+          id?: string
+          note?: string | null
+          on_date?: string
+          project_id?: string | null
+          recorded_at?: string
+          recorded_by?: string
+          staff_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_exposure_log_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      staff_training_records: {
+        Row: {
+          details: Json
+          id: string
+          on_date: string
+          recorded_at: string
+          recorded_by: string
+          staff_id: string
+          training: string
+        }
+        Insert: {
+          details?: Json
+          id?: string
+          on_date: string
+          recorded_at?: string
+          recorded_by?: string
+          staff_id: string
+          training: string
+        }
+        Update: {
+          details?: Json
+          id?: string
+          on_date?: string
+          recorded_at?: string
+          recorded_by?: string
+          staff_id?: string
+          training?: string
+        }
+        Relationships: []
+      }
       subject_profiles: {
         Row: {
           account_id: string | null
@@ -4656,6 +5314,70 @@ export type Database = {
             columns: ["outbox_id"]
             isOneToOne: false
             referencedRelation: "vault_outbox"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      verification_records: {
+        Row: {
+          capture_id: string
+          confidence: string
+          content_check: string
+          id: string
+          project_id: string
+          rated_at: string
+          rater: string
+          reasoning: string
+          source_check: string
+          standard_version: string
+          technical_check: string
+        }
+        Insert: {
+          capture_id: string
+          confidence: string
+          content_check: string
+          id?: string
+          project_id: string
+          rated_at?: string
+          rater?: string
+          reasoning: string
+          source_check: string
+          standard_version: string
+          technical_check: string
+        }
+        Update: {
+          capture_id?: string
+          confidence?: string
+          content_check?: string
+          id?: string
+          project_id?: string
+          rated_at?: string
+          rater?: string
+          reasoning?: string
+          source_check?: string
+          standard_version?: string
+          technical_check?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verification_records_capture_id_fkey"
+            columns: ["capture_id"]
+            isOneToOne: false
+            referencedRelation: "research_captures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "verification_records_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "verification_records_standard_version_fkey"
+            columns: ["standard_version"]
+            isOneToOne: false
+            referencedRelation: "framework_versions"
             referencedColumns: ["id"]
           },
         ]
@@ -5544,6 +6266,7 @@ export type Database = {
       }
       research_register_sha256: { Args: { _project: string }; Returns: string }
       research_register_status: { Args: { _project: string }; Returns: Json }
+      research_rejection_dashboard: { Args: { _days?: number }; Returns: Json }
       research_report_run: {
         Args: { _expected?: number; _run: string; _status: string }
         Returns: Json
@@ -5696,6 +6419,127 @@ export type Database = {
         Returns: string
       }
       statements_ok: { Args: { _s: Json }; Returns: boolean }
+      u6_add_figure: {
+        Args: {
+          _captures: string[]
+          _confidence: string
+          _label: string
+          _output: string
+        }
+        Returns: string
+      }
+      u6_add_training: {
+        Args: { _on: string; _staff: string; _training: string }
+        Returns: string
+      }
+      u6_approve_statement: {
+        Args: { _note: string; _statement: string }
+        Returns: undefined
+      }
+      u6_check_q1: { Args: { _project: string }; Returns: Json }
+      u6_check_q2: { Args: { _output: string }; Returns: Json }
+      u6_check_v1: { Args: { _capture: string }; Returns: Json }
+      u6_create_finding: {
+        Args: {
+          _alternatives: string
+          _names: boolean
+          _project: string
+          _text: string
+        }
+        Returns: string
+      }
+      u6_declare_conflict: {
+        Args: { _declaration: string; _project: string }
+        Returns: string
+      }
+      u6_latest: { Args: { _cp: string; _subject: string }; Returns: string }
+      u6_latest_confidence: { Args: { _capture: string }; Returns: string }
+      u6_link_item: {
+        Args: { _capture: string; _finding: string; _role: string }
+        Returns: undefined
+      }
+      u6_log_exposure: {
+        Args: {
+          _distressing: boolean
+          _note: string
+          _on: string
+          _project: string
+          _staff: string
+        }
+        Returns: string
+      }
+      u6_output_project: { Args: { _output: string }; Returns: string }
+      u6_record: {
+        Args: {
+          _by_kind?: string
+          _cp: string
+          _details?: Json
+          _kind: string
+          _project: string
+          _reason: string
+          _result: string
+          _subject: string
+        }
+        Returns: string
+      }
+      u6_record_measure: {
+        Args: {
+          _coverage: string
+          _from: string
+          _reach: number
+          _req: string
+          _to: string
+          _volume: number
+        }
+        Returns: string
+      }
+      u6_record_negative: {
+        Args: { _on: string; _req: string; _searched: string }
+        Returns: string
+      }
+      u6_release_problem: { Args: { _output: string }; Returns: string }
+      u6_reopen: {
+        Args: {
+          _checkpoint: string
+          _kind: string
+          _project: string
+          _reason: string
+          _subject: string
+        }
+        Returns: string
+      }
+      u6_require_worker: { Args: { _project: string }; Returns: undefined }
+      u6_requirement_project: { Args: { _req: string }; Returns: string }
+      u6_review: {
+        Args: { _approve: boolean; _finding: string; _note: string }
+        Returns: undefined
+      }
+      u6_send_for_review: { Args: { _finding: string }; Returns: string }
+      u6_staff_guard: { Args: { _staff: string }; Returns: undefined }
+      u6_standard: { Args: never; Returns: Json }
+      u6_standard_version: { Args: never; Returns: string }
+      u6_verify: {
+        Args: {
+          _capture: string
+          _confidence: string
+          _content: string
+          _reasoning: string
+          _source: string
+          _technical: string
+        }
+        Returns: string
+      }
+      u6_write_statement: {
+        Args: {
+          _confidence: string
+          _limits: string
+          _output: string
+          _platforms: string[]
+          _statement: string
+          _window: string
+        }
+        Returns: string
+      }
       vault_apply_offline: { Args: never; Returns: number }
       vault_cloud_copy_for: { Args: { doc: string }; Returns: Json }
       vault_cloud_online: { Args: never; Returns: boolean }

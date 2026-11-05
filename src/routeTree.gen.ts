@@ -29,6 +29,7 @@ import { Route as AuthenticatedLibraryRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedManagementRouteImport } from './routes/_authenticated/management'
 import { Route as AuthenticatedOfflineRouteImport } from './routes/_authenticated/offline'
 import { Route as AuthenticatedQueueRouteImport } from './routes/_authenticated/queue'
+import { Route as AuthenticatedRejectionsRouteImport } from './routes/_authenticated/rejections'
 import { Route as AuthenticatedResultsRouteImport } from './routes/_authenticated/results'
 import { Route as AuthenticatedSearchRouteImport } from './routes/_authenticated/search'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
@@ -50,12 +51,14 @@ import { Route as AuthenticatedDocumentSamplesKindRouteImport } from './routes/_
 import { Route as AuthenticatedDossierCaseIdRouteImport } from './routes/_authenticated/dossier.$caseId'
 import { Route as AuthenticatedItemsItemIdRouteImport } from './routes/_authenticated/items.$itemId'
 import { Route as AuthenticatedJobsJobIdRouteImport } from './routes/_authenticated/jobs.$jobId'
+import { Route as AuthenticatedMethodologyProjectIdRouteImport } from './routes/_authenticated/methodology.$projectId'
 import { Route as AuthenticatedProfilesCaseIdRouteImport } from './routes/_authenticated/profiles.$caseId'
 import { Route as AuthenticatedProjectsIndexRouteImport } from './routes/_authenticated/projects.index'
 import { Route as AuthenticatedProjectsProjectIdRouteImport } from './routes/_authenticated/projects.$projectId'
 import { Route as AuthenticatedReportCaseIdRouteImport } from './routes/_authenticated/report.$caseId'
 import { Route as AuthenticatedResearchIndexRouteImport } from './routes/_authenticated/research.index'
 import { Route as AuthenticatedReviewCaseIdRouteImport } from './routes/_authenticated/review.$caseId'
+import { Route as AuthenticatedStatementStatementIdRouteImport } from './routes/_authenticated/statement.$statementId'
 import { Route as AuthenticatedSummaryCaseIdRouteImport } from './routes/_authenticated/summary.$caseId'
 import { Route as AuthenticatedTimelineCaseIdRouteImport } from './routes/_authenticated/timeline.$caseId'
 import { Route as AuthenticatedTrailCaseIdRouteImport } from './routes/_authenticated/trail.$caseId'
@@ -178,6 +181,11 @@ const AuthenticatedQueueRoute = AuthenticatedQueueRouteImport.update({
   path: '/queue',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedRejectionsRoute = AuthenticatedRejectionsRouteImport.update({
+  id: '/rejections',
+  path: '/rejections',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedResultsRoute = AuthenticatedResultsRouteImport.update({
   id: '/results',
   path: '/results',
@@ -291,6 +299,12 @@ const AuthenticatedJobsJobIdRoute = AuthenticatedJobsJobIdRouteImport.update({
   path: '/jobs/$jobId',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMethodologyProjectIdRoute =
+  AuthenticatedMethodologyProjectIdRouteImport.update({
+    id: '/methodology/$projectId',
+    path: '/methodology/$projectId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedProfilesCaseIdRoute =
   AuthenticatedProfilesCaseIdRouteImport.update({
     id: '/profiles/$caseId',
@@ -325,6 +339,12 @@ const AuthenticatedReviewCaseIdRoute =
   AuthenticatedReviewCaseIdRouteImport.update({
     id: '/review/$caseId',
     path: '/review/$caseId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedStatementStatementIdRoute =
+  AuthenticatedStatementStatementIdRouteImport.update({
+    id: '/statement/$statementId',
+    path: '/statement/$statementId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedSummaryCaseIdRoute =
@@ -460,6 +480,7 @@ export interface FileRoutesByFullPath {
   '/management': typeof AuthenticatedManagementRoute
   '/offline': typeof AuthenticatedOfflineRoute
   '/queue': typeof AuthenticatedQueueRoute
+  '/rejections': typeof AuthenticatedRejectionsRoute
   '/results': typeof AuthenticatedResultsRoute
   '/search': typeof AuthenticatedSearchRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -479,10 +500,12 @@ export interface FileRoutesByFullPath {
   '/dossier/$caseId': typeof AuthenticatedDossierCaseIdRoute
   '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
+  '/methodology/$projectId': typeof AuthenticatedMethodologyProjectIdRoute
   '/profiles/$caseId': typeof AuthenticatedProfilesCaseIdRoute
   '/projects/$projectId': typeof AuthenticatedProjectsProjectIdRoute
   '/report/$caseId': typeof AuthenticatedReportCaseIdRoute
   '/review/$caseId': typeof AuthenticatedReviewCaseIdRoute
+  '/statement/$statementId': typeof AuthenticatedStatementStatementIdRoute
   '/summary/$caseId': typeof AuthenticatedSummaryCaseIdRoute
   '/timeline/$caseId': typeof AuthenticatedTimelineCaseIdRoute
   '/trail/$caseId': typeof AuthenticatedTrailCaseIdRoute
@@ -528,6 +551,7 @@ export interface FileRoutesByTo {
   '/management': typeof AuthenticatedManagementRoute
   '/offline': typeof AuthenticatedOfflineRoute
   '/queue': typeof AuthenticatedQueueRoute
+  '/rejections': typeof AuthenticatedRejectionsRoute
   '/results': typeof AuthenticatedResultsRoute
   '/search': typeof AuthenticatedSearchRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -547,10 +571,12 @@ export interface FileRoutesByTo {
   '/dossier/$caseId': typeof AuthenticatedDossierCaseIdRoute
   '/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
+  '/methodology/$projectId': typeof AuthenticatedMethodologyProjectIdRoute
   '/profiles/$caseId': typeof AuthenticatedProfilesCaseIdRoute
   '/projects/$projectId': typeof AuthenticatedProjectsProjectIdRoute
   '/report/$caseId': typeof AuthenticatedReportCaseIdRoute
   '/review/$caseId': typeof AuthenticatedReviewCaseIdRoute
+  '/statement/$statementId': typeof AuthenticatedStatementStatementIdRoute
   '/summary/$caseId': typeof AuthenticatedSummaryCaseIdRoute
   '/timeline/$caseId': typeof AuthenticatedTimelineCaseIdRoute
   '/trail/$caseId': typeof AuthenticatedTrailCaseIdRoute
@@ -598,6 +624,7 @@ export interface FileRoutesById {
   '/_authenticated/management': typeof AuthenticatedManagementRoute
   '/_authenticated/offline': typeof AuthenticatedOfflineRoute
   '/_authenticated/queue': typeof AuthenticatedQueueRoute
+  '/_authenticated/rejections': typeof AuthenticatedRejectionsRoute
   '/_authenticated/results': typeof AuthenticatedResultsRoute
   '/_authenticated/search': typeof AuthenticatedSearchRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
@@ -617,10 +644,12 @@ export interface FileRoutesById {
   '/_authenticated/dossier/$caseId': typeof AuthenticatedDossierCaseIdRoute
   '/_authenticated/items/$itemId': typeof AuthenticatedItemsItemIdRoute
   '/_authenticated/jobs/$jobId': typeof AuthenticatedJobsJobIdRoute
+  '/_authenticated/methodology/$projectId': typeof AuthenticatedMethodologyProjectIdRoute
   '/_authenticated/profiles/$caseId': typeof AuthenticatedProfilesCaseIdRoute
   '/_authenticated/projects/$projectId': typeof AuthenticatedProjectsProjectIdRoute
   '/_authenticated/report/$caseId': typeof AuthenticatedReportCaseIdRoute
   '/_authenticated/review/$caseId': typeof AuthenticatedReviewCaseIdRoute
+  '/_authenticated/statement/$statementId': typeof AuthenticatedStatementStatementIdRoute
   '/_authenticated/summary/$caseId': typeof AuthenticatedSummaryCaseIdRoute
   '/_authenticated/timeline/$caseId': typeof AuthenticatedTimelineCaseIdRoute
   '/_authenticated/trail/$caseId': typeof AuthenticatedTrailCaseIdRoute
@@ -668,6 +697,7 @@ export interface FileRouteTypes {
     | '/management'
     | '/offline'
     | '/queue'
+    | '/rejections'
     | '/results'
     | '/search'
     | '/settings'
@@ -687,10 +717,12 @@ export interface FileRouteTypes {
     | '/dossier/$caseId'
     | '/items/$itemId'
     | '/jobs/$jobId'
+    | '/methodology/$projectId'
     | '/profiles/$caseId'
     | '/projects/$projectId'
     | '/report/$caseId'
     | '/review/$caseId'
+    | '/statement/$statementId'
     | '/summary/$caseId'
     | '/timeline/$caseId'
     | '/trail/$caseId'
@@ -736,6 +768,7 @@ export interface FileRouteTypes {
     | '/management'
     | '/offline'
     | '/queue'
+    | '/rejections'
     | '/results'
     | '/search'
     | '/settings'
@@ -755,10 +788,12 @@ export interface FileRouteTypes {
     | '/dossier/$caseId'
     | '/items/$itemId'
     | '/jobs/$jobId'
+    | '/methodology/$projectId'
     | '/profiles/$caseId'
     | '/projects/$projectId'
     | '/report/$caseId'
     | '/review/$caseId'
+    | '/statement/$statementId'
     | '/summary/$caseId'
     | '/timeline/$caseId'
     | '/trail/$caseId'
@@ -805,6 +840,7 @@ export interface FileRouteTypes {
     | '/_authenticated/management'
     | '/_authenticated/offline'
     | '/_authenticated/queue'
+    | '/_authenticated/rejections'
     | '/_authenticated/results'
     | '/_authenticated/search'
     | '/_authenticated/settings'
@@ -824,10 +860,12 @@ export interface FileRouteTypes {
     | '/_authenticated/dossier/$caseId'
     | '/_authenticated/items/$itemId'
     | '/_authenticated/jobs/$jobId'
+    | '/_authenticated/methodology/$projectId'
     | '/_authenticated/profiles/$caseId'
     | '/_authenticated/projects/$projectId'
     | '/_authenticated/report/$caseId'
     | '/_authenticated/review/$caseId'
+    | '/_authenticated/statement/$statementId'
     | '/_authenticated/summary/$caseId'
     | '/_authenticated/timeline/$caseId'
     | '/_authenticated/trail/$caseId'
@@ -1020,6 +1058,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedQueueRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/rejections': {
+      id: '/_authenticated/rejections'
+      path: '/rejections'
+      fullPath: '/rejections'
+      preLoaderRoute: typeof AuthenticatedRejectionsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/results': {
       id: '/_authenticated/results'
       path: '/results'
@@ -1167,6 +1212,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedJobsJobIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/methodology/$projectId': {
+      id: '/_authenticated/methodology/$projectId'
+      path: '/methodology/$projectId'
+      fullPath: '/methodology/$projectId'
+      preLoaderRoute: typeof AuthenticatedMethodologyProjectIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/profiles/$caseId': {
       id: '/_authenticated/profiles/$caseId'
       path: '/profiles/$caseId'
@@ -1207,6 +1259,13 @@ declare module '@tanstack/react-router' {
       path: '/review/$caseId'
       fullPath: '/review/$caseId'
       preLoaderRoute: typeof AuthenticatedReviewCaseIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/statement/$statementId': {
+      id: '/_authenticated/statement/$statementId'
+      path: '/statement/$statementId'
+      fullPath: '/statement/$statementId'
+      preLoaderRoute: typeof AuthenticatedStatementStatementIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/summary/$caseId': {
@@ -1367,6 +1426,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedManagementRoute: typeof AuthenticatedManagementRoute
   AuthenticatedOfflineRoute: typeof AuthenticatedOfflineRoute
   AuthenticatedQueueRoute: typeof AuthenticatedQueueRoute
+  AuthenticatedRejectionsRoute: typeof AuthenticatedRejectionsRoute
   AuthenticatedResultsRoute: typeof AuthenticatedResultsRoute
   AuthenticatedSearchRoute: typeof AuthenticatedSearchRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
@@ -1385,10 +1445,12 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDossierCaseIdRoute: typeof AuthenticatedDossierCaseIdRoute
   AuthenticatedItemsItemIdRoute: typeof AuthenticatedItemsItemIdRoute
   AuthenticatedJobsJobIdRoute: typeof AuthenticatedJobsJobIdRoute
+  AuthenticatedMethodologyProjectIdRoute: typeof AuthenticatedMethodologyProjectIdRoute
   AuthenticatedProfilesCaseIdRoute: typeof AuthenticatedProfilesCaseIdRoute
   AuthenticatedProjectsProjectIdRoute: typeof AuthenticatedProjectsProjectIdRoute
   AuthenticatedReportCaseIdRoute: typeof AuthenticatedReportCaseIdRoute
   AuthenticatedReviewCaseIdRoute: typeof AuthenticatedReviewCaseIdRoute
+  AuthenticatedStatementStatementIdRoute: typeof AuthenticatedStatementStatementIdRoute
   AuthenticatedSummaryCaseIdRoute: typeof AuthenticatedSummaryCaseIdRoute
   AuthenticatedTimelineCaseIdRoute: typeof AuthenticatedTimelineCaseIdRoute
   AuthenticatedTrailCaseIdRoute: typeof AuthenticatedTrailCaseIdRoute
@@ -1416,6 +1478,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedManagementRoute: AuthenticatedManagementRoute,
   AuthenticatedOfflineRoute: AuthenticatedOfflineRoute,
   AuthenticatedQueueRoute: AuthenticatedQueueRoute,
+  AuthenticatedRejectionsRoute: AuthenticatedRejectionsRoute,
   AuthenticatedResultsRoute: AuthenticatedResultsRoute,
   AuthenticatedSearchRoute: AuthenticatedSearchRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
@@ -1434,10 +1497,14 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDossierCaseIdRoute: AuthenticatedDossierCaseIdRoute,
   AuthenticatedItemsItemIdRoute: AuthenticatedItemsItemIdRoute,
   AuthenticatedJobsJobIdRoute: AuthenticatedJobsJobIdRoute,
+  AuthenticatedMethodologyProjectIdRoute:
+    AuthenticatedMethodologyProjectIdRoute,
   AuthenticatedProfilesCaseIdRoute: AuthenticatedProfilesCaseIdRoute,
   AuthenticatedProjectsProjectIdRoute: AuthenticatedProjectsProjectIdRoute,
   AuthenticatedReportCaseIdRoute: AuthenticatedReportCaseIdRoute,
   AuthenticatedReviewCaseIdRoute: AuthenticatedReviewCaseIdRoute,
+  AuthenticatedStatementStatementIdRoute:
+    AuthenticatedStatementStatementIdRoute,
   AuthenticatedSummaryCaseIdRoute: AuthenticatedSummaryCaseIdRoute,
   AuthenticatedTimelineCaseIdRoute: AuthenticatedTimelineCaseIdRoute,
   AuthenticatedTrailCaseIdRoute: AuthenticatedTrailCaseIdRoute,

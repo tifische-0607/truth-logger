@@ -180,6 +180,7 @@ function ProjectPage() {
             ) : null}
           </Link>
         ))}
+        <Link to="/methodology/$projectId" params={{ projectId }} className="text-muted-foreground hover:text-foreground flex min-h-11 shrink-0 items-center border-b-2 border-transparent px-3 text-sm font-medium whitespace-nowrap">Checkpoints</Link>
       </nav>
 
       {tab === "overview" ? <OverviewTab ws={w} /> : null}

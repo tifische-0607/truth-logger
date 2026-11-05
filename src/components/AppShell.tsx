@@ -289,6 +289,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           ))}
           <Link to="/library" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/library') && ACTIVE)}><Library className="size-5"/>Library</Link>
           <Link to="/research" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/research') && ACTIVE)}><Microscope className="size-5"/>Research</Link>
+          <Link to="/rejections" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/rejections') && ACTIVE)}><Microscope className="size-5"/>Rejection rates</Link>
           <Link to="/frameworks" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/frameworks') && ACTIVE)}><BookOpen className="size-5"/>Frameworks</Link>
           <p className="kicker mt-5 px-3">System</p>
           {me.data?.isCurator && <Link to="/inbox" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><ScrollText className="size-5"/>Curator inbox</Link>}
@@ -380,7 +381,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 const SECTIONS: [RegExp, string][] = [
   [/^\/dashboard/, "01 · Home"], [/^\/(projects|clients)/, "02 · Projects"], [/^\/search/, "03 · Search"],
   [/^\/(cases|case-database|trail|timeline|profiles|comments|transcripts|custody|report|dossier|summary|items|incidents)/, "04 · Cases"],
-  [/^\/(collect|queue|watchlist|results|capture-log|worker|capture-settings|jobs)/, "05 · Collect"],
+  [/^\/(collect|rejections|queue|watchlist|results|capture-log|worker|capture-settings|jobs)/, "05 · Collect"],
   [/^\/(integrity|verify|export|offline)/, "06 · Integrity"], [/^\/library/, "07 · Library"],
   [/^\/sources/, "08 · Sources"], [/^\/(team|templates|settings|vaults)/, "09 · Admin"],
   [/^\/inbox/, "Curator"], [/^\/management/, "Management"], [/^\/billing/, "Billing"], [/^\/frameworks/, "Frameworks"],
