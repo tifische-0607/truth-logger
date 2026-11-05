@@ -23,6 +23,7 @@ import {
   Search,
   Microscope,
   BookOpen,
+  Receipt,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -292,6 +293,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <p className="kicker mt-5 px-3">System</p>
           {me.data?.isCurator && <Link to="/inbox" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><ScrollText className="size-5"/>Curator inbox</Link>}
           {(me.data?.isOwner || me.data?.isManagement) && <Link to="/management" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><Gauge className="size-5"/>Management</Link>}
+          {(me.data?.isOwner || me.data?.isManagement) && <BillingLink />}
           <Link to="/portal" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><Users className="size-5"/>Client preview</Link>
           <Link to="/sources" className="flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm hover:bg-sidebar-accent"><Server className="size-5"/>Sources</Link>
           <Link to="/vaults" className={cn("flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm hover:bg-sidebar-accent", pathname.startsWith('/vaults') && ACTIVE)}><Server className="size-5"/>Vaults</Link>
@@ -381,7 +383,7 @@ const SECTIONS: [RegExp, string][] = [
   [/^\/(collect|queue|watchlist|results|capture-log|worker|capture-settings|jobs)/, "05 · Collect"],
   [/^\/(integrity|verify|export|offline)/, "06 · Integrity"], [/^\/library/, "07 · Library"],
   [/^\/sources/, "08 · Sources"], [/^\/(team|templates|settings|vaults)/, "09 · Admin"],
-  [/^\/inbox/, "Curator"], [/^\/management/, "Management"], [/^\/frameworks/, "Frameworks"],
+  [/^\/inbox/, "Curator"], [/^\/management/, "Management"], [/^\/billing/, "Billing"], [/^\/frameworks/, "Frameworks"],
 ];
 export function sectionKicker(pathname: string) {
   return SECTIONS.find(([re]) => re.test(pathname))?.[1] ?? "FA Portal";
@@ -409,4 +411,10 @@ export function PageHeader({
       {actions}
     </div>
   );
+}
+
+function BillingLink() {
+  const open = useQuery({ queryKey: ["billing", "open-requests"], refetchInterval: 60_000, queryFn: async () => { const { count } = await supabase.from("upgrade_requests").select("id", { count: "exact", head: true }).eq("status", "requested"); return count ?? 0; } });
+  const n = open.data ?? 0;
+  return <Link to="/billing" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><Receipt className="size-5"/>Billing{n > 0 ? <span className="bg-primary text-primary-foreground ml-auto rounded-full px-2 py-0.5 text-xs font-semibold" aria-label={`${n} upgrade request${n === 1 ? "" : "s"} waiting`}>{n}</span> : null}</Link>;
 }

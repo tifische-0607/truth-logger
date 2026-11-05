@@ -32,7 +32,7 @@
 7. [ ] U6 Methodology checkpoints (needs U4, U5, U8) — waits for Go
 8. [ ] Phase 9 Hardening and full test run — waits for Go
 9. [ ] U1 Membership tiers and seats (needs Phase 4) — waits for Go
-10. [ ] U2 Pricing, upgrade requests and billing (needs U1) — waits for Go
+10. [x] U2 Pricing, upgrade requests and billing — built 5 Nov 2026 (0030, 0031): client Pricing and Billing tabs, upgrade requests with staff Billing inbox badge, owner/Management pricing editor (placeholder Tier 1–3, "Price on request", RM/monthly), invoices Draft→Issued→Paid/Void with never-reused numbers, tier change after paid invoice refused below seats used, append-only logs, A4 invoice PDF. SQL checks saved in tests/sql/u2_billing_test.sql (unrun). Built ahead of U1: seats used = pending + active client users; U1 seat enforcement when adding users still open
 11. [ ] U7 Early warning platform (needs U4, U5, U8) — waits for Go. Requested 3 Nov 2026 for after U6: analyst confirmation, email and Telegram alerts, briefing document on DarkNight, "Not configured" until channels are set.
 12. [ ] U9 Link analysis (needs U4, U5, U8) — waits for Go
 13. [ ] U11 Narrative and coordination detection (needs U7, U8, U9) — waits for Go
@@ -73,3 +73,12 @@
 - [x] Engagements per FA-CEF V1.10 replace the first projects design: Curator role, gates G0-G5 enforced by the database, signed brief with amendments, registers, analyst decisions with second reader, tiers, outputs that report against the brief, G5 release (drizzle 0005-0007)
 - [ ] (Open) Curator decisions: client-facing pricing and tiers; retention wording; whether G5 stays HELD for external clients by default; default S3 thresholds
 - [ ] (Open) Client portal (rules in place, no screens); PDF rendering for the executive brief
+
+## Open decisions from U2 (5 Nov 2026)
+- Tier names, prices and contents (placeholders "Tier 1/2/3", "Price on request" until set)
+- Seat limits: set to the agreed U1 counts 3 / 10 / unlimited — confirm
+- Who may run billing: built as owner and Management only (not Curator/analyst)
+- Partial payments: not supported; payment must equal the invoice total
+- A paid invoice cannot be voided; credit notes not built
+- First tier for a client can be set without an invoice; later changes need a paid invoice
+- Invoice number format FA-INV-YYYY-NNNNN; tax/SST lines not included
