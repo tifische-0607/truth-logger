@@ -246,6 +246,13 @@
       "when": 1793852519412,
       "tag": "0034_fa_portal_u4_register_privileges",
       "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1793874862098,
+      "tag": "0035_fa_portal_u5_rejection_dashboard",
+      "breakpoints": true
     }
   ]
 }

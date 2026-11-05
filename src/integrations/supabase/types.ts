@@ -5544,6 +5544,7 @@ export type Database = {
       }
       research_register_sha256: { Args: { _project: string }; Returns: string }
       research_register_status: { Args: { _project: string }; Returns: Json }
+      research_rejection_dashboard: { Args: { _days?: number }; Returns: Json }
       research_report_run: {
         Args: { _expected?: number; _run: string; _status: string }
         Returns: Json
