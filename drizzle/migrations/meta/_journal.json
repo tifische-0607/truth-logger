@@ -232,6 +232,13 @@
       "when": 1793852370649,
       "tag": "0032_fa_portal_u4_requirements_register",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1793852474663,
+      "tag": "0033_fa_portal_u4_requirements_register_body",
+      "breakpoints": true
     }
   ]
 }
