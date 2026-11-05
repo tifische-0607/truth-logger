@@ -20,6 +20,7 @@ function Page() {
     req(2, 2, { platform: "tiktok", accounts: ["@sample_account"], languages: ["ms"], change_reason: "Sample: handle corrected" }),
     req(3, 2, { platform: "x", keywords: ["sample"], status: "withdrawn", change_reason: "Sample: out of scope" }),
   ];
+  qc.setQueryDefaults(["research", "register", PID], { staleTime: Infinity, retry: false });
   qc.setQueryData(["research", "register", PID], {
     all: rows, current: rows, marks: [],
     status: { brief_signed: true, brief_id: "b", brief_version: 2, complete: false, problems: [], register_sha256: "0".repeat(64) },
