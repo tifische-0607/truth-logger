@@ -260,6 +260,13 @@
       "when": 1793875210764,
       "tag": "0036_fa_portal_u6_methodology_checkpoints",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1793875466827,
+      "tag": "0037_fa_portal_u6_privileges",
+      "breakpoints": true
     }
   ]
 }
