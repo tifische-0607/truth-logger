@@ -5001,6 +5001,7 @@ export type Database = {
         Returns: undefined
       }
       billing_client_summary: { Args: { c?: string }; Returns: Json }
+      billing_clients: { Args: never; Returns: Json }
       billing_create_invoice: {
         Args: {
           _client: string
