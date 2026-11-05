@@ -27,7 +27,7 @@
 2. [x] Phase 8 Management screens — built (0027); SQL checks saved in tests/sql/management_screens_test.sql, unrun
 3. [x] U8 Framework library and universal standard (before U6 and U7) — built (0028); SQL checks saved in tests/sql/framework_library_test.sql, unrun
 4. [~] U3 Storage split — files part built 3 Nov 2026 (0029): library files on DarkNight only, live fetch + SHA-256 re-check, offline message, cloud uploads refused, client uploads switched to email-to-staff. Still open: move 218 existing capture-evidence files per docs/vault/u3-evidence-move-plan.md (waits for approval); engagement outputs still generated into cloud storage (location dropped from library, staff record DarkNight location); portal data move to Namecheap deferred until connection proven; DarkNight gateway must serve GET /v1/library/{path}. Original scope: no report or evidence file in the cloud; DarkNight holds all reports and evidence, cloud holds portal data only — decided 3 Nov 2026: the Namecheap PostgreSQL schema `fa_portal` is that portal-data home (clients, users, tiers, engagements, billing, activity); downloads fetch live from DarkNight and re-check SHA-256, else "Temporarily unavailable, please try again later" — waits for Go
-5. [ ] U4 remainder (needs U3) — partly built: connector contract, worker API; still to do: requirements register fed by the signed brief, further connectors — waits for Go
+5. [x] U4 remainder — built 5 Nov 2026 (0032 empty by mistake, 0033, 0034): requirements register on the Collect tab fed by the signed brief (REQ-nnn IDs, platform, accounts/keywords, languages, window, legal basis; append-only versions; refused outside the brief in force); Start refused until G2 signed and register marked complete; every new capture must link to an in-force requirement (off-register refused and logged); full provenance stored; DarkNight path from the single SAMPLE FA-STD-001 naming function; worker job now carries the register; test adapters are registry rows only. SQL checks in tests/sql/u4_requirements_register_test.sql: Part A run and passed, Part B unrun (needs signed-gate fixture). Further connectors beyond SocialCrawl not added (none requested)
 6. [ ] U5 remainder (needs U4) — partly built: quality controls, quarantine, provenance, auto-suspend; still to do: rejection-rate dashboard over time — waits for Go
 7. [ ] U6 Methodology checkpoints (needs U4, U5, U8) — waits for Go
 8. [ ] Phase 9 Hardening and full test run — waits for Go
@@ -82,3 +82,9 @@
 - A paid invoice cannot be voided; credit notes not built
 - First tier for a client can be set without an invoice; later changes need a paid invoice
 - Invoice number format FA-INV-YYYY-NNNNN; tax/SST lines not included
+
+## Open decisions from U4 (5 Nov 2026)
+- FA-STD-001 final naming (replace public.research_fa_std001_name_sample only)
+- Who may edit the register (now: engagement lead, lead analyst, Curator, owner) and who may mark it complete (now: engagement lead, Curator, owner)
+- Whether captures must also fall inside the requirement time window by post date (connector does not yet send a post date)
+- Brief wording-to-code mapping for platforms/languages (e.g. "YouTube" counted as Google)
