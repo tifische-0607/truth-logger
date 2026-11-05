@@ -26,7 +26,7 @@ function Page() {
     status: { brief_signed: true, brief_id: "b", brief_version: 2, complete: false, problems: [], register_sha256: "0".repeat(64) },
     brief: { platforms: ["Facebook", "TikTok", "X"], languages: ["Malay", "English"], window_from: "2026-10-01", window_to: "2026-12-31" },
   };
-  useEffect(() => { const t = setTimeout(() => qc.setQueryData(["research", "register", PID], sample), 1500); return () => clearTimeout(t); });
+  useEffect(() => { const t = setTimeout(() => qc.setQueryData(["research", "register", PID], sample), 1500); return () => clearTimeout(t); }, []);
   return (
     <div className="mx-auto max-w-5xl p-4">
       <p className="kicker">Sample</p>
