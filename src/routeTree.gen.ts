@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as InviteRouteImport } from './routes/invite'
 import { Route as PortalRouteImport } from './routes/portal'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as AuthenticatedBillingRouteImport } from './routes/_authenticated/billing'
 import { Route as AuthenticatedCaptureLogRouteImport } from './routes/_authenticated/capture-log'
 import { Route as AuthenticatedCaptureSettingsRouteImport } from './routes/_authenticated/capture-settings'
 import { Route as AuthenticatedCaseDatabaseRouteImport } from './routes/_authenticated/case-database'
@@ -104,6 +105,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedBillingRoute = AuthenticatedBillingRouteImport.update({
+  id: '/billing',
+  path: '/billing',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedCaptureLogRoute = AuthenticatedCaptureLogRouteImport.update({
   id: '/capture-log',
@@ -440,6 +446,7 @@ export interface FileRoutesByFullPath {
   '/invite': typeof InviteRoute
   '/portal': typeof PortalRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/billing': typeof AuthenticatedBillingRoute
   '/capture-log': typeof AuthenticatedCaptureLogRoute
   '/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/case-database': typeof AuthenticatedCaseDatabaseRoute
@@ -507,6 +514,7 @@ export interface FileRoutesByTo {
   '/invite': typeof InviteRoute
   '/portal': typeof PortalRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/billing': typeof AuthenticatedBillingRoute
   '/capture-log': typeof AuthenticatedCaptureLogRoute
   '/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/case-database': typeof AuthenticatedCaseDatabaseRoute
@@ -576,6 +584,7 @@ export interface FileRoutesById {
   '/invite': typeof InviteRoute
   '/portal': typeof PortalRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/billing': typeof AuthenticatedBillingRoute
   '/_authenticated/capture-log': typeof AuthenticatedCaptureLogRoute
   '/_authenticated/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/_authenticated/case-database': typeof AuthenticatedCaseDatabaseRoute
@@ -645,6 +654,7 @@ export interface FileRouteTypes {
     | '/invite'
     | '/portal'
     | '/reset-password'
+    | '/billing'
     | '/capture-log'
     | '/capture-settings'
     | '/case-database'
@@ -712,6 +722,7 @@ export interface FileRouteTypes {
     | '/invite'
     | '/portal'
     | '/reset-password'
+    | '/billing'
     | '/capture-log'
     | '/capture-settings'
     | '/case-database'
@@ -780,6 +791,7 @@ export interface FileRouteTypes {
     | '/invite'
     | '/portal'
     | '/reset-password'
+    | '/_authenticated/billing'
     | '/_authenticated/capture-log'
     | '/_authenticated/capture-settings'
     | '/_authenticated/case-database'
@@ -909,6 +921,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/billing': {
+      id: '/_authenticated/billing'
+      path: '/billing'
+      fullPath: '/billing'
+      preLoaderRoute: typeof AuthenticatedBillingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/capture-log': {
       id: '/_authenticated/capture-log'
@@ -1334,6 +1353,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedBillingRoute: typeof AuthenticatedBillingRoute
   AuthenticatedCaptureLogRoute: typeof AuthenticatedCaptureLogRoute
   AuthenticatedCaptureSettingsRoute: typeof AuthenticatedCaptureSettingsRoute
   AuthenticatedCaseDatabaseRoute: typeof AuthenticatedCaseDatabaseRoute
@@ -1382,6 +1402,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedBillingRoute: AuthenticatedBillingRoute,
   AuthenticatedCaptureLogRoute: AuthenticatedCaptureLogRoute,
   AuthenticatedCaptureSettingsRoute: AuthenticatedCaptureSettingsRoute,
   AuthenticatedCaseDatabaseRoute: AuthenticatedCaseDatabaseRoute,
