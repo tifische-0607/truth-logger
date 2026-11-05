@@ -59,7 +59,7 @@ function ConnectorCard({ c }: { c: Conn }) {
   const rate = rejectionRate(c.accepted, c.rejected);
   const max = Math.max(1, ...c.trend.map((t) => t.accepted + t.rejected));
   return (
-    <Section title={`${c.name} · v${c.version}`}
+    <Section id={`conn-${c.key}`} title={`${c.name} · v${c.version}`}
       actions={<Chip tone={c.status === "suspended" ? "bg-failed text-failed-foreground" : "bg-done text-done-foreground"}>
         <span className={cn("size-2 rounded-full", c.status === "suspended" ? "bg-negative" : "bg-positive")} aria-hidden />
         {c.status === "suspended" ? (c.auto_suspended ? "Suspended automatically" : "Suspended") : "Active"}
