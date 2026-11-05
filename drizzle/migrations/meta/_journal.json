@@ -225,6 +225,13 @@
       "when": 1793839120086,
       "tag": "0031_fa_portal_u2_billing_clients",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1793852370649,
+      "tag": "0032_fa_portal_u4_requirements_register",
+      "breakpoints": true
     }
   ]
 }
