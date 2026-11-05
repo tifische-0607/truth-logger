@@ -13,10 +13,11 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@
 import { LogOut } from 'lucide-react';
 import { DOCUMENT_FOOTER } from '@/lib/document-footer';
 import { BaseStrip, COMPANY, GradientHero, Kicker, ProductLockup } from '@/components/BrandLogo';
+import { BillingTab, PricingTab } from '@/components/portal/BillingTabs';
 import { AdministrationTab, DashboardTab, DocumentsTab, EngagementsTab, PageTitle, StatusChip, type PortalCtx } from '@/components/portal/PortalScreens';
 
 type Home = { preview: boolean; access_disabled?: boolean; clients?: { id: string; name: string }[]; client_id?: string; portal_enabled?: boolean };
-const TABS = ['Dashboard', 'Engagements', 'Documents', 'Administration'] as const;
+const TABS = ['Dashboard', 'Engagements', 'Documents', 'Pricing', 'Billing', 'Administration'] as const;
 const str = (v: unknown) => (typeof v === 'string' && v ? v : undefined);
 const search = (r: Record<string, unknown>): { preview?: string | undefined; tab?: string | undefined; e?: string | undefined; pill?: string | undefined } => ({ preview: str(r['preview']), tab: str(r['tab']), e: str(r['e']), pill: str(r['pill']) });
 export const Route = createFileRoute('/portal')({ validateSearch: search, head: () => hubHead('Client portal', 'Private client access to FA Portal.'), component: Portal });
@@ -68,7 +69,9 @@ function Portal() {
                 <DashboardTab ctx={ctx} /></>
                 : tab === 'Engagements' ? <>{!s.e ? <PageTitle kicker="02 · Engagements" title="Engagements" sub={indiv ? 'Work FridayAnalytics is doing for you.' : `Work FridayAnalytics is doing for ${ctx.dash.client_name}.`} /> : null}<EngagementsTab ctx={ctx} openId={s.e || undefined} onBack={() => set({ e: '' })} /></>
                 : tab === 'Documents' ? <><PageTitle kicker="03 · Documents" title="Documents" sub="Every download re-checks the file against its recorded SHA-256." /><DocumentsTab ctx={ctx} /></>
-                : <><PageTitle kicker="04 · Administration" title="Administration" sub={indiv ? 'Your administrators, your name and details, activity and security.' : 'Administrators, organisation details, activity and security.'} /><AdministrationTab ctx={ctx} pill={s.pill} setPill={p => set({ pill: p })} /></>}
+                : tab === 'Pricing' ? <><PageTitle kicker="04 · Pricing" title="Pricing" sub="Compare the tiers. Request an upgrade and FridayAnalytics will be in touch." />{sample ? <p className="text-muted-foreground">Pricing is not shown in Sample mode.</p> : <PricingTab clientId={cid} preview={!!h.preview} canAct={ctx.canAct} />}</>
+                : tab === 'Billing' ? <><PageTitle kicker="05 · Billing" title="Billing" sub={indiv ? 'Your tier, seats and invoices.' : 'Your organisation\'s tier, seats and invoices.'} />{sample ? <p className="text-muted-foreground">Billing is not shown in Sample mode.</p> : <BillingTab clientId={cid} preview={!!h.preview} />}</>
+                : <><PageTitle kicker="06 · Administration" title="Administration" sub={indiv ? 'Your administrators, your name and details, activity and security.' : 'Administrators, organisation details, activity and security.'} /><AdministrationTab ctx={ctx} pill={s.pill} setPill={p => set({ pill: p })} /></>}
             </>}
         </>}
       </main>
