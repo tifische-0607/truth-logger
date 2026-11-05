@@ -52,14 +52,14 @@ function Billing() {
   const raw = Route.useSearch();
   const navigate = useNavigate({ from: "/billing" });
   const pill: Pill = (PILLS as readonly string[]).includes(raw.pill ?? "") ? (raw.pill as Pill) : "Requests";
-  const allowed = !!(me.data?.isOwner || (me.data as { isManagement?: boolean } | undefined)?.isManagement);
+  const allowed = !!(me.data?.isOwner || me.data?.isManagement);
   const clients = useQuery({ queryKey: ["billing", "clients"], enabled: allowed, queryFn: async () => { const { data, error } = await supabase.rpc("billing_clients"); if (error) throw error; return data as unknown as BClient[]; } });
   const tiers = useQuery({ queryKey: ["billing-tiers"], enabled: allowed, queryFn: loadTiers });
   if (me.isPending) return <p className="p-6">Loading…</p>;
   if (!allowed) return <div className="p-6"><PageHeader title="Billing" /><p role="alert" className="bg-failed text-failed-foreground rounded-md p-4">Billing is open to the owner and Management only.</p></div>;
   return (
     <div className="space-y-6 p-4 sm:p-6">
-      <PageHeader title="Billing" description="Pricing, upgrade requests, invoices and tier changes. Clients never pay online." />
+      <PageHeader title="Billing" subtitle="Pricing, upgrade requests, invoices and tier changes. Clients never pay online." />
       <nav aria-label="Billing sections" className="flex flex-wrap gap-2">{PILLS.map(p => <Button key={p} variant={p === pill ? "default" : "outline"} className="min-h-11" aria-current={p === pill ? "page" : undefined} onClick={() => void navigate({ search: { pill: p } })}>{p}</Button>)}</nav>
       {clients.error || tiers.error ? <Refusal msg={String((clients.error ?? tiers.error)?.message)} /> : !clients.data || !tiers.data ? <p>Loading…</p>
         : pill === "Requests" ? <Requests clients={clients.data} tiers={tiers.data} />
