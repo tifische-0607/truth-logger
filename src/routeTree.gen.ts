@@ -29,6 +29,7 @@ import { Route as AuthenticatedLibraryRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedManagementRouteImport } from './routes/_authenticated/management'
 import { Route as AuthenticatedOfflineRouteImport } from './routes/_authenticated/offline'
 import { Route as AuthenticatedQueueRouteImport } from './routes/_authenticated/queue'
+import { Route as AuthenticatedRejectionsRouteImport } from './routes/_authenticated/rejections'
 import { Route as AuthenticatedResultsRouteImport } from './routes/_authenticated/results'
 import { Route as AuthenticatedSearchRouteImport } from './routes/_authenticated/search'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
@@ -176,6 +177,11 @@ const AuthenticatedOfflineRoute = AuthenticatedOfflineRouteImport.update({
 const AuthenticatedQueueRoute = AuthenticatedQueueRouteImport.update({
   id: '/queue',
   path: '/queue',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedRejectionsRoute = AuthenticatedRejectionsRouteImport.update({
+  id: '/rejections',
+  path: '/rejections',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedResultsRoute = AuthenticatedResultsRouteImport.update({
@@ -460,6 +466,7 @@ export interface FileRoutesByFullPath {
   '/management': typeof AuthenticatedManagementRoute
   '/offline': typeof AuthenticatedOfflineRoute
   '/queue': typeof AuthenticatedQueueRoute
+  '/rejections': typeof AuthenticatedRejectionsRoute
   '/results': typeof AuthenticatedResultsRoute
   '/search': typeof AuthenticatedSearchRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -528,6 +535,7 @@ export interface FileRoutesByTo {
   '/management': typeof AuthenticatedManagementRoute
   '/offline': typeof AuthenticatedOfflineRoute
   '/queue': typeof AuthenticatedQueueRoute
+  '/rejections': typeof AuthenticatedRejectionsRoute
   '/results': typeof AuthenticatedResultsRoute
   '/search': typeof AuthenticatedSearchRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -598,6 +606,7 @@ export interface FileRoutesById {
   '/_authenticated/management': typeof AuthenticatedManagementRoute
   '/_authenticated/offline': typeof AuthenticatedOfflineRoute
   '/_authenticated/queue': typeof AuthenticatedQueueRoute
+  '/_authenticated/rejections': typeof AuthenticatedRejectionsRoute
   '/_authenticated/results': typeof AuthenticatedResultsRoute
   '/_authenticated/search': typeof AuthenticatedSearchRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
@@ -668,6 +677,7 @@ export interface FileRouteTypes {
     | '/management'
     | '/offline'
     | '/queue'
+    | '/rejections'
     | '/results'
     | '/search'
     | '/settings'
@@ -736,6 +746,7 @@ export interface FileRouteTypes {
     | '/management'
     | '/offline'
     | '/queue'
+    | '/rejections'
     | '/results'
     | '/search'
     | '/settings'
@@ -805,6 +816,7 @@ export interface FileRouteTypes {
     | '/_authenticated/management'
     | '/_authenticated/offline'
     | '/_authenticated/queue'
+    | '/_authenticated/rejections'
     | '/_authenticated/results'
     | '/_authenticated/search'
     | '/_authenticated/settings'
@@ -1018,6 +1030,13 @@ declare module '@tanstack/react-router' {
       path: '/queue'
       fullPath: '/queue'
       preLoaderRoute: typeof AuthenticatedQueueRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/rejections': {
+      id: '/_authenticated/rejections'
+      path: '/rejections'
+      fullPath: '/rejections'
+      preLoaderRoute: typeof AuthenticatedRejectionsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/results': {
@@ -1367,6 +1386,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedManagementRoute: typeof AuthenticatedManagementRoute
   AuthenticatedOfflineRoute: typeof AuthenticatedOfflineRoute
   AuthenticatedQueueRoute: typeof AuthenticatedQueueRoute
+  AuthenticatedRejectionsRoute: typeof AuthenticatedRejectionsRoute
   AuthenticatedResultsRoute: typeof AuthenticatedResultsRoute
   AuthenticatedSearchRoute: typeof AuthenticatedSearchRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
@@ -1416,6 +1436,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedManagementRoute: AuthenticatedManagementRoute,
   AuthenticatedOfflineRoute: AuthenticatedOfflineRoute,
   AuthenticatedQueueRoute: AuthenticatedQueueRoute,
+  AuthenticatedRejectionsRoute: AuthenticatedRejectionsRoute,
   AuthenticatedResultsRoute: AuthenticatedResultsRoute,
   AuthenticatedSearchRoute: AuthenticatedSearchRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,

@@ -381,7 +381,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 const SECTIONS: [RegExp, string][] = [
   [/^\/dashboard/, "01 · Home"], [/^\/(projects|clients)/, "02 · Projects"], [/^\/search/, "03 · Search"],
   [/^\/(cases|case-database|trail|timeline|profiles|comments|transcripts|custody|report|dossier|summary|items|incidents)/, "04 · Cases"],
-  [/^\/(collect|queue|watchlist|results|capture-log|worker|capture-settings|jobs)/, "05 · Collect"],
+  [/^\/(collect|rejections|queue|watchlist|results|capture-log|worker|capture-settings|jobs)/, "05 · Collect"],
   [/^\/(integrity|verify|export|offline)/, "06 · Integrity"], [/^\/library/, "07 · Library"],
   [/^\/sources/, "08 · Sources"], [/^\/(team|templates|settings|vaults)/, "09 · Admin"],
   [/^\/inbox/, "Curator"], [/^\/management/, "Management"], [/^\/billing/, "Billing"], [/^\/frameworks/, "Frameworks"],
