@@ -20,7 +20,7 @@ export const Route = createFileRoute("/invoice/$invoiceId")({
   component: InvoicePage,
 });
 
-const TONE: Record<string, DocTone> = { info: "neutral" as DocTone, caution: "caution", positive: "positive", negative: "negative" };
+const TONE: Record<string, DocTone> = { info: "info", caution: "caution", positive: "positive", negative: "negative" };
 
 function InvoicePage() {
   const { invoiceId } = Route.useParams();
@@ -49,7 +49,7 @@ function InvoicePage() {
       </div>
       <PrintDocument label="Invoice" kicker={inv.number ?? "DRAFT · NOT ISSUED"} title={`Invoice for ${client.client_name}`} subtitle={`Issued ${fmtDate(inv.issued_at)}${inv.due_date ? ` · Due ${fmtDate(inv.due_date)}` : ""}`}>
         <p><DocStatus tone={TONE[st.tone] ?? "caution"}>{st.label}</DocStatus></p>
-        <table className="fa-doc-table">
+        <table>
           <thead><tr><th>Description</th><th>Qty</th><th>Unit price</th><th>Amount</th></tr></thead>
           <tbody>
             {inv.lines.map((l, i) => <tr key={i}><td>{l.description}</td><td>{l.quantity}</td><td>{formatMoney(l.unit_price, inv.currency)}</td><td>{formatMoney(Math.round(l.quantity * l.unit_price * 100) / 100, inv.currency)}</td></tr>)}

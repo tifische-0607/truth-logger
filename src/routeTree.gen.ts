@@ -38,6 +38,7 @@ import { Route as AuthenticatedVaultsRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedVerifyRouteImport } from './routes/_authenticated/verify'
 import { Route as AuthenticatedWatchlistRouteImport } from './routes/_authenticated/watchlist'
 import { Route as AuthenticatedWorkerRouteImport } from './routes/_authenticated/worker'
+import { Route as InvoiceInvoiceIdRouteImport } from './routes/invoice.$invoiceId'
 import { Route as AuthenticatedCasesIndexRouteImport } from './routes/_authenticated/cases.index'
 import { Route as AuthenticatedCasesCaseIdRouteImport } from './routes/_authenticated/cases.$caseId'
 import { Route as AuthenticatedClientsClientIdRouteImport } from './routes/_authenticated/clients.$clientId'
@@ -220,6 +221,11 @@ const AuthenticatedWorkerRoute = AuthenticatedWorkerRouteImport.update({
   id: '/worker',
   path: '/worker',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const InvoiceInvoiceIdRoute = InvoiceInvoiceIdRouteImport.update({
+  id: '/invoice/$invoiceId',
+  path: '/invoice/$invoiceId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedCasesIndexRoute = AuthenticatedCasesIndexRouteImport.update({
   id: '/cases/',
@@ -457,6 +463,7 @@ export interface FileRoutesByFullPath {
   '/verify': typeof AuthenticatedVerifyRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
   '/worker': typeof AuthenticatedWorkerRoute
+  '/invoice/$invoiceId': typeof InvoiceInvoiceIdRoute
   '/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
   '/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
   '/comments/$caseId': typeof AuthenticatedCommentsCaseIdRoute
@@ -523,6 +530,7 @@ export interface FileRoutesByTo {
   '/verify': typeof AuthenticatedVerifyRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
   '/worker': typeof AuthenticatedWorkerRoute
+  '/invoice/$invoiceId': typeof InvoiceInvoiceIdRoute
   '/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
   '/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
   '/comments/$caseId': typeof AuthenticatedCommentsCaseIdRoute
@@ -591,6 +599,7 @@ export interface FileRoutesById {
   '/_authenticated/verify': typeof AuthenticatedVerifyRoute
   '/_authenticated/watchlist': typeof AuthenticatedWatchlistRoute
   '/_authenticated/worker': typeof AuthenticatedWorkerRoute
+  '/invoice/$invoiceId': typeof InvoiceInvoiceIdRoute
   '/_authenticated/cases/$caseId': typeof AuthenticatedCasesCaseIdRoute
   '/_authenticated/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
   '/_authenticated/comments/$caseId': typeof AuthenticatedCommentsCaseIdRoute
@@ -659,6 +668,7 @@ export interface FileRouteTypes {
     | '/verify'
     | '/watchlist'
     | '/worker'
+    | '/invoice/$invoiceId'
     | '/cases/$caseId'
     | '/clients/$clientId'
     | '/comments/$caseId'
@@ -725,6 +735,7 @@ export interface FileRouteTypes {
     | '/verify'
     | '/watchlist'
     | '/worker'
+    | '/invoice/$invoiceId'
     | '/cases/$caseId'
     | '/clients/$clientId'
     | '/comments/$caseId'
@@ -792,6 +803,7 @@ export interface FileRouteTypes {
     | '/_authenticated/verify'
     | '/_authenticated/watchlist'
     | '/_authenticated/worker'
+    | '/invoice/$invoiceId'
     | '/_authenticated/cases/$caseId'
     | '/_authenticated/clients/$clientId'
     | '/_authenticated/comments/$caseId'
@@ -837,6 +849,7 @@ export interface RootRouteChildren {
   InviteRoute: typeof InviteRoute
   PortalRoute: typeof PortalRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  InvoiceInvoiceIdRoute: typeof InvoiceInvoiceIdRoute
   ApiPublicResearchCapturesRoute: typeof ApiPublicResearchCapturesRoute
   ApiPublicResearchClaimRoute: typeof ApiPublicResearchClaimRoute
   ApiPublicResearchJobsRoute: typeof ApiPublicResearchJobsRoute
@@ -1057,6 +1070,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/worker'
       preLoaderRoute: typeof AuthenticatedWorkerRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/invoice/$invoiceId': {
+      id: '/invoice/$invoiceId'
+      path: '/invoice/$invoiceId'
+      fullPath: '/invoice/$invoiceId'
+      preLoaderRoute: typeof InvoiceInvoiceIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/cases/': {
       id: '/_authenticated/cases/'
@@ -1421,6 +1441,7 @@ const rootRouteChildren: RootRouteChildren = {
   InviteRoute: InviteRoute,
   PortalRoute: PortalRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  InvoiceInvoiceIdRoute: InvoiceInvoiceIdRoute,
   ApiPublicResearchCapturesRoute: ApiPublicResearchCapturesRoute,
   ApiPublicResearchClaimRoute: ApiPublicResearchClaimRoute,
   ApiPublicResearchJobsRoute: ApiPublicResearchJobsRoute,
