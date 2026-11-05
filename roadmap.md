@@ -73,3 +73,12 @@
 - [x] Engagements per FA-CEF V1.10 replace the first projects design: Curator role, gates G0-G5 enforced by the database, signed brief with amendments, registers, analyst decisions with second reader, tiers, outputs that report against the brief, G5 release (drizzle 0005-0007)
 - [ ] (Open) Curator decisions: client-facing pricing and tiers; retention wording; whether G5 stays HELD for external clients by default; default S3 thresholds
 - [ ] (Open) Client portal (rules in place, no screens); PDF rendering for the executive brief
+
+## Open decisions from U2 (5 Nov 2026)
+- Tier names, prices and contents (placeholders "Tier 1/2/3", "Price on request" until set)
+- Seat limits: set to the agreed U1 counts 3 / 10 / unlimited — confirm
+- Who may run billing: built as owner and Management only (not Curator/analyst)
+- Partial payments: not supported; payment must equal the invoice total
+- A paid invoice cannot be voided; credit notes not built
+- First tier for a client can be set without an invoice; later changes need a paid invoice
+- Invoice number format FA-INV-YYYY-NNNNN; tax/SST lines not included
