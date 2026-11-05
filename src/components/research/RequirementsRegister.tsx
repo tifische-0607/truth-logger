@@ -59,7 +59,7 @@ export function RequirementsRegister({ projectId, canEdit, canMark }: { projectI
       hint="Fed by the signed brief. Every collected item must link to one of these requirement IDs; anything else is refused."
       actions={
         <span className="flex items-center gap-2 text-sm font-semibold">
-          <span aria-hidden className={cn("size-2.5 rounded-full", st?.complete ? "bg-positive" : "bg-warn")} />
+          <span aria-hidden className={cn("size-2.5 rounded-full", st?.complete ? "bg-positive" : "bg-caution")} />
           {reg.isLoading ? "Checking…" : st?.complete ? "Complete" : "Not complete"}
         </span>
       }
