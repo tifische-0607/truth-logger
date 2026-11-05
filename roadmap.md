@@ -88,3 +88,11 @@
 - Who may edit the register (now: engagement lead, lead analyst, Curator, owner) and who may mark it complete (now: engagement lead, Curator, owner)
 - Whether captures must also fall inside the requirement time window by post date (connector does not yet send a post date)
 - Brief wording-to-code mapping for platforms/languages (e.g. "YouTube" counted as Google)
+
+## U5 remainder — built 5 Nov 2026
+- Rejection-rate dashboard per connector (staff only, `/rejections`), migration 0035. Phase 5 defaults (5 rejects / 60 min) confirmed and shown from connector settings. SQL Part A run; Part B (suspension simulation, non-staff refusal) not run — `tests/sql/u5_rejection_dashboard_test.sql`.
+
+## U6 Methodology checkpoints — built 5 Nov 2026 (needs live fixture testing)
+- V1, V2, Q1, Q2, R, C plus G0 conflict declaration, findings, second review, report builder and methodology statement, staff exposure/training. Migrations 0036, 0037. Screen: engagement → Checkpoints.
+- SQL Part A run; Part B behaviour checks not run (no engagements exist; test access cannot sign in as users) — `tests/sql/u6_methodology_checkpoints_test.sql`.
+- Open (waits on user): FA-STD-001 naming wording, retention periods, training record format, methodology statement wording (Curator), Curator approval of universal standard v1 (still Sample), client portal display of released methodology statements.
