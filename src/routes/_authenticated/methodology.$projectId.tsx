@@ -32,24 +32,23 @@ function useData(projectId: string) {
   return useQuery({
     queryKey: ["u6", projectId],
     queryFn: async () => {
-      const q = <T,>(p: PromiseLike<{ data: T | null; error: unknown }>) => p;
       const [proj, std, res, caps, ver, reqs, meas, neg, fin, fi, rev, outs, figs, stm, appr, conf] = await Promise.all([
-        q(supabase.from("projects").select("id, name").eq("id", projectId).maybeSingle()),
-        q(supabase.rpc("u6_standard")),
-        q(supabase.from("checkpoint_results").select("subject_id, checkpoint, result, reason, checked_at, subject_kind").eq("project_id", projectId).order("checked_at", { ascending: false })),
-        q(supabase.from("research_captures").select("id, item_ref, platform, item_type, sha256_at_capture, captured_at").eq("project_id", projectId).order("captured_at", { ascending: false }).limit(200)),
-        q(supabase.from("verification_records").select("*").eq("project_id", projectId).order("rated_at", { ascending: false })),
-        q(supabase.from("research_requirements").select("id, req_no, code, version, status, platform, window_from, window_to").eq("project_id", projectId).order("req_no").order("version", { ascending: false })),
-        q(supabase.from("collection_measures").select("*").eq("project_id", projectId)),
-        q(supabase.from("negative_results").select("*").eq("project_id", projectId)),
-        q(supabase.from("findings").select("*").eq("project_id", projectId).order("created_at", { ascending: false })),
-        q(supabase.from("finding_items").select("*").eq("project_id", projectId)),
-        q(supabase.from("finding_reviews").select("*").eq("project_id", projectId).order("decided_at", { ascending: false })),
-        q(supabase.from("project_outputs").select("id, title, kind, status").eq("project_id", projectId).order("created_at", { ascending: false })),
-        q(supabase.from("report_figures").select("*").eq("project_id", projectId)),
-        q(supabase.from("report_statements").select("*").eq("project_id", projectId).order("version", { ascending: false })),
-        q(supabase.from("report_statement_approvals").select("*").eq("project_id", projectId)),
-        q(supabase.from("conflict_declarations").select("*").eq("project_id", projectId).order("declared_at", { ascending: false })),
+        (supabase.from("projects").select("id, name").eq("id", projectId).maybeSingle()),
+        (supabase.rpc("u6_standard")),
+        (supabase.from("checkpoint_results").select("subject_id, checkpoint, result, reason, checked_at, subject_kind").eq("project_id", projectId).order("checked_at", { ascending: false })),
+        (supabase.from("research_captures").select("id, item_ref, platform, item_type, sha256_at_capture, captured_at").eq("project_id", projectId).order("captured_at", { ascending: false }).limit(200)),
+        (supabase.from("verification_records").select("*").eq("project_id", projectId).order("rated_at", { ascending: false })),
+        (supabase.from("research_requirements").select("id, req_no, code, version, status, platform, window_from, window_to").eq("project_id", projectId).order("req_no").order("version", { ascending: false })),
+        (supabase.from("collection_measures").select("*").eq("project_id", projectId)),
+        (supabase.from("negative_results").select("*").eq("project_id", projectId)),
+        (supabase.from("findings").select("*").eq("project_id", projectId).order("created_at", { ascending: false })),
+        (supabase.from("finding_items").select("*").eq("project_id", projectId)),
+        (supabase.from("finding_reviews").select("*").eq("project_id", projectId).order("decided_at", { ascending: false })),
+        (supabase.from("project_outputs").select("id, title, kind, status").eq("project_id", projectId).order("created_at", { ascending: false })),
+        (supabase.from("report_figures").select("*").eq("project_id", projectId)),
+        (supabase.from("report_statements").select("*").eq("project_id", projectId).order("version", { ascending: false })),
+        (supabase.from("report_statement_approvals").select("*").eq("project_id", projectId)),
+        (supabase.from("conflict_declarations").select("*").eq("project_id", projectId).order("declared_at", { ascending: false })),
       ]);
       const err = [proj, std, res, caps, ver, reqs, meas, neg, fin, fi, rev, outs, figs, stm, appr, conf].find((x) => x.error)?.error;
       if (err) throw err;
@@ -99,7 +98,7 @@ function Methodology() {
   return (
     <>
       <PageHeader kicker="02 · Projects · U6" title="Methodology checkpoints" subtitle={D.project?.name ?? "Engagement"}
-        actions={<Link to="/projects/$projectId" params={{ projectId }} className="bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-4 text-sm font-medium">Back to engagement</Link>} />
+        actions={<Link to="/projects/$projectId" params={{ projectId }} search={{ tab: "overview" }} className="bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-4 text-sm font-medium">Back to engagement</Link>} />
       <StandardNote D={D} />
       <CheckpointBar D={D} />
       <div className="grid gap-6">
