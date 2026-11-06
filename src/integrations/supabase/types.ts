@@ -2648,6 +2648,191 @@ export type Database = {
         }
         Relationships: []
       }
+      nar_coordination: {
+        Row: {
+          account_refs: string[]
+          capture_ids: string[]
+          decided_at: string
+          decided_by: string
+          decision: string
+          finding_ref: string
+          id: string
+          kind: string
+          project_id: string
+          reason: string
+          standard_version_id: string
+          thresholds: Json
+        }
+        Insert: {
+          account_refs: string[]
+          capture_ids: string[]
+          decided_at?: string
+          decided_by: string
+          decision: string
+          finding_ref: string
+          id?: string
+          kind: string
+          project_id: string
+          reason: string
+          standard_version_id: string
+          thresholds: Json
+        }
+        Update: {
+          account_refs?: string[]
+          capture_ids?: string[]
+          decided_at?: string
+          decided_by?: string
+          decision?: string
+          finding_ref?: string
+          id?: string
+          kind?: string
+          project_id?: string
+          reason?: string
+          standard_version_id?: string
+          thresholds?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nar_coordination_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nar_coordination_standard_version_id_fkey"
+            columns: ["standard_version_id"]
+            isOneToOne: false
+            referencedRelation: "framework_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nar_events: {
+        Row: {
+          action: string
+          actor: string | null
+          created_at: string
+          detail: Json
+          id: string
+          project_id: string | null
+        }
+        Insert: {
+          action: string
+          actor?: string | null
+          created_at?: string
+          detail?: Json
+          id?: string
+          project_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor?: string | null
+          created_at?: string
+          detail?: Json
+          id?: string
+          project_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nar_events_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nar_narratives: {
+        Row: {
+          capture_ids: string[]
+          cluster_ref: string
+          decided_at: string
+          decided_by: string
+          decision: string
+          id: string
+          myth_refs: string[]
+          name: string | null
+          project_id: string
+          reason: string
+          scenario_refs: string[]
+          similarity_min: number
+          standard_version_id: string
+          window_minutes: number
+        }
+        Insert: {
+          capture_ids: string[]
+          cluster_ref: string
+          decided_at?: string
+          decided_by: string
+          decision: string
+          id?: string
+          myth_refs?: string[]
+          name?: string | null
+          project_id: string
+          reason: string
+          scenario_refs?: string[]
+          similarity_min: number
+          standard_version_id: string
+          window_minutes: number
+        }
+        Update: {
+          capture_ids?: string[]
+          cluster_ref?: string
+          decided_at?: string
+          decided_by?: string
+          decision?: string
+          id?: string
+          myth_refs?: string[]
+          name?: string | null
+          project_id?: string
+          reason?: string
+          scenario_refs?: string[]
+          similarity_min?: number
+          standard_version_id?: string
+          window_minutes?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nar_narratives_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nar_narratives_standard_version_id_fkey"
+            columns: ["standard_version_id"]
+            isOneToOne: false
+            referencedRelation: "framework_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nar_thresholds: {
+        Row: {
+          id: string
+          key: string
+          set_at: string
+          set_by: string | null
+          value: number | null
+        }
+        Insert: {
+          id?: string
+          key: string
+          set_at?: string
+          set_by?: string | null
+          value?: number | null
+        }
+        Update: {
+          id?: string
+          key?: string
+          set_at?: string
+          set_by?: string | null
+          value?: number | null
+        }
+        Relationships: []
+      }
       negative_results: {
         Row: {
           id: string
@@ -6825,6 +7010,42 @@ export type Database = {
       lnk_standard_in_force: { Args: never; Returns: string }
       mgmt_can_open: { Args: { u: string }; Returns: boolean }
       mgmt_portfolio: { Args: never; Returns: Json }
+      nar_captures_ok: {
+        Args: { _captures: string[]; _project: string }
+        Returns: boolean
+      }
+      nar_confirmed_coordination: { Args: { _project: string }; Returns: Json }
+      nar_decide_cluster: {
+        Args: {
+          _captures: string[]
+          _cluster: string
+          _confirm: boolean
+          _myths: string[]
+          _name: string
+          _project: string
+          _reason: string
+          _scenarios: string[]
+        }
+        Returns: string
+      }
+      nar_decide_coordination: {
+        Args: {
+          _accounts: string[]
+          _captures: string[]
+          _confirm: boolean
+          _finding: string
+          _kind: string
+          _project: string
+          _reason: string
+        }
+        Returns: Json
+      }
+      nar_overview: { Args: { _project: string }; Returns: Json }
+      nar_set_threshold: {
+        Args: { _key: string; _value: number }
+        Returns: undefined
+      }
+      nar_threshold: { Args: { _key: string }; Returns: number }
       portal_access_list: { Args: { c: string }; Returns: Json }
       portal_activate_invitation: {
         Args: { rid: string; uid: string }
