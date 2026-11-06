@@ -48,7 +48,7 @@ function Portal() {
   const indiv = ctx?.dash.kind === 'individual';
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <header className="border-b"><div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4"><div className="flex items-center gap-3"><ProductLockup /><span className="text-muted-foreground hidden text-sm sm:inline">Client portal</span></div>
+      <header className="border-b"><div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4"><div className="flex items-center gap-3"><Link to="/portal" search={(prev) => ({ ...prev, tab: 'Dashboard', e: '' })} aria-label="Go to dashboard" className="inline-flex min-h-11 items-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><ProductLockup /></Link><span className="text-muted-foreground hidden text-sm sm:inline">Client portal</span></div>
         <div className="flex items-center gap-3"><div className="w-36"><ThemeControl /></div>{h ? <Button variant="ghost" className="min-h-11" aria-label="Sign out" onClick={async () => { await qc.cancelQueries(); qc.clear(); await supabase.auth.signOut(); await navigate({ to: '/auth', replace: true }); }}><LogOut className="size-4" /><span className="hidden sm:inline">Sign out</span></Button> : null}</div></div>
         {ctx ? <nav aria-label="Client portal pages" className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4">{TABS.map(t => <Button key={t} variant="ghost" className={`min-h-11 rounded-none border-b-2 ${tab === t ? 'border-primary font-semibold' : 'border-transparent'}`} aria-current={tab === t ? 'page' : undefined} onClick={() => set({ tab: t, e: '' })}>{t}</Button>)}</nav> : null}
       </header>
