@@ -4804,6 +4804,68 @@ export type Database = {
           },
         ]
       }
+      research_approved_sources: {
+        Row: {
+          actor: string
+          at: string
+          brief_id: string
+          connector_key: string
+          id: string
+          legal_basis: string
+          project_id: string
+          status: string
+        }
+        Insert: {
+          actor: string
+          at?: string
+          brief_id: string
+          connector_key: string
+          id?: string
+          legal_basis: string
+          project_id: string
+          status: string
+        }
+        Update: {
+          actor?: string
+          at?: string
+          brief_id?: string
+          connector_key?: string
+          id?: string
+          legal_basis?: string
+          project_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_approved_sources_brief_id_fkey"
+            columns: ["brief_id"]
+            isOneToOne: false
+            referencedRelation: "project_briefs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_approved_sources_brief_id_fkey"
+            columns: ["brief_id"]
+            isOneToOne: false
+            referencedRelation: "project_current_briefs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_approved_sources_connector_key_fkey"
+            columns: ["connector_key"]
+            isOneToOne: false
+            referencedRelation: "research_connectors"
+            referencedColumns: ["key"]
+          },
+          {
+            foreignKeyName: "research_approved_sources_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       research_captures: {
         Row: {
           captured_at: string
@@ -4952,13 +5014,95 @@ export type Database = {
           },
         ]
       }
+      research_connector_certifications: {
+        Row: {
+          checklist: Json
+          connector_key: string
+          connector_version: string
+          decided_at: string
+          decided_by: string
+          id: string
+          notes: string
+          result: string
+        }
+        Insert: {
+          checklist: Json
+          connector_key: string
+          connector_version: string
+          decided_at?: string
+          decided_by: string
+          id?: string
+          notes: string
+          result: string
+        }
+        Update: {
+          checklist?: Json
+          connector_key?: string
+          connector_version?: string
+          decided_at?: string
+          decided_by?: string
+          id?: string
+          notes?: string
+          result?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_connector_certifications_connector_key_fkey"
+            columns: ["connector_key"]
+            isOneToOne: false
+            referencedRelation: "research_connectors"
+            referencedColumns: ["key"]
+          },
+        ]
+      }
+      research_connector_config: {
+        Row: {
+          actor: string | null
+          at: string
+          configured: boolean
+          connector_key: string
+          id: string
+          note: string | null
+          reported_by: string
+        }
+        Insert: {
+          actor?: string | null
+          at?: string
+          configured: boolean
+          connector_key: string
+          id?: string
+          note?: string | null
+          reported_by: string
+        }
+        Update: {
+          actor?: string | null
+          at?: string
+          configured?: boolean
+          connector_key?: string
+          id?: string
+          note?: string | null
+          reported_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_connector_config_connector_key_fkey"
+            columns: ["connector_key"]
+            isOneToOne: false
+            referencedRelation: "research_connectors"
+            referencedColumns: ["key"]
+          },
+        ]
+      }
       research_connectors: {
         Row: {
+          access_scope: string
           key: string
           name: string
           platforms: string[]
           reject_limit: number
           reject_window_minutes: number
+          requires_certification: boolean
+          source_kind: string
           status: string
           status_reason: string | null
           updated_at: string
@@ -4966,11 +5110,14 @@ export type Database = {
           version: string
         }
         Insert: {
+          access_scope?: string
           key: string
           name: string
           platforms: string[]
           reject_limit?: number
           reject_window_minutes?: number
+          requires_certification?: boolean
+          source_kind?: string
           status?: string
           status_reason?: string | null
           updated_at?: string
@@ -4978,11 +5125,14 @@ export type Database = {
           version: string
         }
         Update: {
+          access_scope?: string
           key?: string
           name?: string
           platforms?: string[]
           reject_limit?: number
           reject_window_minutes?: number
+          requires_certification?: boolean
+          source_kind?: string
           status?: string
           status_reason?: string | null
           updated_at?: string
@@ -7286,6 +7436,15 @@ export type Database = {
         }
         Returns: string
       }
+      research_approve_source: {
+        Args: {
+          _approve: boolean
+          _key: string
+          _legal_basis: string
+          _project: string
+        }
+        Returns: undefined
+      }
       research_block_reason: {
         Args: { _cycle: number; _plan?: string; _project: string }
         Returns: string
@@ -7294,9 +7453,23 @@ export type Database = {
         Args: { c: Database["public"]["Tables"]["research_captures"]["Row"] }
         Returns: string
       }
+      research_certify_connector: {
+        Args: {
+          _checklist: Json
+          _key: string
+          _notes: string
+          _passed: boolean
+        }
+        Returns: undefined
+      }
       research_claim_job: {
         Args: { _cycle?: number; _plan_sha256?: string }
         Returns: Json
+      }
+      research_connector_certified: { Args: { _key: string }; Returns: boolean }
+      research_connector_configured: {
+        Args: { _key: string }
+        Returns: boolean
       }
       research_cycle_open_for_reading: {
         Args: { _cycle: number; _project: string }
@@ -7376,6 +7549,10 @@ export type Database = {
       research_register_sha256: { Args: { _project: string }; Returns: string }
       research_register_status: { Args: { _project: string }; Returns: Json }
       research_rejection_dashboard: { Args: { _days?: number }; Returns: Json }
+      research_report_connector_config: {
+        Args: { _configured: boolean; _key: string; _note: string }
+        Returns: undefined
+      }
       research_report_run: {
         Args: { _expected?: number; _run: string; _status: string }
         Returns: Json
@@ -7458,6 +7635,11 @@ export type Database = {
         Args: { _minutes: number }
         Returns: undefined
       }
+      research_source_approved: {
+        Args: { _key: string; _project: string }
+        Returns: boolean
+      }
+      research_sources_overview: { Args: { _project: string }; Returns: Json }
       research_start_plan: { Args: { _plan: string }; Returns: string }
       research_submit_capture: {
         Args: {
