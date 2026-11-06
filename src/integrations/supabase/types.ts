@@ -2648,6 +2648,120 @@ export type Database = {
         }
         Relationships: []
       }
+      manual_capture_vault_writes: {
+        Row: {
+          artefact: string
+          at: string
+          capture_id: string
+          darknight_path: string
+          id: string
+          sha256_on_write: string
+          verified: boolean
+        }
+        Insert: {
+          artefact: string
+          at?: string
+          capture_id: string
+          darknight_path: string
+          id?: string
+          sha256_on_write: string
+          verified: boolean
+        }
+        Update: {
+          artefact?: string
+          at?: string
+          capture_id?: string
+          darknight_path?: string
+          id?: string
+          sha256_on_write?: string
+          verified?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "manual_capture_vault_writes_capture_id_fkey"
+            columns: ["capture_id"]
+            isOneToOne: false
+            referencedRelation: "manual_captures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      manual_captures: {
+        Row: {
+          captured_at_utc: string
+          client_ref: string
+          collector: string
+          connector_key: string
+          connector_version: string
+          id: string
+          page_sha256: string
+          project_id: string
+          received_at: string
+          requirement_id: string
+          screenshot_sha256: string
+          session_log_sha256: string | null
+          session_pages: number | null
+          status: string
+          url_sha256: string
+        }
+        Insert: {
+          captured_at_utc: string
+          client_ref: string
+          collector: string
+          connector_key?: string
+          connector_version: string
+          id?: string
+          page_sha256: string
+          project_id: string
+          received_at?: string
+          requirement_id: string
+          screenshot_sha256: string
+          session_log_sha256?: string | null
+          session_pages?: number | null
+          status?: string
+          url_sha256: string
+        }
+        Update: {
+          captured_at_utc?: string
+          client_ref?: string
+          collector?: string
+          connector_key?: string
+          connector_version?: string
+          id?: string
+          page_sha256?: string
+          project_id?: string
+          received_at?: string
+          requirement_id?: string
+          screenshot_sha256?: string
+          session_log_sha256?: string | null
+          session_pages?: number | null
+          status?: string
+          url_sha256?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "manual_captures_connector_key_fkey"
+            columns: ["connector_key"]
+            isOneToOne: false
+            referencedRelation: "research_connectors"
+            referencedColumns: ["key"]
+          },
+          {
+            foreignKeyName: "manual_captures_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "manual_captures_requirement_id_fkey"
+            columns: ["requirement_id"]
+            isOneToOne: false
+            referencedRelation: "research_requirements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       nar_coordination: {
         Row: {
           account_refs: string[]
@@ -7300,6 +7414,19 @@ export type Database = {
         Returns: undefined
       }
       lnk_standard_in_force: { Args: never; Returns: string }
+      manual_capture_submit: {
+        Args: { _item: Json; _project: string; _requirement_code: string }
+        Returns: Json
+      }
+      manual_capture_vault_write: {
+        Args: {
+          _artefact: string
+          _capture: string
+          _path: string
+          _sha256: string
+        }
+        Returns: Json
+      }
       mgmt_can_open: { Args: { u: string }; Returns: boolean }
       mgmt_portfolio: { Args: never; Returns: Json }
       nar_captures_ok: {
