@@ -1,8 +1,10 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect, useLocation } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 import { portalIdentity, type PortalIdentity } from '@/lib/portal-access';
+import { accessMenuQuery, canOpen, FORBIDDEN_MESSAGE, staffScreenFor } from '@/lib/access-levels';
 
 const STAFF_MARKER = "fa-portal-staff-verified";
 
@@ -35,14 +37,32 @@ export const Route = createFileRoute("/_authenticated")({
       if (identity.kind === 'staff') localStorage.setItem(STAFF_MARKER, data.user.id);
       else localStorage.removeItem(STAFF_MARKER);
     } catch { /* ignore */ }
-    if(identity.kind === 'client') throw redirect({to:'/portal'});
+    // Client Admin, Client Staff and Members never open FA screens: they go to the client portal.
+    if(identity.kind === 'client' || identity.kind === 'member') throw redirect({to:'/portal'});
     if(identity.kind !== 'staff') throw redirect({to:'/auth'});
     context.queryClient.setQueryData(['staff-identity',data.user.id],identity);
+    // Screen access by level plus job role comes from the database.
+    await context.queryClient.prefetchQuery(accessMenuQuery);
     return { user: data.user };
   },
-  component: () => (
-    <AppShell>
-      <Outlet />
-    </AppShell>
-  ),
+  component: StaffLayout,
 });
+
+function StaffLayout() {
+  const { pathname } = useLocation();
+  const menu = useQuery({ ...accessMenuQuery, enabled: typeof navigator === 'undefined' || navigator.onLine });
+  const screen = staffScreenFor(pathname);
+  // Offline: the menu cannot be checked; downloaded cases stay readable and the server still checks every request.
+  const offline = typeof navigator !== 'undefined' && !navigator.onLine;
+  const refused = !offline && menu.data && !canOpen(menu.data, screen);
+  return (
+    <AppShell>
+      {refused ? (
+        <div role="alert" className="bg-failed text-failed-foreground max-w-2xl rounded-md p-5">
+          <p className="font-display text-lg font-medium">This screen is not available</p>
+          <p className="mt-1 text-sm">{FORBIDDEN_MESSAGE}</p>
+        </div>
+      ) : <Outlet />}
+    </AppShell>
+  );
+}
