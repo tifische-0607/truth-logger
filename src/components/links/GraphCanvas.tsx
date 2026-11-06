@@ -13,7 +13,15 @@ export function GraphCanvas({ graph, onNode, onEdge }: { graph: Graph; onNode: (
     void import("cytoscape").then(({ default: cytoscape }) => {
       if (cancelled || !ref.current) return;
       const css = getComputedStyle(ref.current);
-      const tok = (n: string) => css.getPropertyValue(n).trim() || "currentColor";
+      // Cytoscape only understands rgb/hex, so theme tokens (oklch) are converted through a 1px canvas.
+      const px = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
+      const tok = (n: string) => {
+        const v = css.getPropertyValue(n).trim();
+        if (!px || !v) return "#888";
+        px.clearRect(0, 0, 1, 1); px.fillStyle = v; px.fillRect(0, 0, 1, 1);
+        const [r, g, b] = px.getImageData(0, 0, 1, 1).data;
+        return `rgb(${r},${g},${b})`;
+      };
       const inst = cytoscape({
         container: ref.current,
         elements: [
