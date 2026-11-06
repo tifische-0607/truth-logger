@@ -1,0 +1,1 @@
+REVOKE ALL ON FUNCTION public.nar_confirmed_coordination(uuid), public.nar_threshold(text), public.nar_captures_ok(uuid,uuid[]), public.nar_row_guard() FROM authenticated;

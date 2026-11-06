@@ -323,6 +323,13 @@
       "when": 1793954002095,
       "tag": "0045_fa_portal_u11_narratives",
       "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "7",
+      "when": 1793954139736,
+      "tag": "0046_fa_portal_u11_gateway_feed_privileges",
+      "breakpoints": true
     }
   ]
 }
