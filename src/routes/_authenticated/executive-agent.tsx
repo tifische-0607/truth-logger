@@ -19,7 +19,7 @@ export const Route = createFileRoute("/_authenticated/executive-agent")({
   component: ExecAgent,
 });
 
-export const NO_EXECUTIVES = "No executives have access";
+const NO_EXECUTIVES = "No executives have access";
 type Access = { user_id: string; name: string; status: "granted" | "revoked"; projects: string[]; scope: string[]; reason: string; at: string };
 type Overview = { access: Access[]; log: { user: string | null; confidence: string; citations: number; ref: string; at: string }[]; candidates: { id: string; name: string }[] };
 const sel = "border-input bg-background min-h-11 w-full rounded-md border px-3 text-sm";

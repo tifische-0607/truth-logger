@@ -29,6 +29,7 @@ import {
   MessagesSquare,
   ScanSearch,
   Plug,
+  Bot,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -304,6 +305,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <p className="kicker mt-5 px-3">System</p>
           {me.data?.isCurator && <Link to="/inbox" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><ScrollText className="size-5"/>Curator inbox</Link>}
           {(me.data?.isOwner || me.data?.isManagement) && <Link to="/management" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><Gauge className="size-5"/>Management</Link>}
+          {(me.data?.isOwner || me.data?.isManagement) && <Link to="/executive-agent" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><Bot className="size-5"/>Executive agent</Link>}
           {(me.data?.isOwner || me.data?.isManagement) && <BillingLink />}
           <Link to="/portal" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><Users className="size-5"/>Client preview</Link>
           <Link to="/sources" className="flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm hover:bg-sidebar-accent"><Server className="size-5"/>Sources</Link>

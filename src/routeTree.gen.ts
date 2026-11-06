@@ -24,6 +24,7 @@ import { Route as AuthenticatedConnectorsRouteImport } from './routes/_authentic
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedEarlyWarningRouteImport } from './routes/_authenticated/early-warning'
 import { Route as AuthenticatedEvidenceSearchRouteImport } from './routes/_authenticated/evidence-search'
+import { Route as AuthenticatedExecutiveAgentRouteImport } from './routes/_authenticated/executive-agent'
 import { Route as AuthenticatedExportRouteImport } from './routes/_authenticated/export'
 import { Route as AuthenticatedFrameworksRouteImport } from './routes/_authenticated/frameworks'
 import { Route as AuthenticatedInboxRouteImport } from './routes/_authenticated/inbox'
@@ -161,6 +162,12 @@ const AuthenticatedEvidenceSearchRoute =
   AuthenticatedEvidenceSearchRouteImport.update({
     id: '/evidence-search',
     path: '/evidence-search',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedExecutiveAgentRoute =
+  AuthenticatedExecutiveAgentRouteImport.update({
+    id: '/executive-agent',
+    path: '/executive-agent',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedExportRoute = AuthenticatedExportRouteImport.update({
@@ -507,6 +514,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/early-warning': typeof AuthenticatedEarlyWarningRoute
   '/evidence-search': typeof AuthenticatedEvidenceSearchRoute
+  '/executive-agent': typeof AuthenticatedExecutiveAgentRoute
   '/export': typeof AuthenticatedExportRoute
   '/frameworks': typeof AuthenticatedFrameworksRoute
   '/inbox': typeof AuthenticatedInboxRoute
@@ -583,6 +591,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/early-warning': typeof AuthenticatedEarlyWarningRoute
   '/evidence-search': typeof AuthenticatedEvidenceSearchRoute
+  '/executive-agent': typeof AuthenticatedExecutiveAgentRoute
   '/export': typeof AuthenticatedExportRoute
   '/frameworks': typeof AuthenticatedFrameworksRoute
   '/inbox': typeof AuthenticatedInboxRoute
@@ -661,6 +670,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/early-warning': typeof AuthenticatedEarlyWarningRoute
   '/_authenticated/evidence-search': typeof AuthenticatedEvidenceSearchRoute
+  '/_authenticated/executive-agent': typeof AuthenticatedExecutiveAgentRoute
   '/_authenticated/export': typeof AuthenticatedExportRoute
   '/_authenticated/frameworks': typeof AuthenticatedFrameworksRoute
   '/_authenticated/inbox': typeof AuthenticatedInboxRoute
@@ -739,6 +749,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/early-warning'
     | '/evidence-search'
+    | '/executive-agent'
     | '/export'
     | '/frameworks'
     | '/inbox'
@@ -815,6 +826,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/early-warning'
     | '/evidence-search'
+    | '/executive-agent'
     | '/export'
     | '/frameworks'
     | '/inbox'
@@ -892,6 +904,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/early-warning'
     | '/_authenticated/evidence-search'
+    | '/_authenticated/executive-agent'
     | '/_authenticated/export'
     | '/_authenticated/frameworks'
     | '/_authenticated/inbox'
@@ -1083,6 +1096,13 @@ declare module '@tanstack/react-router' {
       path: '/evidence-search'
       fullPath: '/evidence-search'
       preLoaderRoute: typeof AuthenticatedEvidenceSearchRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/executive-agent': {
+      id: '/_authenticated/executive-agent'
+      path: '/executive-agent'
+      fullPath: '/executive-agent'
+      preLoaderRoute: typeof AuthenticatedExecutiveAgentRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/export': {
@@ -1518,6 +1538,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedEarlyWarningRoute: typeof AuthenticatedEarlyWarningRoute
   AuthenticatedEvidenceSearchRoute: typeof AuthenticatedEvidenceSearchRoute
+  AuthenticatedExecutiveAgentRoute: typeof AuthenticatedExecutiveAgentRoute
   AuthenticatedExportRoute: typeof AuthenticatedExportRoute
   AuthenticatedFrameworksRoute: typeof AuthenticatedFrameworksRoute
   AuthenticatedInboxRoute: typeof AuthenticatedInboxRoute
@@ -1575,6 +1596,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedEarlyWarningRoute: AuthenticatedEarlyWarningRoute,
   AuthenticatedEvidenceSearchRoute: AuthenticatedEvidenceSearchRoute,
+  AuthenticatedExecutiveAgentRoute: AuthenticatedExecutiveAgentRoute,
   AuthenticatedExportRoute: AuthenticatedExportRoute,
   AuthenticatedFrameworksRoute: AuthenticatedFrameworksRoute,
   AuthenticatedInboxRoute: AuthenticatedInboxRoute,
