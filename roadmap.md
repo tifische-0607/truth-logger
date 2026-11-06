@@ -101,3 +101,5 @@
 - V1, V2, Q1, Q2, R, C plus G0 conflict declaration, findings, second review, report builder and methodology statement, staff exposure/training. Migrations 0036, 0037. Screen: engagement → Checkpoints.
 - SQL Part A run; Part B behaviour checks not run (no engagements exist; test access cannot sign in as users) — `tests/sql/u6_methodology_checkpoints_test.sql`.
 - Open (waits on user): FA-STD-001 naming wording, retention periods, training record format, methodology statement wording (Curator), Curator approval of universal standard v1 (still Sample), client portal display of released methodology statements.
+
+- U7/U9 decisions (2026-11-06): owner/Curator/Management confirmed as settings editors; U7 signal thresholds and U9 coordination thresholds are admin-set 0–20 sliders (whole numbers, enforced by the database).

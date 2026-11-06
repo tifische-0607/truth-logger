@@ -16,6 +16,7 @@ import { hubHead } from "@/lib/hub";
 import { formatDateTime } from "@/lib/format";
 import { fetchGraph, fetchNeighbours, sampleGateway, type GraphResult } from "@/lib/link-gateway";
 import { bursts, clusters, degreeCentrality, ENTITY_LABEL, filterByTime, LINK_LABEL, onlyEvidencedLinks, type Graph, type MergeSuggestion } from "@/lib/link-graph";
+import { Slider } from "@/components/ui/slider";
 import { THRESHOLD_NOT_SET } from "@/lib/early-warning";
 
 export const Route = createFileRoute("/_authenticated/links")({
@@ -233,10 +234,16 @@ function CoordinationThresholds({ current }: { current: Overview["thresholds"] }
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild><Button variant="outline" className="mt-2 h-11">Set coordination threshold</Button></DialogTrigger>
       <DialogContent>
-        <DialogHeader><DialogTitle>Coordination threshold</DialogTitle><DialogDescription>Leave empty for Threshold not set. Every change is logged.</DialogDescription></DialogHeader>
+        <DialogHeader><DialogTitle>Coordination threshold</DialogTitle><DialogDescription>Drag to choose 0–20, or clear for Threshold not set. Every change is logged.</DialogDescription></DialogHeader>
         <form className="grid gap-3" onSubmit={(e) => { e.preventDefault(); m.mutate(async () => { const r = await supabase.rpc("lnk_set_threshold", { _key: "burst_min_accounts", _value: num(a) }); return r.error ? r : supabase.rpc("lnk_set_threshold", { _key: "burst_window_minutes", _value: num(w) }); }); }}>
-          <div className="grid gap-1"><Label htmlFor="lnk-ta">Minimum accounts</Label><Input id="lnk-ta" className="h-11" inputMode="numeric" value={a} onChange={(e) => setA(e.target.value)} /></div>
-          <div className="grid gap-1"><Label htmlFor="lnk-tw">Within minutes</Label><Input id="lnk-tw" className="h-11" inputMode="numeric" value={w} onChange={(e) => setW(e.target.value)} /></div>
+          {([["lnk-ta", "Minimum accounts", a, setA], ["lnk-tw", "Within minutes", w, setW]] as const).map(([id, label, val, set]) => (
+            <div key={id} className="grid gap-2">
+              <div className="flex items-center justify-between"><Label htmlFor={id}>{label}</Label><span className="font-mono text-lg" aria-live="polite">{val.trim() === "" ? "Not set" : val}</span></div>
+              <Slider id={id} min={0} max={20} step={1} value={[val.trim() === "" ? 0 : Number(val)]} onValueChange={([n]) => set(String(n))} aria-label={`${label}, 0 to 20`} className="py-3" />
+              <div className="flex justify-between text-muted-foreground text-xs"><span>0</span><span>20</span></div>
+              {val.trim() !== "" ? <Button type="button" variant="outline" className="h-11 justify-self-start" onClick={() => set("")}>Clear (Threshold not set)</Button> : null}
+            </div>
+          ))}
           <Refuse t={err} />
           <DialogFooter><Button type="submit" className="h-11" disabled={m.isPending}>Save</Button></DialogFooter>
         </form>
