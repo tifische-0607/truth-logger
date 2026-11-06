@@ -16,6 +16,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { getCloudVaultConfig, testVaultConnection } from '@/lib/vaults.functions';
 import { cloudChecks, cloudWord, homeChecks, ROUTE_LABEL, type CloudRoute, type VaultCheck } from '@/lib/vault-config';
 import { useVaultOverview, WHERE_DATA_GOES } from '@/lib/vaults';
+import { EvidenceMovePanel } from '@/components/vault/EvidenceMovePanel';
 
 export const Route = createFileRoute('/_authenticated/vaults')({
   head: () => hubHead('Vaults', 'Status, checks and data routing for the FA Portal Home Vault and Cloud Vault.'),
@@ -202,6 +203,8 @@ function VaultsPage() {
           extra={<div className="space-y-3"><RouteSetting route={cloudCfg.route as CloudRoute} owner={owner} />
             <p className="text-muted-foreground text-sm">While offline, only plans that mirror to the Cloud Vault are paused; queued custody and event records wait in the outbox ({s?.outbox_pending.cloud ?? 0} waiting).</p></div>} />}
       </div>
+
+      <EvidenceMovePanel owner={owner} />
 
       <section className="panel p-5" aria-labelledby="where">
         <h2 id="where" className="font-display mb-3 text-lg font-medium">Where data goes</h2>
