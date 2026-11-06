@@ -295,6 +295,13 @@
       "when": 1793937434893,
       "tag": "0041_fa_portal_u9_link_analysis",
       "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1793937620173,
+      "tag": "0042_fa_portal_u7_u9_privileges",
+      "breakpoints": true
     }
   ]
 }
