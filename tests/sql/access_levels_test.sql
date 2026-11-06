@@ -4,7 +4,9 @@
 --      role guard + sync on user_roles; sync on client_users
 --   A3 existing data mapped: the one owner = SuperAdmin (active); the active client administrator = Client Admin; 2 mapping log rows
 --   A4 anon cannot run access_set_level; authenticated cannot run member_activate_invitation or access_log_admin (service role only)
--- Part B (B1–B9) NOT RUN: the available test connection cannot create auth users ("permission denied for schema auth").
+-- Create accounts (0056) Part A RUN and passed: RLS on staff_invitations; account_invite/resend/cancel/pending granted to authenticated, not anon;
+--   staff_invitation_info/claim/activate service role only; level/roles CHECK on staff_invitations present.
+-- Part B (B1–B9, C1–C6) NOT RUN: the available test connection cannot create auth users ("permission denied for schema auth").
 
 -- ============ Part A (read-only) ============
 SELECT relname, relrowsecurity FROM pg_class WHERE relname IN ('account_access','access_level_log','account_admin_events','member_invitations','document_member_release');
@@ -113,5 +115,60 @@ DO $$ BEGIN
   BEGIN DELETE FROM public.account_admin_events; RAISE EXCEPTION 'B9 FAILED';
   EXCEPTION WHEN raise_exception THEN IF SQLERRM LIKE 'B9 FAILED%' THEN RAISE; END IF; END;
   RAISE NOTICE 'B9 passed';
+END $$;
+
+-- ===== Create accounts (0056) =====
+-- C1: a non-SuperAdmin cannot create SuperAdmin or FA Staff accounts.
+DO $$ BEGIN
+  PERFORM pg_temp.as_user(pg_temp.fx('ca'));
+  BEGIN PERFORM public.account_invite('fa_staff','X','c1@test.invalid',repeat('c',64),now()+interval '7 days',ARRAY['analyst']); RAISE EXCEPTION 'C1 FAILED';
+  EXCEPTION WHEN raise_exception THEN IF SQLERRM <> 'Only a SuperAdmin can create SuperAdmin or FA Staff accounts.' THEN RAISE; END IF; END;
+  RAISE NOTICE 'C1 passed';
+END $$;
+-- C2: a third Client Admin is refused with the existing message.
+DO $$ BEGIN
+  PERFORM pg_temp.as_user(pg_temp.fx('s1'));
+  PERFORM public.account_invite('client_admin','Second','c2a@test.invalid',repeat('d',64),now()+interval '7 days','{}',pg_temp.fx('a'));
+  BEGIN PERFORM public.account_invite('client_admin','Third','c2b@test.invalid',repeat('e',64),now()+interval '7 days','{}',pg_temp.fx('a')); RAISE EXCEPTION 'C2 FAILED';
+  EXCEPTION WHEN raise_exception THEN IF SQLERRM <> 'A client can have at most 2 administrators.' THEN RAISE; END IF; END;
+  RAISE NOTICE 'C2 passed';
+END $$;
+-- C3: Client Staff beyond the seat limit is refused with seats used and limit.
+DO $$ DECLARE i int; BEGIN
+  PERFORM pg_temp.as_user(pg_temp.fx('s1'));
+  PERFORM set_config('fa.billing_tier_change','on',true);
+  UPDATE public.clients SET tier_id=(SELECT id FROM public.billing_tiers WHERE rank=1) WHERE id=pg_temp.fx('b');
+  BEGIN
+    FOR i IN 1..3 LOOP PERFORM public.account_invite('client_staff','S'||i,'c3-'||i||'@test.invalid',repeat(chr(102+i),64),now()+interval '7 days','{}',pg_temp.fx('b')); END LOOP;
+    RAISE EXCEPTION 'C3 FAILED';
+  EXCEPTION WHEN raise_exception THEN IF SQLERRM NOT LIKE 'Seat limit reached: % of % seats are in use on %' THEN RAISE; END IF; END;
+  RAISE NOTICE 'C3 passed';
+END $$;
+-- C4: an email already in use is refused.
+DO $$ BEGIN
+  PERFORM pg_temp.as_user(pg_temp.fx('s1'));
+  BEGIN PERFORM public.account_invite('member','Dup','al-cs@test.invalid',repeat('9',64),now()+interval '7 days'); RAISE EXCEPTION 'C4 FAILED';
+  EXCEPTION WHEN raise_exception THEN IF SQLERRM <> 'This email is already in use by an FA Portal login or a pending invitation.' THEN RAISE; END IF; END;
+  RAISE NOTICE 'C4 passed';
+END $$;
+-- C5: a used or expired link is refused; level and roles come from the invitation.
+DO $$ DECLARE r jsonb; u uuid := gen_random_uuid(); BEGIN
+  PERFORM pg_temp.as_user(pg_temp.fx('s1'));
+  PERFORM public.account_invite('fa_staff','Staff','c5@test.invalid',repeat('5',64),now()+interval '7 days',ARRAY['curator']);
+  r := public.staff_claim_invitation(repeat('5',64));
+  BEGIN PERFORM public.staff_claim_invitation(repeat('5',64)); RAISE EXCEPTION 'C5 FAILED: reused';
+  EXCEPTION WHEN raise_exception THEN IF SQLERRM <> 'This invitation is invalid, expired or already used.' THEN RAISE; END IF; END;
+  INSERT INTO auth.users(id,email) VALUES (u,'c5@test.invalid');
+  PERFORM public.staff_activate_invitation((r->>'id')::uuid,u);
+  IF NOT public.has_role(u,'curator') OR public.access_level_of(u)<>'fa_staff' THEN RAISE EXCEPTION 'C5 FAILED: level/role'; END IF;
+  UPDATE public.staff_invitations SET status='pending',invite_token_hash=repeat('6',64),invite_expires_at=now()-interval '1 minute',invite_used_at=NULL,user_id=NULL WHERE id=(r->>'id')::uuid;
+  BEGIN PERFORM public.staff_claim_invitation(repeat('6',64)); RAISE EXCEPTION 'C5 FAILED: expired';
+  EXCEPTION WHEN raise_exception THEN IF SQLERRM <> 'This invitation is invalid, expired or already used.' THEN RAISE; END IF; END;
+  RAISE NOTICE 'C5 passed';
+END $$;
+-- C6: creation, resend and cancel are logged with level, role and client.
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM public.account_admin_events WHERE action='account_created' AND actor=pg_temp.fx('s1') AND detail->>'level'='fa_staff' AND detail->'roles' ? 'curator') THEN RAISE EXCEPTION 'C6 FAILED'; END IF;
+  RAISE NOTICE 'C6 passed';
 END $$;
 ROLLBACK;

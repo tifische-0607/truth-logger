@@ -16,3 +16,9 @@ Every login has one access level (`account_access`), kept in step with existing 
 - Members are invited only by SuperAdmin or Management (single-use link, no email sent). They read only reports that are shared, ticked "Members" in the Library, and (if tiers are ticked) match their tier.
 - Account section: profile (name, display name, phone, job title, language, theme), email change (confirmation email), password change (current password required), sign out of other sessions. Admin actions on others (reset link, deactivate/reactivate, profile edit) follow `access_can_manage`: SuperAdmin for anyone, Client Admin for own Client Staff. All logged in the append-only `account_admin_events` and shown under "User activity".
 - Account emails stay off and show "Not configured" until the `ACCOUNT_EMAILS_ENABLED` server setting is present.
+
+## Creating accounts (0056)
+- Users and access → Create account (SuperAdmin: any level; Management: Member only). Name, email, level, then job roles (FA Staff), client (Client Admin/Staff) or optional tier (Member).
+- `account_invite()` records a single-use invitation (7-day expiry); the person opens the link and sets their own password. Level and roles come only from the invitation (`staff_invitations`, `client_users`, `member_invitations`).
+- Refused in the database: non-SuperAdmin creating SuperAdmin/FA Staff/Client Admin; email already in use; third Client Admin; Client Staff with no tier or beyond seats; used/expired links.
+- Pending invitations list with Resend (new link, old one stops working) and Cancel. Creation, resend and cancel are logged in User activity. Email sending shows "Not configured"; links are copied from the screen.
