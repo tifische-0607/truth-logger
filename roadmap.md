@@ -47,8 +47,11 @@
 - Secure route from the portal to DarkNight
 - Cloud Vault access route (direct or HTTPS relay) and its secrets
 - Prices, currency and billing period
-- Which reports belong to each tier (staff screen built in Library; nothing assigned, so all reports visible to all tiers)
-- U1: do administrators count as seats (built: yes); may a client on no tier add users (built: no); who may assign report tiers (built: owner, Curator, Management); real tier names and seat limits
+- [RESOLVED 6 Nov 2026] U1 seat counting: administrators count as seats (confirmed as built).
+- [RESOLVED 6 Nov 2026] U1 client with no tier: cannot add users — administrators only until a tier is set (confirmed as built).
+- [RESOLVED 6 Nov 2026] U1 report access by tier: may be set by owner, Curator and Management (confirmed as built).
+- [RESOLVED 6 Nov 2026] Which reports belong to each tier: staff set this in the system through the Library tier tick boxes; nothing to build or decide here — the "Report access by tier not yet set" note stays until they do.
+- [RESOLVED 6 Nov 2026] Final tier names and seat limits: decided later as part of membership tiering and pricing (with the U2 prices); keep the placeholders Tier 1/2/3 with 3 / 10 / unlimited seats.
 - FA-STD-001 naming
 - Universal standard v1 is a Sample draft awaiting Curator edit/approval; wiring into the report builder waits for U6
 - Retention periods
@@ -56,7 +59,7 @@
 - First framework library entries
 - Phase 5 defaults: auto-suspend after 5 rejected items in 60 minutes, language list, item types
 - Real SOP targets and holiday calendar
-- Unrun SQL checks (Phase 3 checks 1–3; Phase 4 gate checks; Phase 5 worker simulation; Phase 6 V2, V3, V5–V7): need a test connection with the service role and a test engagement with G1 and G2 signed
+- (OPEN) Unrun SQL checks (Phase 3 checks 1–3; Phase 4 gate checks; Phase 5 worker simulation; Phase 6 V2, V3, V5–V7; U1 S1–S10; U5 Part B; U6 Part B): need a test connection with the service role and a test engagement with G1 and G2 signed. Whether a test connection that can create test accounts will be provided is still open — no decision as at 6 Nov 2026.
 
 - [x] Rechecked approved implementation in order; tightened output provenance/storage/log guards and added real hash-mismatch tests
 
@@ -76,8 +79,8 @@
 - [ ] (Open) Client portal (rules in place, no screens); PDF rendering for the executive brief
 
 ## Open decisions from U2 (5 Nov 2026)
-- Tier names, prices and contents (placeholders "Tier 1/2/3", "Price on request" until set)
-- Seat limits: set to the agreed U1 counts 3 / 10 / unlimited — confirm
+- Tier names, prices and contents: names and seat limits are decided later as part of membership tiering and pricing (6 Nov 2026); keep the placeholders "Tier 1/2/3" and "Price on request" until then. Prices, currency and billing period stay open.
+- Seat limits: placeholders 3 / 10 / unlimited kept (the agreed U1 counts, confirmed 6 Nov 2026); final limits wait for the membership tiering and pricing decision.
 - Who may run billing: built as owner and Management only (not Curator/analyst)
 - Partial payments: not supported; payment must equal the invoice total
 - A paid invoice cannot be voided; credit notes not built
