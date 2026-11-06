@@ -11,6 +11,7 @@ export type PortalNotify = { new_documents: boolean; engagement_updates: boolean
 export type PortalDashboard = {
   client_id: string; client_name: string; kind: string; name: string | null; email: string | null; previous_sign_in: string | null; last_sign_in: string | null;
   notify: PortalNotify | null; organisation: PortalOrganisation; admins_used: number; pending_invites: number;
+  role?: 'client_admin' | 'client_user' | 'staff_preview'; is_admin?: boolean; tier_name?: string | null; seat_limit?: number | null; seats_used?: number;
 };
 export type PortalDoc = {
   id: string; code: string; title: string; kind: string; source: string; engagement_id: string | null; sha256: string | null; file_name: string | null;
