@@ -6,7 +6,7 @@ import { DARKNIGHT_UNAVAILABLE } from "./library-home";
  */
 export type SearchMode = "keyword" | "meaning" | "image";
 export type SearchKind = "captures" | "cases" | "narratives" | "entities" | "reports";
-export type SearchFilters = { platform?: string; from?: string; to?: string; narrative?: string; entity?: string; verification?: string; kinds?: SearchKind[] };
+export type SearchFilters = { platform?: string | undefined; from?: string | undefined; to?: string | undefined; narrative?: string | undefined; entity?: string | undefined; verification?: string | undefined; kinds?: SearchKind[] | undefined };
 export type SearchHit = {
   key: string;
   kind: SearchKind;
