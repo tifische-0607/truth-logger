@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, FileAudio, Loader2 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
+import { readArtefact } from "@/lib/evidence-read";
 import { PageHeader } from "@/components/AppShell";
 import { formatDateTime } from "@/lib/format";
 
@@ -63,8 +64,8 @@ async function fetchEntries(caseId: string): Promise<Entry[]> {
 
 /** Download a transcript file and log the access in the custody trail. */
 async function readTranscript(art: Art, itemId: string): Promise<string> {
-  const { data, error } = await supabase.storage.from("evidence").download(art.storage_path);
-  if (error || !data) throw error ?? new Error("File not available");
+  const r = await readArtefact(art.storage_path);
+  if (!r.ok) throw new Error(r.message);
   const { data: user } = await supabase.auth.getUser();
   await supabase.from("custody_events").insert({
     artefact_id: art.id,
@@ -75,7 +76,7 @@ async function readTranscript(art: Art, itemId: string): Promise<string> {
     handler: user.user?.email ?? null,
     notes: "Viewed on transcript trail",
   });
-  return data.text();
+  return new TextDecoder().decode(r.bytes);
 }
 
 function TranscriptTrailPage() {

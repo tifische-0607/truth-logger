@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Printer } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
+import { readArtefact } from "@/lib/evidence-read";
 import { Button } from "@/components/ui/button";
 import { formatDateTime } from "@/lib/format";
 import { PrintDocument } from '@/components/print/PrintDocument';
@@ -37,8 +38,8 @@ const anchor = (code: string) => `item-${code.replace(/[^A-Za-z0-9-]/g, "")}`;
 
 async function textOf(a: Art | undefined) {
   if (!a) return null;
-  const { data } = await supabase.storage.from("evidence").download(a.storage_path);
-  if (!data) return null;
+  const r = await readArtefact(a.storage_path);
+  if (!r.ok) return r.from === "darknight" ? r.message : null;
   await supabase.from("custody_events").insert({
     artefact_id: a.id,
     filename: a.filename,
@@ -46,7 +47,7 @@ async function textOf(a: Art | undefined) {
     action: "accessed",
     notes: "Read into case dossier",
   });
-  return data.text();
+  return new TextDecoder().decode(r.bytes);
 }
 
 async function fetchDossier(caseId: string) {
