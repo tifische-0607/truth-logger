@@ -21,11 +21,13 @@ import { Route as AuthenticatedCaptureSettingsRouteImport } from './routes/_auth
 import { Route as AuthenticatedCaseDatabaseRouteImport } from './routes/_authenticated/case-database'
 import { Route as AuthenticatedCollectRouteImport } from './routes/_authenticated/collect'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedEarlyWarningRouteImport } from './routes/_authenticated/early-warning'
 import { Route as AuthenticatedExportRouteImport } from './routes/_authenticated/export'
 import { Route as AuthenticatedFrameworksRouteImport } from './routes/_authenticated/frameworks'
 import { Route as AuthenticatedInboxRouteImport } from './routes/_authenticated/inbox'
 import { Route as AuthenticatedIntegrityRouteImport } from './routes/_authenticated/integrity'
 import { Route as AuthenticatedLibraryRouteImport } from './routes/_authenticated/library'
+import { Route as AuthenticatedLinksRouteImport } from './routes/_authenticated/links'
 import { Route as AuthenticatedManagementRouteImport } from './routes/_authenticated/management'
 import { Route as AuthenticatedOfflineRouteImport } from './routes/_authenticated/offline'
 import { Route as AuthenticatedQueueRouteImport } from './routes/_authenticated/queue'
@@ -141,6 +143,12 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedEarlyWarningRoute =
+  AuthenticatedEarlyWarningRouteImport.update({
+    id: '/early-warning',
+    path: '/early-warning',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedExportRoute = AuthenticatedExportRouteImport.update({
   id: '/export',
   path: '/export',
@@ -164,6 +172,11 @@ const AuthenticatedIntegrityRoute = AuthenticatedIntegrityRouteImport.update({
 const AuthenticatedLibraryRoute = AuthenticatedLibraryRouteImport.update({
   id: '/library',
   path: '/library',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLinksRoute = AuthenticatedLinksRouteImport.update({
+  id: '/links',
+  path: '/links',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedManagementRoute = AuthenticatedManagementRouteImport.update({
@@ -472,11 +485,13 @@ export interface FileRoutesByFullPath {
   '/case-database': typeof AuthenticatedCaseDatabaseRoute
   '/collect': typeof AuthenticatedCollectRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/early-warning': typeof AuthenticatedEarlyWarningRoute
   '/export': typeof AuthenticatedExportRoute
   '/frameworks': typeof AuthenticatedFrameworksRoute
   '/inbox': typeof AuthenticatedInboxRoute
   '/integrity': typeof AuthenticatedIntegrityRoute
   '/library': typeof AuthenticatedLibraryRoute
+  '/links': typeof AuthenticatedLinksRoute
   '/management': typeof AuthenticatedManagementRoute
   '/offline': typeof AuthenticatedOfflineRoute
   '/queue': typeof AuthenticatedQueueRoute
@@ -543,11 +558,13 @@ export interface FileRoutesByTo {
   '/case-database': typeof AuthenticatedCaseDatabaseRoute
   '/collect': typeof AuthenticatedCollectRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/early-warning': typeof AuthenticatedEarlyWarningRoute
   '/export': typeof AuthenticatedExportRoute
   '/frameworks': typeof AuthenticatedFrameworksRoute
   '/inbox': typeof AuthenticatedInboxRoute
   '/integrity': typeof AuthenticatedIntegrityRoute
   '/library': typeof AuthenticatedLibraryRoute
+  '/links': typeof AuthenticatedLinksRoute
   '/management': typeof AuthenticatedManagementRoute
   '/offline': typeof AuthenticatedOfflineRoute
   '/queue': typeof AuthenticatedQueueRoute
@@ -616,11 +633,13 @@ export interface FileRoutesById {
   '/_authenticated/case-database': typeof AuthenticatedCaseDatabaseRoute
   '/_authenticated/collect': typeof AuthenticatedCollectRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/early-warning': typeof AuthenticatedEarlyWarningRoute
   '/_authenticated/export': typeof AuthenticatedExportRoute
   '/_authenticated/frameworks': typeof AuthenticatedFrameworksRoute
   '/_authenticated/inbox': typeof AuthenticatedInboxRoute
   '/_authenticated/integrity': typeof AuthenticatedIntegrityRoute
   '/_authenticated/library': typeof AuthenticatedLibraryRoute
+  '/_authenticated/links': typeof AuthenticatedLinksRoute
   '/_authenticated/management': typeof AuthenticatedManagementRoute
   '/_authenticated/offline': typeof AuthenticatedOfflineRoute
   '/_authenticated/queue': typeof AuthenticatedQueueRoute
@@ -689,11 +708,13 @@ export interface FileRouteTypes {
     | '/case-database'
     | '/collect'
     | '/dashboard'
+    | '/early-warning'
     | '/export'
     | '/frameworks'
     | '/inbox'
     | '/integrity'
     | '/library'
+    | '/links'
     | '/management'
     | '/offline'
     | '/queue'
@@ -760,11 +781,13 @@ export interface FileRouteTypes {
     | '/case-database'
     | '/collect'
     | '/dashboard'
+    | '/early-warning'
     | '/export'
     | '/frameworks'
     | '/inbox'
     | '/integrity'
     | '/library'
+    | '/links'
     | '/management'
     | '/offline'
     | '/queue'
@@ -832,11 +855,13 @@ export interface FileRouteTypes {
     | '/_authenticated/case-database'
     | '/_authenticated/collect'
     | '/_authenticated/dashboard'
+    | '/_authenticated/early-warning'
     | '/_authenticated/export'
     | '/_authenticated/frameworks'
     | '/_authenticated/inbox'
     | '/_authenticated/integrity'
     | '/_authenticated/library'
+    | '/_authenticated/links'
     | '/_authenticated/management'
     | '/_authenticated/offline'
     | '/_authenticated/queue'
@@ -1002,6 +1027,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/early-warning': {
+      id: '/_authenticated/early-warning'
+      path: '/early-warning'
+      fullPath: '/early-warning'
+      preLoaderRoute: typeof AuthenticatedEarlyWarningRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/export': {
       id: '/_authenticated/export'
       path: '/export'
@@ -1035,6 +1067,13 @@ declare module '@tanstack/react-router' {
       path: '/library'
       fullPath: '/library'
       preLoaderRoute: typeof AuthenticatedLibraryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/links': {
+      id: '/_authenticated/links'
+      path: '/links'
+      fullPath: '/links'
+      preLoaderRoute: typeof AuthenticatedLinksRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/management': {
@@ -1418,11 +1457,13 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCaseDatabaseRoute: typeof AuthenticatedCaseDatabaseRoute
   AuthenticatedCollectRoute: typeof AuthenticatedCollectRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedEarlyWarningRoute: typeof AuthenticatedEarlyWarningRoute
   AuthenticatedExportRoute: typeof AuthenticatedExportRoute
   AuthenticatedFrameworksRoute: typeof AuthenticatedFrameworksRoute
   AuthenticatedInboxRoute: typeof AuthenticatedInboxRoute
   AuthenticatedIntegrityRoute: typeof AuthenticatedIntegrityRoute
   AuthenticatedLibraryRoute: typeof AuthenticatedLibraryRoute
+  AuthenticatedLinksRoute: typeof AuthenticatedLinksRoute
   AuthenticatedManagementRoute: typeof AuthenticatedManagementRoute
   AuthenticatedOfflineRoute: typeof AuthenticatedOfflineRoute
   AuthenticatedQueueRoute: typeof AuthenticatedQueueRoute
@@ -1470,11 +1511,13 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCaseDatabaseRoute: AuthenticatedCaseDatabaseRoute,
   AuthenticatedCollectRoute: AuthenticatedCollectRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedEarlyWarningRoute: AuthenticatedEarlyWarningRoute,
   AuthenticatedExportRoute: AuthenticatedExportRoute,
   AuthenticatedFrameworksRoute: AuthenticatedFrameworksRoute,
   AuthenticatedInboxRoute: AuthenticatedInboxRoute,
   AuthenticatedIntegrityRoute: AuthenticatedIntegrityRoute,
   AuthenticatedLibraryRoute: AuthenticatedLibraryRoute,
+  AuthenticatedLinksRoute: AuthenticatedLinksRoute,
   AuthenticatedManagementRoute: AuthenticatedManagementRoute,
   AuthenticatedOfflineRoute: AuthenticatedOfflineRoute,
   AuthenticatedQueueRoute: AuthenticatedQueueRoute,
