@@ -97,11 +97,11 @@ export async function syncCase(caseId: string, onProgress?: (p: SyncProgress) =>
     try {
       const size = (a["size_bytes"] as number | null) ?? 0;
       if (size > MAX_BLOB_BYTES) throw new Error("too large for offline copy");
-      const signed = await supabase.storage.from("evidence").createSignedUrl(path, 300);
-      if (signed.error || !signed.data) throw signed.error ?? new Error("no signed url");
-      const res = await fetch(signed.data.signedUrl);
-      if (!res.ok) throw new Error(`download failed (${res.status})`);
-      const blob = await res.blob();
+      // U3: moved artefacts come live from DarkNight (re-hashed there); others from the cloud original.
+      const { readArtefact } = await import("@/lib/evidence-read");
+      const r = await readArtefact(path);
+      if (!r.ok) throw new Error(r.message);
+      const blob = new Blob([r.bytes], { type: (a["mime_type"] as string | null) ?? undefined });
       const recorded = a["sha256"] as string | null;
       const actual = await sha256OfBlob(blob);
       hash_state = recorded ? (recorded === actual ? "match" : "mismatch") : "unverified";
