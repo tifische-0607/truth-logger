@@ -344,6 +344,13 @@
       "when": 1793954650436,
       "tag": "0048_fa_portal_u13_wider_sources",
       "breakpoints": true
+    },
+    {
+      "idx": 49,
+      "version": "7",
+      "when": 1793954679043,
+      "tag": "0049_fa_portal_u13_approve_source_signed_brief",
+      "breakpoints": true
     }
   ]
 }
