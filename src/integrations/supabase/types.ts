@@ -1831,6 +1831,102 @@ export type Database = {
         }
         Relationships: []
       }
+      exec_access: {
+        Row: {
+          actor: string
+          at: string
+          id: string
+          project_ids: string[]
+          reason: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          actor: string
+          at?: string
+          id?: string
+          project_ids?: string[]
+          reason: string
+          status: string
+          user_id: string
+        }
+        Update: {
+          actor?: string
+          at?: string
+          id?: string
+          project_ids?: string[]
+          reason?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      exec_qa_log: {
+        Row: {
+          access_id: string
+          answer_sha256: string
+          answered_at: string
+          asked_at: string
+          channel: string
+          cited_captures: string[]
+          confidence: string
+          darknight_ref: string
+          id: string
+          logged_at: string
+          project_ids: string[]
+          question_sha256: string
+          standard_version_id: string
+          user_id: string
+        }
+        Insert: {
+          access_id: string
+          answer_sha256: string
+          answered_at: string
+          asked_at: string
+          channel: string
+          cited_captures: string[]
+          confidence: string
+          darknight_ref: string
+          id?: string
+          logged_at?: string
+          project_ids: string[]
+          question_sha256: string
+          standard_version_id: string
+          user_id: string
+        }
+        Update: {
+          access_id?: string
+          answer_sha256?: string
+          answered_at?: string
+          asked_at?: string
+          channel?: string
+          cited_captures?: string[]
+          confidence?: string
+          darknight_ref?: string
+          id?: string
+          logged_at?: string
+          project_ids?: string[]
+          question_sha256?: string
+          standard_version_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exec_qa_log_access_id_fkey"
+            columns: ["access_id"]
+            isOneToOne: false
+            referencedRelation: "exec_access"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exec_qa_log_standard_version_id_fkey"
+            columns: ["standard_version_id"]
+            isOneToOne: false
+            referencedRelation: "framework_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       finding_items: {
         Row: {
           capture_id: string
@@ -7266,6 +7362,40 @@ export type Database = {
       ew_threshold: {
         Args: { _level: string; _signal: string }
         Returns: number
+      }
+      exec_current_access: {
+        Args: { _user: string }
+        Returns: {
+          actor: string
+          at: string
+          id: string
+          project_ids: string[]
+          reason: string
+          status: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "exec_access"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      exec_is_admin: { Args: { u: string }; Returns: boolean }
+      exec_log_exchange: {
+        Args: { _item: Json; _user: string }
+        Returns: string
+      }
+      exec_overview: { Args: never; Returns: Json }
+      exec_scope: { Args: { _user: string }; Returns: string[] }
+      exec_set_access: {
+        Args: {
+          _grant: boolean
+          _projects: string[]
+          _reason: string
+          _user: string
+        }
+        Returns: string
       }
       fw_active_version: { Args: { _entry: string }; Returns: string }
       fw_add_entry: {
