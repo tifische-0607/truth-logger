@@ -20,6 +20,7 @@ import { Route as AuthenticatedCaptureLogRouteImport } from './routes/_authentic
 import { Route as AuthenticatedCaptureSettingsRouteImport } from './routes/_authenticated/capture-settings'
 import { Route as AuthenticatedCaseDatabaseRouteImport } from './routes/_authenticated/case-database'
 import { Route as AuthenticatedCollectRouteImport } from './routes/_authenticated/collect'
+import { Route as AuthenticatedConnectorsRouteImport } from './routes/_authenticated/connectors'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedEarlyWarningRouteImport } from './routes/_authenticated/early-warning'
 import { Route as AuthenticatedEvidenceSearchRouteImport } from './routes/_authenticated/evidence-search'
@@ -138,6 +139,11 @@ const AuthenticatedCaseDatabaseRoute =
 const AuthenticatedCollectRoute = AuthenticatedCollectRouteImport.update({
   id: '/collect',
   path: '/collect',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedConnectorsRoute = AuthenticatedConnectorsRouteImport.update({
+  id: '/connectors',
+  path: '/connectors',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -497,6 +503,7 @@ export interface FileRoutesByFullPath {
   '/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/case-database': typeof AuthenticatedCaseDatabaseRoute
   '/collect': typeof AuthenticatedCollectRoute
+  '/connectors': typeof AuthenticatedConnectorsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/early-warning': typeof AuthenticatedEarlyWarningRoute
   '/evidence-search': typeof AuthenticatedEvidenceSearchRoute
@@ -572,6 +579,7 @@ export interface FileRoutesByTo {
   '/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/case-database': typeof AuthenticatedCaseDatabaseRoute
   '/collect': typeof AuthenticatedCollectRoute
+  '/connectors': typeof AuthenticatedConnectorsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/early-warning': typeof AuthenticatedEarlyWarningRoute
   '/evidence-search': typeof AuthenticatedEvidenceSearchRoute
@@ -649,6 +657,7 @@ export interface FileRoutesById {
   '/_authenticated/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/_authenticated/case-database': typeof AuthenticatedCaseDatabaseRoute
   '/_authenticated/collect': typeof AuthenticatedCollectRoute
+  '/_authenticated/connectors': typeof AuthenticatedConnectorsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/early-warning': typeof AuthenticatedEarlyWarningRoute
   '/_authenticated/evidence-search': typeof AuthenticatedEvidenceSearchRoute
@@ -726,6 +735,7 @@ export interface FileRouteTypes {
     | '/capture-settings'
     | '/case-database'
     | '/collect'
+    | '/connectors'
     | '/dashboard'
     | '/early-warning'
     | '/evidence-search'
@@ -801,6 +811,7 @@ export interface FileRouteTypes {
     | '/capture-settings'
     | '/case-database'
     | '/collect'
+    | '/connectors'
     | '/dashboard'
     | '/early-warning'
     | '/evidence-search'
@@ -877,6 +888,7 @@ export interface FileRouteTypes {
     | '/_authenticated/capture-settings'
     | '/_authenticated/case-database'
     | '/_authenticated/collect'
+    | '/_authenticated/connectors'
     | '/_authenticated/dashboard'
     | '/_authenticated/early-warning'
     | '/_authenticated/evidence-search'
@@ -1043,6 +1055,13 @@ declare module '@tanstack/react-router' {
       path: '/collect'
       fullPath: '/collect'
       preLoaderRoute: typeof AuthenticatedCollectRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/connectors': {
+      id: '/_authenticated/connectors'
+      path: '/connectors'
+      fullPath: '/connectors'
+      preLoaderRoute: typeof AuthenticatedConnectorsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/dashboard': {
@@ -1495,6 +1514,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCaptureSettingsRoute: typeof AuthenticatedCaptureSettingsRoute
   AuthenticatedCaseDatabaseRoute: typeof AuthenticatedCaseDatabaseRoute
   AuthenticatedCollectRoute: typeof AuthenticatedCollectRoute
+  AuthenticatedConnectorsRoute: typeof AuthenticatedConnectorsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedEarlyWarningRoute: typeof AuthenticatedEarlyWarningRoute
   AuthenticatedEvidenceSearchRoute: typeof AuthenticatedEvidenceSearchRoute
@@ -1551,6 +1571,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCaptureSettingsRoute: AuthenticatedCaptureSettingsRoute,
   AuthenticatedCaseDatabaseRoute: AuthenticatedCaseDatabaseRoute,
   AuthenticatedCollectRoute: AuthenticatedCollectRoute,
+  AuthenticatedConnectorsRoute: AuthenticatedConnectorsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedEarlyWarningRoute: AuthenticatedEarlyWarningRoute,
   AuthenticatedEvidenceSearchRoute: AuthenticatedEvidenceSearchRoute,
