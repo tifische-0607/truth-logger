@@ -1178,6 +1178,41 @@ export type Database = {
           },
         ]
       }
+      document_tier_access: {
+        Row: {
+          document_id: string
+          id: string
+          note: string | null
+          set_at: string
+          set_by: string
+          tier_ids: string[]
+        }
+        Insert: {
+          document_id: string
+          id?: string
+          note?: string | null
+          set_at?: string
+          set_by?: string
+          tier_ids?: string[]
+        }
+        Update: {
+          document_id?: string
+          id?: string
+          note?: string | null
+          set_at?: string
+          set_by?: string
+          tier_ids?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_tier_access_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documents: {
         Row: {
           brief_id: string | null
@@ -6135,9 +6170,23 @@ export type Database = {
         }
         Returns: string
       }
+      portal_invite_member: {
+        Args: {
+          c: string
+          e: string
+          existing?: string
+          expires: string
+          h: string
+          n: string
+          r: string
+        }
+        Returns: string
+      }
       portal_is_admin: { Args: { c: string; u: string }; Returns: boolean }
+      portal_is_member: { Args: { c: string; u: string }; Returns: boolean }
       portal_is_staff: { Args: { u: string }; Returns: boolean }
       portal_record_sign_in: { Args: never; Returns: undefined }
+      portal_report_access_note: { Args: never; Returns: Json }
       portal_resolve_client: { Args: { c: string }; Returns: string }
       portal_set_notifications: { Args: { prefs: Json }; Returns: undefined }
       portal_update_organisation: {
@@ -6162,6 +6211,16 @@ export type Database = {
         Returns: string
       }
       report_incomplete: { Args: { _output: string }; Returns: string[] }
+      report_set_tiers: {
+        Args: { doc: string; note?: string; tiers: string[] }
+        Returns: undefined
+      }
+      report_tier_allows: {
+        Args: { d: Database["public"]["Tables"]["documents"]["Row"] }
+        Returns: boolean
+      }
+      report_tier_overview: { Args: never; Returns: Json }
+      report_tiers_in_force: { Args: { doc: string }; Returns: string[] }
       research_add_requirement: {
         Args: {
           _accounts: string[]
@@ -6419,6 +6478,10 @@ export type Database = {
         Returns: string
       }
       statements_ok: { Args: { _s: Json }; Returns: boolean }
+      u1_holds_seat: {
+        Args: { expires: string; status: string }
+        Returns: boolean
+      }
       u6_add_figure: {
         Args: {
           _captures: string[]
