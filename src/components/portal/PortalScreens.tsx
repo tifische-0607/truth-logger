@@ -438,7 +438,8 @@ function SecurityPill({ ctx }: { ctx: PortalCtx }) {
   async function signInLink() {
     if (ctx.sample) return say('link', 'Sample mode: no link was sent.');
     if (!ctx.dash.email) return;
-    const { siteUrl } = await config();
+    let siteUrl: string;
+    try { ({ siteUrl } = await config()); } catch { return say('link', 'Temporarily unavailable, please try again later.', true); }
     const { error } = await supabase.auth.signInWithOtp({ email: ctx.dash.email, options: { shouldCreateUser: false, emailRedirectTo: authReturnUrl(siteUrl, window.location.origin, '/auth') } });
     say('link', error ? error.message : `A sign-in link was sent to ${ctx.dash.email}.`, !!error);
   }
