@@ -372,6 +372,13 @@
       "when": 1793976556331,
       "tag": "0052_fa_portal_u3_evidence_move",
       "breakpoints": true
+    },
+    {
+      "idx": 53,
+      "version": "7",
+      "when": 1793976937536,
+      "tag": "0053_fa_portal_u3_evidence_move_privileges",
+      "breakpoints": true
     }
   ]
 }
