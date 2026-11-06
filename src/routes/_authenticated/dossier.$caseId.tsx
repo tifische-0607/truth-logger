@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Printer } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
+import { readArtefact } from "@/lib/evidence-read";
+import { MoveTag } from "@/components/MoveTag";
 import { Button } from "@/components/ui/button";
 import { formatDateTime } from "@/lib/format";
 import { PrintDocument } from '@/components/print/PrintDocument';
@@ -37,8 +39,8 @@ const anchor = (code: string) => `item-${code.replace(/[^A-Za-z0-9-]/g, "")}`;
 
 async function textOf(a: Art | undefined) {
   if (!a) return null;
-  const { data } = await supabase.storage.from("evidence").download(a.storage_path);
-  if (!data) return null;
+  const r = await readArtefact(a.storage_path);
+  if (!r.ok) return r.from === "darknight" ? r.message : null;
   await supabase.from("custody_events").insert({
     artefact_id: a.id,
     filename: a.filename,
@@ -46,7 +48,7 @@ async function textOf(a: Art | undefined) {
     action: "accessed",
     notes: "Read into case dossier",
   });
-  return data.text();
+  return new TextDecoder().decode(r.bytes);
 }
 
 async function fetchDossier(caseId: string) {
@@ -212,7 +214,7 @@ function DossierPage() {
                 <ul className="mt-1 space-y-0.5 text-[11px]">
                   {e.arts.map((a) => (
                     <li key={a.id} className="font-mono break-all">
-                      {a.filename} — SHA-256 {a.sha256 ?? "not recorded"}
+                      {a.filename} — SHA-256 {a.sha256 ?? "not recorded"}<MoveTag path={a.storage_path} />
                     </li>
                   ))}
                 </ul>

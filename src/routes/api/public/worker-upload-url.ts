@@ -18,6 +18,16 @@ export const Route = createFileRoute("/api/public/worker-upload-url")({
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
+        // U3 step 1: while the owner's evidence move freeze is on, no new file may land in cloud storage.
+        const { data: frozen, error: freezeErr } = await supabaseAdmin.rpc("evidence_move_frozen");
+        if (freezeErr) return jsonResponse({ error: "Could not check the evidence move freeze; upload refused" }, 503);
+        if (frozen) {
+          return jsonResponse({
+            error: "Evidence move freeze is on: new evidence files cannot be uploaded to cloud storage while files move to DarkNight.",
+            code: "evidence_move_freeze",
+          }, 423);
+        }
+
         const slash = path.lastIndexOf("/");
         const folder = slash === -1 ? "" : path.slice(0, slash);
         const filename = slash === -1 ? path : path.slice(slash + 1);

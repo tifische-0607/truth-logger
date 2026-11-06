@@ -171,6 +171,13 @@ Appends only — nothing is ever replaced.
 Returns a signed upload URL for the private `evidence` bucket. Refuses to
 overwrite an object that already exists at that path.
 
+**Evidence move freeze (U3).** While the owner's evidence move freeze is on
+(Vaults page), this returns `423` with `code: "evidence_move_freeze"` and the
+message `Evidence move freeze is on: new evidence files cannot be uploaded to
+cloud storage while files move to DarkNight.` The database also refuses new
+artefact rows in `worker-ingest` with the same message. The worker should stop
+and retry later; nothing is lost on the Mac mini.
+
 **Request**
 
 ```json

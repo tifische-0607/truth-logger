@@ -22,10 +22,11 @@ export function useVaultOverview() { return useQuery(vaultStatusQuery); }
 
 /** Where each kind of record lives. Presentation only; the outbox triggers enforce the queueing. */
 export const WHERE_DATA_GOES: { data: string; home: string; cloud: string }[] = [
-  { data: 'Evidence originals and captures', home: 'DarkNight only', cloud: 'Not held' },
-  { data: 'Reports and released outputs', home: 'DarkNight only', cloud: 'Not held' },
+  { data: 'Evidence files already captured (screenshots, renders, API data)', home: 'Moving to DarkNight; read live and re-hashed once verified', cloud: 'Originals kept untouched until step 6 is approved in writing' },
+  { data: 'New evidence captures', home: 'DarkNight once the worker writes there directly (U4)', cloud: 'Refused while the evidence move freeze is on' },
+  { data: 'Engagement outputs and reports', home: 'DarkNight only, written via the gateway; hash and location recorded', cloud: 'Not held' },
   { data: 'Documents shared with a client', home: 'DarkNight only, fetched live and re-hashed', cloud: 'Title, hash, location and log only' },
-  { data: 'Custody records', home: 'Queued, append-only', cloud: 'Queued, append-only' },
+  { data: 'Custody records (including "transferred")', home: 'Queued, append-only', cloud: 'Queued, append-only' },
   { data: 'Document and research events', home: 'Queued, append-only', cloud: 'Queued, append-only' },
-  { data: 'Portal data (clients, engagements, settings)', home: 'Not sent', cloud: 'Portal data only' },
+  { data: 'Portal data (clients, engagements, settings)', home: 'Not sent', cloud: 'Portal data only (Namecheap move still deferred)' },
 ];

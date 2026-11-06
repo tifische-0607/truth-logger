@@ -1,4 +1,8 @@
-# U3: plan for moving existing evidence files to DarkNight (for approval, not carried out)
+# U3: plan for moving existing evidence files to DarkNight
+
+Approval (6 Nov 2026): steps 1-5 approved and built (migrations 0052-0053); the move cannot run until the DarkNight
+gateway is connected. Step 6 is NOT approved: no cloud file or original artefact row may be deleted, overwritten or altered
+until separate written approval.
 
 Status on 3 Nov 2026: the library holds no files and engagement outputs hold no files. The original evidence
 capture store still holds 218 files in private cloud storage (screenshots, renders, API data, exports from the

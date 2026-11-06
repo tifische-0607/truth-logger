@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/AppShell";
 import { EvidenceThumb, useSignedUrl } from "@/components/EvidenceThumb";
+import { readArtefact } from "@/lib/evidence-read";
 import { CaptureCustodyTrail } from "@/components/CaptureCustodyTrail";
 import { formatBytes, formatDateTime } from "@/lib/format";
 
@@ -354,14 +355,12 @@ function ArtefactButton({
       onView(artefact);
       return;
     }
-    const { data: signed, error } = await supabase.storage
-      .from("evidence")
-      .createSignedUrl(artefact.storage_path, 300);
-    if (error || !signed) {
-      toast.error("File not available in the evidence store");
+    const r = await readArtefact(artefact.storage_path);
+    if (!r.ok) {
+      toast.error(r.from === "darknight" ? r.message : "File not available in the evidence store");
       return;
     }
-    window.open(signed.signedUrl, "_blank");
+    window.open(URL.createObjectURL(new Blob([r.bytes], { type: artefact.mime_type ?? "" })), "_blank");
   };
 
   return (

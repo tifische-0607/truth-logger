@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { EvidenceThumb, useSignedUrl } from "@/components/EvidenceThumb";
+import { readArtefact } from "@/lib/evidence-read";
 import { HashChip } from "@/components/HashChip";
 import { Button } from "@/components/ui/button";
 import { formatBytes, LIVE_KINDS, RENDER_KINDS } from "@/lib/format";
@@ -69,14 +70,17 @@ async function logAccess(artefact: Artefact, itemId: string, note: string) {
 
 async function download(artefact: Artefact, itemId: string) {
   await logAccess(artefact, itemId, "Downloaded from the capture viewer");
-  const { data, error } = await supabase.storage
-    .from("evidence")
-    .createSignedUrl(artefact.storage_path, 300, { download: artefact.filename });
-  if (error || !data) {
-    toast.error("File not available in the evidence store");
+  const r = await readArtefact(artefact.storage_path);
+  if (!r.ok) {
+    toast.error(r.from === "darknight" ? r.message : "File not available in the evidence store");
     return;
   }
-  window.open(data.signedUrl, "_blank");
+  const u = URL.createObjectURL(new Blob([r.bytes]));
+  const el = document.createElement("a");
+  el.href = u;
+  el.download = artefact.filename;
+  el.click();
+  URL.revokeObjectURL(u);
 }
 
 function VideoCard({ artefact, itemId }: { artefact: Artefact; itemId: string }) {
@@ -118,13 +122,9 @@ function NoteCard({ artefact, itemId }: { artefact: Artefact; itemId: string }) 
     enabled: open,
     retry: false,
     queryFn: async () => {
-      const { data, error } = await supabase.storage
-        .from("evidence")
-        .createSignedUrl(artefact.storage_path, 300);
-      if (error || !data) throw error ?? new Error("no url");
-      const res = await fetch(data.signedUrl);
-      if (!res.ok) throw new Error("fetch failed");
-      const body = await res.text();
+      const r = await readArtefact(artefact.storage_path);
+      if (!r.ok) throw new Error(r.message);
+      const body = new TextDecoder().decode(r.bytes);
       await logAccess(artefact, itemId, "Read note in the capture viewer");
       return body;
     },
@@ -178,13 +178,9 @@ function useArtefactText(artefact: Artefact | null, itemId: string, note: string
     staleTime: Infinity,
     queryFn: async () => {
       const a = artefact!;
-      const { data, error } = await supabase.storage
-        .from("evidence")
-        .createSignedUrl(a.storage_path, 300);
-      if (error || !data) throw error ?? new Error("no url");
-      const res = await fetch(data.signedUrl);
-      if (!res.ok) throw new Error("fetch failed");
-      const body = await res.text();
+      const r = await readArtefact(a.storage_path);
+      if (!r.ok) throw new Error(r.message);
+      const body = new TextDecoder().decode(r.bytes);
       await logAccess(a, itemId, note);
       return body;
     },

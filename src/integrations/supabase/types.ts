@@ -1134,6 +1134,27 @@ export type Database = {
           },
         ]
       }
+      darknight_route: {
+        Row: {
+          gateway_url: string | null
+          id: boolean
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          gateway_url?: string | null
+          id?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          gateway_url?: string | null
+          id?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       document_events: {
         Row: {
           action: string
@@ -1342,6 +1363,105 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      evidence_move_freeze_log: {
+        Row: {
+          actor: string | null
+          at: string
+          frozen: boolean
+          id: string
+          reason: string
+        }
+        Insert: {
+          actor?: string | null
+          at?: string
+          frozen: boolean
+          id?: string
+          reason: string
+        }
+        Update: {
+          actor?: string | null
+          at?: string
+          frozen?: boolean
+          id?: string
+          reason?: string
+        }
+        Relationships: []
+      }
+      evidence_move_results: {
+        Row: {
+          actor: string | null
+          artefact_id: string
+          at: string
+          darknight_path: string
+          expected_sha256: string
+          got_sha256: string | null
+          id: string
+          outcome: string
+          run_id: string
+        }
+        Insert: {
+          actor?: string | null
+          artefact_id: string
+          at?: string
+          darknight_path: string
+          expected_sha256: string
+          got_sha256?: string | null
+          id?: string
+          outcome: string
+          run_id: string
+        }
+        Update: {
+          actor?: string | null
+          artefact_id?: string
+          at?: string
+          darknight_path?: string
+          expected_sha256?: string
+          got_sha256?: string | null
+          id?: string
+          outcome?: string
+          run_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evidence_move_results_artefact_id_fkey"
+            columns: ["artefact_id"]
+            isOneToOne: false
+            referencedRelation: "artefacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_move_results_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_move_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      evidence_move_runs: {
+        Row: {
+          gateway_url: string
+          id: string
+          started_at: string
+          started_by: string | null
+          total: number
+        }
+        Insert: {
+          gateway_url: string
+          id?: string
+          started_at?: string
+          started_by?: string | null
+          total: number
+        }
+        Update: {
+          gateway_url?: string
+          id?: string
+          started_at?: string
+          started_by?: string | null
+          total?: number
+        }
+        Relationships: []
       }
       evidence_refs: {
         Row: {
@@ -4237,6 +4357,7 @@ export type Database = {
           created_by_name: string | null
           cycle_nos: number[]
           file_name: string | null
+          home_path: string | null
           id: string
           item_count: number | null
           kind: string
@@ -4261,6 +4382,7 @@ export type Database = {
           created_by_name?: string | null
           cycle_nos?: number[]
           file_name?: string | null
+          home_path?: string | null
           id?: string
           item_count?: number | null
           kind: string
@@ -4285,6 +4407,7 @@ export type Database = {
           created_by_name?: string | null
           cycle_nos?: number[]
           file_name?: string | null
+          home_path?: string | null
           id?: string
           item_count?: number | null
           kind?: string
@@ -7288,6 +7411,33 @@ export type Database = {
         }
       }
       design_ready: { Args: { _project: string }; Returns: boolean }
+      evidence_move_frozen: { Args: never; Returns: boolean }
+      evidence_move_pending: {
+        Args: never
+        Returns: {
+          artefact_id: string
+          filename: string
+          sha256: string
+          storage_path: string
+        }[]
+      }
+      evidence_move_progress: { Args: never; Returns: Json }
+      evidence_move_record: {
+        Args: {
+          _artefact: string
+          _darknight_path: string
+          _got_sha256: string
+          _run: string
+          _unavailable?: boolean
+        }
+        Returns: string
+      }
+      evidence_move_set_freeze: {
+        Args: { _on: boolean; _reason: string }
+        Returns: undefined
+      }
+      evidence_move_start: { Args: never; Returns: Json }
+      evidence_read_location: { Args: { _storage_path: string }; Returns: Json }
       ew_active_recipients: {
         Args: { _channel: string }
         Returns: {
