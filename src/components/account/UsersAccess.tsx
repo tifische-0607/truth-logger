@@ -1,17 +1,14 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
-import { Copy } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { createMemberInvite, getAccountEmailStatus, sendPasswordReset, setAccountStatus } from '@/lib/account.functions';
+import { getAccountEmailStatus, sendPasswordReset, setAccountStatus } from '@/lib/account.functions';
 import { levelLabel } from '@/lib/access-levels';
 import { errorMessage } from '@/lib/portal-access';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ProfileForm } from '@/components/account/AccountPanel';
+import { CreateAccount, PendingInvites } from '@/components/account/CreateAccount';
 
 type User = { user_id: string; name: string | null; full_name: string | null; email: string | null; level: string; status: 'active' | 'inactive'; roles: string[]; client: string | null; member_tier: string | null; last_sign_in: string | null; is_me: boolean; can_manage: boolean };
 type Invite = { id: string; name: string; email: string; status: string; expires: string | null; tier: string | null };
@@ -22,6 +19,7 @@ const when = (t: string | null) => (t ? new Date(t).toLocaleString('en-GB', { da
 const ACTION: Record<string, string> = {
   level_changed: 'Level changed', deactivated: 'Deactivated', reactivated: 'Reactivated', profile_updated: 'Profile edited', password_reset_sent: 'Password reset link sent',
   password_changed: 'Password changed', signed_out_other_sessions: 'Signed out of other sessions', email_change_requested: 'Email change requested',
+  account_created: 'Account created (invitation)', account_invite_resent: 'Invitation resent', account_invite_cancelled: 'Invitation cancelled', account_accepted: 'Invitation accepted',
   member_invited: 'Member invited', member_invite_resent: 'Member invitation resent', member_invite_cancelled: 'Member invitation cancelled', member_accepted: 'Member invitation accepted',
 };
 function describe(e: Event) {
@@ -31,6 +29,7 @@ function describe(e: Event) {
     return `Level ${d.from_level ? levelLabel(d.from_level) : 'none'} → ${d.to_level ? levelLabel(d.to_level) : 'none'}`;
   }
   if (e.action === 'level_changed') return `${ACTION[e.action]}: ${levelLabel(String(e.detail['from']))} → ${levelLabel(String(e.detail['to']))}`;
+  if (e.action === 'account_created') { const x = e.detail as { level?: string; roles?: string[]; client?: string | null; tier?: string | null }; return `${ACTION[e.action]}: ${levelLabel(x.level)}${x.roles?.length ? ` (${x.roles.join(', ')})` : ''}${x.client ? ` · ${x.client}` : ''}${x.tier ? ` · ${x.tier}` : ''}`; }
   if (e.action === 'profile_updated') return `${ACTION[e.action]}: ${Object.keys(e.detail).join(', ')}`;
   return ACTION[e.action] ?? e.action;
 }
@@ -48,35 +47,9 @@ export function ActivityList() {
     <section aria-labelledby="ua-h" className="space-y-3">
       <h3 id="ua-h" className="font-semibold">User activity</h3>
       {q.data.length === 0 ? <p className="text-muted-foreground text-sm">No activity yet.</p> : (
-        <ul className="divide-y">{q.data.map((e, i) => <li key={i} className="py-2 text-sm"><span className="font-medium">{describe(e)}</span> · {e.target_name ?? '—'}<span className="text-muted-foreground"> · by {e.actor_name ?? 'System'} · {when(e.at)}</span></li>)}</ul>
+        <ul className="divide-y">{q.data.map((e, i) => <li key={i} className="py-2 text-sm"><span className="font-medium">{describe(e)}</span> · {e.target_name ?? (typeof e.detail['email'] === 'string' ? e.detail['email'] : '—')}<span className="text-muted-foreground"> · by {e.actor_name ?? 'System'} · {when(e.at)}</span></li>)}</ul>
       )}
     </section>
-  );
-}
-
-function MemberInvite({ onDone }: { onDone: () => void }) {
-  const fn = useServerFn(createMemberInvite);
-  const tiers = useQuery({ queryKey: ['billing-tiers-list'], queryFn: async () => { const { data, error } = await supabase.from('billing_tiers').select('id, name, rank').order('rank'); if (error) throw error; return data; } });
-  const [name, setName] = useState(''); const [email, setEmail] = useState(''); const [tier, setTier] = useState('none');
-  const [busy, setBusy] = useState(false); const [err, setErr] = useState(''); const [link, setLink] = useState('');
-  const go = async (e: React.FormEvent) => {
-    e.preventDefault(); setBusy(true); setErr('');
-    try { const r = await fn({ data: { name, email, ...(tier !== 'none' ? { tierId: tier } : {}) } }); setLink(r.link); setName(''); setEmail(''); onDone(); }
-    catch (x) { setErr(errorMessage(x)); } finally { setBusy(false); }
-  };
-  return (
-    <form onSubmit={go} className="panel space-y-3 p-5" aria-label="Invite a Member">
-      <h3 className="font-semibold">Invite a Member</h3>
-      <p className="text-muted-foreground text-sm">Members are outside readers with no client organisation. They see only reports released to Members and use no client seats.</p>
-      <div className="grid gap-3 sm:grid-cols-3">
-        <div className="space-y-1"><Label htmlFor="mi-name">Name</Label><Input id="mi-name" required className="min-h-11" value={name} onChange={e => setName(e.target.value)} /></div>
-        <div className="space-y-1"><Label htmlFor="mi-email">Email</Label><Input id="mi-email" type="email" required className="min-h-11" value={email} onChange={e => setEmail(e.target.value)} /></div>
-        <div className="space-y-1"><Label htmlFor="mi-tier">Tier</Label><Select value={tier} onValueChange={setTier}><SelectTrigger id="mi-tier" className="min-h-11"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="none">No tier</SelectItem>{tiers.data?.map(t => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent></Select></div>
-      </div>
-      <Button type="submit" className="min-h-11" disabled={busy}>{busy ? 'Recording…' : 'Create invitation link'}</Button>
-      {err ? <p role="alert" className="bg-failed text-failed-foreground rounded-md p-3 text-sm">{err}</p> : null}
-      {link ? <div className="space-y-2" role="status"><p className="text-sm">Single-use link (shown once, valid 7 days). Send it to the person yourself; no email is sent.</p><div className="flex gap-2"><Input readOnly value={link} className="min-h-11" aria-label="Invitation link" /><Button type="button" variant="outline" className="min-h-11" onClick={() => void navigator.clipboard.writeText(link)}><Copy className="size-4" />Copy</Button></div></div> : null}
-    </form>
   );
 }
 
@@ -89,7 +62,7 @@ export function UsersAccess() {
   const [msg, setMsg] = useState<{ id: string; t: string; bad: boolean } | null>(null);
   const [busy, setBusy] = useState(''); const [edit, setEdit] = useState<User | null>(null);
   const [filter, setFilter] = useState('all');
-  const refresh = () => { void qc.invalidateQueries({ queryKey: ['access-users'] }); void qc.invalidateQueries({ queryKey: ['access-activity'] }); };
+  const refresh = () => { void qc.invalidateQueries({ queryKey: ['access-users'] }); void qc.invalidateQueries({ queryKey: ['account-pending-invites'] }); void qc.invalidateQueries({ queryKey: ['access-activity'] }); };
   const run = async (id: string, f: () => Promise<string>) => {
     setBusy(id); setMsg(null);
     try { setMsg({ id, t: await f(), bad: false }); refresh(); } catch (x) { setMsg({ id, t: errorMessage(x), bad: true }); } finally { setBusy(''); }
@@ -124,13 +97,7 @@ export function UsersAccess() {
               {msg?.id === u.user_id ? <p role={msg.bad ? 'alert' : 'status'} className={msg.bad ? 'bg-failed text-failed-foreground rounded-md p-3 text-sm' : 'text-sm'}>{msg.t}</p> : null}
             </li>))}
         </ul>)}
-      {d.scope !== 'client' ? <>
-        <MemberInvite onDone={refresh} />
-        {d.member_invitations.length ? <section aria-labelledby="mi-pending" className="space-y-2"><h3 id="mi-pending" className="font-semibold">Pending Member invitations</h3>
-          <ul className="grid gap-2">{d.member_invitations.map(i => <li key={i.id} className="panel flex flex-wrap items-center justify-between gap-2 p-3 text-sm"><span>{i.name} · {i.email} · {i.tier ?? 'No tier'} · expires {when(i.expires)}</span>
-            <Button variant="outline" className="min-h-11" disabled={!!busy} onClick={() => run(i.id, async () => { const { error } = await supabase.rpc('member_cancel_invite', { rid: i.id }); if (error) throw error; return 'Invitation cancelled.'; })}>Cancel</Button>
-            {msg?.id === i.id ? <p role={msg.bad ? 'alert' : 'status'} className="w-full text-sm">{msg.t}</p> : null}</li>)}</ul></section> : null}
-      </> : null}
+      {d.scope !== 'client' ? <><CreateAccount superadmin={d.scope === 'all'} onDone={refresh} /><PendingInvites onDone={refresh} /></> : null}
       <ActivityList />
       <Dialog open={!!edit} onOpenChange={o => { if (!o) setEdit(null); }}>
         <DialogContent className="max-h-[90vh] overflow-y-auto">

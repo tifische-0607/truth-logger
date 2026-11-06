@@ -6629,6 +6629,51 @@ export type Database = {
           },
         ]
       }
+      staff_invitations: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          invite_expires_at: string | null
+          invite_token_hash: string | null
+          invite_used_at: string | null
+          invited_by: string | null
+          level: string
+          name: string
+          roles: string[]
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          invite_expires_at?: string | null
+          invite_token_hash?: string | null
+          invite_used_at?: string | null
+          invited_by?: string | null
+          level: string
+          name: string
+          roles?: string[]
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          invite_expires_at?: string | null
+          invite_token_hash?: string | null
+          invite_used_at?: string | null
+          invited_by?: string | null
+          level?: string
+          name?: string
+          roles?: string[]
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       staff_training_records: {
         Row: {
           details: Json
@@ -7507,10 +7552,31 @@ export type Database = {
         Returns: undefined
       }
       access_users: { Args: never; Returns: Json }
+      account_email_in_use: { Args: { em: string }; Returns: boolean }
+      account_invite: {
+        Args: {
+          client?: string
+          e: string
+          expires: string
+          h: string
+          lvl: string
+          n: string
+          roles?: string[]
+          tier?: string
+        }
+        Returns: string
+      }
+      account_invite_cancel: { Args: { rid: string }; Returns: undefined }
+      account_invite_kind: { Args: { rid: string }; Returns: string }
+      account_invite_resend: {
+        Args: { expires: string; h: string; rid: string }
+        Returns: undefined
+      }
       account_log_self: {
         Args: { a: string; detail?: Json }
         Returns: undefined
       }
+      account_pending_invites: { Args: never; Returns: Json }
       account_profile: { Args: { target?: string }; Returns: Json }
       account_update_profile: {
         Args: { p: Json; target: string }
@@ -8401,6 +8467,12 @@ export type Database = {
       }
       srch_set_content_types: { Args: { _types: string[] }; Returns: undefined }
       srch_visible: { Args: { _results: Json }; Returns: Json }
+      staff_activate_invitation: {
+        Args: { rid: string; uid: string }
+        Returns: undefined
+      }
+      staff_claim_invitation: { Args: { h: string }; Returns: Json }
+      staff_invitation_info: { Args: { h: string }; Returns: Json }
       statements_ok: { Args: { _s: Json }; Returns: boolean }
       u1_holds_seat: {
         Args: { expires: string; status: string }

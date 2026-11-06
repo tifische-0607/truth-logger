@@ -25,6 +25,9 @@ export const getInviteInfo = createServerFn({ method: 'POST' })
     const { data: info, error } = await supabaseAdmin.rpc('portal_invitation_info', { h: hash });
     if (error) throw new Error(error.message);
     if (info) return info as unknown as { client_name: string; name: string; email: string; existing_account: boolean; kind?: string };
+    const staff = await supabaseAdmin.rpc('staff_invitation_info', { h: hash });
+    if (staff.error) throw new Error(staff.error.message);
+    if (staff.data) return staff.data as unknown as { client_name: string; name: string; email: string; existing_account: boolean; kind?: string };
     const member = await supabaseAdmin.rpc('member_invitation_info', { h: hash });
     if (member.error) throw new Error(member.error.message);
     if (!member.data) throw new Error('This invitation is invalid, expired or already used.');
@@ -40,6 +43,21 @@ export const acceptNewClientInvite = createServerFn({ method: 'POST' })
     if (info.error) throw new Error(info.error.message);
     const details = info.data as unknown as { email: string; name: string; existing_account: boolean } | null;
     if (!details) {
+      // SuperAdmin / FA Staff invitation: level and roles come only from the recorded invitation.
+      const si = await supabaseAdmin.rpc('staff_invitation_info', { h: hash });
+      if (si.error) throw new Error(si.error.message);
+      const sd = si.data as unknown as { email: string; name: string; existing_account: boolean } | null;
+      if (sd) {
+        if (sd.existing_account) throw new Error('This email already has a FA Portal login. Ask a SuperAdmin for help.');
+        const sc = await supabaseAdmin.rpc('staff_claim_invitation', { h: hash });
+        if (sc.error) throw new Error(sc.error.message);
+        const sclaimed = sc.data as unknown as { id: string };
+        const su = await supabaseAdmin.auth.admin.createUser({ email: sd.email, password: data.password, email_confirm: true, user_metadata: { display_name: sd.name } });
+        if (su.error || !su.data.user) throw new Error(su.error?.message ?? 'Account creation failed. Request a new invitation.');
+        const sa = await supabaseAdmin.rpc('staff_activate_invitation', { rid: sclaimed.id, uid: su.data.user.id });
+        if (sa.error) throw new Error(sa.error.message);
+        return { email: sd.email, destination: '/dashboard' as const };
+      }
       // Member invitation (no client organisation, no seat).
       const m = await supabaseAdmin.rpc('member_invitation_info', { h: hash });
       if (m.error) throw new Error(m.error.message);

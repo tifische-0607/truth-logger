@@ -52,3 +52,37 @@ export const createMemberInvite = createServerFn({ method: 'POST' })
     if (error) throw new Error(error.message);
     return { link: siteLink(canonicalSiteUrl(process.env['SITE_URL']), `/invite?token=${token}`) };
   });
+
+const newToken = async () => {
+  const bytes = crypto.getRandomValues(new Uint8Array(32));
+  const token = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+  const hash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(token))), b => b.toString(16).padStart(2, '0')).join('');
+  return { token, hash, expires: new Date(Date.now() + 7 * 86400000).toISOString() };
+};
+
+/** Create an account of any level as a recorded single-use invitation. The database decides who may create which level and enforces caps. */
+export const createAccount = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => z.object({
+    level: z.enum(['superadmin', 'fa_staff', 'client_admin', 'client_staff', 'member']), name: z.string().trim().min(1).max(120), email: z.string().email(),
+    roles: z.array(z.enum(['analyst', 'curator', 'management'])).default([]), clientId: z.string().uuid().optional(), tierId: z.string().uuid().optional(),
+  }).parse(input))
+  .handler(async ({ data, context }) => {
+    const t = await newToken();
+    const { error } = await context.supabase.rpc('account_invite', {
+      lvl: data.level, n: data.name, e: data.email.toLowerCase(), h: t.hash, expires: t.expires, roles: data.roles,
+      ...(data.clientId ? { client: data.clientId } : {}), ...(data.tierId ? { tier: data.tierId } : {}),
+    });
+    if (error) throw new Error(error.message);
+    return { link: siteLink(canonicalSiteUrl(process.env['SITE_URL']), `/invite?token=${t.token}`), emailed: false };
+  });
+
+export const resendAccountInvite = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => z.object({ id: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    const t = await newToken();
+    const { error } = await context.supabase.rpc('account_invite_resend', { rid: data.id, h: t.hash, expires: t.expires });
+    if (error) throw new Error(error.message);
+    return { link: siteLink(canonicalSiteUrl(process.env['SITE_URL']), `/invite?token=${t.token}`) };
+  });
