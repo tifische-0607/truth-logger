@@ -16,6 +16,7 @@ import { hubHead } from "@/lib/hub";
 import { formatDateTime } from "@/lib/format";
 import { fetchHomeFile, type HomeFile } from "@/lib/library-home";
 import { getAlertChannelStatus } from "@/lib/early-warning.functions";
+import { Slider } from "@/components/ui/slider";
 import { DISPATCH_STATE, FRAMEWORKS, LEVELS, LEVEL_LABEL, SIGNALS, thresholdWord, type Level } from "@/lib/early-warning";
 import { cn } from "@/lib/utils";
 
@@ -272,8 +273,13 @@ function SetThreshold({ signal, level, current }: { signal: string; level: Level
   const [v, setV] = useState(current === null ? "" : String(current)); const [note, setNote] = useState("");
   const { m, err } = useAction(() => supabase.rpc("ew_set_threshold", { _signal: signal, _level: level, _value: (v.trim() === "" ? null : Number(v)) as number, _note: note }), () => setOpen(false));
   return (
-    <Shell open={open} setOpen={setOpen} trigger={<Button variant="ghost" className="ml-1 h-11 px-2 text-sm" aria-label={`Set ${LEVEL_LABEL[level]} threshold for ${sigLabel(signal)}`}>Set</Button>} title={`${LEVEL_LABEL[level]} threshold — ${sigLabel(signal)}`} desc="Leave empty for Threshold not set. Every change is logged." onSubmit={() => m.mutate(undefined)} busy={m.isPending} err={err} submit="Save threshold">
-      <div className="grid gap-1"><Label htmlFor="ew-tv">Threshold score</Label><Input id="ew-tv" className="h-11" inputMode="decimal" value={v} onChange={(e) => setV(e.target.value)} /></div>
+    <Shell open={open} setOpen={setOpen} trigger={<Button variant="ghost" className="ml-1 h-11 px-2 text-sm" aria-label={`Set ${LEVEL_LABEL[level]} threshold for ${sigLabel(signal)}`}>Set</Button>} title={`${LEVEL_LABEL[level]} threshold — ${sigLabel(signal)}`} desc="Drag to choose 0–20, or clear for Threshold not set. Every change is logged." onSubmit={() => m.mutate(undefined)} busy={m.isPending} err={err} submit="Save threshold">
+      <div className="grid gap-3">
+        <div className="flex items-center justify-between"><Label htmlFor="ew-tv">Threshold score</Label><span className="font-mono text-lg" aria-live="polite">{v.trim() === "" ? "Not set" : v}</span></div>
+        <Slider id="ew-tv" min={0} max={20} step={1} value={[v.trim() === "" ? 0 : Number(v)]} onValueChange={([n]) => setV(String(n))} aria-label="Threshold score, 0 to 20" className="py-3" />
+        <div className="flex justify-between text-muted-foreground text-xs"><span>0</span><span>20</span></div>
+        {v.trim() !== "" ? <Button type="button" variant="outline" className="h-11 justify-self-start" onClick={() => setV("")}>Clear (Threshold not set)</Button> : null}
+      </div>
       <div className="grid gap-1"><Label htmlFor="ew-tn">Note</Label><Input id="ew-tn" className="h-11" value={note} onChange={(e) => setNote(e.target.value)} /></div>
     </Shell>
   );
