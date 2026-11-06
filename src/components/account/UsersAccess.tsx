@@ -6,9 +6,6 @@ import { getAccountEmailStatus, sendPasswordReset, setAccountStatus } from '@/li
 import { levelLabel } from '@/lib/access-levels';
 import { errorMessage } from '@/lib/portal-access';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ProfileForm } from '@/components/account/AccountPanel';
 import { CreateAccount, PendingInvites } from '@/components/account/CreateAccount';
@@ -50,7 +47,7 @@ export function ActivityList() {
     <section aria-labelledby="ua-h" className="space-y-3">
       <h3 id="ua-h" className="font-semibold">User activity</h3>
       {q.data.length === 0 ? <p className="text-muted-foreground text-sm">No activity yet.</p> : (
-        <ul className="divide-y">{q.data.map((e, i) => <li key={i} className="py-2 text-sm"><span className="font-medium">{describe(e)}</span> · {e.target_name ?? '—'}<span className="text-muted-foreground"> · by {e.actor_name ?? 'System'} · {when(e.at)}</span></li>)}</ul>
+        <ul className="divide-y">{q.data.map((e, i) => <li key={i} className="py-2 text-sm"><span className="font-medium">{describe(e)}</span> · {e.target_name ?? (typeof e.detail['email'] === 'string' ? e.detail['email'] : '—')}<span className="text-muted-foreground"> · by {e.actor_name ?? 'System'} · {when(e.at)}</span></li>)}</ul>
       )}
     </section>
   );
