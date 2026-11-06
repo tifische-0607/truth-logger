@@ -196,7 +196,7 @@ function AlertCard({ a, sample }: { a: Alert; sample: boolean }) {
   );
 }
 
-function useAction<T>(fn: (v: T) => Promise<{ error: { message: string } | null }>, onDone: () => void) {
+function useAction<T>(fn: (v: T) => PromiseLike<{ error: { message: string } | null }>, onDone: () => void) {
   const qc = useQueryClient();
   const [err, setErr] = useState<string | null>(null);
   const m = useMutation({
