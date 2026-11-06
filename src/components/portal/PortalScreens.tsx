@@ -242,8 +242,13 @@ export function DocumentsTab({ ctx }: { ctx: PortalCtx }) {
   const shown = ctx.docs.filter(d => (from === 'all' || d.source === from) && (eng === 'all' || d.engagement_id === eng)
     && (!q.trim() || `${d.title} ${d.code} ${d.sha256 ?? ''}`.toLowerCase().includes(q.trim().toLowerCase())));
   const engName = (id: string | null) => ctx.engagements.find(e => e.id === id)?.name;
+  const tierNote = useQuery({ queryKey: ['report-access-note', ctx.sample], queryFn: async () => {
+    if (ctx.sample) return { any_set: false };
+    const { data, error } = await supabase.rpc('portal_report_access_note'); if (error) throw error; return data as unknown as { any_set: boolean };
+  } });
   return (
     <div className="space-y-4">
+      {tierNote.data && !tierNote.data.any_set ? <p role="note" className="bg-muted rounded-md p-3 text-sm">Report access by tier not yet set. Every report shared with you is visible on every tier.</p> : null}
       <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Who the document is from">
         {([['all', 'All'], ['fa', 'From FridayAnalytics'], ['client', 'From you']] as const).map(([k, l]) => (
           <Button key={k} className="min-h-11" variant={from === k ? 'default' : 'outline'} aria-pressed={from === k} onClick={() => setFrom(k)}>{l} ({ctx.docs.filter(d => k === 'all' || d.source === k).length})</Button>
