@@ -274,6 +274,13 @@
       "when": 1793930742883,
       "tag": "0038_fa_portal_u1_tiers_seats",
       "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1793930764119,
+      "tag": "0039_fa_portal_u1_tier_log_action",
+      "breakpoints": true
     }
   ]
 }
