@@ -103,6 +103,7 @@ function LibraryPage() {
       <PageHeader title="Library" subtitle="Every document FA holds for its clients, with who can see it." />
       <div className="mb-4 flex flex-wrap items-center gap-3"><Button className="min-h-11" onClick={() => setAddOpen(true)}>Add a DarkNight file</Button>
         <p className="text-muted-foreground text-sm">Files are never stored in the cloud. Place the file on DarkNight, then record its location and SHA-256 here.</p></div>
+      {tierOverview.data && !Object.values(tierOverview.data.docs).some(t => t.length > 0) ? <Alert className="mb-4" role="note"><Info className="size-4" /><AlertDescription>Report access by tier not yet set. Every shared report is visible to every tier until you set tiers in a report's detail panel.</AlertDescription></Alert> : null}
       <AddHomeFile open={addOpen} onOpenChange={setAddOpen} clients={clients.data ?? []} />
       <Alert className="mb-5"><Info className="size-4" /><AlertDescription>Staff see every document. Clients see only documents for their own client that you have shared with them.</AlertDescription></Alert>
 
