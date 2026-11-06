@@ -348,6 +348,7 @@ function TeamPill({ ctx }: { ctx: PortalCtx }) {
           <DialogHeader><DialogTitle>Invitation recorded</DialogTitle>
             <DialogDescription>Copy this single-use link and send it to the person you invited. It expires in 7 days.</DialogDescription></DialogHeader>
           <div className="space-y-3"><Input aria-label="Invitation link" type="password" readOnly value={link} className="min-h-11" /><Button className="min-h-11" onClick={() => void navigator.clipboard.writeText(link)}><Copy className="size-4" />Copy invitation link</Button></div>
+        </DialogContent>
       </Dialog>
     </section>
   );
