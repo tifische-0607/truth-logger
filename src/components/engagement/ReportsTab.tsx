@@ -28,10 +28,11 @@ import {
   attachFile,
   build,
   saveBlob,
-  storagePath,
   type Built,
 } from "@/lib/engagement-outputs";
 import { formatBytes, formatDateTime } from "@/lib/format";
+import { outputHomePath } from "@/lib/darknight";
+import { readOutputLive, writeOutputLive } from "@/lib/evidence-read";
 import {
   ATTRIBUTION,
   OUTPUT_KINDS,
@@ -313,15 +314,13 @@ function OutputCard({
   const released = status === "released";
   const brief = ws.briefs.find((b) => b.id === o.brief_id);
   const record = async (b: Built) => {
-    let location: string | null = null;
+    // U3: outputs are written to DarkNight only (never cloud storage); DarkNight re-hashes on receipt.
+    let home_path: string | null = null;
     if (b.uploadable) {
-      const p = storagePath(ws, o.id, b.fileName);
-      const { error } = await supabase.storage.from("evidence").upload(p, b.blob, {
-        contentType: b.blob.type || "application/octet-stream",
-        upsert: false,
-      });
-      if (error) throw error;
-      location = p;
+      const p = outputHomePath(ws.project.id, o.id, b.sha256, b.fileName);
+      const w = await writeOutputLive(p, b.blob, b.sha256);
+      if (!w.ok) throw new Error(w.message);
+      home_path = p;
     }
     const { error } = await supabase
       .from("project_outputs")
@@ -331,7 +330,7 @@ function OutputCard({
         size_bytes: b.sizeBytes,
         item_count: b.itemCount,
         params: b.params as never,
-        location,
+        home_path,
       })
       .eq("id", o.id);
     if (error) throw error;
@@ -366,11 +365,21 @@ function OutputCard({
   const dl = useDbAction(
     ws,
     async () => {
-      const { data, error } = await supabase.storage.from("evidence").download(o.location!);
-      if (error || !data) throw error ?? new Error("File not found");
-      const got = await sha256Hex(await data.arrayBuffer());
-      if (o.sha256 && got !== o.sha256)
-        throw new Error("The stored file does not match its recorded hash");
+      let data: Blob;
+      let got: string;
+      if (o.home_path && o.sha256) {
+        const r = await readOutputLive(o.home_path, o.sha256);
+        if (!r.ok) throw new Error(r.message);
+        data = new Blob([r.bytes]);
+        got = r.sha256;
+      } else {
+        const { data: d, error } = await supabase.storage.from("evidence").download(o.location!);
+        if (error || !d) throw error ?? new Error("File not found");
+        data = d;
+        got = await sha256Hex(await d.arrayBuffer());
+        if (o.sha256 && got !== o.sha256)
+          throw new Error("The stored file does not match its recorded hash");
+      }
       saveBlob(data, o.file_name ?? "output");
       await supabase.from("project_events").insert({
         project_id: ws.project.id,

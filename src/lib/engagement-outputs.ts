@@ -371,9 +371,10 @@ export async function buildBundle(
     const dir = `${root}/files/${safeName(it.caseId ?? "no-case")}/${safeName(it.code)}`;
     for (const a of it.artefacts) {
       try {
-        const { data, error } = await supabase.storage.from("evidence").download(a.storage_path);
-        if (error || !data) throw error ?? new Error("not found");
-        const buf = await data.arrayBuffer();
+        const { readArtefact } = await import("./evidence-read");
+        const r = await readArtefact(a.storage_path);
+        if (!r.ok) throw new Error(r.message);
+        const buf = r.bytes;
         const got = await sha256Hex(buf);
         if (!a.sha256)
           problems.push({
@@ -469,7 +470,7 @@ export async function buildReleasePack(ws: Workspace): Promise<Built> {
   const log: string[] = [];
   const problems: { code: string; filename: string | null; reason: string }[] = [];
   for (const o of held) {
-    if (!o.location || !o.sha256) {
+    if ((!o.location && !o.home_path) || !o.sha256) {
       problems.push({
         code: o.title,
         filename: o.file_name,
@@ -478,12 +479,23 @@ export async function buildReleasePack(ws: Workspace): Promise<Built> {
       });
       continue;
     }
-    const { data, error } = await supabase.storage.from("evidence").download(o.location);
-    if (error || !data) {
-      problems.push({ code: o.title, filename: o.file_name, reason: "file not found in storage" });
-      continue;
+    let buf: ArrayBuffer;
+    if (o.home_path) {
+      const { readOutputLive } = await import("./evidence-read");
+      const r = await readOutputLive(o.home_path, o.sha256);
+      if (!r.ok) {
+        problems.push({ code: o.title, filename: o.file_name, reason: r.message });
+        continue;
+      }
+      buf = r.bytes;
+    } else {
+      const { data, error } = await supabase.storage.from("evidence").download(o.location!);
+      if (error || !data) {
+        problems.push({ code: o.title, filename: o.file_name, reason: "file not found in storage" });
+        continue;
+      }
+      buf = await data.arrayBuffer();
     }
-    const buf = await data.arrayBuffer();
     const got = await sha256Hex(buf);
     if (got !== o.sha256) {
       problems.push({
