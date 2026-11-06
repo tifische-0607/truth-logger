@@ -1,3 +1,7 @@
+-- STATUS 6 Nov 2026: Part A (structure, below as comments) RUN and passed through the read-only database tool:
+--   tiers Tier 1:3, Tier 2:10, Tier 3:unlimited; RLS on document_tier_access; append-only trigger present; anon cannot execute
+--   report_set_tiers / portal_invite_member; every client login has a valid role; no tier access set yet (all reports visible).
+-- S1–S10 below NOT RUN: the available test connection cannot create auth users ("permission denied for schema auth").
 -- U1 Membership tiers and seats checks. Run as a privileged test connection inside a transaction; everything rolls back.
 -- Uses the U2 tiers by rank: rank 1 (seat limit 3), rank 2 (10), rank 3 (unlimited). Tier names are staff-editable, so checks match on rank.
 BEGIN;

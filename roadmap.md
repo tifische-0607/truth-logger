@@ -31,8 +31,8 @@
 6. [ ] U5 remainder (needs U4) — partly built: quality controls, quarantine, provenance, auto-suspend; still to do: rejection-rate dashboard over time — waits for Go
 7. [ ] U6 Methodology checkpoints (needs U4, U5, U8) — waits for Go
 8. [ ] Phase 9 Hardening and full test run — waits for Go
-9. [ ] U1 Membership tiers and seats (needs Phase 4) — waits for Go
-10. [x] U2 Pricing, upgrade requests and billing — built 5 Nov 2026 (0030, 0031): client Pricing and Billing tabs, upgrade requests with staff Billing inbox badge, owner/Management pricing editor (placeholder Tier 1–3, "Price on request", RM/monthly), invoices Draft→Issued→Paid/Void with never-reused numbers, tier change after paid invoice refused below seats used, append-only logs, A4 invoice PDF. SQL checks saved in tests/sql/u2_billing_test.sql (unrun). Built ahead of U1: seats used = pending + active client users; U1 seat enforcement when adding users still open
+9. [x] U1 Membership tiers and seats — built 6 Nov 2026 (0038, 0039): client logins are administrators (issued by FridayAnalytics only) or users (invited by client administrators); real seat rule = active logins + unexpired pending invitations, refused at invite/resend/reactivate with seats used and limit; client with no tier can only have administrators; 2-administrator cap unchanged; non-administrators see tier and seats only; Administration > Team shows Users with invite/deactivate/reactivate; report access by tier set by owner/Curator/Management in Library (append-only versions), unset = every tier, with "Report access by tier not yet set" note. SQL: tests/sql/u1_tiers_seats_test.sql Part A run and passed, S1–S10 unrun (need auth-user fixtures)
+10. [x] U2 Pricing, upgrade requests and billing — built 5 Nov 2026 (0030, 0031): client Pricing and Billing tabs, upgrade requests with staff Billing inbox badge, owner/Management pricing editor (placeholder Tier 1–3, "Price on request", RM/monthly), invoices Draft→Issued→Paid/Void with never-reused numbers, tier change after paid invoice refused below seats used, append-only logs, A4 invoice PDF. SQL checks saved in tests/sql/u2_billing_test.sql (unrun). Seat count replaced by U1's rule (active + unexpired pending)
 11. [ ] U7 Early warning platform (needs U4, U5, U8) — waits for Go. Requested 3 Nov 2026 for after U6: analyst confirmation, email and Telegram alerts, briefing document on DarkNight, "Not configured" until channels are set.
 12. [ ] U9 Link analysis (needs U4, U5, U8) — waits for Go
 13. [ ] U11 Narrative and coordination detection (needs U7, U8, U9) — waits for Go
@@ -47,7 +47,8 @@
 - Secure route from the portal to DarkNight
 - Cloud Vault access route (direct or HTTPS relay) and its secrets
 - Prices, currency and billing period
-- Which reports belong to each tier
+- Which reports belong to each tier (staff screen built in Library; nothing assigned, so all reports visible to all tiers)
+- U1: do administrators count as seats (built: yes); may a client on no tier add users (built: no); who may assign report tiers (built: owner, Curator, Management); real tier names and seat limits
 - FA-STD-001 naming
 - Universal standard v1 is a Sample draft awaiting Curator edit/approval; wiring into the report builder waits for U6
 - Retention periods
