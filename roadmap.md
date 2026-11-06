@@ -110,3 +110,9 @@
 - Database: analyst-only confirmations (row guard on every insert), captures cited, standard version recorded, nothing confirmed while a threshold is unset, confirmed coordination feeds U9 (lnk_events + service-role feed) and U7 (ew_record_signal; refusals logged).
 - SQL `tests/sql/u11_narratives_test.sql`: Part A RUN, passed; Part B NOT RUN (no test-account connection, no approved universal standard).
 - Open: similarity/time-window/account thresholds; languages beyond Malay and English; myth and scenario identifier list in the universal standard.
+
+## U12 Unified evidence search — built 6 Nov 2026
+- Staff `/evidence-search` (Sample at `?preview=sample`): keyword (Malay and English), meaning and image modes; filters platform, date, engagement, narrative, entity, verification; saved searches; Curator promotion to a monitoring requirement linked to an active U4 register requirement. Contract `docs/search/gateway-contract.md`.
+- Migration 0047. Access filter `srch_visible` runs as the caller under row rules; results without a visible capture are dropped and counted. Content types start empty ("No content types chosen yet").
+- SQL `tests/sql/u12_unified_search_test.sql`: Part A RUN, passed; Part B NOT RUN (needs multi-user test accounts).
+- Open: which content types to index first.
