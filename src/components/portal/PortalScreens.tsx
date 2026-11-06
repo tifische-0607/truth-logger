@@ -298,7 +298,7 @@ function TeamPill({ ctx }: { ctx: PortalCtx }) {
   const qc = useQueryClient(); const inviteFn = useServerFn(createClientInvite);
   const cid = ctx.dash.client_id;
   const admins = useQuery({ queryKey: ['client-admins', cid, ctx.sample], queryFn: () => (ctx.sample ? Promise.resolve(sampleAdmins) : clientAdmins(cid)) });
-  const [open, setOpen] = useState(false); const [name, setName] = useState(''); const [email, setEmail] = useState(''); const [link, setLink] = useState('');
+  const [open, setOpen] = useState(false); const [name] = useState(''); const [email] = useState(''); const [link, setLink] = useState('');
   const [sampleNote, setSampleNote] = useState('');
   const inviteBtn = useRef<HTMLButtonElement>(null);
   const [sampleCancelled, setSampleCancelled] = useState<string[]>([]);
