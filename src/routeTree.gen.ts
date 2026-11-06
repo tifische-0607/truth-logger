@@ -29,6 +29,7 @@ import { Route as AuthenticatedIntegrityRouteImport } from './routes/_authentica
 import { Route as AuthenticatedLibraryRouteImport } from './routes/_authenticated/library'
 import { Route as AuthenticatedLinksRouteImport } from './routes/_authenticated/links'
 import { Route as AuthenticatedManagementRouteImport } from './routes/_authenticated/management'
+import { Route as AuthenticatedNarrativesRouteImport } from './routes/_authenticated/narratives'
 import { Route as AuthenticatedOfflineRouteImport } from './routes/_authenticated/offline'
 import { Route as AuthenticatedQueueRouteImport } from './routes/_authenticated/queue'
 import { Route as AuthenticatedRejectionsRouteImport } from './routes/_authenticated/rejections'
@@ -182,6 +183,11 @@ const AuthenticatedLinksRoute = AuthenticatedLinksRouteImport.update({
 const AuthenticatedManagementRoute = AuthenticatedManagementRouteImport.update({
   id: '/management',
   path: '/management',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedNarrativesRoute = AuthenticatedNarrativesRouteImport.update({
+  id: '/narratives',
+  path: '/narratives',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedOfflineRoute = AuthenticatedOfflineRouteImport.update({
@@ -493,6 +499,7 @@ export interface FileRoutesByFullPath {
   '/library': typeof AuthenticatedLibraryRoute
   '/links': typeof AuthenticatedLinksRoute
   '/management': typeof AuthenticatedManagementRoute
+  '/narratives': typeof AuthenticatedNarrativesRoute
   '/offline': typeof AuthenticatedOfflineRoute
   '/queue': typeof AuthenticatedQueueRoute
   '/rejections': typeof AuthenticatedRejectionsRoute
@@ -566,6 +573,7 @@ export interface FileRoutesByTo {
   '/library': typeof AuthenticatedLibraryRoute
   '/links': typeof AuthenticatedLinksRoute
   '/management': typeof AuthenticatedManagementRoute
+  '/narratives': typeof AuthenticatedNarrativesRoute
   '/offline': typeof AuthenticatedOfflineRoute
   '/queue': typeof AuthenticatedQueueRoute
   '/rejections': typeof AuthenticatedRejectionsRoute
@@ -641,6 +649,7 @@ export interface FileRoutesById {
   '/_authenticated/library': typeof AuthenticatedLibraryRoute
   '/_authenticated/links': typeof AuthenticatedLinksRoute
   '/_authenticated/management': typeof AuthenticatedManagementRoute
+  '/_authenticated/narratives': typeof AuthenticatedNarrativesRoute
   '/_authenticated/offline': typeof AuthenticatedOfflineRoute
   '/_authenticated/queue': typeof AuthenticatedQueueRoute
   '/_authenticated/rejections': typeof AuthenticatedRejectionsRoute
@@ -716,6 +725,7 @@ export interface FileRouteTypes {
     | '/library'
     | '/links'
     | '/management'
+    | '/narratives'
     | '/offline'
     | '/queue'
     | '/rejections'
@@ -789,6 +799,7 @@ export interface FileRouteTypes {
     | '/library'
     | '/links'
     | '/management'
+    | '/narratives'
     | '/offline'
     | '/queue'
     | '/rejections'
@@ -863,6 +874,7 @@ export interface FileRouteTypes {
     | '/_authenticated/library'
     | '/_authenticated/links'
     | '/_authenticated/management'
+    | '/_authenticated/narratives'
     | '/_authenticated/offline'
     | '/_authenticated/queue'
     | '/_authenticated/rejections'
@@ -1081,6 +1093,13 @@ declare module '@tanstack/react-router' {
       path: '/management'
       fullPath: '/management'
       preLoaderRoute: typeof AuthenticatedManagementRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/narratives': {
+      id: '/_authenticated/narratives'
+      path: '/narratives'
+      fullPath: '/narratives'
+      preLoaderRoute: typeof AuthenticatedNarrativesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/offline': {
@@ -1465,6 +1484,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedLibraryRoute: typeof AuthenticatedLibraryRoute
   AuthenticatedLinksRoute: typeof AuthenticatedLinksRoute
   AuthenticatedManagementRoute: typeof AuthenticatedManagementRoute
+  AuthenticatedNarrativesRoute: typeof AuthenticatedNarrativesRoute
   AuthenticatedOfflineRoute: typeof AuthenticatedOfflineRoute
   AuthenticatedQueueRoute: typeof AuthenticatedQueueRoute
   AuthenticatedRejectionsRoute: typeof AuthenticatedRejectionsRoute
@@ -1519,6 +1539,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedLibraryRoute: AuthenticatedLibraryRoute,
   AuthenticatedLinksRoute: AuthenticatedLinksRoute,
   AuthenticatedManagementRoute: AuthenticatedManagementRoute,
+  AuthenticatedNarrativesRoute: AuthenticatedNarrativesRoute,
   AuthenticatedOfflineRoute: AuthenticatedOfflineRoute,
   AuthenticatedQueueRoute: AuthenticatedQueueRoute,
   AuthenticatedRejectionsRoute: AuthenticatedRejectionsRoute,
