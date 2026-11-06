@@ -103,3 +103,10 @@
 - Open (waits on user): FA-STD-001 naming wording, retention periods, training record format, methodology statement wording (Curator), Curator approval of universal standard v1 (still Sample), client portal display of released methodology statements.
 
 - U7/U9 decisions (2026-11-06): owner/Curator/Management confirmed as settings editors; U7 signal thresholds and U9 coordination thresholds are admin-set 0–20 sliders (whole numbers, enforced by the database).
+
+## U11 Narrative and coordination detection — built 6 Nov 2026
+- Staff `/narratives` (Sample at `/narratives?preview=sample`): clusters with timeline (volume, platforms, new accounts), coordination findings (near-identical text, same links, new-account bursts), analyst name/confirm dialogs, threshold dialog (counts 1–20; windows 1 min–72 h). Gateway contract `docs/narratives/gateway-contract.md`.
+- Migrations 0045 (tables, guards, functions), 0046 (gateway-feed functions service-role only).
+- Database: analyst-only confirmations (row guard on every insert), captures cited, standard version recorded, nothing confirmed while a threshold is unset, confirmed coordination feeds U9 (lnk_events + service-role feed) and U7 (ew_record_signal; refusals logged).
+- SQL `tests/sql/u11_narratives_test.sql`: Part A RUN, passed; Part B NOT RUN (no test-account connection, no approved universal standard).
+- Open: similarity/time-window/account thresholds; languages beyond Malay and English; myth and scenario identifier list in the universal standard.
