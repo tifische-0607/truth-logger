@@ -8,7 +8,10 @@ import { getSiteConfig } from '@/lib/portal.functions';
 import { siteLink } from '@/lib/site-config';
 
 export const Route = createFileRoute("/")({
-  loader: () => getSiteConfig(),
+  // A dropped connection must not blank the landing page; canonical tags are optional.
+  loader: async () => {
+    try { return await getSiteConfig(); } catch { return null; }
+  },
   head: ({loaderData}) => ({
     meta: [
       { title: "FA Portal — FridayAnalytics" },
