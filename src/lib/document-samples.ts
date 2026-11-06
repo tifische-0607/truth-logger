@@ -9,6 +9,7 @@ export const SAMPLE_KINDS = [
   { id: "limits-statement", label: "Limits statement", long: false },
   { id: "release-log", label: "Release log", long: false },
   { id: "home-vault-bundle", label: "Home-vault bundle manifest", long: false },
+  { id: "ew-briefing", label: "Early warning briefing (template placeholder)", long: false },
 ] as const;
 export type SampleKind = (typeof SAMPLE_KINDS)[number]["id"];
 

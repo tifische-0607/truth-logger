@@ -193,6 +193,21 @@ function Body({ kind }: { kind: SampleKind }) {
           </table>
         </PrintDocument>
       );
+    case "ew-briefing":
+      return (
+        <PrintDocument sample label="Early warning briefing" kicker="EW-S01 · Early warning" title="Briefing — Sample placeholder" subtitle={`Template not decided · ${DATE}`}>
+          <DocCallout><p><strong>Sample placeholder.</strong> The briefing template has not been decided. This page only shows where the content will sit. Briefings are handed over in person and stay on DarkNight.</p></DocCallout>
+          <h2>Alert</h2>
+          <p>Level: <DocStatus tone="caution">WARNING</DocStatus> (Sample). Signal: Call to gather (Sample). Confirmed by an analyst on {DATE} (Sample).</p>
+          <h2>Supporting captures</h2>
+          <table>
+            <thead><tr><th>Capture</th><th>SHA-256</th></tr></thead>
+            <tbody>{rows(3, "ew").map((r) => (<tr key={r.file}><td className="font-mono">{r.code}</td><td className="hash">{r.hash}</td></tr>))}</tbody>
+          </table>
+          <h2>Scoring frameworks</h2>
+          <p>Rabat Plan of Action, Dangerous Speech markers, UN Framework of Analysis for Atrocity Crimes — the version in force will be cited here.</p>
+        </PrintDocument>
+      );
     case "home-vault-bundle":
       return (
         <PrintDocument sample label="Bundle manifest" kicker="HV-S01 · Home-vault bundle" title="Home-vault bundle manifest" subtitle="Manifest and hash only — the files stay on the device">
