@@ -22,6 +22,7 @@ import { Route as AuthenticatedCaseDatabaseRouteImport } from './routes/_authent
 import { Route as AuthenticatedCollectRouteImport } from './routes/_authenticated/collect'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedEarlyWarningRouteImport } from './routes/_authenticated/early-warning'
+import { Route as AuthenticatedEvidenceSearchRouteImport } from './routes/_authenticated/evidence-search'
 import { Route as AuthenticatedExportRouteImport } from './routes/_authenticated/export'
 import { Route as AuthenticatedFrameworksRouteImport } from './routes/_authenticated/frameworks'
 import { Route as AuthenticatedInboxRouteImport } from './routes/_authenticated/inbox'
@@ -148,6 +149,12 @@ const AuthenticatedEarlyWarningRoute =
   AuthenticatedEarlyWarningRouteImport.update({
     id: '/early-warning',
     path: '/early-warning',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedEvidenceSearchRoute =
+  AuthenticatedEvidenceSearchRouteImport.update({
+    id: '/evidence-search',
+    path: '/evidence-search',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedExportRoute = AuthenticatedExportRouteImport.update({
@@ -492,6 +499,7 @@ export interface FileRoutesByFullPath {
   '/collect': typeof AuthenticatedCollectRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/early-warning': typeof AuthenticatedEarlyWarningRoute
+  '/evidence-search': typeof AuthenticatedEvidenceSearchRoute
   '/export': typeof AuthenticatedExportRoute
   '/frameworks': typeof AuthenticatedFrameworksRoute
   '/inbox': typeof AuthenticatedInboxRoute
@@ -566,6 +574,7 @@ export interface FileRoutesByTo {
   '/collect': typeof AuthenticatedCollectRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/early-warning': typeof AuthenticatedEarlyWarningRoute
+  '/evidence-search': typeof AuthenticatedEvidenceSearchRoute
   '/export': typeof AuthenticatedExportRoute
   '/frameworks': typeof AuthenticatedFrameworksRoute
   '/inbox': typeof AuthenticatedInboxRoute
@@ -642,6 +651,7 @@ export interface FileRoutesById {
   '/_authenticated/collect': typeof AuthenticatedCollectRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/early-warning': typeof AuthenticatedEarlyWarningRoute
+  '/_authenticated/evidence-search': typeof AuthenticatedEvidenceSearchRoute
   '/_authenticated/export': typeof AuthenticatedExportRoute
   '/_authenticated/frameworks': typeof AuthenticatedFrameworksRoute
   '/_authenticated/inbox': typeof AuthenticatedInboxRoute
@@ -718,6 +728,7 @@ export interface FileRouteTypes {
     | '/collect'
     | '/dashboard'
     | '/early-warning'
+    | '/evidence-search'
     | '/export'
     | '/frameworks'
     | '/inbox'
@@ -792,6 +803,7 @@ export interface FileRouteTypes {
     | '/collect'
     | '/dashboard'
     | '/early-warning'
+    | '/evidence-search'
     | '/export'
     | '/frameworks'
     | '/inbox'
@@ -867,6 +879,7 @@ export interface FileRouteTypes {
     | '/_authenticated/collect'
     | '/_authenticated/dashboard'
     | '/_authenticated/early-warning'
+    | '/_authenticated/evidence-search'
     | '/_authenticated/export'
     | '/_authenticated/frameworks'
     | '/_authenticated/inbox'
@@ -1044,6 +1057,13 @@ declare module '@tanstack/react-router' {
       path: '/early-warning'
       fullPath: '/early-warning'
       preLoaderRoute: typeof AuthenticatedEarlyWarningRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/evidence-search': {
+      id: '/_authenticated/evidence-search'
+      path: '/evidence-search'
+      fullPath: '/evidence-search'
+      preLoaderRoute: typeof AuthenticatedEvidenceSearchRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/export': {
@@ -1477,6 +1497,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCollectRoute: typeof AuthenticatedCollectRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedEarlyWarningRoute: typeof AuthenticatedEarlyWarningRoute
+  AuthenticatedEvidenceSearchRoute: typeof AuthenticatedEvidenceSearchRoute
   AuthenticatedExportRoute: typeof AuthenticatedExportRoute
   AuthenticatedFrameworksRoute: typeof AuthenticatedFrameworksRoute
   AuthenticatedInboxRoute: typeof AuthenticatedInboxRoute
@@ -1532,6 +1553,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCollectRoute: AuthenticatedCollectRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedEarlyWarningRoute: AuthenticatedEarlyWarningRoute,
+  AuthenticatedEvidenceSearchRoute: AuthenticatedEvidenceSearchRoute,
   AuthenticatedExportRoute: AuthenticatedExportRoute,
   AuthenticatedFrameworksRoute: AuthenticatedFrameworksRoute,
   AuthenticatedInboxRoute: AuthenticatedInboxRoute,
