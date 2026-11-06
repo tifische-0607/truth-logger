@@ -2480,6 +2480,174 @@ export type Database = {
           },
         ]
       }
+      lnk_events: {
+        Row: {
+          action: string
+          actor: string | null
+          created_at: string
+          detail: Json
+          id: string
+          project_id: string | null
+        }
+        Insert: {
+          action: string
+          actor?: string | null
+          created_at?: string
+          detail?: Json
+          id?: string
+          project_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor?: string | null
+          created_at?: string
+          detail?: Json
+          id?: string
+          project_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lnk_events_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lnk_merge_decisions: {
+        Row: {
+          decided_at: string
+          decided_by: string
+          decision: string
+          entity_a: string
+          entity_b: string
+          id: string
+          project_id: string
+          reason: string
+          standard_version_id: string
+          suggestion_ref: string | null
+        }
+        Insert: {
+          decided_at?: string
+          decided_by: string
+          decision: string
+          entity_a: string
+          entity_b: string
+          id?: string
+          project_id: string
+          reason: string
+          standard_version_id: string
+          suggestion_ref?: string | null
+        }
+        Update: {
+          decided_at?: string
+          decided_by?: string
+          decision?: string
+          entity_a?: string
+          entity_b?: string
+          id?: string
+          project_id?: string
+          reason?: string
+          standard_version_id?: string
+          suggestion_ref?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lnk_merge_decisions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lnk_merge_decisions_standard_version_id_fkey"
+            columns: ["standard_version_id"]
+            isOneToOne: false
+            referencedRelation: "framework_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lnk_released_graphs: {
+        Row: {
+          graph_ref: string
+          id: string
+          output_id: string
+          project_id: string
+          released_at: string
+          released_by: string
+          snapshot_sha256: string
+          standard_version_id: string
+        }
+        Insert: {
+          graph_ref: string
+          id?: string
+          output_id: string
+          project_id: string
+          released_at?: string
+          released_by: string
+          snapshot_sha256: string
+          standard_version_id: string
+        }
+        Update: {
+          graph_ref?: string
+          id?: string
+          output_id?: string
+          project_id?: string
+          released_at?: string
+          released_by?: string
+          snapshot_sha256?: string
+          standard_version_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lnk_released_graphs_output_id_fkey"
+            columns: ["output_id"]
+            isOneToOne: false
+            referencedRelation: "project_outputs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lnk_released_graphs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lnk_released_graphs_standard_version_id_fkey"
+            columns: ["standard_version_id"]
+            isOneToOne: false
+            referencedRelation: "framework_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lnk_thresholds: {
+        Row: {
+          id: string
+          key: string
+          set_at: string
+          set_by: string | null
+          value: number | null
+        }
+        Insert: {
+          id?: string
+          key: string
+          set_at?: string
+          set_by?: string | null
+          value?: number | null
+        }
+        Update: {
+          id?: string
+          key?: string
+          set_at?: string
+          set_by?: string | null
+          value?: number | null
+        }
+        Relationships: []
+      }
       negative_results: {
         Row: {
           id: string
@@ -6628,6 +6796,33 @@ export type Database = {
         Args: { doc: string; reason: string }
         Returns: undefined
       }
+      lnk_decide_merge: {
+        Args: {
+          _a: string
+          _b: string
+          _confirm: boolean
+          _project: string
+          _reason: string
+          _suggestion: string
+        }
+        Returns: string
+      }
+      lnk_ident_ok: { Args: { _v: string }; Returns: boolean }
+      lnk_overview: { Args: { _project: string }; Returns: Json }
+      lnk_release_graph: {
+        Args: {
+          _graph: string
+          _output: string
+          _project: string
+          _sha256: string
+        }
+        Returns: string
+      }
+      lnk_set_threshold: {
+        Args: { _key: string; _value: number }
+        Returns: undefined
+      }
+      lnk_standard_in_force: { Args: never; Returns: string }
       mgmt_can_open: { Args: { u: string }; Returns: boolean }
       mgmt_portfolio: { Args: never; Returns: Json }
       portal_access_list: { Args: { c: string }; Returns: Json }
@@ -6677,6 +6872,7 @@ export type Database = {
       portal_is_member: { Args: { c: string; u: string }; Returns: boolean }
       portal_is_staff: { Args: { u: string }; Returns: boolean }
       portal_record_sign_in: { Args: never; Returns: undefined }
+      portal_released_graphs: { Args: { c?: string }; Returns: Json }
       portal_report_access_note: { Args: never; Returns: Json }
       portal_resolve_client: { Args: { c: string }; Returns: string }
       portal_set_notifications: { Args: { prefs: Json }; Returns: undefined }
