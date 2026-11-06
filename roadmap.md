@@ -128,3 +128,9 @@
 - Database: no capture without an active register requirement; collector is the signed-in analyst (never a client); certified/configured/brief-approved connector required; hashes at capture required; vault write sets verified itself by comparing hashes; append-only; captures start in quarantine.
 - SQL `tests/sql/u10_manual_capture_test.sql`: Part A RUN, passed; Part B NOT RUN.
 - Open: extension built outside Lovable; research run type for promoting manual captures into the standard validation queue.
+
+## U14 Executive agent gateway (portal side) — built 6 Nov 2026
+- Owner/Management screen `/executive-agent`: access list (starts "No executives have access"), grant/remove dialogs, question-and-answer log. No chat view. Contract `docs/agent/gateway-contract.md`. Migration 0051.
+- Database: only owner/Management change access; staff only (never client logins); engagements limited to what the person can already see, re-checked on every use (`exec_scope`); log written only by the service role; log refused outside scope, without citations (unless confidence "none") or without the standard version in force. Agent has no other write path.
+- SQL `tests/sql/u14_executive_agent_test.sql`: Part A RUN, passed; Part B NOT RUN.
+- Open: which executives get access; whether the portal gets a chat view; Telegram-to-portal account mapping (kept on the Mac Studio).
