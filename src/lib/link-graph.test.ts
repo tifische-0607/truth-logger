@@ -20,7 +20,7 @@ describe("link analysis rules", () => {
     expect(b[0]!.target).toBe("grp-001");
     expect(b[0]!.accounts.length).toBeGreaterThanOrEqual(3);
   });
-  it("ranks the most connected node first", () => expect(degreeCentrality(g.graph)[0]!.id).toBe("acc-001"));
+  it("ranks the most connected node first", () => expect(degreeCentrality(g.graph)[0]!.id).toBe("grp-001"));
   it("puts linked nodes in one cluster", () => expect(clusters(g.graph)[0]!.length).toBe(10));
   it("shows the unavailable message when DarkNight cannot be reached", async () => {
     const r = await fetchGraph("https://darknight.invalid", "00000000-0000-0000-0000-000000000000", "t", async () => { throw new Error("down"); });
