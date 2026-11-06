@@ -122,3 +122,9 @@
 - Migrations 0048, 0049. Seven new rows (Telegram public, WhatsApp channels, YouTube, Reddit, Local forum (not chosen), News sites, Blogs), all "Not certified" / "Not configured" and suspended. Database refuses activation until certified for the current version and configured, and refuses captures until certified, configured and approved in the brief.
 - SQL `tests/sql/u13_wider_sources_test.sql`: Part A RUN, passed; Part B NOT RUN.
 - Open: order of sources after Telegram; which local forums; the connector design standard wording (checklist built from existing capture rules); widening the capture/register platform lists when the first new connector is certified.
+
+## U10 Analyst browser capture (portal side) — built 6 Nov 2026
+- Manual connector row `analyst_browser` (Not certified, Not configured; shown on `/connectors`), intake `manual_capture_submit`, vault-write check `manual_capture_vault_write`, extension spec `docs/extension/analyst-browser-capture.md`. Migration 0050.
+- Database: no capture without an active register requirement; collector is the signed-in analyst (never a client); certified/configured/brief-approved connector required; hashes at capture required; vault write sets verified itself by comparing hashes; append-only; captures start in quarantine.
+- SQL `tests/sql/u10_manual_capture_test.sql`: Part A RUN, passed; Part B NOT RUN.
+- Open: extension built outside Lovable; research run type for promoting manual captures into the standard validation queue.
