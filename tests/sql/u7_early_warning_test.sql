@@ -34,11 +34,13 @@ DO $$ DECLARE a uuid := (SELECT id FROM public.ew_alerts WHERE level='watch' LIM
 END $$;
 
 -- B3: every alert, decision and hand-over is append-only.
-DO $$ BEGIN
-  BEGIN UPDATE public.ew_alerts SET level='urgent'; EXCEPTION WHEN others THEN NULL; END;
-  BEGIN DELETE FROM public.ew_decisions; EXCEPTION WHEN others THEN NULL; END;
-  BEGIN DELETE FROM public.ew_handovers; EXCEPTION WHEN others THEN NULL; END;
-  IF EXISTS (SELECT 1 FROM public.ew_alerts) AND NOT EXISTS (SELECT 1 FROM public.ew_alerts WHERE level<>'urgent') THEN RAISE EXCEPTION 'B3 FAILED: alerts were updated'; END IF;
+DO $$ DECLARE t text; blocked boolean; BEGIN
+  FOREACH t IN ARRAY ARRAY['ew_alerts','ew_decisions','ew_handovers','ew_client_notices','ew_events'] LOOP
+    IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgrelid=('public.'||t)::regclass AND tgname LIKE '%append_only') THEN RAISE EXCEPTION 'B3 FAILED: % has no append-only trigger', t; END IF;
+    blocked := false;
+    BEGIN EXECUTE format('DELETE FROM public.%I WHERE id IN (SELECT id FROM public.%I LIMIT 1)', t, t); EXCEPTION WHEN others THEN blocked := true; END;
+    IF NOT blocked AND EXISTS (SELECT 1 FROM pg_class WHERE relname=t AND reltuples>0) THEN RAISE EXCEPTION 'B3 FAILED: delete on % was not blocked', t; END IF;
+  END LOOP;
 END $$;
 
 -- B4: an unset threshold never raises an alert. Set claims to an analyst on a fixture engagement, then:
