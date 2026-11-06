@@ -5774,6 +5774,148 @@ export type Database = {
         }
         Relationships: []
       }
+      srch_content_types: {
+        Row: {
+          id: string
+          set_at: string
+          set_by: string
+          types: string[]
+        }
+        Insert: {
+          id?: string
+          set_at?: string
+          set_by: string
+          types: string[]
+        }
+        Update: {
+          id?: string
+          set_at?: string
+          set_by?: string
+          types?: string[]
+        }
+        Relationships: []
+      }
+      srch_log: {
+        Row: {
+          action: string
+          actor: string | null
+          at: string
+          detail: Json
+          id: string
+          project_id: string | null
+        }
+        Insert: {
+          action: string
+          actor?: string | null
+          at?: string
+          detail?: Json
+          id?: string
+          project_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor?: string | null
+          at?: string
+          detail?: Json
+          id?: string
+          project_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "srch_log_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      srch_promotions: {
+        Row: {
+          actor: string
+          at: string
+          id: string
+          reason: string | null
+          requirement_id: string | null
+          saved_id: string
+          step: string
+        }
+        Insert: {
+          actor: string
+          at?: string
+          id?: string
+          reason?: string | null
+          requirement_id?: string | null
+          saved_id: string
+          step: string
+        }
+        Update: {
+          actor?: string
+          at?: string
+          id?: string
+          reason?: string | null
+          requirement_id?: string | null
+          saved_id?: string
+          step?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "srch_promotions_requirement_id_fkey"
+            columns: ["requirement_id"]
+            isOneToOne: false
+            referencedRelation: "research_requirements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "srch_promotions_saved_id_fkey"
+            columns: ["saved_id"]
+            isOneToOne: false
+            referencedRelation: "srch_saved"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      srch_saved: {
+        Row: {
+          created_at: string
+          created_by: string
+          filters: Json
+          id: string
+          mode: string
+          name: string
+          project_id: string
+          query: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          filters?: Json
+          id?: string
+          mode: string
+          name: string
+          project_id: string
+          query?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          filters?: Json
+          id?: string
+          mode?: string
+          name?: string
+          project_id?: string
+          query?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "srch_saved_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       staff_exposure_log: {
         Row: {
           distressing: boolean
@@ -7385,6 +7527,41 @@ export type Database = {
         }
         Returns: string
       }
+      srch_current_types: { Args: never; Returns: string[] }
+      srch_decide_promotion: {
+        Args: {
+          _approve: boolean
+          _reason: string
+          _requirement: string
+          _saved: string
+        }
+        Returns: undefined
+      }
+      srch_log_search: {
+        Args: {
+          _filters: string[]
+          _hidden: number
+          _mode: string
+          _project: string
+          _shown: number
+        }
+        Returns: undefined
+      }
+      srch_overview: { Args: { _project: string }; Returns: Json }
+      srch_promotion_state: { Args: { _saved: string }; Returns: string }
+      srch_request_promotion: { Args: { _saved: string }; Returns: undefined }
+      srch_save: {
+        Args: {
+          _filters: Json
+          _mode: string
+          _name: string
+          _project: string
+          _query: string
+        }
+        Returns: string
+      }
+      srch_set_content_types: { Args: { _types: string[] }; Returns: undefined }
+      srch_visible: { Args: { _results: Json }; Returns: Json }
       statements_ok: { Args: { _s: Json }; Returns: boolean }
       u1_holds_seat: {
         Args: { expires: string; status: string }
