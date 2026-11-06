@@ -92,8 +92,8 @@ function Narratives() {
                       : <Chip><Dot c="bg-warn" />Awaiting analyst</Chip>}</div>
                   <p>{c.summary}</p>
                   <p className="text-muted-foreground">Languages: {c.languages.join(", ")} · Similarity {(c.similarity * 100).toFixed(0)}%</p>
-                  <table className="w-full text-left"><thead><tr><th>Day</th><th>Volume</th><th>Platforms</th><th>New accounts</th></tr></thead>
-                    <tbody>{c.timeline.map((d) => <tr key={d.day}><td>{d.day}</td><td>{d.volume}</td><td>{d.platforms.join(", ")}</td><td>{d.new_accounts}</td></tr>)}</tbody></table>
+                  <div className="overflow-x-auto"><table className="w-full min-w-[22rem] text-left"><thead><tr><th>Day</th><th>Volume</th><th>Platforms</th><th>New accounts</th></tr></thead>
+                    <tbody>{c.timeline.map((d) => <tr key={d.day}><td>{d.day}</td><td>{d.volume}</td><td>{d.platforms.join(", ")}</td><td>{d.new_accounts}</td></tr>)}</tbody></table></div>
                   <p className="font-medium">Evidence</p><p className="font-mono break-all">{c.captures.join(", ")}</p>
                   {!done ? (clusterSet || sample ? <ClusterDialog c={c} project={project} sample={sample} /> : <p className="text-sm"><NotSet /> Clusters cannot be confirmed yet.</p>) : null}
                 </li>;
