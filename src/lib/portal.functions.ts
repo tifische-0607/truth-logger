@@ -24,8 +24,11 @@ export const getInviteInfo = createServerFn({ method: 'POST' })
     const hash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(data.token))), b => b.toString(16).padStart(2, '0')).join('');
     const { data: info, error } = await supabaseAdmin.rpc('portal_invitation_info', { h: hash });
     if (error) throw new Error(error.message);
-    if (!info) throw new Error('This invitation is invalid, expired or already used.');
-    return info as unknown as { client_name: string; name: string; email: string; existing_account: boolean };
+    if (info) return info as unknown as { client_name: string; name: string; email: string; existing_account: boolean; kind?: string };
+    const member = await supabaseAdmin.rpc('member_invitation_info', { h: hash });
+    if (member.error) throw new Error(member.error.message);
+    if (!member.data) throw new Error('This invitation is invalid, expired or already used.');
+    return member.data as unknown as { client_name: string; name: string; email: string; existing_account: boolean; kind?: string };
   });
 
 export const acceptNewClientInvite = createServerFn({ method: 'POST' })
@@ -36,7 +39,22 @@ export const acceptNewClientInvite = createServerFn({ method: 'POST' })
     const info = await supabaseAdmin.rpc('portal_invitation_info', { h: hash });
     if (info.error) throw new Error(info.error.message);
     const details = info.data as unknown as { email: string; name: string; existing_account: boolean } | null;
-    if (!details) throw new Error('This invitation is invalid, expired or already used.');
+    if (!details) {
+      // Member invitation (no client organisation, no seat).
+      const m = await supabaseAdmin.rpc('member_invitation_info', { h: hash });
+      if (m.error) throw new Error(m.error.message);
+      const md = m.data as unknown as { email: string; name: string; existing_account: boolean } | null;
+      if (!md) throw new Error('This invitation is invalid, expired or already used.');
+      if (md.existing_account) throw new Error('This email already has a FA Portal login. Ask FridayAnalytics for help.');
+      const mc = await supabaseAdmin.rpc('member_claim_invitation', { h: hash });
+      if (mc.error) throw new Error(mc.error.message);
+      const mclaimed = mc.data as unknown as { id: string };
+      const mu = await supabaseAdmin.auth.admin.createUser({ email: md.email, password: data.password, email_confirm: true, user_metadata: { display_name: md.name } });
+      if (mu.error || !mu.data.user) throw new Error(mu.error?.message ?? 'Account creation failed. Request a new invitation.');
+      const ma = await supabaseAdmin.rpc('member_activate_invitation', { rid: mclaimed.id, uid: mu.data.user.id });
+      if (ma.error) throw new Error(ma.error.message);
+      return { email: md.email };
+    }
     if (details.existing_account) throw new Error('Sign in to your existing account to accept this invitation.');
     // Consuming the token is atomic and happens before any privileged account operation.
     const claim = await supabaseAdmin.rpc('portal_claim_invitation', { h: hash });
