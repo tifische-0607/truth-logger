@@ -281,6 +281,13 @@
       "when": 1793930764119,
       "tag": "0039_fa_portal_u1_tier_log_action",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1793937221606,
+      "tag": "0040_fa_portal_u7_early_warning",
+      "breakpoints": true
     }
   ]
 }

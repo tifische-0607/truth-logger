@@ -1416,6 +1416,421 @@ export type Database = {
           },
         ]
       }
+      ew_alerts: {
+        Row: {
+          id: string
+          level: string
+          project_id: string
+          raised_at: string
+          signal_id: string
+          threshold_value: number
+        }
+        Insert: {
+          id?: string
+          level: string
+          project_id: string
+          raised_at?: string
+          signal_id: string
+          threshold_value: number
+        }
+        Update: {
+          id?: string
+          level?: string
+          project_id?: string
+          raised_at?: string
+          signal_id?: string
+          threshold_value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ew_alerts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ew_alerts_signal_id_fkey"
+            columns: ["signal_id"]
+            isOneToOne: true
+            referencedRelation: "ew_signals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ew_briefings: {
+        Row: {
+          file_name: string | null
+          home_path: string
+          home_source_id: string
+          id: string
+          notice_id: string
+          registered_at: string
+          registered_by: string
+          sha256: string
+        }
+        Insert: {
+          file_name?: string | null
+          home_path: string
+          home_source_id: string
+          id?: string
+          notice_id: string
+          registered_at?: string
+          registered_by: string
+          sha256: string
+        }
+        Update: {
+          file_name?: string | null
+          home_path?: string
+          home_source_id?: string
+          id?: string
+          notice_id?: string
+          registered_at?: string
+          registered_by?: string
+          sha256?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ew_briefings_home_source_id_fkey"
+            columns: ["home_source_id"]
+            isOneToOne: false
+            referencedRelation: "sources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ew_briefings_notice_id_fkey"
+            columns: ["notice_id"]
+            isOneToOne: false
+            referencedRelation: "ew_client_notices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ew_client_notices: {
+        Row: {
+          alert_id: string
+          body: string
+          client_id: string
+          created_at: string
+          created_by: string
+          id: string
+          level: string
+          project_id: string
+          title: string
+        }
+        Insert: {
+          alert_id: string
+          body: string
+          client_id: string
+          created_at?: string
+          created_by: string
+          id?: string
+          level: string
+          project_id: string
+          title: string
+        }
+        Update: {
+          alert_id?: string
+          body?: string
+          client_id?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          level?: string
+          project_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ew_client_notices_alert_id_fkey"
+            columns: ["alert_id"]
+            isOneToOne: true
+            referencedRelation: "ew_alerts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ew_client_notices_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ew_client_notices_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ew_decisions: {
+        Row: {
+          alert_id: string
+          decided_at: string
+          decided_by: string
+          decision: string
+          id: string
+          reason: string
+        }
+        Insert: {
+          alert_id: string
+          decided_at?: string
+          decided_by: string
+          decision: string
+          id?: string
+          reason: string
+        }
+        Update: {
+          alert_id?: string
+          decided_at?: string
+          decided_by?: string
+          decision?: string
+          id?: string
+          reason?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ew_decisions_alert_id_fkey"
+            columns: ["alert_id"]
+            isOneToOne: true
+            referencedRelation: "ew_alerts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ew_dispatches: {
+        Row: {
+          alert_id: string
+          channel: string
+          created_at: string
+          id: string
+          recipient_id: string | null
+          state: string
+        }
+        Insert: {
+          alert_id: string
+          channel: string
+          created_at?: string
+          id?: string
+          recipient_id?: string | null
+          state: string
+        }
+        Update: {
+          alert_id?: string
+          channel?: string
+          created_at?: string
+          id?: string
+          recipient_id?: string | null
+          state?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ew_dispatches_alert_id_fkey"
+            columns: ["alert_id"]
+            isOneToOne: false
+            referencedRelation: "ew_alerts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ew_dispatches_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "ew_recipients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ew_events: {
+        Row: {
+          action: string
+          actor: string | null
+          alert_id: string | null
+          created_at: string
+          detail: Json
+          id: string
+        }
+        Insert: {
+          action: string
+          actor?: string | null
+          alert_id?: string | null
+          created_at?: string
+          detail?: Json
+          id?: string
+        }
+        Update: {
+          action?: string
+          actor?: string | null
+          alert_id?: string | null
+          created_at?: string
+          detail?: Json
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ew_events_alert_id_fkey"
+            columns: ["alert_id"]
+            isOneToOne: false
+            referencedRelation: "ew_alerts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ew_handovers: {
+        Row: {
+          handed_at: string
+          handed_to: string
+          id: string
+          note: string | null
+          notice_id: string
+          recorded_at: string
+          recorded_by: string
+        }
+        Insert: {
+          handed_at: string
+          handed_to: string
+          id?: string
+          note?: string | null
+          notice_id: string
+          recorded_at?: string
+          recorded_by: string
+        }
+        Update: {
+          handed_at?: string
+          handed_to?: string
+          id?: string
+          note?: string | null
+          notice_id?: string
+          recorded_at?: string
+          recorded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ew_handovers_notice_id_fkey"
+            columns: ["notice_id"]
+            isOneToOne: false
+            referencedRelation: "ew_client_notices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ew_recipients: {
+        Row: {
+          active: boolean
+          address: string
+          channel: string
+          id: string
+          set_at: string
+          set_by: string | null
+          user_id: string
+        }
+        Insert: {
+          active: boolean
+          address: string
+          channel: string
+          id?: string
+          set_at?: string
+          set_by?: string | null
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          address?: string
+          channel?: string
+          id?: string
+          set_at?: string
+          set_by?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ew_signals: {
+        Row: {
+          capture_ids: string[]
+          framework_code: string
+          framework_version_id: string
+          id: string
+          note: string | null
+          outcome: string
+          project_id: string
+          recorded_at: string
+          recorded_by: string | null
+          score: number
+          signal: string
+        }
+        Insert: {
+          capture_ids: string[]
+          framework_code: string
+          framework_version_id: string
+          id?: string
+          note?: string | null
+          outcome: string
+          project_id: string
+          recorded_at?: string
+          recorded_by?: string | null
+          score: number
+          signal: string
+        }
+        Update: {
+          capture_ids?: string[]
+          framework_code?: string
+          framework_version_id?: string
+          id?: string
+          note?: string | null
+          outcome?: string
+          project_id?: string
+          recorded_at?: string
+          recorded_by?: string | null
+          score?: number
+          signal?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ew_signals_framework_version_id_fkey"
+            columns: ["framework_version_id"]
+            isOneToOne: false
+            referencedRelation: "framework_versions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ew_signals_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ew_thresholds: {
+        Row: {
+          id: string
+          level: string
+          note: string | null
+          set_at: string
+          set_by: string | null
+          signal: string
+          value: number | null
+        }
+        Insert: {
+          id?: string
+          level: string
+          note?: string | null
+          set_at?: string
+          set_by?: string | null
+          signal: string
+          value?: number | null
+        }
+        Update: {
+          id?: string
+          level?: string
+          note?: string | null
+          set_at?: string
+          set_by?: string | null
+          signal?: string
+          value?: number | null
+        }
+        Relationships: []
+      }
       finding_items: {
         Row: {
           capture_id: string
@@ -6018,6 +6433,81 @@ export type Database = {
         }
       }
       design_ready: { Args: { _project: string }; Returns: boolean }
+      ew_active_recipients: {
+        Args: { _channel: string }
+        Returns: {
+          active: boolean
+          address: string
+          channel: string
+          id: string
+          set_at: string
+          set_by: string | null
+          user_id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "ew_recipients"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      ew_briefing_file: { Args: { _notice: string }; Returns: Json }
+      ew_decide: {
+        Args: {
+          _alert: string
+          _body: string
+          _confirm: boolean
+          _reason: string
+          _title: string
+        }
+        Returns: string
+      }
+      ew_is_analyst: { Args: { u: string }; Returns: boolean }
+      ew_is_settings_editor: { Args: { u: string }; Returns: boolean }
+      ew_level_channels: { Args: { _level: string }; Returns: string[] }
+      ew_overview: { Args: never; Returns: Json }
+      ew_record_handover: {
+        Args: { _at: string; _note: string; _notice: string; _to: string }
+        Returns: string
+      }
+      ew_record_signal: {
+        Args: {
+          _captures: string[]
+          _framework: string
+          _note: string
+          _project: string
+          _score: number
+          _signal: string
+        }
+        Returns: Json
+      }
+      ew_register_briefing: {
+        Args: {
+          _file_name: string
+          _notice: string
+          _path: string
+          _sha256: string
+          _source: string
+        }
+        Returns: string
+      }
+      ew_set_recipient: {
+        Args: {
+          _active: boolean
+          _address: string
+          _channel: string
+          _user: string
+        }
+        Returns: undefined
+      }
+      ew_set_threshold: {
+        Args: { _level: string; _note: string; _signal: string; _value: number }
+        Returns: undefined
+      }
+      ew_threshold: {
+        Args: { _level: string; _signal: string }
+        Returns: number
+      }
       fw_active_version: { Args: { _entry: string }; Returns: string }
       fw_add_entry: {
         Args: { _code: string; _kind: string; _name: string }
@@ -6155,6 +6645,7 @@ export type Database = {
       portal_engagement_briefs: { Args: { p: string }; Returns: Json }
       portal_engagement_stage: { Args: { p: string }; Returns: number }
       portal_engagements: { Args: { c?: string }; Returns: Json }
+      portal_ew_notices: { Args: { c?: string }; Returns: Json }
       portal_has_client_identity: { Args: { u: string }; Returns: boolean }
       portal_home: { Args: { c?: string }; Returns: Json }
       portal_identity: { Args: never; Returns: Json }
