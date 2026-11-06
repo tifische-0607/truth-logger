@@ -18,11 +18,18 @@ export function useSignedUrl(path?: string | null, expiresIn = 300) {
     retry: false,
     queryFn: async () => {
       if (typeof navigator !== "undefined" && !navigator.onLine) throw new Error("offline");
+      // U3: moved artefacts are read live from DarkNight and re-hashed; others keep their cloud link.
+      const loc = await artefactLocation(path as string).catch(() => null);
+      if (loc?.moved) {
+        const r = await readArtefact(path as string);
+        if (!r.ok) throw new Error(r.message);
+        return { url: URL.createObjectURL(new Blob([r.bytes])), moved: true };
+      }
       const { data, error } = await supabase.storage
         .from("evidence")
         .createSignedUrl(path as string, expiresIn);
       if (error) throw error;
-      return data.signedUrl;
+      return { url: data.signedUrl, moved: false };
     },
   });
 
