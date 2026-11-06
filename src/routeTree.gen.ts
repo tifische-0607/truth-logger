@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as InviteRouteImport } from './routes/invite'
 import { Route as PortalRouteImport } from './routes/portal'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as AuthenticatedBillingRouteImport } from './routes/_authenticated/billing'
 import { Route as AuthenticatedCaptureLogRouteImport } from './routes/_authenticated/capture-log'
 import { Route as AuthenticatedCaptureSettingsRouteImport } from './routes/_authenticated/capture-settings'
@@ -42,6 +43,7 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedSourcesRouteImport } from './routes/_authenticated/sources'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as AuthenticatedTemplatesRouteImport } from './routes/_authenticated/templates'
+import { Route as AuthenticatedUsersAccessRouteImport } from './routes/_authenticated/users-access'
 import { Route as AuthenticatedVaultsRouteImport } from './routes/_authenticated/vaults'
 import { Route as AuthenticatedVerifyRouteImport } from './routes/_authenticated/verify'
 import { Route as AuthenticatedWatchlistRouteImport } from './routes/_authenticated/watchlist'
@@ -114,6 +116,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedBillingRoute = AuthenticatedBillingRouteImport.update({
   id: '/billing',
@@ -255,6 +262,12 @@ const AuthenticatedTemplatesRoute = AuthenticatedTemplatesRouteImport.update({
   path: '/templates',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedUsersAccessRoute =
+  AuthenticatedUsersAccessRouteImport.update({
+    id: '/users-access',
+    path: '/users-access',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedVaultsRoute = AuthenticatedVaultsRouteImport.update({
   id: '/vaults',
   path: '/vaults',
@@ -505,6 +518,7 @@ export interface FileRoutesByFullPath {
   '/invite': typeof InviteRoute
   '/portal': typeof PortalRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/account': typeof AuthenticatedAccountRoute
   '/billing': typeof AuthenticatedBillingRoute
   '/capture-log': typeof AuthenticatedCaptureLogRoute
   '/capture-settings': typeof AuthenticatedCaptureSettingsRoute
@@ -532,6 +546,7 @@ export interface FileRoutesByFullPath {
   '/sources': typeof AuthenticatedSourcesRoute
   '/team': typeof AuthenticatedTeamRoute
   '/templates': typeof AuthenticatedTemplatesRoute
+  '/users-access': typeof AuthenticatedUsersAccessRoute
   '/vaults': typeof AuthenticatedVaultsRoute
   '/verify': typeof AuthenticatedVerifyRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
@@ -582,6 +597,7 @@ export interface FileRoutesByTo {
   '/invite': typeof InviteRoute
   '/portal': typeof PortalRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/account': typeof AuthenticatedAccountRoute
   '/billing': typeof AuthenticatedBillingRoute
   '/capture-log': typeof AuthenticatedCaptureLogRoute
   '/capture-settings': typeof AuthenticatedCaptureSettingsRoute
@@ -609,6 +625,7 @@ export interface FileRoutesByTo {
   '/sources': typeof AuthenticatedSourcesRoute
   '/team': typeof AuthenticatedTeamRoute
   '/templates': typeof AuthenticatedTemplatesRoute
+  '/users-access': typeof AuthenticatedUsersAccessRoute
   '/vaults': typeof AuthenticatedVaultsRoute
   '/verify': typeof AuthenticatedVerifyRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
@@ -661,6 +678,7 @@ export interface FileRoutesById {
   '/invite': typeof InviteRoute
   '/portal': typeof PortalRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/account': typeof AuthenticatedAccountRoute
   '/_authenticated/billing': typeof AuthenticatedBillingRoute
   '/_authenticated/capture-log': typeof AuthenticatedCaptureLogRoute
   '/_authenticated/capture-settings': typeof AuthenticatedCaptureSettingsRoute
@@ -688,6 +706,7 @@ export interface FileRoutesById {
   '/_authenticated/sources': typeof AuthenticatedSourcesRoute
   '/_authenticated/team': typeof AuthenticatedTeamRoute
   '/_authenticated/templates': typeof AuthenticatedTemplatesRoute
+  '/_authenticated/users-access': typeof AuthenticatedUsersAccessRoute
   '/_authenticated/vaults': typeof AuthenticatedVaultsRoute
   '/_authenticated/verify': typeof AuthenticatedVerifyRoute
   '/_authenticated/watchlist': typeof AuthenticatedWatchlistRoute
@@ -740,6 +759,7 @@ export interface FileRouteTypes {
     | '/invite'
     | '/portal'
     | '/reset-password'
+    | '/account'
     | '/billing'
     | '/capture-log'
     | '/capture-settings'
@@ -767,6 +787,7 @@ export interface FileRouteTypes {
     | '/sources'
     | '/team'
     | '/templates'
+    | '/users-access'
     | '/vaults'
     | '/verify'
     | '/watchlist'
@@ -817,6 +838,7 @@ export interface FileRouteTypes {
     | '/invite'
     | '/portal'
     | '/reset-password'
+    | '/account'
     | '/billing'
     | '/capture-log'
     | '/capture-settings'
@@ -844,6 +866,7 @@ export interface FileRouteTypes {
     | '/sources'
     | '/team'
     | '/templates'
+    | '/users-access'
     | '/vaults'
     | '/verify'
     | '/watchlist'
@@ -895,6 +918,7 @@ export interface FileRouteTypes {
     | '/invite'
     | '/portal'
     | '/reset-password'
+    | '/_authenticated/account'
     | '/_authenticated/billing'
     | '/_authenticated/capture-log'
     | '/_authenticated/capture-settings'
@@ -922,6 +946,7 @@ export interface FileRouteTypes {
     | '/_authenticated/sources'
     | '/_authenticated/team'
     | '/_authenticated/templates'
+    | '/_authenticated/users-access'
     | '/_authenticated/vaults'
     | '/_authenticated/verify'
     | '/_authenticated/watchlist'
@@ -1034,6 +1059,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/account': {
+      id: '/_authenticated/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AuthenticatedAccountRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/billing': {
       id: '/_authenticated/billing'
@@ -1222,6 +1254,13 @@ declare module '@tanstack/react-router' {
       path: '/templates'
       fullPath: '/templates'
       preLoaderRoute: typeof AuthenticatedTemplatesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/users-access': {
+      id: '/_authenticated/users-access'
+      path: '/users-access'
+      fullPath: '/users-access'
+      preLoaderRoute: typeof AuthenticatedUsersAccessRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/vaults': {
@@ -1529,6 +1568,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
   AuthenticatedBillingRoute: typeof AuthenticatedBillingRoute
   AuthenticatedCaptureLogRoute: typeof AuthenticatedCaptureLogRoute
   AuthenticatedCaptureSettingsRoute: typeof AuthenticatedCaptureSettingsRoute
@@ -1556,6 +1596,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSourcesRoute: typeof AuthenticatedSourcesRoute
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRoute
   AuthenticatedTemplatesRoute: typeof AuthenticatedTemplatesRoute
+  AuthenticatedUsersAccessRoute: typeof AuthenticatedUsersAccessRoute
   AuthenticatedVaultsRoute: typeof AuthenticatedVaultsRoute
   AuthenticatedVerifyRoute: typeof AuthenticatedVerifyRoute
   AuthenticatedWatchlistRoute: typeof AuthenticatedWatchlistRoute
@@ -1587,6 +1628,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAccountRoute: AuthenticatedAccountRoute,
   AuthenticatedBillingRoute: AuthenticatedBillingRoute,
   AuthenticatedCaptureLogRoute: AuthenticatedCaptureLogRoute,
   AuthenticatedCaptureSettingsRoute: AuthenticatedCaptureSettingsRoute,
@@ -1614,6 +1656,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSourcesRoute: AuthenticatedSourcesRoute,
   AuthenticatedTeamRoute: AuthenticatedTeamRoute,
   AuthenticatedTemplatesRoute: AuthenticatedTemplatesRoute,
+  AuthenticatedUsersAccessRoute: AuthenticatedUsersAccessRoute,
   AuthenticatedVaultsRoute: AuthenticatedVaultsRoute,
   AuthenticatedVerifyRoute: AuthenticatedVerifyRoute,
   AuthenticatedWatchlistRoute: AuthenticatedWatchlistRoute,

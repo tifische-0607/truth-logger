@@ -6,7 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 
 type Tier = { id: string; name: string; rank: number };
-type Overview = { any_set: boolean; docs: Record<string, string[]> };
+type Overview = { any_set: boolean; docs: Record<string, string[]>; members?: Record<string, boolean> };
 
 export function useTierOverview() {
   return useQuery({ queryKey: ['report-tier-overview'], queryFn: async () => {
@@ -23,14 +23,18 @@ export function ReportTierAccess({ docId, source }: { docId: string; source: str
   const ov = useTierOverview();
   const inForce = ov.data?.docs[docId] ?? [];
   const [picked, setPicked] = useState<string[]>([]);
+  const membersInForce = ov.data?.members?.[docId] ?? false;
+  const [members, setMembers] = useState(false);
   const [busy, setBusy] = useState(false); const [msg, setMsg] = useState<{ t: string; bad: boolean } | null>(null);
-  useEffect(() => { setPicked(inForce); }, [docId, ov.data]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { setPicked(inForce); setMembers(membersInForce); }, [docId, ov.data]); // eslint-disable-line react-hooks/exhaustive-deps
   if (source === 'client') return <p className="text-muted-foreground text-sm">Client uploads are always visible to their own client.</p>;
   const save = async () => {
     setBusy(true); setMsg(null);
-    const { error } = await supabase.rpc('report_set_tiers', { doc: docId, tiers: picked });
+    const same = picked.length === inForce.length && picked.every(x => inForce.includes(x));
+    if (same && members === membersInForce) { setBusy(false); setMsg({ t: 'Nothing changed.', bad: true }); return; }
+    if (!same) { const { error } = await supabase.rpc('report_set_tiers', { doc: docId, tiers: picked }); if (error) { setBusy(false); setMsg({ t: error.message, bad: true }); return; } }
+    if (members !== membersInForce) { const { error } = await supabase.rpc('report_set_members', { doc: docId, released: members }); if (error) { setBusy(false); void qc.invalidateQueries({ queryKey: ['report-tier-overview'] }); setMsg({ t: error.message, bad: true }); return; } }
     setBusy(false);
-    if (error) { setMsg({ t: error.message, bad: true }); return; }
     setMsg({ t: 'Report access saved.', bad: false });
     void qc.invalidateQueries({ queryKey: ['report-tier-overview'] }); void qc.invalidateQueries({ queryKey: ['library-log', docId] });
   };
@@ -45,7 +49,12 @@ export function ReportTierAccess({ docId, source }: { docId: string; source: str
             <Label htmlFor={`tier-${docId}-${t.id}`}>{t.name}</Label>
           </div>
         ))}
+        <div className="flex min-h-11 items-center gap-2">
+          <Checkbox id={`tier-${docId}-members`} checked={members} onCheckedChange={v => setMembers(!!v)} />
+          <Label htmlFor={`tier-${docId}-members`}>Members</Label>
+        </div>
       </div>
+      <p className="text-muted-foreground text-xs">Members: {membersInForce ? 'released to Members (once shared), limited to the ticked tiers if any.' : 'not released to Members.'}</p>
       <Button variant="outline" className="min-h-11" disabled={busy} onClick={save}>{busy ? 'Saving…' : 'Save report access'}</Button>
       {msg ? <p role={msg.bad ? 'alert' : 'status'} className={msg.bad ? 'bg-failed text-failed-foreground rounded-md p-3 text-sm' : 'text-sm'}>{msg.t}</p> : null}
     </section>

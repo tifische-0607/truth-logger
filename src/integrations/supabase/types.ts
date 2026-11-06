@@ -14,6 +14,98 @@ export type Database = {
   }
   public: {
     Tables: {
+      access_level_log: {
+        Row: {
+          actor: string | null
+          created_at: string
+          from_level: string | null
+          from_status: string | null
+          id: string
+          to_level: string | null
+          to_status: string | null
+          user_id: string
+        }
+        Insert: {
+          actor?: string | null
+          created_at?: string
+          from_level?: string | null
+          from_status?: string | null
+          id?: string
+          to_level?: string | null
+          to_status?: string | null
+          user_id: string
+        }
+        Update: {
+          actor?: string | null
+          created_at?: string
+          from_level?: string | null
+          from_status?: string | null
+          id?: string
+          to_level?: string | null
+          to_status?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      account_access: {
+        Row: {
+          level: string
+          member_tier_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          level: string
+          member_tier_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          level?: string
+          member_tier_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_access_member_tier_id_fkey"
+            columns: ["member_tier_id"]
+            isOneToOne: false
+            referencedRelation: "billing_tiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      account_admin_events: {
+        Row: {
+          action: string
+          actor: string | null
+          created_at: string
+          detail: Json
+          id: string
+          target: string
+        }
+        Insert: {
+          action: string
+          actor?: string | null
+          created_at?: string
+          detail?: Json
+          id?: string
+          target: string
+        }
+        Update: {
+          action?: string
+          actor?: string | null
+          created_at?: string
+          detail?: Json
+          id?: string
+          target?: string
+        }
+        Relationships: []
+      }
       account_snapshots: {
         Row: {
           account_id: string
@@ -1192,6 +1284,38 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "document_events_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_member_release: {
+        Row: {
+          document_id: string
+          id: string
+          released: boolean
+          set_at: string
+          set_by: string
+        }
+        Insert: {
+          document_id: string
+          id?: string
+          released: boolean
+          set_at?: string
+          set_by?: string
+        }
+        Update: {
+          document_id?: string
+          id?: string
+          released?: boolean
+          set_at?: string
+          set_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_member_release_document_id_fkey"
             columns: ["document_id"]
             isOneToOne: false
             referencedRelation: "documents"
@@ -2978,6 +3102,56 @@ export type Database = {
           },
         ]
       }
+      member_invitations: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          invite_expires_at: string | null
+          invite_token_hash: string | null
+          invite_used_at: string | null
+          invited_by: string | null
+          name: string
+          status: string
+          tier_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          invite_expires_at?: string | null
+          invite_token_hash?: string | null
+          invite_used_at?: string | null
+          invited_by?: string | null
+          name: string
+          status?: string
+          tier_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          invite_expires_at?: string | null
+          invite_token_hash?: string | null
+          invite_used_at?: string | null
+          invited_by?: string | null
+          name?: string
+          status?: string
+          tier_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_invitations_tier_id_fkey"
+            columns: ["tier_id"]
+            isOneToOne: false
+            referencedRelation: "billing_tiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       nar_coordination: {
         Row: {
           account_refs: string[]
@@ -3275,24 +3449,39 @@ export type Database = {
           default_handler: string | null
           display_name: string | null
           email: string | null
+          full_name: string | null
           id: string
           is_owner: boolean
+          job_title: string | null
+          language: string | null
+          phone: string | null
+          preferred_theme: string | null
         }
         Insert: {
           created_at?: string
           default_handler?: string | null
           display_name?: string | null
           email?: string | null
+          full_name?: string | null
           id: string
           is_owner?: boolean
+          job_title?: string | null
+          language?: string | null
+          phone?: string | null
+          preferred_theme?: string | null
         }
         Update: {
           created_at?: string
           default_handler?: string | null
           display_name?: string | null
           email?: string | null
+          full_name?: string | null
           id?: string
           is_owner?: boolean
+          job_title?: string | null
+          language?: string | null
+          phone?: string | null
+          preferred_theme?: string | null
         }
         Relationships: []
       }
@@ -7293,6 +7482,40 @@ export type Database = {
       }
     }
     Functions: {
+      access_active: { Args: { u: string }; Returns: boolean }
+      access_activity: { Args: never; Returns: Json }
+      access_can_manage: {
+        Args: { actor: string; target: string }
+        Returns: boolean
+      }
+      access_is_member: { Args: { u: string }; Returns: boolean }
+      access_is_superadmin: { Args: { u: string }; Returns: boolean }
+      access_level_of: { Args: { u: string }; Returns: string }
+      access_log_admin: {
+        Args: { a: string; actor: string; detail?: Json; target: string }
+        Returns: undefined
+      }
+      access_menu: { Args: never; Returns: Json }
+      access_recompute: { Args: { u: string }; Returns: undefined }
+      access_reset_target: { Args: { target: string }; Returns: string }
+      access_set_level: {
+        Args: { lvl: string; target: string }
+        Returns: undefined
+      }
+      access_set_status: {
+        Args: { make_active: boolean; target: string }
+        Returns: undefined
+      }
+      access_users: { Args: never; Returns: Json }
+      account_log_self: {
+        Args: { a: string; detail?: Json }
+        Returns: undefined
+      }
+      account_profile: { Args: { target?: string }; Returns: Json }
+      account_update_profile: {
+        Args: { p: Json; target: string }
+        Returns: undefined
+      }
       append_job_log: {
         Args: { p_job_id: string; p_lines: string[]; p_warnings: string[] }
         Returns: undefined
@@ -7707,6 +7930,25 @@ export type Database = {
         }
         Returns: Json
       }
+      member_activate_invitation: {
+        Args: { rid: string; uid: string }
+        Returns: undefined
+      }
+      member_cancel_invite: { Args: { rid: string }; Returns: undefined }
+      member_claim_invitation: { Args: { h: string }; Returns: Json }
+      member_invitation_info: { Args: { h: string }; Returns: Json }
+      member_invite: {
+        Args: {
+          e: string
+          existing?: string
+          expires: string
+          h: string
+          n: string
+          tier?: string
+        }
+        Returns: string
+      }
+      member_reports: { Args: never; Returns: Json }
       mgmt_can_open: { Args: { u: string }; Returns: boolean }
       mgmt_portfolio: { Args: never; Returns: Json }
       nar_captures_ok: {
@@ -7818,6 +8060,14 @@ export type Database = {
         Returns: string
       }
       report_incomplete: { Args: { _output: string }; Returns: string[] }
+      report_member_release_in_force: {
+        Args: { doc: string }
+        Returns: boolean
+      }
+      report_set_members: {
+        Args: { doc: string; released: boolean }
+        Returns: undefined
+      }
       report_set_tiers: {
         Args: { doc: string; note?: string; tiers: string[] }
         Returns: undefined

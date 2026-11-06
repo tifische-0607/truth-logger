@@ -30,6 +30,8 @@ import {
   ScanSearch,
   Plug,
   Bot,
+  UserRound,
+  UserCog,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -45,9 +47,11 @@ import { ThemeControl } from '@/components/ThemeControl';
 import { useMe } from '@/lib/projects';
 import { BaseStrip, Kicker, ProductLockup, COMPANY } from '@/components/BrandLogo';
 import { DOCUMENT_FOOTER } from '@/lib/document-footer';
+import { accessMenuQuery, canOpen } from '@/lib/access-levels';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 const ACTIVE = "relative bg-sidebar-accent text-sidebar-accent-foreground font-semibold before:absolute before:inset-y-2 before:left-0 before:w-[3px] before:rounded-full before:bg-primary";
-const nav = [
+const nav_ = [
   { to: "/dashboard", label: "Home", icon: Gauge },
   { to: "/projects", label: "Projects", icon: Briefcase },
   { to: "/search", label: "Search", icon: Search },
@@ -55,9 +59,38 @@ const nav = [
   { to: "/collect", label: "Collect", icon: ListPlus },
   { to: "/integrity", label: "Integrity", icon: ShieldCheck },
 ] as const;
+const NAV_SCREEN: Record<string, string> = { '/dashboard': 'dashboard', '/projects': 'engagements', '/search': 'search', '/cases': 'cases', '/collect': 'collect', '/integrity': 'integrity' };
+const BASE_OFFLINE = ['dashboard', 'engagements', 'search', 'cases', 'collect', 'integrity', 'library', 'account'];
+/** Workspace links, shown only when the database menu includes their screen. */
+const SIDE_LINKS = [
+  { to: '/library', label: 'Library', icon: Library, screen: 'library' },
+  { to: '/research', label: 'Research', icon: Microscope, screen: 'research' },
+  { to: '/rejections', label: 'Rejection rates', icon: Microscope, screen: 'research' },
+  { to: '/early-warning', label: 'Early warning', icon: Siren, screen: 'early_warning' },
+  { to: '/links', label: 'Link analysis', icon: Network, screen: 'links' },
+  { to: '/narratives', label: 'Narratives', icon: MessagesSquare, screen: 'narratives' },
+  { to: '/evidence-search', label: 'Evidence search', icon: ScanSearch, screen: 'evidence_search' },
+  { to: '/frameworks', label: 'Frameworks', icon: BookOpen, screen: 'frameworks' },
+] as const;
+const SYSTEM_LINKS = [
+  { to: '/inbox', label: 'Curator inbox', icon: ScrollText, screen: 'curator_inbox' },
+  { to: '/management', label: 'Management', icon: Gauge, screen: 'management' },
+  { to: '/billing', label: 'Billing and pricing', icon: Receipt, screen: 'billing' },
+  { to: '/users-access', label: 'Users and access', icon: UserCog, screen: 'users_access' },
+  { to: '/vaults', label: 'Vaults and evidence move', icon: Server, screen: 'vaults' },
+  { to: '/connectors', label: 'Connectors', icon: Plug, screen: 'connectors' },
+  { to: '/executive-agent', label: 'Executive agent access', icon: Bot, screen: 'executive_agent' },
+  { to: '/team', label: 'Team and case assignment', icon: Users, screen: 'team' },
+  { to: '/settings', label: 'Settings', icon: Settings, screen: 'settings' },
+  { to: '/templates', label: 'Case templates', icon: LayoutTemplate, screen: 'templates' },
+  { to: '/sources', label: 'Sources', icon: Server, screen: 'sources' },
+  { to: '/portal', label: 'Client preview', icon: Users, screen: 'client_preview' },
+  { to: '/account', label: 'Account', icon: UserRound, screen: 'account' },
+] as const;
 const collectTabs = [['/collect','Now'],['/queue','All jobs'],['/watchlist','Watched pages'],['/results','Results'],['/capture-log','Capture log'],['/worker','Worker'],['/capture-settings','Capture setup']] as const;
 const integrityTabs = [['/verify','Verify'],['/export','Export bundle'],['/offline','Offline library']] as const;
 const adminTabs = [['/team','Team'],['/templates','Case templates'],['/settings','Settings'],['/vaults','Vaults']] as const;
+
 
 export function useWorkerStatus() {
   const queryClient = useQueryClient();
@@ -252,6 +285,9 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [captureOpen, setCaptureOpen] = useState(false);
   const [captureUrl, setCaptureUrl] = useState("");
   const me = useMe();
+  const access = useQuery({ ...accessMenuQuery, enabled: typeof navigator === 'undefined' || navigator.onLine });
+  // Offline the menu cannot be checked; show the base workspace links only.
+  const ok = (screen: string) => access.data ? canOpen(access.data, screen) : BASE_OFFLINE.includes(screen);
   const canCollect = me.data?.isInvestigator ?? false;
 
   // Home Screen shortcut / shared link: /dashboard?capture=1&url=…
@@ -282,7 +318,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </Link>
 
         <nav className="mt-8 flex flex-1 flex-col gap-1">
-          {nav.map((entry) => (
+          {nav_.filter(e => ok(NAV_SCREEN[e.to] ?? 'dashboard')).map((entry) => (
             <Link
               key={entry.to}
               to={entry.to}
@@ -293,36 +329,16 @@ export function AppShell({ children }: { children: ReactNode }) {
               {entry.label}
             </Link>
           ))}
-          <Link to="/library" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/library') && ACTIVE)}><Library className="size-5"/>Library</Link>
-          <Link to="/research" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/research') && ACTIVE)}><Microscope className="size-5"/>Research</Link>
-          <Link to="/rejections" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/rejections') && ACTIVE)}><Microscope className="size-5"/>Rejection rates</Link>
-          <Link to="/connectors" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/connectors') && ACTIVE)}><Plug className="size-5"/>Connectors</Link>
-          <Link to="/early-warning" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/early-warning') && ACTIVE)}><Siren className="size-5"/>Early warning</Link>
-          <Link to="/links" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/links') && ACTIVE)}><Network className="size-5"/>Link analysis</Link>
-          <Link to="/narratives" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/narratives') && ACTIVE)}><MessagesSquare className="size-5"/>Narratives</Link>
-          <Link to="/evidence-search" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/evidence-search') && ACTIVE)}><ScanSearch className="size-5"/>Evidence search</Link>
-          <Link to="/frameworks" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/frameworks') && ACTIVE)}><BookOpen className="size-5"/>Frameworks</Link>
-          <p className="kicker mt-5 px-3">System</p>
-          {me.data?.isCurator && <Link to="/inbox" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><ScrollText className="size-5"/>Curator inbox</Link>}
-          {(me.data?.isOwner || me.data?.isManagement) && <Link to="/management" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><Gauge className="size-5"/>Management</Link>}
-          {(me.data?.isOwner || me.data?.isManagement) && <Link to="/executive-agent" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><Bot className="size-5"/>Executive agent</Link>}
-          {(me.data?.isOwner || me.data?.isManagement) && <BillingLink />}
-          <Link to="/portal" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><Users className="size-5"/>Client preview</Link>
-          <Link to="/sources" className="flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm hover:bg-sidebar-accent"><Server className="size-5"/>Sources</Link>
-          <Link to="/vaults" className={cn("flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm hover:bg-sidebar-accent", pathname.startsWith('/vaults') && ACTIVE)}><Server className="size-5"/>Vaults</Link>
-          <Link to="/team" className="flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm hover:bg-sidebar-accent"><Users className="size-5"/>Admin</Link>
+          {SIDE_LINKS.filter(l => ok(l.screen)).map(l => <Link key={l.to} to={l.to} className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith(l.to) && ACTIVE)}><l.icon className="size-5"/>{l.label}</Link>)}
+          <p className="kicker mt-5 px-3">{access.data?.level === 'superadmin' ? 'Administration' : 'System'}</p>
+          {SYSTEM_LINKS.filter(l => ok(l.screen)).map(l => l.to === '/billing' ? <BillingLink key={l.to} label={l.label} /> : <Link key={l.to} to={l.to} className={cn("hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm", pathname.startsWith(l.to) && ACTIVE)}><l.icon className="size-5"/>{l.label}</Link>)}
         </nav>
 
         <div className="border-sidebar-border space-y-3 border-t pt-4">
           <ThemeControl/>
-          <SidebarVaults />
+          {ok("vaults") ? <SidebarVaults /> : null}
           <WorkerStatusCard />
-          <Button variant="ghost"
-            onClick={signOut}
-            className="text-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-sm transition-colors"
-          >
-            <LogOut className="size-4" /> Sign out
-          </Button>
+          <UserMenu onSignOut={signOut} canUsers={ok("users_access")} />
         </div>
       </aside>
 
@@ -331,7 +347,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Link to="/dashboard" className="flex items-center" aria-label="FA Portal home">
             <ProductLockup compact />
           </Link>
-          <WorkerPill compact />
+          <div className="flex items-center gap-2"><WorkerPill compact /><UserMenu onSignOut={signOut} canUsers={ok("users_access")} compact /></div>
         </header>
 
         <div className="no-print">
@@ -341,7 +357,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
 
         <main className="min-w-0 flex-1 px-4 pt-6 pb-28 md:px-8 md:pt-8 md:pb-12">
-          <div className="md:hidden no-print mb-4 flex flex-wrap gap-3 text-sm"><Link to="/library" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Library</Link><Link to="/research" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Research</Link><Link to="/early-warning" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Early warning</Link><Link to="/links" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Link analysis</Link><Link to="/narratives" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Narratives</Link><Link to="/evidence-search" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Evidence search</Link><Link to="/connectors" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Connectors</Link><Link to="/sources" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Sources</Link><Link to="/vaults" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Vaults</Link><Link to="/team" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Admin</Link></div>
+          <div className="md:hidden no-print mb-4 flex flex-wrap gap-3 text-sm">{[...SIDE_LINKS, ...SYSTEM_LINKS].filter(l => ok(l.screen)).map(l => <Link key={l.to} to={l.to} className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">{l.label}</Link>)}</div>
           {workspaceTabs.length>0 && <nav aria-label="Workspace pages" className="no-print mb-6 relative flex overflow-x-auto border-b">{workspaceTabs.map(([to,label])=><Link key={to} to={to} className={cn('shrink-0 min-h-12 px-4 py-3 border-b-2 text-sm',pathname===to?'border-primary text-foreground font-semibold':'border-transparent text-muted-foreground')}>{label}</Link>)}</nav>}
           {caseId && <CaseWorkspace caseId={caseId} path={pathname}/>}
           {children}
@@ -372,7 +388,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         />}
 
         <nav className="bg-background text-foreground safe-bottom fixed inset-x-0 bottom-0 z-40 flex flex-col border-t md:hidden"><div className="flex justify-around">
-          {nav.map((entry) => (
+          {nav_.filter(e => ok(NAV_SCREEN[e.to] ?? 'dashboard')).map((entry) => (
             <Link
               key={entry.to}
               to={entry.to}
@@ -396,7 +412,7 @@ const SECTIONS: [RegExp, string][] = [
   [/^\/(collect|rejections|queue|watchlist|results|capture-log|worker|capture-settings|jobs)/, "05 · Collect"],
   [/^\/(integrity|verify|export|offline)/, "06 · Integrity"], [/^\/library/, "07 · Library"],
   [/^\/sources/, "08 · Sources"], [/^\/(team|templates|settings|vaults)/, "09 · Admin"],
-  [/^\/inbox/, "Curator"], [/^\/management/, "Management"], [/^\/billing/, "Billing"], [/^\/frameworks/, "Frameworks"],
+  [/^\/inbox/, "Curator"], [/^\/management/, "Management"], [/^\/billing/, "Billing"], [/^\/frameworks/, "Frameworks"], [/^\/account/, "Account"], [/^\/users-access/, "Users and access"],
 ];
 export function sectionKicker(pathname: string) {
   return SECTIONS.find(([re]) => re.test(pathname))?.[1] ?? "FA Portal";
@@ -426,8 +442,27 @@ export function PageHeader({
   );
 }
 
-function BillingLink() {
+function BillingLink({ label }: { label: string }) {
   const open = useQuery({ queryKey: ["billing", "open-requests"], refetchInterval: 60_000, queryFn: async () => { const { count } = await supabase.from("upgrade_requests").select("id", { count: "exact", head: true }).eq("status", "requested"); return count ?? 0; } });
   const n = open.data ?? 0;
-  return <Link to="/billing" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><Receipt className="size-5"/>Billing{n > 0 ? <span className="bg-primary text-primary-foreground ml-auto rounded-full px-2 py-0.5 text-xs font-semibold" aria-label={`${n} upgrade request${n === 1 ? "" : "s"} waiting`}>{n}</span> : null}</Link>;
+  return <Link to="/billing" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><Receipt className="size-5"/>{label}{n > 0 ? <span className="bg-primary text-primary-foreground ml-auto rounded-full px-2 py-0.5 text-xs font-semibold" aria-label={`${n} upgrade request${n === 1 ? "" : "s"} waiting`}>{n}</span> : null}</Link>;
+}
+
+/** User dropdown: Account (every level), Users and access when allowed, Sign out. */
+export function UserMenu({ onSignOut, canUsers, compact = false }: { onSignOut: () => void; canUsers: boolean; compact?: boolean }) {
+  const navigate = useNavigate();
+  const me = useMe();
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className={cn("min-h-11 gap-2", !compact && "w-full justify-start px-3")} aria-label="Account menu"><UserRound className="size-4" />{compact ? null : <span className="truncate">{me.data?.name || 'Account'}</span>}</Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuItem className="min-h-11" onSelect={() => void navigate({ to: '/account' })}><UserRound className="size-4" />Account</DropdownMenuItem>
+        {canUsers ? <DropdownMenuItem className="min-h-11" onSelect={() => void navigate({ to: '/users-access' })}><UserCog className="size-4" />Users and access</DropdownMenuItem> : null}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem className="min-h-11" onSelect={onSignOut}><LogOut className="size-4" />Sign out</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 }
