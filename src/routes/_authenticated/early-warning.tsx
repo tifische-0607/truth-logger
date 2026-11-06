@@ -250,12 +250,11 @@ function RecordSignal({ frameworks }: { frameworks: Overview["frameworks"] }) {
   const [open, setOpen] = useState(false);
   const projects = useQuery({ queryKey: ["ew-projects"], enabled: open, queryFn: async () => { const { data, error } = await supabase.from("projects").select("id,name").order("name"); if (error) throw error; return data; } });
   const [f, setF] = useState({ project: "", signal: SIGNALS[0].id as string, score: "", framework: frameworks[0]?.code ?? "RABAT", captures: "", note: "" });
-  const [result, setResult] = useState<string | null>(null);
   const { m, err } = useAction(async () => {
     const r = await supabase.rpc("ew_record_signal", { _project: f.project, _signal: f.signal, _score: Number(f.score), _framework: f.framework, _captures: f.captures.split(/[\s,]+/).filter(Boolean), _note: f.note });
-    if (!r.error) { const o = (r.data as { outcome: string }).outcome; setResult(o === "alert" ? "Alert raised for analysts." : o === "threshold_not_set" ? "Signal recorded. Threshold not set, so no alert." : "Signal recorded. Below threshold, so no alert."); }
+    if (!r.error) { const o = (r.data as { outcome: string }).outcome; toast(o === "alert" ? "Alert raised for analysts." : o === "threshold_not_set" ? "Signal recorded. Threshold not set, so no alert." : "Signal recorded. Below threshold, so no alert."); }
     return r;
-  }, () => { setOpen(false); if (result) toast(result); });
+  }, () => setOpen(false));
   return (
     <Shell open={open} setOpen={setOpen} trigger={<Button className="h-11">Record signal</Button>} title="Record a scored signal" desc="Cite the captures that support the score. The database decides whether an alert is raised." onSubmit={() => m.mutate(undefined)} busy={m.isPending} err={err} submit="Record signal">
       <div className="grid gap-1"><Label htmlFor="ew-p">Engagement</Label><select id="ew-p" className={sel} value={f.project} onChange={(e) => setF({ ...f, project: e.target.value })}><option value="">Choose…</option>{projects.data?.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select></div>

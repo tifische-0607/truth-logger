@@ -21,6 +21,7 @@ import { Route as AuthenticatedCaptureSettingsRouteImport } from './routes/_auth
 import { Route as AuthenticatedCaseDatabaseRouteImport } from './routes/_authenticated/case-database'
 import { Route as AuthenticatedCollectRouteImport } from './routes/_authenticated/collect'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedEarlyWarningRouteImport } from './routes/_authenticated/early-warning'
 import { Route as AuthenticatedExportRouteImport } from './routes/_authenticated/export'
 import { Route as AuthenticatedFrameworksRouteImport } from './routes/_authenticated/frameworks'
 import { Route as AuthenticatedInboxRouteImport } from './routes/_authenticated/inbox'
@@ -141,6 +142,12 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedEarlyWarningRoute =
+  AuthenticatedEarlyWarningRouteImport.update({
+    id: '/early-warning',
+    path: '/early-warning',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedExportRoute = AuthenticatedExportRouteImport.update({
   id: '/export',
   path: '/export',
@@ -472,6 +479,7 @@ export interface FileRoutesByFullPath {
   '/case-database': typeof AuthenticatedCaseDatabaseRoute
   '/collect': typeof AuthenticatedCollectRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/early-warning': typeof AuthenticatedEarlyWarningRoute
   '/export': typeof AuthenticatedExportRoute
   '/frameworks': typeof AuthenticatedFrameworksRoute
   '/inbox': typeof AuthenticatedInboxRoute
@@ -543,6 +551,7 @@ export interface FileRoutesByTo {
   '/case-database': typeof AuthenticatedCaseDatabaseRoute
   '/collect': typeof AuthenticatedCollectRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/early-warning': typeof AuthenticatedEarlyWarningRoute
   '/export': typeof AuthenticatedExportRoute
   '/frameworks': typeof AuthenticatedFrameworksRoute
   '/inbox': typeof AuthenticatedInboxRoute
@@ -616,6 +625,7 @@ export interface FileRoutesById {
   '/_authenticated/case-database': typeof AuthenticatedCaseDatabaseRoute
   '/_authenticated/collect': typeof AuthenticatedCollectRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/early-warning': typeof AuthenticatedEarlyWarningRoute
   '/_authenticated/export': typeof AuthenticatedExportRoute
   '/_authenticated/frameworks': typeof AuthenticatedFrameworksRoute
   '/_authenticated/inbox': typeof AuthenticatedInboxRoute
@@ -689,6 +699,7 @@ export interface FileRouteTypes {
     | '/case-database'
     | '/collect'
     | '/dashboard'
+    | '/early-warning'
     | '/export'
     | '/frameworks'
     | '/inbox'
@@ -760,6 +771,7 @@ export interface FileRouteTypes {
     | '/case-database'
     | '/collect'
     | '/dashboard'
+    | '/early-warning'
     | '/export'
     | '/frameworks'
     | '/inbox'
@@ -832,6 +844,7 @@ export interface FileRouteTypes {
     | '/_authenticated/case-database'
     | '/_authenticated/collect'
     | '/_authenticated/dashboard'
+    | '/_authenticated/early-warning'
     | '/_authenticated/export'
     | '/_authenticated/frameworks'
     | '/_authenticated/inbox'
@@ -1000,6 +1013,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/early-warning': {
+      id: '/_authenticated/early-warning'
+      path: '/early-warning'
+      fullPath: '/early-warning'
+      preLoaderRoute: typeof AuthenticatedEarlyWarningRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/export': {
@@ -1418,6 +1438,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCaseDatabaseRoute: typeof AuthenticatedCaseDatabaseRoute
   AuthenticatedCollectRoute: typeof AuthenticatedCollectRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedEarlyWarningRoute: typeof AuthenticatedEarlyWarningRoute
   AuthenticatedExportRoute: typeof AuthenticatedExportRoute
   AuthenticatedFrameworksRoute: typeof AuthenticatedFrameworksRoute
   AuthenticatedInboxRoute: typeof AuthenticatedInboxRoute
@@ -1470,6 +1491,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCaseDatabaseRoute: AuthenticatedCaseDatabaseRoute,
   AuthenticatedCollectRoute: AuthenticatedCollectRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedEarlyWarningRoute: AuthenticatedEarlyWarningRoute,
   AuthenticatedExportRoute: AuthenticatedExportRoute,
   AuthenticatedFrameworksRoute: AuthenticatedFrameworksRoute,
   AuthenticatedInboxRoute: AuthenticatedInboxRoute,
