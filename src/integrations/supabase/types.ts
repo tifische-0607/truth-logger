@@ -1831,6 +1831,102 @@ export type Database = {
         }
         Relationships: []
       }
+      exec_access: {
+        Row: {
+          actor: string
+          at: string
+          id: string
+          project_ids: string[]
+          reason: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          actor: string
+          at?: string
+          id?: string
+          project_ids?: string[]
+          reason: string
+          status: string
+          user_id: string
+        }
+        Update: {
+          actor?: string
+          at?: string
+          id?: string
+          project_ids?: string[]
+          reason?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      exec_qa_log: {
+        Row: {
+          access_id: string
+          answer_sha256: string
+          answered_at: string
+          asked_at: string
+          channel: string
+          cited_captures: string[]
+          confidence: string
+          darknight_ref: string
+          id: string
+          logged_at: string
+          project_ids: string[]
+          question_sha256: string
+          standard_version_id: string
+          user_id: string
+        }
+        Insert: {
+          access_id: string
+          answer_sha256: string
+          answered_at: string
+          asked_at: string
+          channel: string
+          cited_captures: string[]
+          confidence: string
+          darknight_ref: string
+          id?: string
+          logged_at?: string
+          project_ids: string[]
+          question_sha256: string
+          standard_version_id: string
+          user_id: string
+        }
+        Update: {
+          access_id?: string
+          answer_sha256?: string
+          answered_at?: string
+          asked_at?: string
+          channel?: string
+          cited_captures?: string[]
+          confidence?: string
+          darknight_ref?: string
+          id?: string
+          logged_at?: string
+          project_ids?: string[]
+          question_sha256?: string
+          standard_version_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exec_qa_log_access_id_fkey"
+            columns: ["access_id"]
+            isOneToOne: false
+            referencedRelation: "exec_access"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exec_qa_log_standard_version_id_fkey"
+            columns: ["standard_version_id"]
+            isOneToOne: false
+            referencedRelation: "framework_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       finding_items: {
         Row: {
           capture_id: string
@@ -2625,6 +2721,305 @@ export type Database = {
         ]
       }
       lnk_thresholds: {
+        Row: {
+          id: string
+          key: string
+          set_at: string
+          set_by: string | null
+          value: number | null
+        }
+        Insert: {
+          id?: string
+          key: string
+          set_at?: string
+          set_by?: string | null
+          value?: number | null
+        }
+        Update: {
+          id?: string
+          key?: string
+          set_at?: string
+          set_by?: string | null
+          value?: number | null
+        }
+        Relationships: []
+      }
+      manual_capture_vault_writes: {
+        Row: {
+          artefact: string
+          at: string
+          capture_id: string
+          darknight_path: string
+          id: string
+          sha256_on_write: string
+          verified: boolean
+        }
+        Insert: {
+          artefact: string
+          at?: string
+          capture_id: string
+          darknight_path: string
+          id?: string
+          sha256_on_write: string
+          verified: boolean
+        }
+        Update: {
+          artefact?: string
+          at?: string
+          capture_id?: string
+          darknight_path?: string
+          id?: string
+          sha256_on_write?: string
+          verified?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "manual_capture_vault_writes_capture_id_fkey"
+            columns: ["capture_id"]
+            isOneToOne: false
+            referencedRelation: "manual_captures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      manual_captures: {
+        Row: {
+          captured_at_utc: string
+          client_ref: string
+          collector: string
+          connector_key: string
+          connector_version: string
+          id: string
+          page_sha256: string
+          project_id: string
+          received_at: string
+          requirement_id: string
+          screenshot_sha256: string
+          session_log_sha256: string | null
+          session_pages: number | null
+          status: string
+          url_sha256: string
+        }
+        Insert: {
+          captured_at_utc: string
+          client_ref: string
+          collector: string
+          connector_key?: string
+          connector_version: string
+          id?: string
+          page_sha256: string
+          project_id: string
+          received_at?: string
+          requirement_id: string
+          screenshot_sha256: string
+          session_log_sha256?: string | null
+          session_pages?: number | null
+          status?: string
+          url_sha256: string
+        }
+        Update: {
+          captured_at_utc?: string
+          client_ref?: string
+          collector?: string
+          connector_key?: string
+          connector_version?: string
+          id?: string
+          page_sha256?: string
+          project_id?: string
+          received_at?: string
+          requirement_id?: string
+          screenshot_sha256?: string
+          session_log_sha256?: string | null
+          session_pages?: number | null
+          status?: string
+          url_sha256?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "manual_captures_connector_key_fkey"
+            columns: ["connector_key"]
+            isOneToOne: false
+            referencedRelation: "research_connectors"
+            referencedColumns: ["key"]
+          },
+          {
+            foreignKeyName: "manual_captures_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "manual_captures_requirement_id_fkey"
+            columns: ["requirement_id"]
+            isOneToOne: false
+            referencedRelation: "research_requirements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nar_coordination: {
+        Row: {
+          account_refs: string[]
+          capture_ids: string[]
+          decided_at: string
+          decided_by: string
+          decision: string
+          finding_ref: string
+          id: string
+          kind: string
+          project_id: string
+          reason: string
+          standard_version_id: string
+          thresholds: Json
+        }
+        Insert: {
+          account_refs: string[]
+          capture_ids: string[]
+          decided_at?: string
+          decided_by: string
+          decision: string
+          finding_ref: string
+          id?: string
+          kind: string
+          project_id: string
+          reason: string
+          standard_version_id: string
+          thresholds: Json
+        }
+        Update: {
+          account_refs?: string[]
+          capture_ids?: string[]
+          decided_at?: string
+          decided_by?: string
+          decision?: string
+          finding_ref?: string
+          id?: string
+          kind?: string
+          project_id?: string
+          reason?: string
+          standard_version_id?: string
+          thresholds?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nar_coordination_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nar_coordination_standard_version_id_fkey"
+            columns: ["standard_version_id"]
+            isOneToOne: false
+            referencedRelation: "framework_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nar_events: {
+        Row: {
+          action: string
+          actor: string | null
+          created_at: string
+          detail: Json
+          id: string
+          project_id: string | null
+        }
+        Insert: {
+          action: string
+          actor?: string | null
+          created_at?: string
+          detail?: Json
+          id?: string
+          project_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor?: string | null
+          created_at?: string
+          detail?: Json
+          id?: string
+          project_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nar_events_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nar_narratives: {
+        Row: {
+          capture_ids: string[]
+          cluster_ref: string
+          decided_at: string
+          decided_by: string
+          decision: string
+          id: string
+          myth_refs: string[]
+          name: string | null
+          project_id: string
+          reason: string
+          scenario_refs: string[]
+          similarity_min: number
+          standard_version_id: string
+          window_minutes: number
+        }
+        Insert: {
+          capture_ids: string[]
+          cluster_ref: string
+          decided_at?: string
+          decided_by: string
+          decision: string
+          id?: string
+          myth_refs?: string[]
+          name?: string | null
+          project_id: string
+          reason: string
+          scenario_refs?: string[]
+          similarity_min: number
+          standard_version_id: string
+          window_minutes: number
+        }
+        Update: {
+          capture_ids?: string[]
+          cluster_ref?: string
+          decided_at?: string
+          decided_by?: string
+          decision?: string
+          id?: string
+          myth_refs?: string[]
+          name?: string | null
+          project_id?: string
+          reason?: string
+          scenario_refs?: string[]
+          similarity_min?: number
+          standard_version_id?: string
+          window_minutes?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nar_narratives_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nar_narratives_standard_version_id_fkey"
+            columns: ["standard_version_id"]
+            isOneToOne: false
+            referencedRelation: "framework_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nar_thresholds: {
         Row: {
           id: string
           key: string
@@ -4619,6 +5014,68 @@ export type Database = {
           },
         ]
       }
+      research_approved_sources: {
+        Row: {
+          actor: string
+          at: string
+          brief_id: string
+          connector_key: string
+          id: string
+          legal_basis: string
+          project_id: string
+          status: string
+        }
+        Insert: {
+          actor: string
+          at?: string
+          brief_id: string
+          connector_key: string
+          id?: string
+          legal_basis: string
+          project_id: string
+          status: string
+        }
+        Update: {
+          actor?: string
+          at?: string
+          brief_id?: string
+          connector_key?: string
+          id?: string
+          legal_basis?: string
+          project_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_approved_sources_brief_id_fkey"
+            columns: ["brief_id"]
+            isOneToOne: false
+            referencedRelation: "project_briefs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_approved_sources_brief_id_fkey"
+            columns: ["brief_id"]
+            isOneToOne: false
+            referencedRelation: "project_current_briefs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "research_approved_sources_connector_key_fkey"
+            columns: ["connector_key"]
+            isOneToOne: false
+            referencedRelation: "research_connectors"
+            referencedColumns: ["key"]
+          },
+          {
+            foreignKeyName: "research_approved_sources_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       research_captures: {
         Row: {
           captured_at: string
@@ -4767,13 +5224,95 @@ export type Database = {
           },
         ]
       }
+      research_connector_certifications: {
+        Row: {
+          checklist: Json
+          connector_key: string
+          connector_version: string
+          decided_at: string
+          decided_by: string
+          id: string
+          notes: string
+          result: string
+        }
+        Insert: {
+          checklist: Json
+          connector_key: string
+          connector_version: string
+          decided_at?: string
+          decided_by: string
+          id?: string
+          notes: string
+          result: string
+        }
+        Update: {
+          checklist?: Json
+          connector_key?: string
+          connector_version?: string
+          decided_at?: string
+          decided_by?: string
+          id?: string
+          notes?: string
+          result?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_connector_certifications_connector_key_fkey"
+            columns: ["connector_key"]
+            isOneToOne: false
+            referencedRelation: "research_connectors"
+            referencedColumns: ["key"]
+          },
+        ]
+      }
+      research_connector_config: {
+        Row: {
+          actor: string | null
+          at: string
+          configured: boolean
+          connector_key: string
+          id: string
+          note: string | null
+          reported_by: string
+        }
+        Insert: {
+          actor?: string | null
+          at?: string
+          configured: boolean
+          connector_key: string
+          id?: string
+          note?: string | null
+          reported_by: string
+        }
+        Update: {
+          actor?: string | null
+          at?: string
+          configured?: boolean
+          connector_key?: string
+          id?: string
+          note?: string | null
+          reported_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_connector_config_connector_key_fkey"
+            columns: ["connector_key"]
+            isOneToOne: false
+            referencedRelation: "research_connectors"
+            referencedColumns: ["key"]
+          },
+        ]
+      }
       research_connectors: {
         Row: {
+          access_scope: string
           key: string
           name: string
           platforms: string[]
           reject_limit: number
           reject_window_minutes: number
+          requires_certification: boolean
+          source_kind: string
           status: string
           status_reason: string | null
           updated_at: string
@@ -4781,11 +5320,14 @@ export type Database = {
           version: string
         }
         Insert: {
+          access_scope?: string
           key: string
           name: string
           platforms: string[]
           reject_limit?: number
           reject_window_minutes?: number
+          requires_certification?: boolean
+          source_kind?: string
           status?: string
           status_reason?: string | null
           updated_at?: string
@@ -4793,11 +5335,14 @@ export type Database = {
           version: string
         }
         Update: {
+          access_scope?: string
           key?: string
           name?: string
           platforms?: string[]
           reject_limit?: number
           reject_window_minutes?: number
+          requires_certification?: boolean
+          source_kind?: string
           status?: string
           status_reason?: string | null
           updated_at?: string
@@ -5588,6 +6133,148 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      srch_content_types: {
+        Row: {
+          id: string
+          set_at: string
+          set_by: string
+          types: string[]
+        }
+        Insert: {
+          id?: string
+          set_at?: string
+          set_by: string
+          types: string[]
+        }
+        Update: {
+          id?: string
+          set_at?: string
+          set_by?: string
+          types?: string[]
+        }
+        Relationships: []
+      }
+      srch_log: {
+        Row: {
+          action: string
+          actor: string | null
+          at: string
+          detail: Json
+          id: string
+          project_id: string | null
+        }
+        Insert: {
+          action: string
+          actor?: string | null
+          at?: string
+          detail?: Json
+          id?: string
+          project_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor?: string | null
+          at?: string
+          detail?: Json
+          id?: string
+          project_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "srch_log_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      srch_promotions: {
+        Row: {
+          actor: string
+          at: string
+          id: string
+          reason: string | null
+          requirement_id: string | null
+          saved_id: string
+          step: string
+        }
+        Insert: {
+          actor: string
+          at?: string
+          id?: string
+          reason?: string | null
+          requirement_id?: string | null
+          saved_id: string
+          step: string
+        }
+        Update: {
+          actor?: string
+          at?: string
+          id?: string
+          reason?: string | null
+          requirement_id?: string | null
+          saved_id?: string
+          step?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "srch_promotions_requirement_id_fkey"
+            columns: ["requirement_id"]
+            isOneToOne: false
+            referencedRelation: "research_requirements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "srch_promotions_saved_id_fkey"
+            columns: ["saved_id"]
+            isOneToOne: false
+            referencedRelation: "srch_saved"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      srch_saved: {
+        Row: {
+          created_at: string
+          created_by: string
+          filters: Json
+          id: string
+          mode: string
+          name: string
+          project_id: string
+          query: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          filters?: Json
+          id?: string
+          mode: string
+          name: string
+          project_id: string
+          query?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          filters?: Json
+          id?: string
+          mode?: string
+          name?: string
+          project_id?: string
+          query?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "srch_saved_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       staff_exposure_log: {
         Row: {
@@ -6676,6 +7363,40 @@ export type Database = {
         Args: { _level: string; _signal: string }
         Returns: number
       }
+      exec_current_access: {
+        Args: { _user: string }
+        Returns: {
+          actor: string
+          at: string
+          id: string
+          project_ids: string[]
+          reason: string
+          status: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "exec_access"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      exec_is_admin: { Args: { u: string }; Returns: boolean }
+      exec_log_exchange: {
+        Args: { _item: Json; _user: string }
+        Returns: string
+      }
+      exec_overview: { Args: never; Returns: Json }
+      exec_scope: { Args: { _user: string }; Returns: string[] }
+      exec_set_access: {
+        Args: {
+          _grant: boolean
+          _projects: string[]
+          _reason: string
+          _user: string
+        }
+        Returns: string
+      }
       fw_active_version: { Args: { _entry: string }; Returns: string }
       fw_add_entry: {
         Args: { _code: string; _kind: string; _name: string }
@@ -6823,8 +7544,57 @@ export type Database = {
         Returns: undefined
       }
       lnk_standard_in_force: { Args: never; Returns: string }
+      manual_capture_submit: {
+        Args: { _item: Json; _project: string; _requirement_code: string }
+        Returns: Json
+      }
+      manual_capture_vault_write: {
+        Args: {
+          _artefact: string
+          _capture: string
+          _path: string
+          _sha256: string
+        }
+        Returns: Json
+      }
       mgmt_can_open: { Args: { u: string }; Returns: boolean }
       mgmt_portfolio: { Args: never; Returns: Json }
+      nar_captures_ok: {
+        Args: { _captures: string[]; _project: string }
+        Returns: boolean
+      }
+      nar_confirmed_coordination: { Args: { _project: string }; Returns: Json }
+      nar_decide_cluster: {
+        Args: {
+          _captures: string[]
+          _cluster: string
+          _confirm: boolean
+          _myths: string[]
+          _name: string
+          _project: string
+          _reason: string
+          _scenarios: string[]
+        }
+        Returns: string
+      }
+      nar_decide_coordination: {
+        Args: {
+          _accounts: string[]
+          _captures: string[]
+          _confirm: boolean
+          _finding: string
+          _kind: string
+          _project: string
+          _reason: string
+        }
+        Returns: Json
+      }
+      nar_overview: { Args: { _project: string }; Returns: Json }
+      nar_set_threshold: {
+        Args: { _key: string; _value: number }
+        Returns: undefined
+      }
+      nar_threshold: { Args: { _key: string }; Returns: number }
       portal_access_list: { Args: { c: string }; Returns: Json }
       portal_activate_invitation: {
         Args: { rid: string; uid: string }
@@ -6923,6 +7693,15 @@ export type Database = {
         }
         Returns: string
       }
+      research_approve_source: {
+        Args: {
+          _approve: boolean
+          _key: string
+          _legal_basis: string
+          _project: string
+        }
+        Returns: undefined
+      }
       research_block_reason: {
         Args: { _cycle: number; _plan?: string; _project: string }
         Returns: string
@@ -6931,9 +7710,23 @@ export type Database = {
         Args: { c: Database["public"]["Tables"]["research_captures"]["Row"] }
         Returns: string
       }
+      research_certify_connector: {
+        Args: {
+          _checklist: Json
+          _key: string
+          _notes: string
+          _passed: boolean
+        }
+        Returns: undefined
+      }
       research_claim_job: {
         Args: { _cycle?: number; _plan_sha256?: string }
         Returns: Json
+      }
+      research_connector_certified: { Args: { _key: string }; Returns: boolean }
+      research_connector_configured: {
+        Args: { _key: string }
+        Returns: boolean
       }
       research_cycle_open_for_reading: {
         Args: { _cycle: number; _project: string }
@@ -7013,6 +7806,10 @@ export type Database = {
       research_register_sha256: { Args: { _project: string }; Returns: string }
       research_register_status: { Args: { _project: string }; Returns: Json }
       research_rejection_dashboard: { Args: { _days?: number }; Returns: Json }
+      research_report_connector_config: {
+        Args: { _configured: boolean; _key: string; _note: string }
+        Returns: undefined
+      }
       research_report_run: {
         Args: { _expected?: number; _run: string; _status: string }
         Returns: Json
@@ -7095,6 +7892,11 @@ export type Database = {
         Args: { _minutes: number }
         Returns: undefined
       }
+      research_source_approved: {
+        Args: { _key: string; _project: string }
+        Returns: boolean
+      }
+      research_sources_overview: { Args: { _project: string }; Returns: Json }
       research_start_plan: { Args: { _plan: string }; Returns: string }
       research_submit_capture: {
         Args: {
@@ -7164,6 +7966,41 @@ export type Database = {
         }
         Returns: string
       }
+      srch_current_types: { Args: never; Returns: string[] }
+      srch_decide_promotion: {
+        Args: {
+          _approve: boolean
+          _reason: string
+          _requirement: string
+          _saved: string
+        }
+        Returns: undefined
+      }
+      srch_log_search: {
+        Args: {
+          _filters: string[]
+          _hidden: number
+          _mode: string
+          _project: string
+          _shown: number
+        }
+        Returns: undefined
+      }
+      srch_overview: { Args: { _project: string }; Returns: Json }
+      srch_promotion_state: { Args: { _saved: string }; Returns: string }
+      srch_request_promotion: { Args: { _saved: string }; Returns: undefined }
+      srch_save: {
+        Args: {
+          _filters: Json
+          _mode: string
+          _name: string
+          _project: string
+          _query: string
+        }
+        Returns: string
+      }
+      srch_set_content_types: { Args: { _types: string[] }; Returns: undefined }
+      srch_visible: { Args: { _results: Json }; Returns: Json }
       statements_ok: { Args: { _s: Json }; Returns: boolean }
       u1_holds_seat: {
         Args: { expires: string; status: string }

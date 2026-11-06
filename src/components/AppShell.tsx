@@ -26,6 +26,10 @@ import {
   Receipt,
   Siren,
   Network,
+  MessagesSquare,
+  ScanSearch,
+  Plug,
+  Bot,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -292,12 +296,16 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Link to="/library" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/library') && ACTIVE)}><Library className="size-5"/>Library</Link>
           <Link to="/research" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/research') && ACTIVE)}><Microscope className="size-5"/>Research</Link>
           <Link to="/rejections" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/rejections') && ACTIVE)}><Microscope className="size-5"/>Rejection rates</Link>
+          <Link to="/connectors" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/connectors') && ACTIVE)}><Plug className="size-5"/>Connectors</Link>
           <Link to="/early-warning" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/early-warning') && ACTIVE)}><Siren className="size-5"/>Early warning</Link>
           <Link to="/links" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/links') && ACTIVE)}><Network className="size-5"/>Link analysis</Link>
+          <Link to="/narratives" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/narratives') && ACTIVE)}><MessagesSquare className="size-5"/>Narratives</Link>
+          <Link to="/evidence-search" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/evidence-search') && ACTIVE)}><ScanSearch className="size-5"/>Evidence search</Link>
           <Link to="/frameworks" className={cn("hover:bg-sidebar-accent text-sidebar-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium", pathname.startsWith('/frameworks') && ACTIVE)}><BookOpen className="size-5"/>Frameworks</Link>
           <p className="kicker mt-5 px-3">System</p>
           {me.data?.isCurator && <Link to="/inbox" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><ScrollText className="size-5"/>Curator inbox</Link>}
           {(me.data?.isOwner || me.data?.isManagement) && <Link to="/management" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><Gauge className="size-5"/>Management</Link>}
+          {(me.data?.isOwner || me.data?.isManagement) && <Link to="/executive-agent" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><Bot className="size-5"/>Executive agent</Link>}
           {(me.data?.isOwner || me.data?.isManagement) && <BillingLink />}
           <Link to="/portal" className="hover:bg-sidebar-accent flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm"><Users className="size-5"/>Client preview</Link>
           <Link to="/sources" className="flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm hover:bg-sidebar-accent"><Server className="size-5"/>Sources</Link>
@@ -333,7 +341,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
 
         <main className="min-w-0 flex-1 px-4 pt-6 pb-28 md:px-8 md:pt-8 md:pb-12">
-          <div className="md:hidden no-print mb-4 flex flex-wrap gap-3 text-sm"><Link to="/library" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Library</Link><Link to="/research" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Research</Link><Link to="/early-warning" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Early warning</Link><Link to="/links" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Link analysis</Link><Link to="/sources" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Sources</Link><Link to="/vaults" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Vaults</Link><Link to="/team" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Admin</Link></div>
+          <div className="md:hidden no-print mb-4 flex flex-wrap gap-3 text-sm"><Link to="/library" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Library</Link><Link to="/research" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Research</Link><Link to="/early-warning" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Early warning</Link><Link to="/links" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Link analysis</Link><Link to="/narratives" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Narratives</Link><Link to="/evidence-search" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Evidence search</Link><Link to="/connectors" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Connectors</Link><Link to="/sources" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Sources</Link><Link to="/vaults" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Vaults</Link><Link to="/team" className="chip bg-secondary text-secondary-foreground inline-flex min-h-11 items-center rounded-[10px] px-3">Admin</Link></div>
           {workspaceTabs.length>0 && <nav aria-label="Workspace pages" className="no-print mb-6 relative flex overflow-x-auto border-b">{workspaceTabs.map(([to,label])=><Link key={to} to={to} className={cn('shrink-0 min-h-12 px-4 py-3 border-b-2 text-sm',pathname===to?'border-primary text-foreground font-semibold':'border-transparent text-muted-foreground')}>{label}</Link>)}</nav>}
           {caseId && <CaseWorkspace caseId={caseId} path={pathname}/>}
           {children}

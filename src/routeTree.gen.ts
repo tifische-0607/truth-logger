@@ -20,8 +20,11 @@ import { Route as AuthenticatedCaptureLogRouteImport } from './routes/_authentic
 import { Route as AuthenticatedCaptureSettingsRouteImport } from './routes/_authenticated/capture-settings'
 import { Route as AuthenticatedCaseDatabaseRouteImport } from './routes/_authenticated/case-database'
 import { Route as AuthenticatedCollectRouteImport } from './routes/_authenticated/collect'
+import { Route as AuthenticatedConnectorsRouteImport } from './routes/_authenticated/connectors'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedEarlyWarningRouteImport } from './routes/_authenticated/early-warning'
+import { Route as AuthenticatedEvidenceSearchRouteImport } from './routes/_authenticated/evidence-search'
+import { Route as AuthenticatedExecutiveAgentRouteImport } from './routes/_authenticated/executive-agent'
 import { Route as AuthenticatedExportRouteImport } from './routes/_authenticated/export'
 import { Route as AuthenticatedFrameworksRouteImport } from './routes/_authenticated/frameworks'
 import { Route as AuthenticatedInboxRouteImport } from './routes/_authenticated/inbox'
@@ -29,6 +32,7 @@ import { Route as AuthenticatedIntegrityRouteImport } from './routes/_authentica
 import { Route as AuthenticatedLibraryRouteImport } from './routes/_authenticated/library'
 import { Route as AuthenticatedLinksRouteImport } from './routes/_authenticated/links'
 import { Route as AuthenticatedManagementRouteImport } from './routes/_authenticated/management'
+import { Route as AuthenticatedNarrativesRouteImport } from './routes/_authenticated/narratives'
 import { Route as AuthenticatedOfflineRouteImport } from './routes/_authenticated/offline'
 import { Route as AuthenticatedQueueRouteImport } from './routes/_authenticated/queue'
 import { Route as AuthenticatedRejectionsRouteImport } from './routes/_authenticated/rejections'
@@ -138,6 +142,11 @@ const AuthenticatedCollectRoute = AuthenticatedCollectRouteImport.update({
   path: '/collect',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedConnectorsRoute = AuthenticatedConnectorsRouteImport.update({
+  id: '/connectors',
+  path: '/connectors',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -147,6 +156,18 @@ const AuthenticatedEarlyWarningRoute =
   AuthenticatedEarlyWarningRouteImport.update({
     id: '/early-warning',
     path: '/early-warning',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedEvidenceSearchRoute =
+  AuthenticatedEvidenceSearchRouteImport.update({
+    id: '/evidence-search',
+    path: '/evidence-search',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedExecutiveAgentRoute =
+  AuthenticatedExecutiveAgentRouteImport.update({
+    id: '/executive-agent',
+    path: '/executive-agent',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedExportRoute = AuthenticatedExportRouteImport.update({
@@ -182,6 +203,11 @@ const AuthenticatedLinksRoute = AuthenticatedLinksRouteImport.update({
 const AuthenticatedManagementRoute = AuthenticatedManagementRouteImport.update({
   id: '/management',
   path: '/management',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedNarrativesRoute = AuthenticatedNarrativesRouteImport.update({
+  id: '/narratives',
+  path: '/narratives',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedOfflineRoute = AuthenticatedOfflineRouteImport.update({
@@ -484,8 +510,11 @@ export interface FileRoutesByFullPath {
   '/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/case-database': typeof AuthenticatedCaseDatabaseRoute
   '/collect': typeof AuthenticatedCollectRoute
+  '/connectors': typeof AuthenticatedConnectorsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/early-warning': typeof AuthenticatedEarlyWarningRoute
+  '/evidence-search': typeof AuthenticatedEvidenceSearchRoute
+  '/executive-agent': typeof AuthenticatedExecutiveAgentRoute
   '/export': typeof AuthenticatedExportRoute
   '/frameworks': typeof AuthenticatedFrameworksRoute
   '/inbox': typeof AuthenticatedInboxRoute
@@ -493,6 +522,7 @@ export interface FileRoutesByFullPath {
   '/library': typeof AuthenticatedLibraryRoute
   '/links': typeof AuthenticatedLinksRoute
   '/management': typeof AuthenticatedManagementRoute
+  '/narratives': typeof AuthenticatedNarrativesRoute
   '/offline': typeof AuthenticatedOfflineRoute
   '/queue': typeof AuthenticatedQueueRoute
   '/rejections': typeof AuthenticatedRejectionsRoute
@@ -557,8 +587,11 @@ export interface FileRoutesByTo {
   '/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/case-database': typeof AuthenticatedCaseDatabaseRoute
   '/collect': typeof AuthenticatedCollectRoute
+  '/connectors': typeof AuthenticatedConnectorsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/early-warning': typeof AuthenticatedEarlyWarningRoute
+  '/evidence-search': typeof AuthenticatedEvidenceSearchRoute
+  '/executive-agent': typeof AuthenticatedExecutiveAgentRoute
   '/export': typeof AuthenticatedExportRoute
   '/frameworks': typeof AuthenticatedFrameworksRoute
   '/inbox': typeof AuthenticatedInboxRoute
@@ -566,6 +599,7 @@ export interface FileRoutesByTo {
   '/library': typeof AuthenticatedLibraryRoute
   '/links': typeof AuthenticatedLinksRoute
   '/management': typeof AuthenticatedManagementRoute
+  '/narratives': typeof AuthenticatedNarrativesRoute
   '/offline': typeof AuthenticatedOfflineRoute
   '/queue': typeof AuthenticatedQueueRoute
   '/rejections': typeof AuthenticatedRejectionsRoute
@@ -632,8 +666,11 @@ export interface FileRoutesById {
   '/_authenticated/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/_authenticated/case-database': typeof AuthenticatedCaseDatabaseRoute
   '/_authenticated/collect': typeof AuthenticatedCollectRoute
+  '/_authenticated/connectors': typeof AuthenticatedConnectorsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/early-warning': typeof AuthenticatedEarlyWarningRoute
+  '/_authenticated/evidence-search': typeof AuthenticatedEvidenceSearchRoute
+  '/_authenticated/executive-agent': typeof AuthenticatedExecutiveAgentRoute
   '/_authenticated/export': typeof AuthenticatedExportRoute
   '/_authenticated/frameworks': typeof AuthenticatedFrameworksRoute
   '/_authenticated/inbox': typeof AuthenticatedInboxRoute
@@ -641,6 +678,7 @@ export interface FileRoutesById {
   '/_authenticated/library': typeof AuthenticatedLibraryRoute
   '/_authenticated/links': typeof AuthenticatedLinksRoute
   '/_authenticated/management': typeof AuthenticatedManagementRoute
+  '/_authenticated/narratives': typeof AuthenticatedNarrativesRoute
   '/_authenticated/offline': typeof AuthenticatedOfflineRoute
   '/_authenticated/queue': typeof AuthenticatedQueueRoute
   '/_authenticated/rejections': typeof AuthenticatedRejectionsRoute
@@ -707,8 +745,11 @@ export interface FileRouteTypes {
     | '/capture-settings'
     | '/case-database'
     | '/collect'
+    | '/connectors'
     | '/dashboard'
     | '/early-warning'
+    | '/evidence-search'
+    | '/executive-agent'
     | '/export'
     | '/frameworks'
     | '/inbox'
@@ -716,6 +757,7 @@ export interface FileRouteTypes {
     | '/library'
     | '/links'
     | '/management'
+    | '/narratives'
     | '/offline'
     | '/queue'
     | '/rejections'
@@ -780,8 +822,11 @@ export interface FileRouteTypes {
     | '/capture-settings'
     | '/case-database'
     | '/collect'
+    | '/connectors'
     | '/dashboard'
     | '/early-warning'
+    | '/evidence-search'
+    | '/executive-agent'
     | '/export'
     | '/frameworks'
     | '/inbox'
@@ -789,6 +834,7 @@ export interface FileRouteTypes {
     | '/library'
     | '/links'
     | '/management'
+    | '/narratives'
     | '/offline'
     | '/queue'
     | '/rejections'
@@ -854,8 +900,11 @@ export interface FileRouteTypes {
     | '/_authenticated/capture-settings'
     | '/_authenticated/case-database'
     | '/_authenticated/collect'
+    | '/_authenticated/connectors'
     | '/_authenticated/dashboard'
     | '/_authenticated/early-warning'
+    | '/_authenticated/evidence-search'
+    | '/_authenticated/executive-agent'
     | '/_authenticated/export'
     | '/_authenticated/frameworks'
     | '/_authenticated/inbox'
@@ -863,6 +912,7 @@ export interface FileRouteTypes {
     | '/_authenticated/library'
     | '/_authenticated/links'
     | '/_authenticated/management'
+    | '/_authenticated/narratives'
     | '/_authenticated/offline'
     | '/_authenticated/queue'
     | '/_authenticated/rejections'
@@ -1020,6 +1070,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCollectRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/connectors': {
+      id: '/_authenticated/connectors'
+      path: '/connectors'
+      fullPath: '/connectors'
+      preLoaderRoute: typeof AuthenticatedConnectorsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -1032,6 +1089,20 @@ declare module '@tanstack/react-router' {
       path: '/early-warning'
       fullPath: '/early-warning'
       preLoaderRoute: typeof AuthenticatedEarlyWarningRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/evidence-search': {
+      id: '/_authenticated/evidence-search'
+      path: '/evidence-search'
+      fullPath: '/evidence-search'
+      preLoaderRoute: typeof AuthenticatedEvidenceSearchRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/executive-agent': {
+      id: '/_authenticated/executive-agent'
+      path: '/executive-agent'
+      fullPath: '/executive-agent'
+      preLoaderRoute: typeof AuthenticatedExecutiveAgentRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/export': {
@@ -1081,6 +1152,13 @@ declare module '@tanstack/react-router' {
       path: '/management'
       fullPath: '/management'
       preLoaderRoute: typeof AuthenticatedManagementRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/narratives': {
+      id: '/_authenticated/narratives'
+      path: '/narratives'
+      fullPath: '/narratives'
+      preLoaderRoute: typeof AuthenticatedNarrativesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/offline': {
@@ -1456,8 +1534,11 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCaptureSettingsRoute: typeof AuthenticatedCaptureSettingsRoute
   AuthenticatedCaseDatabaseRoute: typeof AuthenticatedCaseDatabaseRoute
   AuthenticatedCollectRoute: typeof AuthenticatedCollectRoute
+  AuthenticatedConnectorsRoute: typeof AuthenticatedConnectorsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedEarlyWarningRoute: typeof AuthenticatedEarlyWarningRoute
+  AuthenticatedEvidenceSearchRoute: typeof AuthenticatedEvidenceSearchRoute
+  AuthenticatedExecutiveAgentRoute: typeof AuthenticatedExecutiveAgentRoute
   AuthenticatedExportRoute: typeof AuthenticatedExportRoute
   AuthenticatedFrameworksRoute: typeof AuthenticatedFrameworksRoute
   AuthenticatedInboxRoute: typeof AuthenticatedInboxRoute
@@ -1465,6 +1546,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedLibraryRoute: typeof AuthenticatedLibraryRoute
   AuthenticatedLinksRoute: typeof AuthenticatedLinksRoute
   AuthenticatedManagementRoute: typeof AuthenticatedManagementRoute
+  AuthenticatedNarrativesRoute: typeof AuthenticatedNarrativesRoute
   AuthenticatedOfflineRoute: typeof AuthenticatedOfflineRoute
   AuthenticatedQueueRoute: typeof AuthenticatedQueueRoute
   AuthenticatedRejectionsRoute: typeof AuthenticatedRejectionsRoute
@@ -1510,8 +1592,11 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCaptureSettingsRoute: AuthenticatedCaptureSettingsRoute,
   AuthenticatedCaseDatabaseRoute: AuthenticatedCaseDatabaseRoute,
   AuthenticatedCollectRoute: AuthenticatedCollectRoute,
+  AuthenticatedConnectorsRoute: AuthenticatedConnectorsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedEarlyWarningRoute: AuthenticatedEarlyWarningRoute,
+  AuthenticatedEvidenceSearchRoute: AuthenticatedEvidenceSearchRoute,
+  AuthenticatedExecutiveAgentRoute: AuthenticatedExecutiveAgentRoute,
   AuthenticatedExportRoute: AuthenticatedExportRoute,
   AuthenticatedFrameworksRoute: AuthenticatedFrameworksRoute,
   AuthenticatedInboxRoute: AuthenticatedInboxRoute,
@@ -1519,6 +1604,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedLibraryRoute: AuthenticatedLibraryRoute,
   AuthenticatedLinksRoute: AuthenticatedLinksRoute,
   AuthenticatedManagementRoute: AuthenticatedManagementRoute,
+  AuthenticatedNarrativesRoute: AuthenticatedNarrativesRoute,
   AuthenticatedOfflineRoute: AuthenticatedOfflineRoute,
   AuthenticatedQueueRoute: AuthenticatedQueueRoute,
   AuthenticatedRejectionsRoute: AuthenticatedRejectionsRoute,

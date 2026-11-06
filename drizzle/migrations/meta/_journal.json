@@ -316,6 +316,55 @@
       "when": 1793938368799,
       "tag": "0044_lnk_threshold_range_0_20",
       "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1793954002095,
+      "tag": "0045_fa_portal_u11_narratives",
+      "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "7",
+      "when": 1793954139736,
+      "tag": "0046_fa_portal_u11_gateway_feed_privileges",
+      "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1793954380011,
+      "tag": "0047_fa_portal_u12_unified_search",
+      "breakpoints": true
+    },
+    {
+      "idx": 48,
+      "version": "7",
+      "when": 1793954650436,
+      "tag": "0048_fa_portal_u13_wider_sources",
+      "breakpoints": true
+    },
+    {
+      "idx": 49,
+      "version": "7",
+      "when": 1793954679043,
+      "tag": "0049_fa_portal_u13_approve_source_signed_brief",
+      "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "7",
+      "when": 1793954895465,
+      "tag": "0050_fa_portal_u10_manual_capture_intake",
+      "breakpoints": true
+    },
+    {
+      "idx": 51,
+      "version": "7",
+      "when": 1793954979881,
+      "tag": "0051_fa_portal_u14_executive_agent_gateway",
+      "breakpoints": true
     }
   ]
 }

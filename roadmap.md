@@ -103,3 +103,34 @@
 - Open (waits on user): FA-STD-001 naming wording, retention periods, training record format, methodology statement wording (Curator), Curator approval of universal standard v1 (still Sample), client portal display of released methodology statements.
 
 - U7/U9 decisions (2026-11-06): owner/Curator/Management confirmed as settings editors; U7 signal thresholds and U9 coordination thresholds are admin-set 0–20 sliders (whole numbers, enforced by the database).
+
+## U11 Narrative and coordination detection — built 6 Nov 2026
+- Staff `/narratives` (Sample at `/narratives?preview=sample`): clusters with timeline (volume, platforms, new accounts), coordination findings (near-identical text, same links, new-account bursts), analyst name/confirm dialogs, threshold dialog (counts 1–20; windows 1 min–72 h). Gateway contract `docs/narratives/gateway-contract.md`.
+- Migrations 0045 (tables, guards, functions), 0046 (gateway-feed functions service-role only).
+- Database: analyst-only confirmations (row guard on every insert), captures cited, standard version recorded, nothing confirmed while a threshold is unset, confirmed coordination feeds U9 (lnk_events + service-role feed) and U7 (ew_record_signal; refusals logged).
+- SQL `tests/sql/u11_narratives_test.sql`: Part A RUN, passed; Part B NOT RUN (no test-account connection, no approved universal standard).
+- Open: similarity/time-window/account thresholds; languages beyond Malay and English; myth and scenario identifier list in the universal standard.
+
+## U12 Unified evidence search — built 6 Nov 2026
+- Staff `/evidence-search` (Sample at `?preview=sample`): keyword (Malay and English), meaning and image modes; filters platform, date, engagement, narrative, entity, verification; saved searches; Curator promotion to a monitoring requirement linked to an active U4 register requirement. Contract `docs/search/gateway-contract.md`.
+- Migration 0047. Access filter `srch_visible` runs as the caller under row rules; results without a visible capture are dropped and counted. Content types start empty ("No content types chosen yet").
+- SQL `tests/sql/u12_unified_search_test.sql`: Part A RUN, passed; Part B NOT RUN (needs multi-user test accounts).
+- Open: which content types to index first.
+
+## U13 Wider source coverage — built 6 Nov 2026
+- Staff `/connectors`: registry with Certified / Configured / Approved-in-brief states; Curator certification dialog (8 required checks); engagement source approval against the signed brief (G0) with legal basis. Doc `docs/connectors/connector-design-standard.md`.
+- Migrations 0048, 0049. Seven new rows (Telegram public, WhatsApp channels, YouTube, Reddit, Local forum (not chosen), News sites, Blogs), all "Not certified" / "Not configured" and suspended. Database refuses activation until certified for the current version and configured, and refuses captures until certified, configured and approved in the brief.
+- SQL `tests/sql/u13_wider_sources_test.sql`: Part A RUN, passed; Part B NOT RUN.
+- Open: order of sources after Telegram; which local forums; the connector design standard wording (checklist built from existing capture rules); widening the capture/register platform lists when the first new connector is certified.
+
+## U10 Analyst browser capture (portal side) — built 6 Nov 2026
+- Manual connector row `analyst_browser` (Not certified, Not configured; shown on `/connectors`), intake `manual_capture_submit`, vault-write check `manual_capture_vault_write`, extension spec `docs/extension/analyst-browser-capture.md`. Migration 0050.
+- Database: no capture without an active register requirement; collector is the signed-in analyst (never a client); certified/configured/brief-approved connector required; hashes at capture required; vault write sets verified itself by comparing hashes; append-only; captures start in quarantine.
+- SQL `tests/sql/u10_manual_capture_test.sql`: Part A RUN, passed; Part B NOT RUN.
+- Open: extension built outside Lovable; research run type for promoting manual captures into the standard validation queue.
+
+## U14 Executive agent gateway (portal side) — built 6 Nov 2026
+- Owner/Management screen `/executive-agent`: access list (starts "No executives have access"), grant/remove dialogs, question-and-answer log. No chat view. Contract `docs/agent/gateway-contract.md`. Migration 0051.
+- Database: only owner/Management change access; staff only (never client logins); engagements limited to what the person can already see, re-checked on every use (`exec_scope`); log written only by the service role; log refused outside scope, without citations (unless confidence "none") or without the standard version in force. Agent has no other write path.
+- SQL `tests/sql/u14_executive_agent_test.sql`: Part A RUN, passed; Part B NOT RUN.
+- Open: which executives get access; whether the portal gets a chat view; Telegram-to-portal account mapping (kept on the Mac Studio).
