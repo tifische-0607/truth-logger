@@ -5,6 +5,7 @@ import { ArrowLeft, FileAudio, Loader2 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { readArtefact } from "@/lib/evidence-read";
+import { MoveTag } from "@/components/MoveTag";
 import { PageHeader } from "@/components/AppShell";
 import { formatDateTime } from "@/lib/format";
 
@@ -214,7 +215,7 @@ function TranscriptBlock({
           })}
         </div>
       )}
-      <div className="hash text-muted-foreground mt-2 break-all">{art.filename}</div>
+      <div className="hash text-muted-foreground mt-2 break-all">{art.filename}<MoveTag path={art.storage_path} /></div>
       <div className="hash mt-1 break-all">SHA-256 {art.sha256 ?? "—"}</div>
     </div>
   );

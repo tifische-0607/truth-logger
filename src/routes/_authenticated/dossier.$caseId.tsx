@@ -5,6 +5,7 @@ import { ArrowLeft, Printer } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { readArtefact } from "@/lib/evidence-read";
+import { MoveTag } from "@/components/MoveTag";
 import { Button } from "@/components/ui/button";
 import { formatDateTime } from "@/lib/format";
 import { PrintDocument } from '@/components/print/PrintDocument';
@@ -213,7 +214,7 @@ function DossierPage() {
                 <ul className="mt-1 space-y-0.5 text-[11px]">
                   {e.arts.map((a) => (
                     <li key={a.id} className="font-mono break-all">
-                      {a.filename} — SHA-256 {a.sha256 ?? "not recorded"}
+                      {a.filename} — SHA-256 {a.sha256 ?? "not recorded"}<MoveTag path={a.storage_path} />
                     </li>
                   ))}
                 </ul>

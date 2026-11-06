@@ -12,6 +12,7 @@ import { PageHeader } from "@/components/AppShell";
 import { HashChip } from "@/components/HashChip";
 import { CaseSummaryPanel } from "@/components/CaseSummaryPanel";
 import { EvidenceThumb, useSignedUrl } from "@/components/EvidenceThumb";
+import { readArtefact } from "@/lib/evidence-read";
 import { Button } from "@/components/ui/button";
 import { formatBytes, formatDateTime, LIVE_KINDS, RENDER_KINDS } from "@/lib/format";
 import { findCachedItem, offlineFirst, queueCustodyEvent, useOnline } from "@/lib/offline";
@@ -396,14 +397,17 @@ function ItemPage() {
                         size="sm"
                         onClick={async () => {
                           await logAccess(a, itemId, "Downloaded from FA Portal");
-                          const { data: signed, error } = await supabase.storage
-                            .from("evidence")
-                            .createSignedUrl(a.storage_path, 300, { download: a.filename });
-                          if (error || !signed) {
-                            toast.error("File not available in the evidence store");
+                          const r = await readArtefact(a.storage_path);
+                          if (!r.ok) {
+                            toast.error(r.from === "darknight" ? r.message : "File not available in the evidence store");
                             return;
                           }
-                          window.open(signed.signedUrl, "_blank");
+                          const u = URL.createObjectURL(new Blob([r.bytes]));
+                          const el = document.createElement("a");
+                          el.href = u;
+                          el.download = a.filename;
+                          el.click();
+                          URL.revokeObjectURL(u);
                         }}
                       >
                         <Download className="size-4" />
