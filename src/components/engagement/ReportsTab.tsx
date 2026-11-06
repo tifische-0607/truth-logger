@@ -439,7 +439,9 @@ function OutputCard({
           <span>{formatBytes(o.size_bytes)}</span>
           <span>{o.item_count ?? 0} items</span>
           <HashChip value={o.sha256} />
-          {!o.location ? (
+          {o.home_path ? (
+            <span className="font-mono break-all">DarkNight: {o.home_path}</span>
+          ) : !o.location ? (
             <span className="text-home-foreground">
               Kept on the building device only (home-vault content)
             </span>
@@ -506,7 +508,7 @@ function OutputCard({
             {entries ? "Hide" : "Report against the brief"}
           </Button>
         ) : null}
-        {o.location ? (
+        {o.location || o.home_path ? (
           <Button
             variant="ghost"
             className="min-h-10"
