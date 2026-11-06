@@ -7,12 +7,12 @@ export const getSiteConfig = createServerFn({ method: 'GET' }).handler(async () 
 
 export const createClientInvite = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input) => z.object({ clientId: z.string().uuid(), name: z.string().trim().min(1), email: z.string().email(), existingId: z.string().uuid().optional() }).parse(input))
+  .inputValidator((input) => z.object({ clientId: z.string().uuid(), name: z.string().trim().min(1), email: z.string().email(), existingId: z.string().uuid().optional(), role: z.enum(['client_admin', 'client_user']).default('client_admin') }).parse(input))
   .handler(async ({ data, context }) => {
     const bytes = crypto.getRandomValues(new Uint8Array(32));
     const token = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
     const hash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(token))), b => b.toString(16).padStart(2, '0')).join('');
-    const { error } = await context.supabase.rpc('portal_invite', { c: data.clientId, n: data.name, e: data.email.toLowerCase(), h: hash, expires: new Date(Date.now() + 7 * 86400000).toISOString(), ...(data.existingId ? {existing: data.existingId} : {}) });
+    const { error } = await context.supabase.rpc('portal_invite_member', { r: data.role, c: data.clientId, n: data.name, e: data.email.toLowerCase(), h: hash, expires: new Date(Date.now() + 7 * 86400000).toISOString(), ...(data.existingId ? {existing: data.existingId} : {}) });
     if (error) throw new Error(error.message);
     return { link: siteLink(canonicalSiteUrl(process.env['SITE_URL']), `/invite?token=${token}`) };
   });

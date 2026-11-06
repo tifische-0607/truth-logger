@@ -20,6 +20,7 @@ import { downloadLibraryDocument } from '@/lib/library-download';
 import { audienceOf, AUDIENCE_LABEL, LIBRARY_KINDS, type LibraryDoc } from '@/lib/library';
 import { formatDateTime as formatDate } from '@/lib/format';
 import { cn } from '@/lib/utils';
+import { ReportTierAccess, useTierOverview } from '@/components/library/ReportTierAccess';
 
 export const Route = createFileRoute('/_authenticated/library')({
   head: () => ({
@@ -60,6 +61,7 @@ function LibraryPage() {
   const [openId, setOpenId] = useState<string | null>(null);
   const [addOpen, setAddOpen] = useState(false);
 
+  const tierOverview = useTierOverview();
   const docs = useQuery({
     queryKey: ['library'],
     queryFn: async () => {
@@ -101,6 +103,7 @@ function LibraryPage() {
       <PageHeader title="Library" subtitle="Every document FA holds for its clients, with who can see it." />
       <div className="mb-4 flex flex-wrap items-center gap-3"><Button className="min-h-11" onClick={() => setAddOpen(true)}>Add a DarkNight file</Button>
         <p className="text-muted-foreground text-sm">Files are never stored in the cloud. Place the file on DarkNight, then record its location and SHA-256 here.</p></div>
+      {tierOverview.data && !Object.values(tierOverview.data.docs).some(t => t.length > 0) ? <Alert className="mb-4" role="note"><Info className="size-4" /><AlertDescription>Report access by tier not yet set. Every shared report is visible to every tier until you set tiers in a report's detail panel.</AlertDescription></Alert> : null}
       <AddHomeFile open={addOpen} onOpenChange={setAddOpen} clients={clients.data ?? []} />
       <Alert className="mb-5"><Info className="size-4" /><AlertDescription>Staff see every document. Clients see only documents for their own client that you have shared with them.</AlertDescription></Alert>
 
@@ -245,7 +248,7 @@ function DocumentDetail({ d, clientName }: { d: LibraryDoc; clientName: string }
         <dt className="text-muted-foreground">Code</dt><dd className="font-mono">{d.code} · v{d.version}</dd>
         <dt className="text-muted-foreground">Client</dt><dd>{clientName}</dd>
         <dt className="text-muted-foreground">Who can see it</dt><dd><AudienceChip d={d} /><p className="text-muted-foreground mt-1 text-xs">
-          {a === 'shared' ? `FA staff and the administrators of ${clientName}.` : a === 'void' ? `Void: ${d.voided_note}. Staff only.` : a === 'held' ? 'FA staff only. It reaches the client only when released at gate G5.' : 'FA staff only.'}</p></dd>
+          {a === 'shared' ? `FA staff and the client logins of ${clientName}, limited by report access by tier.` : a === 'void' ? `Void: ${d.voided_note}. Staff only.` : a === 'held' ? 'FA staff only. It reaches the client only when released at gate G5.' : 'FA staff only.'}</p></dd>
         <dt className="text-muted-foreground">From</dt><dd>{d.source === 'client' ? 'Uploaded by the client' : 'FA'}</dd>
         <dt className="text-muted-foreground">SHA-256</dt><dd className="font-mono text-xs break-all">{d.sha256 ?? '—'}</dd>
         <dt className="text-muted-foreground">File on DarkNight</dt><dd className="font-mono text-xs break-all">{d.home_path ?? 'Not recorded yet'}</dd>
@@ -266,6 +269,8 @@ function DocumentDetail({ d, clientName }: { d: LibraryDoc; clientName: string }
         {d.visibility === 'client' ? <Button variant="outline" className="min-h-11" disabled={busy} onClick={() => { setReason(''); setConfirm('withdraw'); }}>Withdraw</Button> : null}
       </div>
 
+      <ReportTierAccess docId={d.id} source={d.source} />
+
       <section>
         <h3 className="mb-2 font-semibold">Access log</h3>
         <ol className="space-y-2 text-sm">
@@ -280,7 +285,7 @@ function DocumentDetail({ d, clientName }: { d: LibraryDoc; clientName: string }
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{confirm === 'share' ? 'Share with client?' : 'Withdraw from client?'}</AlertDialogTitle>
-            <AlertDialogDescription>{confirm === 'share' ? `The administrators of ${clientName} will be able to see and download this document.` : `The administrators of ${clientName} will no longer see this document. A reason is required.`}</AlertDialogDescription>
+            <AlertDialogDescription>{confirm === 'share' ? `Client logins of ${clientName} on the permitted tiers will be able to see and download this document.` : `Client logins of ${clientName} will no longer see this document. A reason is required.`}</AlertDialogDescription>
           </AlertDialogHeader>
           {confirm === 'withdraw' ? <div className="space-y-1"><Label htmlFor="withdraw-reason">Reason</Label><Textarea id="withdraw-reason" value={reason} onChange={(e) => setReason(e.target.value)} /></div> : null}
           <AlertDialogFooter>

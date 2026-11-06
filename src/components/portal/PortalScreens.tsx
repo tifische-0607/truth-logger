@@ -15,6 +15,7 @@ import {
 } from '@/lib/portal-data';
 import { sampleAdmins, sampleBriefs } from '@/lib/portal-sample';
 import { Kicker } from '@/components/BrandLogo';
+import { UsersSection } from '@/components/portal/UsersSection';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -241,8 +242,13 @@ export function DocumentsTab({ ctx }: { ctx: PortalCtx }) {
   const shown = ctx.docs.filter(d => (from === 'all' || d.source === from) && (eng === 'all' || d.engagement_id === eng)
     && (!q.trim() || `${d.title} ${d.code} ${d.sha256 ?? ''}`.toLowerCase().includes(q.trim().toLowerCase())));
   const engName = (id: string | null) => ctx.engagements.find(e => e.id === id)?.name;
+  const tierNote = useQuery({ queryKey: ['report-access-note', ctx.sample], queryFn: async () => {
+    if (ctx.sample) return { any_set: false };
+    const { data, error } = await supabase.rpc('portal_report_access_note'); if (error) throw error; return data as unknown as { any_set: boolean };
+  } });
   return (
     <div className="space-y-4">
+      {tierNote.data && !tierNote.data.any_set ? <p role="note" className="bg-muted rounded-md p-3 text-sm">Report access by tier not yet set. Every report shared with you is visible on every tier.</p> : null}
       <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Who the document is from">
         {([['all', 'All'], ['fa', 'From FridayAnalytics'], ['client', 'From you']] as const).map(([k, l]) => (
           <Button key={k} className="min-h-11" variant={from === k ? 'default' : 'outline'} aria-pressed={from === k} onClick={() => setFrom(k)}>{l} ({ctx.docs.filter(d => k === 'all' || d.source === k).length})</Button>
@@ -278,14 +284,16 @@ function UploadDialog({ open, onOpenChange }: { ctx: PortalCtx; open: boolean; o
 /* ---------------------------------------------------------------- administration */
 const PILLS = ['Team', 'Organisation', 'Activity', 'Security and notifications'] as const;
 export function AdministrationTab({ ctx, pill, setPill }: { ctx: PortalCtx; pill: string; setPill: (p: string) => void }) {
-  const current = (PILLS as readonly string[]).includes(pill) ? pill : 'Team';
+  // A signed-in client user who is not an administrator only manages their own security settings.
+  const pills: readonly string[] = ctx.canAct && !ctx.dash.is_admin ? ['Security and notifications'] : PILLS;
+  const current = pills.includes(pill) ? pill : pills[0]!;
   const label = (p: string) => (p === 'Organisation' && isIndividual(ctx.dash) ? 'Your details' : p);
   return (
     <div className="space-y-5">
       <nav aria-label="Administration sections" className="flex flex-wrap gap-2">
-        {PILLS.map(p => <Button key={p} className="min-h-11 rounded-full" variant={current === p ? 'default' : 'outline'} aria-current={current === p ? 'page' : undefined} onClick={() => setPill(p)}>{label(p)}</Button>)}
+        {pills.map(p => <Button key={p} className="min-h-11 rounded-full" variant={current === p ? 'default' : 'outline'} aria-current={current === p ? 'page' : undefined} onClick={() => setPill(p)}>{label(p)}</Button>)}
       </nav>
-      {current === 'Team' ? <TeamPill ctx={ctx} /> : current === 'Organisation' ? <OrganisationPill ctx={ctx} /> : current === 'Activity' ? <ActivityPill ctx={ctx} /> : <SecurityPill ctx={ctx} />}
+      {current === 'Team' ? <><TeamPill ctx={ctx} /><UsersSection ctx={ctx} /></> : current === 'Organisation' ? <OrganisationPill ctx={ctx} /> : current === 'Activity' ? <ActivityPill ctx={ctx} /> : <SecurityPill ctx={ctx} />}
     </div>
   );
 }
@@ -295,7 +303,7 @@ function TeamPill({ ctx }: { ctx: PortalCtx }) {
   const qc = useQueryClient(); const inviteFn = useServerFn(createClientInvite);
   const cid = ctx.dash.client_id;
   const admins = useQuery({ queryKey: ['client-admins', cid, ctx.sample], queryFn: () => (ctx.sample ? Promise.resolve(sampleAdmins) : clientAdmins(cid)) });
-  const [open, setOpen] = useState(false); const [name, setName] = useState(''); const [email, setEmail] = useState(''); const [link, setLink] = useState('');
+  const [open, setOpen] = useState(false); const [name] = useState(''); const [email] = useState(''); const [link, setLink] = useState('');
   const [sampleNote, setSampleNote] = useState('');
   const inviteBtn = useRef<HTMLButtonElement>(null);
   const [sampleCancelled, setSampleCancelled] = useState<string[]>([]);
@@ -311,7 +319,7 @@ function TeamPill({ ctx }: { ctx: PortalCtx }) {
     mutationFn: async (id: string) => { if (ctx.sample) { setSampleCancelled(c => [...c, id]); return; } const { error } = await supabase.rpc('portal_admin_action', { rid: id, a: 'cancel' }); if (error) throw error; },
     onSuccess: () => { if (ctx.sample) setSampleNote('Sample mode: the invitation is hidden on this screen only; nothing was saved.'); else refresh(); },
   });
-  const used = (admins.data ?? []).filter(a => a.status !== 'inactive' && !sampleCancelled.includes(a.id));
+  const used = (admins.data ?? []).filter(a => (a.role ?? 'client_admin') === 'client_admin' && a.status !== 'inactive' && !sampleCancelled.includes(a.id));
   const full = used.length >= 2; const busy = invite.isPending || cancel.isPending;
   const actionable = ctx.canAct || ctx.sample;
   return (
@@ -334,22 +342,12 @@ function TeamPill({ ctx }: { ctx: PortalCtx }) {
         {Array.from({ length: Math.max(0, 2 - used.length) }, (_, i) => <li key={`free-${i}`} className="text-muted-foreground flex items-center gap-3 rounded-md border border-dashed p-4"><UserRound className="size-5" />Free administrator slot</li>)}
       </ul>
       <p className="text-muted-foreground text-sm">Only FridayAnalytics can remove an active administrator. Contact curator@fridayanalytics.org.</p>
-      <div className="space-y-2">
-        <Button ref={inviteBtn} className="min-h-11" disabled={full || busy || !actionable} onClick={() => { setName(''); setEmail(''); setLink(''); invite.reset(); setOpen(true); }}><Plus className="size-4" />Invite administrator</Button>
-        {full ? <p className="text-sm" role="note">{CAP_MESSAGE}</p> : null}
-      </div>
+      <p className="text-sm" role="note">FridayAnalytics issues administrator logins (one or two per client).{full ? ` ${CAP_MESSAGE}` : ''}</p>
       <Dialog open={open} onOpenChange={v => { setOpen(v); if (!v) setLink(''); }}>
         <DialogContent onCloseAutoFocus={e => { e.preventDefault(); inviteBtn.current?.focus(); }}>
-          <DialogHeader><DialogTitle>{link ? 'Invitation recorded' : 'Invite administrator'}</DialogTitle>
-            <DialogDescription>{link ? 'Copy this single-use link and send it to the person you invited. It expires in 7 days.' : 'The invitation takes the free administrator slot. No email is sent.'}</DialogDescription></DialogHeader>
-          {link ? <div className="space-y-3"><Input aria-label="Invitation link" type="password" readOnly value={link} className="min-h-11" /><Button className="min-h-11" onClick={() => void navigator.clipboard.writeText(link)}><Copy className="size-4" />Copy invitation link</Button></div> : (
-            <form className="space-y-4" onSubmit={e => { e.preventDefault(); invite.mutate(undefined); if (ctx.sample) setOpen(false); }}>
-              <div className="space-y-1"><Label htmlFor="invite-name">Name</Label><Input id="invite-name" className="min-h-11" required value={name} onChange={e => setName(e.target.value)} /></div>
-              <div className="space-y-1"><Label htmlFor="invite-email">Email</Label><Input id="invite-email" className="min-h-11" type="email" required value={email} onChange={e => setEmail(e.target.value)} /></div>
-              {invite.error ? <p role="alert" className="bg-failed text-failed-foreground rounded-md p-3 text-sm">{errorMessage(invite.error)}</p> : null}
-              <Button type="submit" className="min-h-11" disabled={invite.isPending}>{invite.isPending ? 'Recording…' : 'Record invitation'}</Button>
-            </form>
-          )}
+          <DialogHeader><DialogTitle>Invitation recorded</DialogTitle>
+            <DialogDescription>Copy this single-use link and send it to the person you invited. It expires in 7 days.</DialogDescription></DialogHeader>
+          <div className="space-y-3"><Input aria-label="Invitation link" type="password" readOnly value={link} className="min-h-11" /><Button className="min-h-11" onClick={() => void navigator.clipboard.writeText(link)}><Copy className="size-4" />Copy invitation link</Button></div>
         </DialogContent>
       </Dialog>
     </section>

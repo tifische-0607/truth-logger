@@ -10,7 +10,7 @@ export const sampleDashboard: PortalDashboard = {
   client_id: SAMPLE_CLIENT_ID, client_name: 'Sample Organisation Berhad', kind: 'organisation', name: 'Sample Administrator', email: 'admin@sample.invalid',
   previous_sign_in: day(20), last_sign_in: day(30), notify: { new_documents: true, engagement_updates: true, team_changes: false },
   organisation: { display_name: 'Sample Organisation Berhad', legal_name: 'Sample Organisation Berhad (Sample)', kind: 'organisation', contact_name: 'Sample Contact', contact_email: 'contact@sample.invalid', phone: '+60 3-0000 0000 (Sample)', time_zone: 'Asia/Kuala_Lumpur' },
-  admins_used: 2, pending_invites: 1,
+  admins_used: 2, pending_invites: 2, role: 'client_admin', is_admin: true, tier_name: 'Tier 1', seat_limit: 3, seats_used: 3,
 };
 export const sampleEngagements: PortalEngagement[] = [
   { id: 's-e1', code: 'ENG-S01', name: 'Sample: online narrative review', status: 'active', opened_on: '2026-09-01', due_on: '2026-12-15', stage: 3 },
@@ -36,6 +36,8 @@ export const sampleEvents: PortalEvent[] = [
   { id: 's-a6', at: day(3), type: 'document', action: 'downloaded', subject: 'Sample: signed brief', code: 'DOC-S0001', person: 'Sample Administrator' },
 ];
 export const sampleAdmins: ClientAdmin[] = [
-  { id: 's-u1', user_id: 's', email: 'admin@sample.invalid', name: 'Sample Administrator', status: 'active', last_sign_in: day(30), invite_expires_at: null },
-  { id: 's-u2', user_id: null, email: 'colleague@sample.invalid', name: 'Sample Colleague', status: 'pending', last_sign_in: null, invite_expires_at: day(31) },
+  { id: 's-u1', user_id: 's', email: 'admin@sample.invalid', name: 'Sample Administrator', status: 'active', last_sign_in: day(30), invite_expires_at: null, role: 'client_admin', holds_seat: true },
+  { id: 's-u2', user_id: null, email: 'colleague@sample.invalid', name: 'Sample Colleague', status: 'pending', last_sign_in: null, invite_expires_at: day(31), role: 'client_admin', holds_seat: true },
+  { id: 's-u3', user_id: 's3', email: 'analyst@sample.invalid', name: 'Sample User', status: 'active', last_sign_in: day(29), invite_expires_at: null, role: 'client_user', holds_seat: true },
+  { id: 's-u4', user_id: 's4', email: 'former@sample.invalid', name: 'Sample Former User', status: 'inactive', last_sign_in: day(10), invite_expires_at: null, role: 'client_user', holds_seat: false },
 ];
