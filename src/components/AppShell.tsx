@@ -24,6 +24,8 @@ import {
   Microscope,
   BookOpen,
   Receipt,
+  Siren,
+  Network,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";

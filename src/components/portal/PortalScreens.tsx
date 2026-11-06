@@ -123,6 +123,7 @@ export function DashboardTab({ ctx }: { ctx: PortalCtx }) {
         <h2 id="attention" className="font-display flex items-center gap-2 text-lg font-medium"><Bell className="size-5" />Needs your attention</h2>
         {attention.length ? <ul className="mt-2 list-disc space-y-1 pl-5">{attention.map(a => <li key={a}>{a}</li>)}</ul> : <p className="text-muted-foreground mt-2">Nothing needs your attention right now.</p>}
       </section>
+      <EarlyWarningNotices clientId={ctx.dash.client_id} sample={ctx.sample} />
       <dl className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {counts.map(([k, v]) => <div key={k} className="panel p-4"><dt className="text-muted-foreground text-sm">{k}</dt><dd className="font-display text-3xl font-medium">{v}</dd></div>)}
       </dl>
