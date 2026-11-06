@@ -143,7 +143,7 @@ function Links() {
                 : bs.length === 0 ? <p className="text-sm">None found.</p>
                 : <ul className="grid gap-2 text-sm">{bs.map((b, i) => <li key={i} className="bg-muted rounded p-2">{b.accounts.length} accounts into {label(b.target)} · {formatDateTime(b.start)}–{formatDateTime(b.end)}
                     {!sample ? <SendToEarlyWarning project={project} accounts={b.accounts.length} captures={b.captures} /> : null}</li>)}</ul>}
-              <p className="text-muted-foreground mt-2 text-sm">Burst rule: {t?.burst_min_accounts ?? THRESHOLD_NOT_SET} accounts within {t?.burst_window_minutes ?? THRESHOLD_NOT_SET} minutes.</p>
+              <p className="text-muted-foreground mt-2 text-sm">Burst rule: {t?.burst_min_accounts && t?.burst_window_minutes ? `${t.burst_min_accounts} or more accounts within ${t.burst_window_minutes} minutes` : THRESHOLD_NOT_SET}.</p>
               {overview?.can_edit_settings ? <CoordinationThresholds current={t!} /> : null}
             </Section>
             <Section id="lnk-merges" title="Same-actor suggestions" hint="The platform suggests; an analyst confirms or rejects. Decisions are logged.">
