@@ -101,7 +101,7 @@ export async function syncCase(caseId: string, onProgress?: (p: SyncProgress) =>
       const { readArtefact } = await import("@/lib/evidence-read");
       const r = await readArtefact(path);
       if (!r.ok) throw new Error(r.message);
-      const blob = new Blob([r.bytes], { type: (a["mime_type"] as string | null) ?? undefined });
+      const blob = new Blob([r.bytes], { type: (a["mime_type"] as string | null) ?? "" });
       const recorded = a["sha256"] as string | null;
       const actual = await sha256OfBlob(blob);
       hash_state = recorded ? (recorded === actual ? "match" : "mismatch") : "unverified";

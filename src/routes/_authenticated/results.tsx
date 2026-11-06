@@ -360,7 +360,7 @@ function ArtefactButton({
       toast.error(r.from === "darknight" ? r.message : "File not available in the evidence store");
       return;
     }
-    window.open(URL.createObjectURL(new Blob([r.bytes], { type: artefact.mime_type ?? undefined })), "_blank");
+    window.open(URL.createObjectURL(new Blob([r.bytes], { type: artefact.mime_type ?? "" })), "_blank");
   };
 
   return (
