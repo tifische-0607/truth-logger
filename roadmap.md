@@ -116,3 +116,9 @@
 - Migration 0047. Access filter `srch_visible` runs as the caller under row rules; results without a visible capture are dropped and counted. Content types start empty ("No content types chosen yet").
 - SQL `tests/sql/u12_unified_search_test.sql`: Part A RUN, passed; Part B NOT RUN (needs multi-user test accounts).
 - Open: which content types to index first.
+
+## U13 Wider source coverage — built 6 Nov 2026
+- Staff `/connectors`: registry with Certified / Configured / Approved-in-brief states; Curator certification dialog (8 required checks); engagement source approval against the signed brief (G0) with legal basis. Doc `docs/connectors/connector-design-standard.md`.
+- Migrations 0048, 0049. Seven new rows (Telegram public, WhatsApp channels, YouTube, Reddit, Local forum (not chosen), News sites, Blogs), all "Not certified" / "Not configured" and suspended. Database refuses activation until certified for the current version and configured, and refuses captures until certified, configured and approved in the brief.
+- SQL `tests/sql/u13_wider_sources_test.sql`: Part A RUN, passed; Part B NOT RUN.
+- Open: order of sources after Telegram; which local forums; the connector design standard wording (checklist built from existing capture rules); widening the capture/register platform lists when the first new connector is certified.
