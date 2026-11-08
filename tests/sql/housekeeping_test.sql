@@ -32,6 +32,16 @@ END $$;
 -- B8: authenticated SELECT sees no deleted capture-job row.
 SET LOCAL ROLE authenticated;
 DO $$ BEGIN IF EXISTS (SELECT 1 FROM public.capture_jobs WHERE url='https://example.invalid/housekeeping-test') THEN RAISE EXCEPTION 'B8 FAILED'; END IF; END $$;
+RESET ROLE;
+DO $$ DECLARE u uuid; c uuid; p uuid; BEGIN
+ SELECT user_id INTO u FROM public.account_access WHERE level='superadmin' AND status='active' LIMIT 1;
+ SELECT id INTO c FROM public.clients LIMIT 1;
+ IF c IS NULL THEN RAISE EXCEPTION 'Client test fixture needed'; END IF;
+ INSERT INTO public.projects(client_id,code,name,created_by) VALUES(c,'HOUSEKEEPING-TEST-'||gen_random_uuid()::text,'Housekeeping fixture',u) RETURNING id INTO p;
+ PERFORM public.housekeeping_delete('project',p,'rollback fixture');
+ IF NOT EXISTS(SELECT 1 FROM public.projects WHERE id=p) OR NOT EXISTS(SELECT 1 FROM public.project_members WHERE project_id=p) THEN RAISE EXCEPTION 'B9 FAILED: original or membership removed'; END IF;
+ IF NOT EXISTS(SELECT 1 FROM public.account_admin_events WHERE action='housekeeping_deleted' AND detail->>'record_id'=p::text) THEN RAISE EXCEPTION 'B9 FAILED: missing project audit'; END IF;
+END $$;
+SET LOCAL ROLE authenticated;
+DO $$ BEGIN IF EXISTS(SELECT 1 FROM public.projects WHERE name='Housekeeping fixture') THEN RAISE EXCEPTION 'B10 FAILED: deleted project visible'; END IF; END $$;
 ROLLBACK;
--- B9 (unrun): isolated project fixture deletion; assert row and all related immutable records remain,
--- project disappears from authenticated list/direct reads, and deletion is logged.

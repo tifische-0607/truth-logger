@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] SuperAdmin housekeeping: logged project/capture-job removal with evidence and custody preserved; database permissions, confirmation dialogs, regression checks.
+- [x] SuperAdmin housekeeping (0057): SuperAdmin-only, reasoned project/capture-job deletion via append-only tombstones plus User activity; RLS hides removed records, original rows/evidence/custody retained; running jobs refused and worker excludes deleted jobs. Signed-in failed test-job deletion, direct-URL hiding and activity read-back passed; project confirmation keyboard/phone checked without deleting existing project. 111 unit tests passed; SQL Part A passed, Part B B1–B10 saved/unrun (privileged rollback fixtures needed). Docs: docs/housekeeping.md.
 
 - [x] Scope reduced to identity/navigation and home vault; hide project navigation and case Projects button without deleting existing work
 - [x] Stage 1 implementation: 0009/0010 plus 0011 identity/invite boundaries and 0012 staff-policy helper; single sign-in, client types, management read access, recorded invites, client portal shell and themes. Authenticated browser checks passed for acceptance, used-token refusal, staff-route isolation, enable guard, second invite/cap, deactivate/reactivate/cancel/resend; 18 unit tests pass and preview build is clean.
