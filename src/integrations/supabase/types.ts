@@ -2611,6 +2611,36 @@ export type Database = {
           },
         ]
       }
+      housekeeping_deletions: {
+        Row: {
+          actor: string
+          deleted_at: string
+          id: string
+          kind: string
+          label: string
+          reason: string
+          record_id: string
+        }
+        Insert: {
+          actor: string
+          deleted_at?: string
+          id?: string
+          kind: string
+          label: string
+          reason: string
+          record_id: string
+        }
+        Update: {
+          actor?: string
+          deleted_at?: string
+          id?: string
+          kind?: string
+          label?: string
+          reason?: string
+          record_id?: string
+        }
+        Relationships: []
+      }
       incidents: {
         Row: {
           case_id: string
@@ -7909,6 +7939,14 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      housekeeping_delete: {
+        Args: { _id: string; _kind: string; _reason: string }
+        Returns: string
+      }
+      housekeeping_is_deleted: {
+        Args: { _id: string; _kind: string }
         Returns: boolean
       }
       hub_storage_project: {
