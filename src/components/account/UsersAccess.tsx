@@ -23,6 +23,7 @@ const ACTION: Record<string, string> = {
   member_invited: 'Member invited', member_invite_resent: 'Member invitation resent', member_invite_cancelled: 'Member invitation cancelled', member_accepted: 'Member invitation accepted',
 };
 function describe(e: Event) {
+  if (e.action === 'housekeeping_deleted') return `Deleted ${e.detail['kind'] === 'project' ? 'project' : 'capture job'}: ${String(e.detail['label'])} · ID ${String(e.detail['record_id'])} · Reason: ${String(e.detail['reason'])}`;
   if (e.action === 'level_log') {
     const d = e.detail as { from_level: string | null; to_level: string | null; from_status: string | null; to_status: string | null };
     if (d.from_level === d.to_level) return `Status ${d.from_status ?? '—'} → ${d.to_status ?? '—'}`;

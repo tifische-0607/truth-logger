@@ -11,6 +11,7 @@ import { formatDateTime } from "@/lib/format";
 import { visibleWorkerLogs } from "@/lib/capture-progress";
 import { CaptureCustodyTrail } from "@/components/CaptureCustodyTrail";
 import { CaptureViewer } from "@/components/CaptureViewer";
+import { HousekeepingDelete } from '@/components/HousekeepingDelete';
 
 export const Route = createFileRoute("/_authenticated/jobs/$jobId")({
   head: () => hubHead('Capture job'),
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/_authenticated/jobs/$jobId")({
 function JobDetail() {
   const { jobId } = Route.useParams();
   const queryClient = useQueryClient();
+  const navigate = Route.useNavigate();
   const logEnd = useRef<HTMLDivElement>(null);
 
   const job = useQuery({
@@ -70,7 +72,7 @@ function JobDetail() {
       <PageHeader
         title="Capture job"
         subtitle={data.url}
-        actions={<StatusBadge status={data.status} className="text-sm" />}
+        actions={<div className="flex items-center gap-2"><StatusBadge status={data.status} className="text-sm" /><HousekeepingDelete kind="capture_job" id={data.id} label={data.url} running={data.status === 'running'} onDeleted={() => void navigate({ to: '/queue' })} /></div>}
       />
 
       <div className="grid gap-5 lg:grid-cols-3">
