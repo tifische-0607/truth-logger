@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] SuperAdmin housekeeping: logged project/capture-job removal with evidence and custody preserved; database permissions, confirmation dialogs, regression checks.
+
 - [x] Scope reduced to identity/navigation and home vault; hide project navigation and case Projects button without deleting existing work
 - [x] Stage 1 implementation: 0009/0010 plus 0011 identity/invite boundaries and 0012 staff-policy helper; single sign-in, client types, management read access, recorded invites, client portal shell and themes. Authenticated browser checks passed for acceptance, used-token refusal, staff-route isolation, enable guard, second invite/cap, deactivate/reactivate/cancel/resend; 18 unit tests pass and preview build is clean.
 - [ ] Stage 1 SQL suite execution: tests/sql/portal_foundation_test.sql saved; blocked by absence of a privileged test connection (managed shell cannot execute functions or update rows). No database privileges widened.
