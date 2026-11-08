@@ -7,14 +7,11 @@ import { NewClientDialog, NewProjectDialog } from "@/components/projects/ClientP
 import { Button } from "@/components/ui/button";
 import { ProjectRow } from "@/components/projects/ProjectRow";
 import { useClientsAndProjects, useMe } from "@/lib/projects";
+import { HousekeepingDelete } from '@/components/HousekeepingDelete';
+import { hubHead } from '@/lib/hub';
 
 export const Route = createFileRoute("/_authenticated/projects/")({
-  head: () => ({
-    meta: [
-      { title: "Projects — FA Portal" },
-      { name: "description", content: "Clients, their projects, briefs and outputs." },
-    ],
-  }),
+  head: () => hubHead('Projects', 'Clients, their projects, briefs and outputs.'),
   component: ProjectsPage,
 });
 
@@ -94,7 +91,7 @@ function ProjectsPage() {
               </div>
               <div className="divide-border divide-y">
                 {mine.length ? (
-                  mine.map((p) => <ProjectRow key={p.id} p={p} />)
+                  mine.map((p) => <div key={p.id} className="flex items-center"><div className="min-w-0 flex-1"><ProjectRow p={p} /></div><div className="pr-3"><HousekeepingDelete kind="project" id={p.id} label={`${p.code} · ${p.name}`} /></div></div>)
                 ) : (
                   <p className="text-muted-foreground px-5 py-4 text-sm">
                     No projects you are on for this client.

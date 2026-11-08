@@ -21,6 +21,7 @@ import { ProjectStatusChip } from "@/components/projects/ProjectRow";
 import { PROJECT_STATUS, currentPhase, roleLabel, useProjectWorkspace } from "@/lib/projects";
 import { cn } from "@/lib/utils";
 import { hubHead } from '@/lib/hub';
+import { HousekeepingDelete } from '@/components/HousekeepingDelete';
 
 const TABS = [
   { id: "overview", label: "Overview" },
@@ -54,6 +55,7 @@ function ProjectPage() {
   const { tab } = Route.useSearch();
   const ws = useProjectWorkspace(projectId);
   const qc = useQueryClient();
+  const navigate = Route.useNavigate();
   const setStatus = useMutation({
     mutationFn: async (status: string) => {
       const { error } = await supabase.from("projects").update({ status }).eq("id", projectId);
@@ -136,6 +138,7 @@ function ProjectPage() {
           {p.summary ? <p className="text-muted-foreground mt-1 text-sm">{p.summary}</p> : null}
         </div>
         <div className="flex items-center gap-3">
+          <HousekeepingDelete kind="project" id={p.id} label={`${p.code} · ${p.name}`} onDeleted={() => void navigate({ to: '/projects' })} />
           <span className="text-muted-foreground text-xs">You: {roleLabel(w.role)}</span>
           {w.canManage ? (
             <select

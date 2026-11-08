@@ -11,6 +11,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatDateTime, timeAgo } from "@/lib/format";
+import { HousekeepingDelete } from '@/components/HousekeepingDelete';
 
 export const Route = createFileRoute("/_authenticated/queue")({
   head: () => ({
@@ -245,6 +246,7 @@ function QueuePage() {
                   {job.case_id ? `${job.case_id}${job.incident_id ? ` · ${job.incident_id}` : ""}` : "no case yet"}
                 </span>
                 <span className="text-muted-foreground text-xs">{timeAgo(job.created_at)}</span>
+                <HousekeepingDelete kind="capture_job" id={job.id} label={job.url} running={job.status === 'running'} />
                 {job.status === "queued" ? (
                   <Button
                     variant="ghost"
@@ -297,6 +299,7 @@ function QueuePage() {
                 >
                   <RotateCcw className="size-4" /> Run again
                 </Button>
+                <HousekeepingDelete kind="capture_job" id={job.id} label={job.url} />
               </div>
             ))
           )}
