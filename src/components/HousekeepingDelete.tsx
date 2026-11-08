@@ -4,6 +4,7 @@ import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { accessMenuQuery } from '@/lib/access-levels';
+import { canDeleteHousekeeping } from '@/lib/housekeeping';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel } from '@/components/ui/alert-dialog';
@@ -29,7 +30,7 @@ export function HousekeepingDelete({ kind, id, label, running = false, onDeleted
     },
     onError: (e: { message?: string }) => setError(e.message ?? 'Could not delete this record.'),
   });
-  if (access.data?.level !== 'superadmin' || access.data.status !== 'active') return null;
+  if (!canDeleteHousekeeping(access.data)) return null;
   const noun = kind === 'project' ? 'project' : 'capture job';
   return <>
     <Button variant="ghost" size="icon" className="min-h-11 min-w-11 text-destructive" aria-label={`Delete ${noun}`} title={running ? 'Stop the running capture job before deleting it.' : `Delete ${noun}`} disabled={running} onClick={() => { setReason(''); setError(''); setOpen(true); }}><Trash2 className="size-4" /></Button>
