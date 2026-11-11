@@ -152,3 +152,4 @@
 - 2026-11-11 — U7 set-up: thresholds 5/10/15 (Watch/Warning/Urgent) on all five signals; owner also holds Curator; Sample versions of Rabat, Dangerous Speech and UN Framework approved. End-to-end alert test BLOCKED: Home Vault offline (no report in 15 min) and no engagement with signed G1/G2 + register, so no capture can be cited.
 - [ ] Real DarkNight connection + switch off fake gateway + Vaults Test connection — BLOCKED: notify.fridayanalytics.org is delegated to the email service; needs a separate address and tunnel/port choice.
 - [ ] Invitation email to hafidz@fridayanalytics.org — waiting on email domain hookup and access level.
+- 2026-11-11 — Connected notify.portal.fridayanalytics.org and scaffolded all six branded authentication emails; activation awaits DNS verification and publishing. Account-email feature flag and custom invitation sending remain separate follow-up work; no invitation was sent.

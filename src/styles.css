@@ -121,6 +121,12 @@
 }
 
 :root {
+  /* Email-safe sRGB equivalents: email clients do not support oklch/variables. */
+  --email-background: #ffffff;
+  --email-heading: #0D1118;
+  --email-body: #2B313B;
+  --email-muted: #5B616B;
+  --email-primary: #4F63EF;
   /* ---- Brand palette (FridayAnalytics Brand v2.0) ---- */
   --fa-signal-blue: oklch(0.622 0.196 265); /* #4A7DFB */
   --fa-violet: oklch(0.567 0.209 284);      /* #6E59EA */
