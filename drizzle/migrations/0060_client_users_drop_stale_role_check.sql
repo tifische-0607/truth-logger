@@ -1,0 +1,2 @@
+-- U1 added client_users_role_u1 (client_admin, client_user) but left the original admin-only check, which refused every Client Staff invitation.
+ALTER TABLE public.client_users DROP CONSTRAINT IF EXISTS client_users_role_check;
