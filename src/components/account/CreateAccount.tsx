@@ -17,7 +17,7 @@ type Pending = { id: string; name: string; email: string; level: string; roles: 
 const when = (t: string | null) => (t ? new Date(t).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—');
 
 function LinkBox({ link }: { link: string }) {
-  return <div className="space-y-2" role="status"><p className="text-sm">Single-use link, shown once and valid 7 days. Email sending is <span className="font-medium">Not configured</span>, so copy it and send it to the person yourself. They set their own password.</p>
+  return <div className="space-y-2" role="status"><p className="text-sm">Single-use link, shown once and valid 7 days. An invitation email is sent automatically; if it does not arrive, copy this link and send it yourself. They set their own password.</p>
     <div className="flex gap-2"><Input readOnly value={link} className="min-h-11" aria-label="Invitation link" /><Button type="button" variant="outline" className="min-h-11" onClick={() => void navigator.clipboard.writeText(link)}><Copy className="size-4" />Copy</Button></div></div>;
 }
 
@@ -77,11 +77,11 @@ export function PendingInvites({ onDone }: { onDone: () => void }) {
             <div className="flex flex-wrap items-center justify-between gap-2">
               <span><span className="font-medium">{i.name}</span> · {i.email} · {levelLabel(i.level)}{i.roles.length ? ` (${i.roles.join(', ')})` : ''}{i.client ? ` · ${i.client}` : ''}{i.level === 'member' ? ` · ${i.tier ?? 'No tier'}` : ''} · expires {when(i.expires)}</span>
               <span className="flex gap-2">
-                <Button variant="outline" className="min-h-11" disabled={!!busy} onClick={() => act(i.id, async () => { const r = await resendFn({ data: { id: i.id } }); return { t: 'New link created; the old one no longer works.', link: r.link }; })}>Resend</Button>
+                <Button variant="outline" className="min-h-11" disabled={!!busy} onClick={() => act(i.id, async () => { const r = await resendFn({ data: { id: i.id } }); return { t: r.emailed ? `New link emailed to ${r.email}; the old one no longer works.` : 'New link created; the old one no longer works. Email could not be sent, so copy the link below.', link: r.link }; })}>Resend</Button>
                 <Button variant="outline" className="min-h-11" disabled={!!busy} onClick={() => act(i.id, async () => { const { error } = await supabase.rpc('account_invite_cancel', { rid: i.id }); if (error) throw error; return { t: 'Invitation cancelled.' }; })}>Cancel</Button>
               </span>
             </div>
-            {st?.id === i.id ? (st.link ? <LinkBox link={st.link} /> : <p role={st.bad ? 'alert' : 'status'} className={st.bad ? 'bg-failed text-failed-foreground rounded-md p-3' : ''}>{st.t}</p>) : null}
+            {st?.id === i.id ? (st.link ? <div className="space-y-2"><p role="status">{st.t}</p><LinkBox link={st.link} /></div> : <p role={st.bad ? 'alert' : 'status'} className={st.bad ? 'bg-failed text-failed-foreground rounded-md p-3' : ''}>{st.t}</p>) : null}
           </li>))}</ul>)}
     </section>
   );
