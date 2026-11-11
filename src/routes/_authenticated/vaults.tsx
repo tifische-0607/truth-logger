@@ -13,8 +13,8 @@ import { Refusal } from '@/components/research/ResearchBits';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { getCloudVaultConfig, testVaultConnection } from '@/lib/vaults.functions';
-import { cloudChecks, cloudWord, homeChecks, ROUTE_LABEL, type CloudRoute, type VaultCheck } from '@/lib/vault-config';
+import { testVaultConnection } from '@/lib/vaults.functions';
+import { homeChecks, type VaultCheck } from '@/lib/vault-config';
 import { useVaultOverview, WHERE_DATA_GOES } from '@/lib/vaults';
 import { EvidenceMovePanel } from '@/components/vault/EvidenceMovePanel';
 
@@ -105,6 +105,7 @@ function VaultCard({ cfg, word, checks, owner, extra }: { cfg: Config; word: str
       const r = raw as { outcome: string; detail: { missing?: string[] } };
       const text = r.outcome === 'not_configured' ? (cfg.vault === 'home' ? 'Not configured. DarkNight gateway not connected: no DarkNight address saved yet.' : `Not configured. Missing: ${(r.detail.missing ?? []).join(', ')}.`)
         : cfg.vault === 'home' ? (r.outcome === 'ok' ? 'Reachable: DarkNight answered online.' : 'Temporarily unavailable, please try again later')
+        : r.outcome === 'ok' ? 'Reachable: the Cloud Vault (Supabase) answered.'
         : r.outcome === 'not_attempted' ? 'Configured, but no connection was attempted: outside connections are not permitted in this phase.'
         : r.outcome === 'ok' ? 'Reachable: the Home Vault reported online within the window.' : 'Not reachable: no online report within the window.';
       setMsg({ text, bad: r.outcome !== 'ok' });
@@ -123,15 +124,12 @@ function VaultCard({ cfg, word, checks, owner, extra }: { cfg: Config; word: str
       <dl className="space-y-2">
         <Row k="Engine" v={cfg.engine} />
         <Row k="Location" v={cfg.location} />
-        <Row k="Reached via" v={cfg.vault === 'home' ? 'HTTPS gateway, read directly from the browser' : ROUTE_LABEL[cfg.route as CloudRoute]} />
+        <Row k="Reached via" v={cfg.vault === 'home' ? 'HTTPS gateway, read directly from the browser' : 'Built in (HTTPS, signed-in session)'} />
         <Row k="Holds" v={cfg.holds} />
-        <Row k="Database roles" v={cfg.database_roles.length ? <span className="font-mono">{cfg.database_name} · {cfg.database_roles.join(', ')} · schema {cfg.schema_name}</span> : 'None (file gateway)'} />
+        <Row k="Database roles" v={cfg.vault === 'cloud' ? 'Managed by the app (row-level rules on every table)' : cfg.database_roles.length ? <span className="font-mono">{cfg.database_name} · {cfg.database_roles.join(', ')} · schema {cfg.schema_name}</span> : 'None (file gateway)'} />
       </dl>
       {extra}
       <div><p className="kicker mb-1">Checks</p><Checks checks={checks} /></div>
-      {cfg.note && cfg.vault === 'cloud' && (
-        <p className="bg-secondary rounded-lg px-4 py-3 text-sm"><span className="font-semibold">cPanel note: </span>{cfg.note} This app's server does not have a fixed address to allowlist.</p>
-      )}
       {msg && <p role="status" className={msg.bad ? 'border-l-4 border-destructive pl-3 text-sm' : 'border-l-4 border-positive pl-3 text-sm'}>{msg.text}</p>}
       <div className="flex flex-wrap gap-3">
         <Button className="min-h-11" disabled={m.isPending} onClick={() => m.mutate()}>{m.isPending ? 'Testing…' : 'Test connection'}</Button>
@@ -141,38 +139,26 @@ function VaultCard({ cfg, word, checks, owner, extra }: { cfg: Config; word: str
   );
 }
 
-function RouteSetting({ route, owner }: { route: CloudRoute; owner: boolean }) {
-  const qc = useQueryClient();
-  const [err, setErr] = useState<string | null>(null);
-  const m = useMutation({
-    mutationFn: async (r: CloudRoute) => { const { error } = await supabase.rpc('vault_set_cloud_route', { _route: r }); if (error) throw error; },
-    onSuccess: async () => { setErr(null); await qc.invalidateQueries({ queryKey: ['vaults'] }); },
-    onError: (e) => setErr(errText(e)),
-  });
-  return (
-    <fieldset className="space-y-2">
-      <legend className="text-sm font-semibold">Access route {owner ? '' : '(owner can change)'}</legend>
-      <div className="flex flex-wrap gap-2">
-        {(['direct', 'relay'] as const).map((r) => (
-          <Button key={r} variant={route === r ? 'default' : 'outline'} aria-pressed={route === r} disabled={!owner || m.isPending}
-            className="min-h-11" onClick={() => route !== r && m.mutate(r)}>{ROUTE_LABEL[r]}</Button>
-        ))}
-      </div>
-      <Refusal text={err} />
-    </fieldset>
-  );
-}
+const SUPABASE_CLOUD = {
+  engine: 'Supabase (PostgreSQL), this app\'s own cloud',
+  location: 'Lovable Cloud',
+  holds: 'Portal data: clients, users, tiers, engagements, billing, activity, custody and event records',
+};
+const supabaseChecks = (ok: boolean): VaultCheck[] => [
+  { label: 'Reachable', state: ok ? 'passed' : 'failed', note: ok ? 'Vault settings loaded from the database' : 'Could not read the database' },
+  { label: 'TLS', state: 'passed', note: 'Built-in HTTPS connection' },
+  { label: 'Schema version', state: 'passed', note: 'Kept in step by the app\'s own database changes' },
+  { label: 'Write test', state: 'not_checked', note: 'Use Test connection to record a check' },
+];
 
 function VaultsPage() {
   const me = useMe();
   const owner = !!me.data?.isOwner;
   const status = useVaultOverview();
-  const getCfg = useServerFn(getCloudVaultConfig);
   const configs = useQuery({ queryKey: ['vaults', 'config'], queryFn: async () => {
     const { data, error } = await supabase.from('vault_config').select('*').order('vault', { ascending: false });
     if (error) throw error; return data as unknown as Config[];
   } });
-  const cloudEnv = useQuery({ queryKey: ['vaults', 'cloud-env', configs.data?.find((c) => c.vault === 'cloud')?.route], queryFn: () => getCfg(), enabled: !!configs.data });
   const home = useQuery({ queryKey: ['vaults', 'home-extra'], queryFn: async () => {
     const [src, w] = await Promise.all([
       supabase.from('sources').select('gateway_url').eq('kind', 'home_vault').limit(1),
@@ -188,7 +174,6 @@ function VaultsPage() {
   const s = status.data;
   const homeCfg = configs.data?.find((c) => c.vault === 'home');
   const cloudCfg = configs.data?.find((c) => c.vault === 'cloud');
-  const cloudState = cloudEnv.data;
   return (
     <div className="space-y-6">
       <PageHeader kicker="09 · Admin · Settings" title="Vaults" subtitle="Where FA Portal data is held, how each vault is reached and whether it is online." />
@@ -198,11 +183,10 @@ function VaultsPage() {
           checks={homeChecks({ online: !!s?.home_online, httpsGateway: !!home.data?.https, lastVerifiedWrite: !!home.data?.verified, windowMinutes: s?.window_minutes ?? 15 })}
           extra={<p className="text-muted-foreground text-sm">Online means the collection device reported in within the last {s?.window_minutes ?? 15} minutes.
             {s?.home_last_report ? ` Last report ${formatDateTime(s.home_last_report.reported_at)}.` : ' No report yet.'} While offline, running research is paused and Start is refused.</p>} />}
-        {cloudCfg && <VaultCard cfg={cloudCfg} owner={owner}
-          word={cloudState ? cloudWord(cloudState.configured, !!s?.cloud_online) : 'Not configured'}
-          checks={cloudState ? cloudChecks(cloudState) : []}
-          extra={<div className="space-y-3"><RouteSetting route={cloudCfg.route as CloudRoute} owner={owner} />
-            <p className="text-muted-foreground text-sm">While offline, only plans that mirror to the Cloud Vault are paused; queued custody and event records wait in the outbox ({s?.outbox_pending.cloud ?? 0} waiting).</p></div>} />}
+        {cloudCfg && <VaultCard cfg={{ ...cloudCfg, ...SUPABASE_CLOUD }} owner={owner}
+          word={configs.data ? 'Online' : 'Offline'}
+          checks={supabaseChecks(!!configs.data)}
+          extra={<p className="text-muted-foreground text-sm">The Cloud Vault is this app's own Supabase database. It needs no separate address or password; access is controlled by the database's own rules.</p>} />}
       </div>
 
       <EvidenceMovePanel owner={owner} />

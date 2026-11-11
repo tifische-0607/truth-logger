@@ -1,7 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
-import { cloudChecks, cloudConfigState, type CloudRoute } from '@/lib/vault-config';
+import { cloudConfigState, type CloudRoute } from '@/lib/vault-config';
 
 async function cloudState(supabase: any) {
   const { data, error } = await supabase.from('vault_config').select('route').eq('vault', 'cloud').single();
@@ -32,9 +32,10 @@ export const testVaultConnection = createServerFn({ method: 'POST' })
     let outcome: 'ok' | 'failed' | 'not_configured' | 'not_attempted';
     let detail: Record<string, unknown>;
     if (data.vault === 'cloud') {
-      const s = await cloudState(context.supabase);
-      outcome = s.configured ? 'not_attempted' : 'not_configured';
-      detail = { route: s.route, missing: s.missing, checks: cloudChecks(s) };
+      // Cloud Vault = this app's own Supabase database: a real round-trip read as the caller.
+      const probe = await context.supabase.from('vault_config').select('vault').limit(1);
+      outcome = probe.error ? 'failed' : 'ok';
+      detail = { engine: 'supabase', error: probe.error?.message ?? null };
     } else {
       const route = await context.supabase.from('darknight_route').select('gateway_url').limit(1).maybeSingle();
       const gw = route.data?.gateway_url ?? null;
