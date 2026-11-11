@@ -23,7 +23,6 @@ export default defineConfig({
       alias: {
         "entities/lib/decode.js": path.resolve("node_modules/entities/lib/decode.js"),
         "entities/lib/encode.js": path.resolve("node_modules/entities/lib/encode.js"),
-        entities: path.resolve("node_modules/entities"),
       },
     },
     plugins: [
