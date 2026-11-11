@@ -19,8 +19,8 @@ export const getCloudVaultConfig = createServerFn({ method: 'POST' })
   });
 
 /**
- * Test connection. Reports honestly: Not configured, or configured but not attempted.
- * No outside connection is opened in this phase; the result is recorded in the append-only vault log.
+ * Test connection. Home: calls the DarkNight receiver's /health (HTTPS only, no redirects).
+ * Cloud: reports Not configured or configured but not attempted. Recorded in the append-only vault log.
  */
 export const testVaultConnection = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
@@ -36,8 +36,20 @@ export const testVaultConnection = createServerFn({ method: 'POST' })
       outcome = s.configured ? 'not_attempted' : 'not_configured';
       detail = { route: s.route, missing: s.missing, checks: cloudChecks(s) };
     } else {
-      outcome = status.home_online ? 'ok' : 'failed';
-      detail = { online: status.home_online, window_minutes: status.window_minutes };
+      const route = await context.supabase.from('darknight_route').select('gateway_url').limit(1).maybeSingle();
+      const gw = route.data?.gateway_url ?? null;
+      let gateway: 'not_configured' | 'online' | 'unreachable' = 'not_configured';
+      if (gw) {
+        try {
+          const u = new URL(gw);
+          if (u.protocol !== 'https:') throw new Error('not https');
+          const r = await fetch(`${u.href.replace(/\/$/, '')}/health`, { redirect: 'error', signal: AbortSignal.timeout(8000) });
+          const j = (await r.json().catch(() => ({}))) as { status?: string };
+          gateway = r.ok && j.status === 'online' ? 'online' : 'unreachable';
+        } catch { gateway = 'unreachable'; }
+      }
+      outcome = gateway === 'not_configured' ? 'not_configured' : gateway === 'online' ? 'ok' : 'failed';
+      detail = { gateway, gateway_url: gw, online: status.home_online, window_minutes: status.window_minutes };
     }
     const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
     const rec = await supabaseAdmin.rpc('vault_record_check', { _vault: data.vault, _outcome: outcome, _detail: detail as never, _actor: context.userId });
