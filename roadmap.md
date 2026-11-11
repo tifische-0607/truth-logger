@@ -154,3 +154,5 @@
 - [ ] Invitation email to hafidz@fridayanalytics.org — waiting on email domain hookup and access level.
 - 2026-11-11 — Connected notify.portal.fridayanalytics.org and scaffolded all six branded authentication emails; activation awaits DNS verification and publishing. Account-email feature flag and custom invitation sending remain separate follow-up work; no invitation was sent.
 - 2026-11-11: DarkNight real connection requested on notify.portal.fridayanalytics.org — BLOCKED: that address is now the email sender (delegated to the email service); needs a separate address (e.g. darknight.fridayanalytics.org) and tunnel/port choice.
+
+- 2026-11-11 DarkNight live route: decided Tailscale Funnel (*.ts.net address; custom vault.fridayanalytics.org not possible with Funnel). Receiver + Mac installer in gateway/darknight_receiver/; Vaults Test connection now calls DarkNight /health. OPEN (waiting on owner): install on home Mac, send the .ts.net address to save as the DarkNight address. NEXT after live: capture worker writes files straight to DarkNight (needs a database change so new artefacts are recorded as home-held).

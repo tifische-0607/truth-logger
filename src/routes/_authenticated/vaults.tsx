@@ -103,7 +103,8 @@ function VaultCard({ cfg, word, checks, owner, extra }: { cfg: Config; word: str
     mutationFn: () => test({ data: { vault: cfg.vault } }),
     onSuccess: async (raw) => {
       const r = raw as { outcome: string; detail: { missing?: string[] } };
-      const text = r.outcome === 'not_configured' ? `Not configured. Missing: ${(r.detail.missing ?? []).join(', ')}.`
+      const text = r.outcome === 'not_configured' ? (cfg.vault === 'home' ? 'Not configured. DarkNight gateway not connected: no DarkNight address saved yet.' : `Not configured. Missing: ${(r.detail.missing ?? []).join(', ')}.`)
+        : cfg.vault === 'home' ? (r.outcome === 'ok' ? 'Reachable: DarkNight answered online.' : 'Temporarily unavailable, please try again later')
         : r.outcome === 'not_attempted' ? 'Configured, but no connection was attempted: outside connections are not permitted in this phase.'
         : r.outcome === 'ok' ? 'Reachable: the Home Vault reported online within the window.' : 'Not reachable: no online report within the window.';
       setMsg({ text, bad: r.outcome !== 'ok' });
