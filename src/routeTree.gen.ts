@@ -87,6 +87,8 @@ import { Route as ApiPublicWorkerWatchDueRouteImport } from './routes/api/public
 import { Route as ApiPublicWorkerWatchReportRouteImport } from './routes/api/public/worker-watch-report'
 import { Route as AuthenticatedResearchRunsRunIdRouteImport } from './routes/_authenticated/research.runs.$runId'
 import { Route as AuthenticatedVaultSourceIdRecordIdRouteImport } from './routes/_authenticated/vault.$sourceId.$recordId'
+import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
+import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -511,6 +513,16 @@ const AuthenticatedVaultSourceIdRecordIdRoute =
     path: '/vault/$sourceId/$recordId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
+  id: '/lovable/email/auth/preview',
+  path: '/lovable/email/auth/preview',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
+  id: '/lovable/email/auth/webhook',
+  path: '/lovable/email/auth/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -590,6 +602,8 @@ export interface FileRoutesByFullPath {
   '/research/': typeof AuthenticatedResearchIndexRoute
   '/research/runs/$runId': typeof AuthenticatedResearchRunsRunIdRoute
   '/vault/$sourceId/$recordId': typeof AuthenticatedVaultSourceIdRecordIdRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -669,6 +683,8 @@ export interface FileRoutesByTo {
   '/research': typeof AuthenticatedResearchIndexRoute
   '/research/runs/$runId': typeof AuthenticatedResearchRunsRunIdRoute
   '/vault/$sourceId/$recordId': typeof AuthenticatedVaultSourceIdRecordIdRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -750,6 +766,8 @@ export interface FileRoutesById {
   '/_authenticated/research/': typeof AuthenticatedResearchIndexRoute
   '/_authenticated/research/runs/$runId': typeof AuthenticatedResearchRunsRunIdRoute
   '/_authenticated/vault/$sourceId/$recordId': typeof AuthenticatedVaultSourceIdRecordIdRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -831,6 +849,8 @@ export interface FileRouteTypes {
     | '/research/'
     | '/research/runs/$runId'
     | '/vault/$sourceId/$recordId'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -910,6 +930,8 @@ export interface FileRouteTypes {
     | '/research'
     | '/research/runs/$runId'
     | '/vault/$sourceId/$recordId'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
   id:
     | '__root__'
     | '/'
@@ -990,6 +1012,8 @@ export interface FileRouteTypes {
     | '/_authenticated/research/'
     | '/_authenticated/research/runs/$runId'
     | '/_authenticated/vault/$sourceId/$recordId'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1014,6 +1038,8 @@ export interface RootRouteChildren {
   ApiPublicWorkerUploadUrlRoute: typeof ApiPublicWorkerUploadUrlRoute
   ApiPublicWorkerWatchDueRoute: typeof ApiPublicWorkerWatchDueRoute
   ApiPublicWorkerWatchReportRoute: typeof ApiPublicWorkerWatchReportRoute
+  LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
+  LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1564,6 +1590,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedVaultSourceIdRecordIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/lovable/email/auth/preview': {
+      id: '/lovable/email/auth/preview'
+      path: '/lovable/email/auth/preview'
+      fullPath: '/lovable/email/auth/preview'
+      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/auth/webhook': {
+      id: '/lovable/email/auth/webhook'
+      path: '/lovable/email/auth/webhook'
+      fullPath: '/lovable/email/auth/webhook'
+      preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1716,6 +1756,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicWorkerUploadUrlRoute: ApiPublicWorkerUploadUrlRoute,
   ApiPublicWorkerWatchDueRoute: ApiPublicWorkerWatchDueRoute,
   ApiPublicWorkerWatchReportRoute: ApiPublicWorkerWatchReportRoute,
+  LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
+  LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
