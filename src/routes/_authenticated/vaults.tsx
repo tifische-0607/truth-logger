@@ -13,7 +13,7 @@ import { Refusal } from '@/components/research/ResearchBits';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { getCloudVaultConfig, testVaultConnection } from '@/lib/vaults.functions';
+import { testVaultConnection } from '@/lib/vaults.functions';
 import { homeChecks, type VaultCheck } from '@/lib/vault-config';
 import { useVaultOverview, WHERE_DATA_GOES } from '@/lib/vaults';
 import { EvidenceMovePanel } from '@/components/vault/EvidenceMovePanel';
