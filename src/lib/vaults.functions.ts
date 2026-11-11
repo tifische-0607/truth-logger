@@ -1,7 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
-import { cloudChecks, cloudConfigState, type CloudRoute } from '@/lib/vault-config';
+import { cloudConfigState, type CloudRoute } from '@/lib/vault-config';
 
 async function cloudState(supabase: any) {
   const { data, error } = await supabase.from('vault_config').select('route').eq('vault', 'cloud').single();
