@@ -17,7 +17,7 @@ type Pending = { id: string; name: string; email: string; level: string; roles: 
 const when = (t: string | null) => (t ? new Date(t).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—');
 
 function LinkBox({ link }: { link: string }) {
-  return <div className="space-y-2" role="status"><p className="text-sm">Single-use link, shown once and valid 7 days. Email sending is <span className="font-medium">Not configured</span>, so copy it and send it to the person yourself. They set their own password.</p>
+  return <div className="space-y-2" role="status"><p className="text-sm">Single-use link, shown once and valid 7 days. An invitation email is sent automatically; if it does not arrive, copy this link and send it yourself. They set their own password.</p>
     <div className="flex gap-2"><Input readOnly value={link} className="min-h-11" aria-label="Invitation link" /><Button type="button" variant="outline" className="min-h-11" onClick={() => void navigator.clipboard.writeText(link)}><Copy className="size-4" />Copy</Button></div></div>;
 }
 
