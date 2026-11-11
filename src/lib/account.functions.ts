@@ -60,6 +60,20 @@ const newToken = async () => {
   return { token, hash, expires: new Date(Date.now() + 7 * 86400000).toISOString() };
 };
 
+const LEVEL_LABELS: Record<string, string> = { superadmin: 'SuperAdmin', fa_staff: 'FA Staff', client_admin: 'Client Admin', client_staff: 'Client Staff', member: 'Member' };
+
+/** Email the one-time link. Never fails the invitation itself: the link is always shown on screen too. */
+async function emailInvite(to: string, name: string, level: string, link: string, expires: string, key: string): Promise<boolean> {
+  try {
+    const { sendTemplateEmail } = await import('@/lib/email-templates/send-email');
+    const r = await sendTemplateEmail('account-invitation', to, {
+      templateData: { name, levelLabel: LEVEL_LABELS[level] ?? level, link, expires: new Date(expires).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) },
+      idempotencyKey: `account-invitation-${key}`,
+    });
+    return r.sent;
+  } catch (e) { console.error('Invitation email failed', e); return false; }
+}
+
 /** Create an account of any level as a recorded single-use invitation. The database decides who may create which level and enforces caps. */
 export const createAccount = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
@@ -74,7 +88,9 @@ export const createAccount = createServerFn({ method: 'POST' })
       ...(data.clientId ? { client: data.clientId } : {}), ...(data.tierId ? { tier: data.tierId } : {}),
     });
     if (error) throw new Error(error.message);
-    return { link: siteLink(canonicalSiteUrl(process.env['SITE_URL']), `/invite?token=${t.token}`), emailed: false };
+    const link = siteLink(canonicalSiteUrl(process.env['SITE_URL']), `/invite?token=${t.token}`);
+    const emailed = await emailInvite(data.email.toLowerCase(), data.name, data.level, link, t.expires, t.hash.slice(0, 32));
+    return { link, emailed };
   });
 
 export const resendAccountInvite = createServerFn({ method: 'POST' })
@@ -84,5 +100,9 @@ export const resendAccountInvite = createServerFn({ method: 'POST' })
     const t = await newToken();
     const { error } = await context.supabase.rpc('account_invite_resend', { rid: data.id, h: t.hash, expires: t.expires });
     if (error) throw new Error(error.message);
-    return { link: siteLink(canonicalSiteUrl(process.env['SITE_URL']), `/invite?token=${t.token}`) };
+    const link = siteLink(canonicalSiteUrl(process.env['SITE_URL']), `/invite?token=${t.token}`);
+    const { data: list } = await context.supabase.rpc('account_pending_invites');
+    const inv = ((list ?? []) as unknown as { id: string; email: string; name: string; level: string }[]).find(i => i.id === data.id);
+    const emailed = inv ? await emailInvite(inv.email, inv.name, inv.level, link, t.expires, t.hash.slice(0, 32)) : false;
+    return { link, emailed, email: inv?.email ?? '' };
   });
