@@ -2,8 +2,9 @@ import css from '@/styles.css?raw'
 
 function token(name: string): string {
   const match = css.match(new RegExp(`--email-${name}:\\s*(#[a-fA-F0-9]+)`))
-  if (!match) throw new Error(`Missing email design token: ${name}`)
-  return match[1]
+  const value = match?.[1]
+  if (!value) throw new Error(`Missing email design token: ${name}`)
+  return value
 }
 
 export const main = { backgroundColor: token('background'), fontFamily: 'Inter, Arial, sans-serif' }

@@ -10,7 +10,7 @@ import { loadEnv } from "vite";
 import path from "node:path";
 
 // Server-only environment; never include these values in client defines.
-Object.assign(process.env, loadEnv(process.env.NODE_ENV ?? "development", process.cwd(), ""));
+Object.assign(process.env, loadEnv(process.env['NODE_ENV'] ?? "development", process.cwd(), ""));
 
 export default defineConfig({
   tanstackStart: {
