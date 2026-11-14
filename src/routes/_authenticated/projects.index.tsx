@@ -10,6 +10,7 @@ import { EditProjectDetails } from '@/components/projects/EditProjectDetails';
 import { useClientsAndProjects, useMe } from "@/lib/projects";
 import { HousekeepingDelete } from '@/components/HousekeepingDelete';
 import { hubHead } from '@/lib/hub';
+import { ClientDatabaseDetails } from '@/components/projects/ClientDatabaseDetails';
 
 export const Route = createFileRoute("/_authenticated/projects/")({
   head: () => hubHead('Projects', 'Clients, their projects, briefs and outputs.'),
@@ -72,12 +73,13 @@ function ProjectsPage() {
           return (
             <section key={c.id} className="panel overflow-hidden" aria-labelledby={`cl-${c.id}`}>
               <div className="bg-muted/50 flex flex-wrap items-center justify-between gap-3 border-b px-5 py-3">
+                <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-8 gap-y-3">
                 <Link
                   to="/clients/$clientId"
                   params={{ clientId: c.id }}
-                  className="min-w-0 hover:underline"
+                  className="min-w-0 max-w-full hover:underline"
                 >
-                  <h2 id={`cl-${c.id}`} className="truncate font-semibold">
+                  <h2 id={`cl-${c.id}`} className="break-words font-semibold">
                     {c.name}
                   </h2>
                   <div className="text-muted-foreground font-mono text-xs">
@@ -86,7 +88,9 @@ function ProjectsPage() {
                     {c.status === "archived" ? " · archived" : ""}
                   </div>
                 </Link>
-                <span className="text-muted-foreground text-xs">
+                <ClientDatabaseDetails />
+                </div>
+                <span className="text-muted-foreground shrink-0 text-xs">
                   {mine.length} project{mine.length === 1 ? "" : "s"}
                 </span>
               </div>
