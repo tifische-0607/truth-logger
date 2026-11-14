@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Client administration (0061): left menu for SuperAdmin/Management, all clients and existing membership plans/seats, SuperAdmin-only client-detail/database-reference edits with immutable audit. Signed-in save/reopen/restoration passed; 8 focused tests passed, build OK. Database references do not provision or migrate schemas or connect to outside hosts; size/health remain unmeasured.
+
 - [x] Client tiles show database name, size and health beside the client name; honest unconfigured/unmeasured states are shown because client database assignments and telemetry are not yet implemented. No database or evidence changes.
 
 - [x] 2026-11-14 — Database arrangement confirmed: each client will have its own schema in the current Cloud Vault PostgreSQL database; DarkNight is exclusively FridayAnalytics; evidence and report files remain at home. Decision recorded only; no schema/data/file changes performed.

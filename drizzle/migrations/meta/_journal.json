@@ -428,6 +428,20 @@
       "when": 1794387156435,
       "tag": "0060_client_users_drop_stale_role_check",
       "breakpoints": true
+    },
+    {
+      "idx": 61,
+      "version": "7",
+      "when": 1794636890809,
+      "tag": "0061_client_administration",
+      "breakpoints": true
+    },
+    {
+      "idx": 62,
+      "version": "7",
+      "when": 1794637036332,
+      "tag": "0062_client_edit_audit_grants",
+      "breakpoints": true
     }
   ]
 }

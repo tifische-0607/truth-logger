@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type ReactNode } from "react";
 import {
   Briefcase,
+  Building2,
   CloudDownload,
   FolderClosed,
   Gauge,
@@ -73,6 +74,7 @@ const SIDE_LINKS = [
   { to: '/frameworks', label: 'Frameworks', icon: BookOpen, screen: 'frameworks' },
 ] as const;
 const SYSTEM_LINKS = [
+  { to: '/client-admin', label: 'Client administration', icon: Building2, screen: 'client_admin' },
   { to: '/inbox', label: 'Curator inbox', icon: ScrollText, screen: 'curator_inbox' },
   { to: '/management', label: 'Management', icon: Gauge, screen: 'management' },
   { to: '/billing', label: 'Billing and pricing', icon: Receipt, screen: 'billing' },

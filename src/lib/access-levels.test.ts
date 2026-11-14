@@ -6,6 +6,7 @@ const menu = (screens: string[], status: 'active' | 'inactive' = 'active'): Acce
 describe('access levels', () => {
   it('maps SuperAdmin-only screens to their own keys', () => {
     expect(staffScreenFor('/users-access')).toBe('users_access');
+    expect(staffScreenFor('/client-admin')).toBe('client_admin');
     expect(staffScreenFor('/vaults')).toBe('vaults');
     expect(staffScreenFor('/connectors')).toBe('connectors');
     expect(staffScreenFor('/executive-agent')).toBe('executive_agent');
@@ -16,6 +17,10 @@ describe('access levels', () => {
   });
   it('an inactive login opens nothing', () => {
     expect(canOpen(menu(['dashboard'], 'inactive'), 'dashboard')).toBe(false);
+  });
+  it('client administration requires its database-granted screen permission', () => {
+    expect(canOpen(menu(['engagements']), staffScreenFor('/client-admin'))).toBe(false);
+    expect(canOpen(menu(['client_admin']), staffScreenFor('/client-admin'))).toBe(true);
   });
   it('Members get Reports, Notices and Account only', () => {
     const tabs = portalTabsFor(menu(['portal_reports', 'portal_notices', 'account']), false).map(t => t.label);

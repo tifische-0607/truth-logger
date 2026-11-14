@@ -20,6 +20,7 @@ import { Route as AuthenticatedBillingRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedCaptureLogRouteImport } from './routes/_authenticated/capture-log'
 import { Route as AuthenticatedCaptureSettingsRouteImport } from './routes/_authenticated/capture-settings'
 import { Route as AuthenticatedCaseDatabaseRouteImport } from './routes/_authenticated/case-database'
+import { Route as AuthenticatedClientAdminRouteImport } from './routes/_authenticated/client-admin'
 import { Route as AuthenticatedCollectRouteImport } from './routes/_authenticated/collect'
 import { Route as AuthenticatedConnectorsRouteImport } from './routes/_authenticated/connectors'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -145,6 +146,12 @@ const AuthenticatedCaseDatabaseRoute =
   AuthenticatedCaseDatabaseRouteImport.update({
     id: '/case-database',
     path: '/case-database',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedClientAdminRoute =
+  AuthenticatedClientAdminRouteImport.update({
+    id: '/client-admin',
+    path: '/client-admin',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedCollectRoute = AuthenticatedCollectRouteImport.update({
@@ -542,6 +549,7 @@ export interface FileRoutesByFullPath {
   '/capture-log': typeof AuthenticatedCaptureLogRoute
   '/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/case-database': typeof AuthenticatedCaseDatabaseRoute
+  '/client-admin': typeof AuthenticatedClientAdminRoute
   '/collect': typeof AuthenticatedCollectRoute
   '/connectors': typeof AuthenticatedConnectorsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -624,6 +632,7 @@ export interface FileRoutesByTo {
   '/capture-log': typeof AuthenticatedCaptureLogRoute
   '/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/case-database': typeof AuthenticatedCaseDatabaseRoute
+  '/client-admin': typeof AuthenticatedClientAdminRoute
   '/collect': typeof AuthenticatedCollectRoute
   '/connectors': typeof AuthenticatedConnectorsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -708,6 +717,7 @@ export interface FileRoutesById {
   '/_authenticated/capture-log': typeof AuthenticatedCaptureLogRoute
   '/_authenticated/capture-settings': typeof AuthenticatedCaptureSettingsRoute
   '/_authenticated/case-database': typeof AuthenticatedCaseDatabaseRoute
+  '/_authenticated/client-admin': typeof AuthenticatedClientAdminRoute
   '/_authenticated/collect': typeof AuthenticatedCollectRoute
   '/_authenticated/connectors': typeof AuthenticatedConnectorsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -792,6 +802,7 @@ export interface FileRouteTypes {
     | '/capture-log'
     | '/capture-settings'
     | '/case-database'
+    | '/client-admin'
     | '/collect'
     | '/connectors'
     | '/dashboard'
@@ -874,6 +885,7 @@ export interface FileRouteTypes {
     | '/capture-log'
     | '/capture-settings'
     | '/case-database'
+    | '/client-admin'
     | '/collect'
     | '/connectors'
     | '/dashboard'
@@ -957,6 +969,7 @@ export interface FileRouteTypes {
     | '/_authenticated/capture-log'
     | '/_authenticated/capture-settings'
     | '/_authenticated/case-database'
+    | '/_authenticated/client-admin'
     | '/_authenticated/collect'
     | '/_authenticated/connectors'
     | '/_authenticated/dashboard'
@@ -1133,6 +1146,13 @@ declare module '@tanstack/react-router' {
       path: '/case-database'
       fullPath: '/case-database'
       preLoaderRoute: typeof AuthenticatedCaseDatabaseRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/client-admin': {
+      id: '/_authenticated/client-admin'
+      path: '/client-admin'
+      fullPath: '/client-admin'
+      preLoaderRoute: typeof AuthenticatedClientAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/collect': {
@@ -1634,6 +1654,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCaptureLogRoute: typeof AuthenticatedCaptureLogRoute
   AuthenticatedCaptureSettingsRoute: typeof AuthenticatedCaptureSettingsRoute
   AuthenticatedCaseDatabaseRoute: typeof AuthenticatedCaseDatabaseRoute
+  AuthenticatedClientAdminRoute: typeof AuthenticatedClientAdminRoute
   AuthenticatedCollectRoute: typeof AuthenticatedCollectRoute
   AuthenticatedConnectorsRoute: typeof AuthenticatedConnectorsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
@@ -1694,6 +1715,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCaptureLogRoute: AuthenticatedCaptureLogRoute,
   AuthenticatedCaptureSettingsRoute: AuthenticatedCaptureSettingsRoute,
   AuthenticatedCaseDatabaseRoute: AuthenticatedCaseDatabaseRoute,
+  AuthenticatedClientAdminRoute: AuthenticatedClientAdminRoute,
   AuthenticatedCollectRoute: AuthenticatedCollectRoute,
   AuthenticatedConnectorsRoute: AuthenticatedConnectorsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
