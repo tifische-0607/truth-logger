@@ -88,7 +88,7 @@ function ProjectsPage() {
                     {c.status === "archived" ? " · archived" : ""}
                   </div>
                 </Link>
-                <ClientDatabaseDetails />
+                <ClientDatabaseDetails client={c} />
                 </div>
                 <span className="text-muted-foreground shrink-0 text-xs">
                   {mine.length} project{mine.length === 1 ? "" : "s"}

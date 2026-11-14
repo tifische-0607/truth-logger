@@ -13,6 +13,7 @@ export const FORBIDDEN_MESSAGE = 'Your access level does not include this screen
 
 /** Staff screens by path. Order matters: first match wins. Unlisted staff paths need "dashboard" (any active FA login). */
 const STAFF_SCREENS: [RegExp, string][] = [
+  [/^\/client-admin(?:\/|$)/, 'client_admin'],
   [/^\/users-access/, 'users_access'],
   [/^\/vaults/, 'vaults'],
   [/^\/connectors/, 'connectors'],
