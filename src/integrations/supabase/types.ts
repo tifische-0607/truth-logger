@@ -810,6 +810,41 @@ export type Database = {
           },
         ]
       }
+      client_detail_events: {
+        Row: {
+          actor: string
+          after_details: Json
+          before_details: Json
+          client_id: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          actor?: string
+          after_details: Json
+          before_details: Json
+          client_id: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          actor?: string
+          after_details?: Json
+          before_details?: Json
+          client_id?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_detail_events_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_tier_log: {
         Row: {
           actor: string
@@ -941,6 +976,9 @@ export type Database = {
           contact_name: string | null
           created_at: string
           created_by: string | null
+          database_name: string | null
+          database_schema: string | null
+          database_url: string | null
           display_name: string | null
           id: string
           kind: string
@@ -961,6 +999,9 @@ export type Database = {
           contact_name?: string | null
           created_at?: string
           created_by?: string | null
+          database_name?: string | null
+          database_schema?: string | null
+          database_url?: string | null
           display_name?: string | null
           id?: string
           kind?: string
@@ -981,6 +1022,9 @@ export type Database = {
           contact_name?: string | null
           created_at?: string
           created_by?: string | null
+          database_name?: string | null
+          database_schema?: string | null
+          database_url?: string | null
           display_name?: string | null
           id?: string
           kind?: string
@@ -7728,6 +7772,11 @@ export type Database = {
           isOneToOne: false
           isSetofReturn: true
         }
+      }
+      client_admin_list: { Args: never; Returns: Json }
+      client_admin_save: {
+        Args: { _client: string; _details: Json }
+        Returns: undefined
       }
       design_ready: { Args: { _project: string }; Returns: boolean }
       evidence_move_frozen: { Args: never; Returns: boolean }
