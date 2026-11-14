@@ -1,5 +1,8 @@
 # Roadmap
 
+- [x] 2026-11-14 — Database arrangement confirmed: each client will have its own schema in the current Cloud Vault PostgreSQL database; DarkNight is exclusively FridayAnalytics; evidence and report files remain at home. Decision recorded only; no schema/data/file changes performed.
+- [ ] Implement separate client schemas in Cloud Vault — requires a scoped migration plan preserving existing permissions, shared configuration and evidence/custody references; not implemented by the arrangement confirmation.
+
 - [x] 2026-11-14 — Project details: shared edit action on Projects and engagement header for users authorised by existing can_manage_project; name, summary and due date only, preserving client/code identity, signed briefs, gates and RLS.
 
 - [x] SuperAdmin housekeeping (0057): SuperAdmin-only, reasoned project/capture-job deletion via append-only tombstones plus User activity; RLS hides removed records, original rows/evidence/custody retained; running jobs refused and worker excludes deleted jobs. Signed-in failed test-job deletion, direct-URL hiding and activity read-back passed; project confirmation keyboard/phone checked without deleting existing project. 111 unit tests passed; SQL Part A passed, Part B B1–B10 saved/unrun (privileged rollback fixtures needed). Docs: docs/housekeeping.md.
