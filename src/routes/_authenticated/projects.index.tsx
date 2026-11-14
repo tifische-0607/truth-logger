@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/AppShell";
 import { NewClientDialog, NewProjectDialog } from "@/components/projects/ClientProjectDialogs";
 import { Button } from "@/components/ui/button";
 import { ProjectRow } from "@/components/projects/ProjectRow";
+import { EditProjectDetails } from '@/components/projects/EditProjectDetails';
 import { useClientsAndProjects, useMe } from "@/lib/projects";
 import { HousekeepingDelete } from '@/components/HousekeepingDelete';
 import { hubHead } from '@/lib/hub';
@@ -91,7 +92,7 @@ function ProjectsPage() {
               </div>
               <div className="divide-border divide-y">
                 {mine.length ? (
-                  mine.map((p) => <div key={p.id} className="flex items-center"><div className="min-w-0 flex-1"><ProjectRow p={p} /></div><div className="pr-3"><HousekeepingDelete kind="project" id={p.id} label={`${p.code} · ${p.name}`} /></div></div>)
+                  mine.map((p) => <div key={p.id} className="flex items-center"><div className="min-w-0 flex-1"><ProjectRow p={p} /></div><div className="flex shrink-0 items-center gap-1 pr-3"><EditProjectDetails project={p} compact /><HousekeepingDelete kind="project" id={p.id} label={`${p.code} · ${p.name}`} /></div></div>)
                 ) : (
                   <p className="text-muted-foreground px-5 py-4 text-sm">
                     No projects you are on for this client.
