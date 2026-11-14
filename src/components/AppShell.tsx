@@ -366,7 +366,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           {caseId && pathname.startsWith('/trail/') && <HomeReferences caseId={caseId}/>}
         </main>
         <footer className="no-print text-muted-foreground border-t px-4 pt-4 pb-24 text-xs md:px-8 md:pb-6">
-          <p>{DOCUMENT_FOOTER} · {COMPANY.name} · {COMPANY.reg} · {COMPANY.email} · {COMPANY.web}</p>
+          <p>{DOCUMENT_FOOTER} · {COMPANY.name} · {COMPANY.reg} · {COMPANY.email}</p>
         </footer>
         <BaseStrip className="no-print sticky bottom-0 z-30 hidden md:block" />
 
