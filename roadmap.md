@@ -32,6 +32,7 @@
 - Master build plan v2: docs/planning/FA-Portal-Master-Build-Plan-v2.md
 - Instructions for Phase 7 to U14: docs/planning/FA-Portal-Lovable-Instructions-Phase7-to-U14.md
 - U6 methodology checkpoints checklist: docs/planning/U6-Methodology-Checkpoints-Build-Checklist.md
+- Source documents (3 Nov 2026: Final Design Brief, Upgrade Phases U1–U14, Research Methodology v0.1): docs/planning/source/ — reference only; later decisions in this roadmap take precedence
 
 ## Order after Phase 6 (every item waits for "Go")
 1. [x] Phase 7 SOP and clock engine (0024–0026) — clocks, SOP versions, pauses, alerts, Turnaround card. Outstanding: SQL checks C1–C2, C4b–C4d, C5–C6 in tests/sql/sop_clocks_test.sql need a privileged test connection; real SOP targets, holidays, escalation chains wait on user
