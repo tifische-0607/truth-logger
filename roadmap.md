@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Client administration: left menu, all clients and existing membership plans, SuperAdmin-only client-detail/database-reference edits with immutable audit; verify signed-in save/read-back. Database references do not provision or migrate schemas or connect to outside hosts.
+- [x] Client administration (0061): left menu for SuperAdmin/Management, all clients and existing membership plans/seats, SuperAdmin-only client-detail/database-reference edits with immutable audit. Signed-in save/reopen/restoration passed; 8 focused tests passed, build OK. Database references do not provision or migrate schemas or connect to outside hosts; size/health remain unmeasured.
 
 - [x] Client tiles show database name, size and health beside the client name; honest unconfigured/unmeasured states are shown because client database assignments and telemetry are not yet implemented. No database or evidence changes.
 
