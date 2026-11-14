@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] 2026-11-14 — Project details: shared edit action on Projects and engagement header for users authorised by existing can_manage_project; name, summary and due date only, preserving client/code identity, signed briefs, gates and RLS.
+
 - [x] SuperAdmin housekeeping (0057): SuperAdmin-only, reasoned project/capture-job deletion via append-only tombstones plus User activity; RLS hides removed records, original rows/evidence/custody retained; running jobs refused and worker excludes deleted jobs. Signed-in failed test-job deletion, direct-URL hiding and activity read-back passed; project confirmation keyboard/phone checked without deleting existing project. 111 unit tests passed; SQL Part A passed, Part B B1–B10 saved/unrun (privileged rollback fixtures needed). Docs: docs/housekeeping.md.
 
 - [x] Scope reduced to identity/navigation and home vault; hide project navigation and case Projects button without deleting existing work

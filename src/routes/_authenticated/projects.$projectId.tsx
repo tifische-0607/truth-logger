@@ -22,6 +22,7 @@ import { PROJECT_STATUS, currentPhase, roleLabel, useProjectWorkspace } from "@/
 import { cn } from "@/lib/utils";
 import { hubHead } from '@/lib/hub';
 import { HousekeepingDelete } from '@/components/HousekeepingDelete';
+import { EditProjectDetails } from '@/components/projects/EditProjectDetails';
 
 const TABS = [
   { id: "overview", label: "Overview" },
@@ -137,7 +138,8 @@ function ProjectPage() {
           <h1 className="font-display mt-1 text-2xl font-medium tracking-tight md:text-3xl">{p.name}</h1>
           {p.summary ? <p className="text-muted-foreground mt-1 text-sm">{p.summary}</p> : null}
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <EditProjectDetails project={p} />
           <HousekeepingDelete kind="project" id={p.id} label={`${p.code} · ${p.name}`} onDeleted={() => void navigate({ to: '/projects' })} />
           <span className="text-muted-foreground text-xs">You: {roleLabel(w.role)}</span>
           {w.canManage ? (
