@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Client tiles show database name, size and health beside the client name; honest unconfigured/unmeasured states are shown because client database assignments and telemetry are not yet implemented. No database or evidence changes.
+
 - [x] 2026-11-14 — Database arrangement confirmed: each client will have its own schema in the current Cloud Vault PostgreSQL database; DarkNight is exclusively FridayAnalytics; evidence and report files remain at home. Decision recorded only; no schema/data/file changes performed.
 - [ ] Implement separate client schemas in Cloud Vault — requires a scoped migration plan preserving existing permissions, shared configuration and evidence/custody references; not implemented by the arrangement confirmation.
 
